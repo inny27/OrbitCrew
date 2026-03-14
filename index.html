@@ -1599,7 +1599,7 @@ function updateExFormSection() {
     section.innerHTML = `<div class="quick-picks-wrap">
       <p style="text-align:left;font-size:10px;font-family:var(--pixel);color:var(--accent3)">${recLabel}</p>
       <div class="quick-picks-grid">${recs.map(ex=>
-        `<button class="qp-btn" onmousedown="event.preventDefault();selectExercise('${ex.id}')">${ex.name}</button>`
+        `<button class="qp-btn" onmousedown="event.preventDefault();window.selectExercise&&window.selectExercise('${ex.id}')">${ex.name}</button>`
       ).join('')}</div>
     </div>`;
   }
@@ -1879,7 +1879,7 @@ window.updateExSearch = q => {
   const filtered = smartSearch(q);
   const ti = {weights:'🏋️',calisthenics:'💪',run:'🏃',swim:'🏊',cardio:'❤️'};
   c.innerHTML = filtered.length
-    ? `<div class="ex-results-list">${filtered.map(ex=>`<div class="ex-result-row" onmousedown="event.preventDefault();selectExercise('${ex.id}')"><span class="ex-result-icon">${ti[ex.type]||'💪'}</span><div style="flex:1"><div class="ex-result-name">${ex.name}</div><div class="ex-result-muscles">${ex.muscles.join(', ')}</div></div><span class="ex-result-stars">${'⭐'.repeat(ex.difficulty)}</span></div>`).join('')}</div>`
+    ? `<div class="ex-results-list">${filtered.map(ex=>`<div class="ex-result-row" onmousedown="event.preventDefault();window.selectExercise&&window.selectExercise('${ex.id}')"><span class="ex-result-icon">${ti[ex.type]||'💪'}</span><div style="flex:1"><div class="ex-result-name">${ex.name}</div><div class="ex-result-muscles">${ex.muscles.join(', ')}</div></div><span class="ex-result-stars">${'⭐'.repeat(ex.difficulty)}</span></div>`).join('')}</div>`
     : `<div style="padding:12px;color:var(--muted);font-size:13px;font-weight:600">No results for "${q}"</div>`;
 };
 // Expose as direct global so search input can call without bridge delay
@@ -3181,11 +3181,20 @@ window.renderLibrary = function(keepFocus) {
   if (existingResults) {
     // Only update filters and results, leave search input alone
     const filtersEl = document.getElementById('lib-filters');
-    if(filtersEl) filtersEl.innerHTML = [['all','All'],['weights','🏋️ Weights'],['calisthenics','💪 Calisthenics'],['run','🏃 Running'],['swim','🏊 Swimming']].map(([v,l])=>`<button class="lib-filter-btn${lf===v?' active':''}" onclick="window._libFilter='${v}';window.renderLibrary(true)">${l}</button>`).join('');
+    if(filtersEl) filtersEl.innerHTML = [['all','All'],['weights','🏋️ Weights'],['calisthenics','💪 Calisthenics'],['run','🏃 Running'],['swim','🏊 Swimming'],['cardio','❤️ Cardio']].map(([v,l])=>`<button class="lib-filter-btn${lf===v?' active':''}" onclick="window._libFilter='${v}';window.renderLibrary(true)">${l}</button>`).join('');
     const countEl = document.getElementById('lib-count');
     if(countEl) countEl.textContent = filtered.length + ' exercises';
     existingResults.innerHTML = filtered.map(ex=>`
-      <div class="ex-lib-card" onclick="showExDetail('${ex.id}')">
+      <div class="ex-lib-card" data-exid="${ex.id}">
+        <span class="ex-lib-gif">${typeIcon[ex.type]||'💪'}</span>
+        <div class="ex-lib-info"><div class="ex-lib-name">${ex.name}</div><div class="ex-lib-muscles">${ex.muscles.join(', ')}</div></div>
+        <div class="ex-lib-right"><div class="ex-lib-diff">${'●'.repeat(ex.difficulty)}${'○'.repeat(5-ex.difficulty)}</div><div class="ex-lib-type">${ex.type}</div></div>
+      </div>`).join('');
+  existingResults.onclick = e => {
+    const card = e.target.closest('[data-exid]');
+    if(card) window.showExDetail(card.dataset.exid);
+  };existingResults.innerHTML = filtered.map(ex=>`
+      <div class="ex-lib-card" data-exid="${ex.id}">
         <span class="ex-lib-gif">${typeIcon[ex.type]||'💪'}</span>
         <div class="ex-lib-info"><div class="ex-lib-name">${ex.name}</div><div class="ex-lib-muscles">${ex.muscles.join(', ')}</div></div>
         <div class="ex-lib-right"><div class="ex-lib-diff">${'●'.repeat(ex.difficulty)}${'○'.repeat(5-ex.difficulty)}</div><div class="ex-lib-type">${ex.type}</div></div>
@@ -3209,6 +3218,14 @@ window.renderLibrary = function(keepFocus) {
       window._libSearch = this.value;
       window.renderLibrary(true);
     });
+  }
+  // Add event delegation for exercise cards (more reliable than inline onclick)
+  const libResults = document.getElementById('lib-results');
+  if(libResults) {
+    libResults.onclick = e => {
+      const card = e.target.closest('[data-exid]');
+      if(card && card.dataset.exid) window.showExDetail(card.dataset.exid);
+    };
   }
   // Now populate filters and results
   window.renderLibrary(false);
