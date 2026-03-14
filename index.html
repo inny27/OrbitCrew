@@ -1381,6 +1381,103 @@ window.clearExSelection = () => {
   const inp = g('ex-search'); if(inp){inp.value='';inp.focus();}
 };
 
+
+// ── Exercise Recommendation Engine ──────────────────────────
+const WORKOUT_PAIRS = {
+  // Chest exercises → push day suggestions
+  'bench_press':    ['ohp','incline_press','dips','tricep_pushdown','lateral_raise'],
+  'incline_press':  ['bench_press','ohp','dips','skull_crusher','lateral_raise'],
+  'pushup':         ['dips','ohp','tricep_pushdown','plank','archer_pushup'],
+  'dips':           ['bench_press','tricep_pushdown','ohp','incline_press','skull_crusher'],
+  // Back exercises → pull day suggestions  
+  'pullup':         ['bent_row','lat_pulldown','bicep_curl','hammer_curl','face_pull'],
+  'bent_row':       ['pullup','lat_pulldown','rdl','bicep_curl','deadlift'],
+  'lat_pulldown':   ['pullup','bent_row','bicep_curl','hammer_curl','face_pull'],
+  'deadlift':       ['bent_row','rdl','pullup','squat','glute_bridge'],
+  // Shoulder exercises
+  'ohp':            ['lateral_raise','bench_press','tricep_pushdown','incline_press','skull_crusher'],
+  'lateral_raise':  ['ohp','bent_row','bicep_curl','face_pull','hammer_curl'],
+  // Biceps
+  'bicep_curl':     ['hammer_curl','pullup','lat_pulldown','bent_row','chinup'],
+  'hammer_curl':    ['bicep_curl','pullup','lat_pulldown','bent_row','face_pull'],
+  // Triceps
+  'tricep_pushdown':['skull_crusher','dips','bench_press','ohp','incline_press'],
+  'skull_crusher':  ['tricep_pushdown','dips','bench_press','ohp','close_grip_press'],
+  // Legs
+  'squat':          ['rdl','leg_press','lunge','glute_bridge','calf_raise'],
+  'rdl':            ['squat','deadlift','glute_bridge','leg_press','lunge'],
+  'leg_press':      ['squat','rdl','lunge','calf_raise','glute_bridge'],
+  'lunge':          ['squat','rdl','glute_bridge','calf_raise','leg_press'],
+  'glute_bridge':   ['rdl','squat','lunge','deadlift','leg_press'],
+  // Core
+  'plank':          ['dead_bug','hanging_leg_raise','ab_wheel','l_sit','dragon_flag'],
+  'dead_bug':       ['plank','hanging_leg_raise','ab_wheel','l_sit','squat'],
+  'hanging_leg_raise':['plank','dead_bug','l_sit','ab_wheel','dragon_flag'],
+  // Calisthenics advanced
+  'muscle_up':      ['pullup','dips','planche_lean','tuck_front_lever','handstand_pushup'],
+  'planche_lean':   ['pushup','dips','tuck_planche','l_sit','handstand_pushup'],
+  'tuck_planche':   ['planche_lean','pushup','l_sit','dips','tuck_front_lever'],
+  'front_lever':    ['tuck_front_lever','pullup','l_sit','dead_bug','hanging_leg_raise'],
+  'tuck_front_lever':['front_lever','pullup','bent_row','dead_bug','l_sit'],
+  'handstand_pushup':['ohp','planche_lean','dips','pushup','muscle_up'],
+  'l_sit':          ['plank','dead_bug','hanging_leg_raise','tuck_planche','v_sit'],
+  // Running
+  'easy_run':       ['tempo_run','interval_run','easy_run','lunge','glute_bridge'],
+  'interval_run':   ['easy_run','tempo_run','lunge','rdl','calf_raise'],
+  'tempo_run':      ['easy_run','interval_run','lunge','calf_raise','rdl'],
+  // Swimming
+  'freestyle':      ['breaststroke','bent_row','ohp','lat_pulldown','plank'],
+  'breaststroke':   ['freestyle','bent_row','ohp','glute_bridge','plank'],
+};
+
+// Also use historical co-occurrence from user's own workout data
+function getPersonalisedRecs(firstExId) {
+  // Look at past sessions where this exercise appeared
+  // and find what exercises most commonly appear alongside it
+  const sessionMap = {};
+  workoutEntries.filter(e=>e.sessionId).forEach(e => {
+    if(!sessionMap[e.sessionId]) sessionMap[e.sessionId] = [];
+    sessionMap[e.sessionId].push(e.exercise||e.exerciseName);
+  });
+  
+  const coCount = {};
+  Object.values(sessionMap).forEach(exIds => {
+    if(exIds.includes(firstExId)) {
+      exIds.filter(id=>id!==firstExId).forEach(id => {
+        coCount[id] = (coCount[id]||0) + 1;
+      });
+    }
+  });
+  
+  // Sort by co-occurrence count
+  return Object.entries(coCount)
+    .sort((a,b)=>b[1]-a[1])
+    .slice(0,4)
+    .map(([id])=>id);
+}
+
+function getRecommendations(firstExId) {
+  // 1. Start with personalised recs from history
+  const personal = getPersonalisedRecs(firstExId);
+  
+  // 2. Fall back to curated pairs
+  const curated = WORKOUT_PAIRS[firstExId] || [];
+  
+  // 3. If exercise not in map, use same muscle group
+  const ex = EXERCISE_DB.find(e=>e.id===firstExId);
+  let fallback = [];
+  if(ex) {
+    fallback = EXERCISE_DB
+      .filter(e => e.id!==firstExId && e.muscles.some(m=>ex.muscles.includes(m)))
+      .slice(0,5)
+      .map(e=>e.id);
+  }
+  
+  // Merge: personal first (they're most relevant), then curated, then fallback
+  const merged = [...new Set([...personal, ...curated, ...fallback])].slice(0,6);
+  return merged.map(id=>EXERCISE_DB.find(e=>e.id===id)).filter(Boolean);
+}
+
 function updateExFormSection() {
   const section = g('ex-form-section');
   if (!section) {
@@ -1423,12 +1520,37 @@ function updateExFormSection() {
     // Clear search results since we picked one
     const rc = g('ex-results-container'); if(rc) rc.innerHTML='';
   } else {
+    // Get smart recommendations based on session context
+    const sessionExIds = (activeSession?.exercises||[]).map(e=>e.exId);
+    let recs = [];
+    let recLabel = 'Popular exercises:';
+    
+    if(sessionExIds.length > 0) {
+      // Base recommendations on first exercise in session
+      recs = getRecommendations(sessionExIds[0]);
+      // Filter out exercises already in this session
+      recs = recs.filter(ex => !sessionExIds.includes(ex.id));
+      // Check if personalised (has co-occurrence data)
+      const hasPersonal = getPersonalisedRecs(sessionExIds[0]).length > 0;
+      const firstEx = EXERCISE_DB.find(e=>e.id===sessionExIds[0]);
+      recLabel = hasPersonal 
+        ? `⭐ Based on your history with ${firstEx?.name||'this exercise'}:`
+        : `💡 Often paired with ${firstEx?.name||'this exercise'}:`;
+    } else {
+      // No session yet - show defaults
+      recs = ['bench_press','squat','deadlift','pullup','bicep_curl','pushup','plank','lat_pulldown','ohp','rdl']
+        .map(id=>EXERCISE_DB.find(e=>e.id===id)).filter(Boolean);
+      recLabel = 'Popular exercises:';
+    }
+    
+    // Limit to 6
+    recs = recs.slice(0,6);
+    
     section.innerHTML = `<div class="quick-picks-wrap">
-      <p><img src="https://maplestory.io/api/GMS/255/item/1302000/icon" alt="" width="16" height="16" style="image-rendering:pixelated;vertical-align:middle"> Search above or pick a common exercise:</p>
-      <div class="quick-picks-grid">${['Bench Press','Back Squat','Deadlift','Pull Up','Bicep Curl','Push Up','Plank','Lat Pulldown','Overhead Press','Romanian Deadlift'].map(n=>{
-        const ex=EXERCISE_DB.find(e=>e.name===n);
-        return ex?`<button class="qp-btn" onmousedown="event.preventDefault();selectExercise('${ex.id}')">${ex.name}</button>`:'';
-      }).join('')}</div>
+      <p style="text-align:left;font-size:10px;font-family:var(--pixel);color:var(--accent3)">${recLabel}</p>
+      <div class="quick-picks-grid">${recs.map(ex=>
+        `<button class="qp-btn" onmousedown="event.preventDefault();selectExercise('${ex.id}')">${ex.name}</button>`
+      ).join('')}</div>
     </div>`;
   }
   // Restore focus to search input if it had focus before
