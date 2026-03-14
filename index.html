@@ -2104,6 +2104,11 @@ function renderSettings() {
         <input id="settings-nickname" class="form-input" style="margin-bottom:0;flex:1" value="${u.displayName||''}" placeholder="Enter your nickname...">
         <button class="icon-btn" onclick="saveNickname()">Save</button>
       </div>
+      <label class="field-label">🥚 TAMAFIT PET NAME</label>
+      <div style="display:flex;gap:8px;margin-bottom:14px">
+        <input id="settings-petname" class="form-input" style="margin-bottom:0;flex:1" value="${localStorage.getItem('intask_pet_name')||''}" placeholder="Name your pet... (e.g. Pumpy)">
+        <button class="icon-btn" onclick="savePetName()">Save</button>
+      </div>
       <label class="field-label">YOUR AVATAR</label>
       <select id="settings-av-select" class="form-input" onchange="settingsSelectAvatar(this.value,this)" style="font-size:20px;margin-bottom:14px">
         ${AVATARS.map(a=>`<option value="${a}" ${(u.avatar||'👨‍🚀')===a?'selected':''}>${a} ${a}</option>`).join('')}
@@ -2224,6 +2229,16 @@ function renderSettings() {
     }
   }, 50);
 }
+
+window.savePetName = () => {
+  const name = document.getElementById('settings-petname')?.value?.trim();
+  if (!name) { toast('Enter a pet name!'); return; }
+  localStorage.setItem('intask_pet_name', name);
+  toast(`🥚 Pet named ${name}!`);
+  // Re-render TamaFit if visible
+  const tamaC = document.getElementById('tamafit-container');
+  if(tamaC && tamaC.style.display !== 'none') renderTamaFit();
+};
 
 window.saveNickname = async () => {
   const name = g('settings-nickname')?.value?.trim();
@@ -2484,8 +2499,11 @@ window.renderTamaFit = function() {
     </div>
     <div class="tamafit-info">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
-        <div class="tamafit-stage-badge">${stage.name}</div>
-        <div style="font-size:8px;font-family:var(--pixel);color:var(--muted)">${totalWorkouts} sessions</div>
+        <div>
+          <div style="font-size:9px;font-family:var(--pixel);color:var(--accent3);margin-bottom:4px">${localStorage.getItem('intask_pet_name')||'???'}</div>
+          <div class="tamafit-stage-badge">${stage.name}</div>
+        </div>
+        <div style="font-size:8px;font-family:var(--pixel);color:var(--muted);text-align:right">${totalWorkouts}<br>sessions</div>
       </div>
       <div style="font-size:11px;color:var(--muted);margin-bottom:10px;line-height:1.6">${stage.desc}</div>
       ${nextStage?`<div style="margin-bottom:10px"><div style="display:flex;justify-content:space-between;margin-bottom:4px"><span style="font-size:7px;font-family:var(--pixel);color:var(--muted)">NEXT: ${nextStage.name}</span><span style="font-size:7px;font-family:var(--pixel);color:var(--accent)">${progressToNext}%</span></div><div style="height:6px;background:var(--border)"><div style="height:100%;width:${progressToNext}%;background:#0f380f;transition:width .5s"></div></div><div style="font-size:7px;color:var(--muted);margin-top:3px;font-family:var(--pixel)">${nextStage.minWorkouts-totalWorkouts} sessions to evolve</div></div>`:'<div style="font-size:8px;font-family:var(--pixel);color:#ffd700;text-align:center;margin-bottom:10px">★ MAX LEVEL ★</div>'}
@@ -3721,12 +3739,15 @@ const colRow=g('col-row'); if(colRow) colRow.innerHTML=COLORS.map((c,i)=>`<div c
 
 <script>
 // Bridge: expose module functions to global scope for onclick handlers
+function openModal(id){window.openModal&&window.openModal(id);}
+function closeModal(id){window.closeModal&&window.closeModal(id);}
 function doGoogleLogin(){window.doGoogleLogin&&window.doGoogleLogin();}
 function doEmailLogin(){window.doEmailLogin&&window.doEmailLogin();}
 function doGuestLogin(){window.doGuestLogin&&window.doGuestLogin();}
 function doGuestReturn(){window.doGuestReturn&&window.doGuestReturn();}
 function doLogout(){window.doLogout&&window.doLogout();}
 function saveNickname(){window.saveNickname&&window.saveNickname();}
+function savePetName(){window.savePetName&&window.savePetName();}
 function settingsSelectAvatar(a,el){window.settingsSelectAvatar&&window.settingsSelectAvatar(a,el);}
 function settingsSelectColor(c,el){window.settingsSelectColor&&window.settingsSelectColor(c,el);}
 function toggleColorBlind(){window.toggleColorBlind&&window.toggleColorBlind();}
@@ -3841,6 +3862,9 @@ function editUpdSet(i,f,v,id){window.editUpdSet&&window.editUpdSet(i,f,v,id);}
 function editDelSet(i,id){window.editDelSet&&window.editDelSet(i,id);}
 function editAddSet(id){window.editAddSet&&window.editAddSet(id);}
 function deleteWorkoutEntry(id){window.deleteWorkoutEntry&&window.deleteWorkoutEntry(id);}
+
+function openModal(id){window.openModal&&window.openModal(id);}
+function closeModal(id){window.closeModal&&window.closeModal(id);}
 
 function switchAuthTab(tab) {
   document.getElementById('atab-account').classList.toggle('active', tab==='account');
