@@ -619,10 +619,41 @@ body.colorblind{filter:url(#colorblind-filter);}
   button, a, [onclick], select, input[type="checkbox"], input[type="radio"], label {
     cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32"><text y="28" font-size="28">👆</text></svg>') 8 4, pointer !important;
   }
-  button:active, a:active, [onclick]:active {
-    cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32"><text y="26" font-size="24">👇</text></svg>') 8 4, pointer !important;
-  }
+
 }
+
+/* ════════════════════════════════════════════
+   TAMAFIT
+════════════════════════════════════════════ */
+.tamafit-wrap{background:var(--surf);border:3px solid var(--accent);border-radius:0;padding:0;margin-bottom:16px;box-shadow:4px 4px 0 rgba(0,0,0,.5);overflow:hidden;}
+.tamafit-screen{background:#9bbc0f;border-bottom:3px solid var(--accent);padding:20px 16px;display:flex;flex-direction:column;align-items:center;position:relative;min-height:200px;}
+.tamafit-scanlines{position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.05) 2px,rgba(0,0,0,.05) 4px);pointer-events:none;}
+.tamafit-scene{width:160px;height:160px;position:relative;display:flex;align-items:flex-end;justify-content:center;}
+.tamafit-ground{position:absolute;bottom:0;left:0;right:0;height:8px;background:#0f380f;border-radius:2px;}
+.tamafit-char{position:relative;display:flex;flex-direction:column;align-items:center;image-rendering:pixelated;}
+.tamafit-bubble{position:absolute;top:-44px;left:50%;transform:translateX(-50%);background:#fff;border:2px solid #0f380f;border-radius:4px;padding:4px 8px;font-size:7px;font-family:'Press Start 2P',monospace;color:#0f380f;white-space:nowrap;z-index:10;}
+.tamafit-bubble::after{content:'';position:absolute;bottom:-8px;left:50%;transform:translateX(-50%);border:4px solid transparent;border-top-color:#0f380f;}
+.tamafit-info{background:var(--surf2);border-top:2px solid var(--border);padding:12px 16px;}
+.tamafit-name{font-size:10px;font-family:'Press Start 2P',monospace;color:var(--accent);margin-bottom:6px;}
+.tamafit-stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:10px;}
+.tamafit-stat{text-align:center;}
+.tamafit-stat-val{font-size:9px;font-family:'Press Start 2P',monospace;color:var(--accent3);}
+.tamafit-stat-bar{height:6px;background:var(--border);border-radius:0;margin-top:3px;overflow:hidden;}
+.tamafit-stat-fill{height:100%;background:#0f380f;transition:width .5s;}
+.tamafit-stat-lbl{font-size:7px;color:var(--muted);margin-top:2px;font-family:'Press Start 2P',monospace;}
+.tamafit-stage-badge{display:inline-block;font-size:7px;font-family:'Press Start 2P',monospace;background:var(--accent);color:#0a0a1a;padding:3px 8px;margin-bottom:8px;}
+.tamafit-actions{display:flex;gap:8px;}
+.tamafit-action-btn{flex:1;padding:8px;border-radius:0;border:2px solid var(--border);background:var(--surf2);color:var(--muted);font-family:'Press Start 2P',monospace;font-size:7px;cursor:pointer;transition:.1s;}
+.tamafit-action-btn:hover{border-color:var(--accent);color:var(--accent);}
+.tamafit-action-btn.active{background:var(--accent);border-color:var(--accent);color:#0a0a1a;}
+/* Pixel character animations */
+@keyframes tama-idle{0%,100%{transform:translateY(0);}50%{transform:translateY(-3px);}}
+@keyframes tama-happy{0%,100%{transform:rotate(0);}25%{transform:rotate(-8deg);}75%{transform:rotate(8deg);}}
+@keyframes tama-sad{0%,100%{transform:translateY(0);}50%{transform:translateY(2px);}}
+@keyframes tama-flex{0%,100%{transform:scaleX(1);}50%{transform:scaleX(1.1);}}
+@keyframes tama-run{0%,100%{transform:translateX(0) scaleX(1);}49%{transform:translateX(20px) scaleX(1);}51%{transform:translateX(20px) scaleX(-1);}100%{transform:translateX(0) scaleX(-1);}}
+@keyframes tama-levelup{0%{transform:scale(1);}30%{transform:scale(1.3) rotate(-5deg);}60%{transform:scale(1.3) rotate(5deg);}100%{transform:scale(1);}}
+
 </style>
 
 <!-- Firebase -->
@@ -2155,6 +2186,91 @@ window.promptInstall = async () => {
   if(outcome==='accepted') { window._deferredInstallPrompt=null; toast("🎉 InTask installed!"); }
 };
 
+// ════════════════════════════════════════════
+// TAMAFIT
+// ════════════════════════════════════════════
+
+const TAMAFIT_STAGES = [
+  { id:'egg', name:'EGG', minWorkouts:0, desc:'Waiting to hatch...', messages:['...','zzzz','*wiggle*','Soon...'], mood_good:'Resting', mood_bad:'Sleeping',
+    render:(sz)=>`<svg width="${sz}" height="${sz}" viewBox="0 0 32 32" style="image-rendering:pixelated"><ellipse cx="16" cy="19" rx="10" ry="13" fill="#e8e8d0" stroke="#0f380f" stroke-width="2"/><line x1="13" y1="12" x2="11" y2="8" stroke="#8bac0f" stroke-width="2"/><line x1="11" y1="8" x2="16" y2="6" stroke="#8bac0f" stroke-width="2"/><line x1="16" y1="6" x2="21" y2="8" stroke="#8bac0f" stroke-width="2"/><circle cx="13" cy="21" r="2" fill="#0f380f"/><circle cx="19" cy="21" r="2" fill="#0f380f"/><path d="M13 26 Q16 28 19 26" stroke="#0f380f" stroke-width="1.5" fill="none"/></svg>`},
+  { id:'hatchling', name:'HATCHLING', minWorkouts:1, desc:'Just hatched! Tiny but eager.', messages:["I'm alive!",'Feed me gains!','One rep!'], mood_good:"Let's go!", mood_bad:"Hungry...",
+    render:(sz)=>`<svg width="${sz}" height="${sz*1.2}" viewBox="0 0 32 38" style="image-rendering:pixelated;animation:tama-idle 1.5s ease-in-out infinite"><ellipse cx="16" cy="27" rx="8" ry="9" fill="#9bbc0f" stroke="#0f380f" stroke-width="2"/><ellipse cx="16" cy="14" rx="9" ry="9" fill="#9bbc0f" stroke="#0f380f" stroke-width="2"/><ellipse cx="13" cy="13" rx="2.5" ry="3" fill="#0f380f"/><ellipse cx="19" cy="13" rx="2.5" ry="3" fill="#0f380f"/><ellipse cx="13.8" cy="12" rx="1" ry="1" fill="#9bbc0f"/><ellipse cx="19.8" cy="12" rx="1" ry="1" fill="#9bbc0f"/><path d="M12 18 Q16 21 20 18" stroke="#0f380f" stroke-width="1.5" fill="none"/><line x1="8" y1="26" x2="4" y2="23" stroke="#0f380f" stroke-width="2"/><line x1="24" y1="26" x2="28" y2="23" stroke="#0f380f" stroke-width="2"/><ellipse cx="12" cy="35" rx="3" ry="3" fill="#9bbc0f" stroke="#0f380f" stroke-width="1.5"/><ellipse cx="20" cy="35" rx="3" ry="3" fill="#9bbc0f" stroke="#0f380f" stroke-width="1.5"/></svg>`},
+  { id:'rookie', name:'ROOKIE', minWorkouts:5, desc:'5 workouts! Getting serious.', messages:['Feeling it!','One more set!','Sore but good'], mood_good:'Training hard!', mood_bad:'Rest day...',
+    render:(sz)=>`<svg width="${sz}" height="${sz*1.3}" viewBox="0 0 36 46" style="image-rendering:pixelated;animation:tama-idle 1.8s ease-in-out infinite"><rect x="10" y="36" width="6" height="10" rx="2" fill="#9bbc0f" stroke="#0f380f" stroke-width="2"/><rect x="20" y="36" width="6" height="10" rx="2" fill="#9bbc0f" stroke="#0f380f" stroke-width="2"/><rect x="8" y="20" width="20" height="18" rx="4" fill="#9bbc0f" stroke="#0f380f" stroke-width="2"/><ellipse cx="8" cy="22" rx="3" ry="3" fill="#8bac0f" stroke="#0f380f" stroke-width="1.5"/><ellipse cx="28" cy="22" rx="3" ry="3" fill="#8bac0f" stroke="#0f380f" stroke-width="1.5"/><rect x="2" y="21" width="6" height="12" rx="3" fill="#9bbc0f" stroke="#0f380f" stroke-width="2"/><rect x="28" y="21" width="6" height="12" rx="3" fill="#9bbc0f" stroke="#0f380f" stroke-width="2"/><ellipse cx="18" cy="13" rx="10" ry="10" fill="#9bbc0f" stroke="#0f380f" stroke-width="2"/><ellipse cx="14" cy="12" rx="2.5" ry="3" fill="#0f380f"/><ellipse cx="22" cy="12" rx="2.5" ry="3" fill="#0f380f"/><path d="M14 17 Q18 20 22 17" stroke="#0f380f" stroke-width="1.5" fill="none"/><rect x="8" y="6" width="20" height="4" rx="2" fill="#0f380f"/></svg>`},
+  { id:'trainee', name:'TRAINEE', minWorkouts:15, desc:'15 workouts. Muscle memory!', messages:['PRs incoming!','Feel the pump!','No days off!'], mood_good:'In the zone!', mood_bad:'Need gains...',
+    render:(sz)=>`<svg width="${sz}" height="${sz*1.35}" viewBox="0 0 40 54" style="image-rendering:pixelated;animation:tama-flex 2s ease-in-out infinite"><rect x="11" y="40" width="7" height="14" rx="2" fill="#9bbc0f" stroke="#0f380f" stroke-width="2"/><rect x="22" y="40" width="7" height="14" rx="2" fill="#9bbc0f" stroke="#0f380f" stroke-width="2"/><rect x="8" y="22" width="24" height="20" rx="3" fill="#9bbc0f" stroke="#0f380f" stroke-width="2"/><line x1="20" y1="24" x2="20" y2="40" stroke="#8bac0f" stroke-width="1.5"/><ellipse cx="14" cy="28" rx="4" ry="4" fill="#8bac0f" stroke="#0f380f" stroke-width="1"/><ellipse cx="26" cy="28" rx="4" ry="4" fill="#8bac0f" stroke="#0f380f" stroke-width="1"/><ellipse cx="8" cy="24" rx="4" ry="4" fill="#8bac0f" stroke="#0f380f" stroke-width="2"/><ellipse cx="32" cy="24" rx="4" ry="4" fill="#8bac0f" stroke="#0f380f" stroke-width="2"/><rect x="2" y="23" width="6" height="14" rx="3" fill="#9bbc0f" stroke="#0f380f" stroke-width="2"/><ellipse cx="5" cy="27" rx="3.5" ry="3" fill="#8bac0f" stroke="#0f380f" stroke-width="1"/><rect x="32" y="23" width="6" height="14" rx="3" fill="#9bbc0f" stroke="#0f380f" stroke-width="2"/><ellipse cx="35" cy="27" rx="3.5" ry="3" fill="#8bac0f" stroke="#0f380f" stroke-width="1"/><ellipse cx="20" cy="13" rx="11" ry="10" fill="#9bbc0f" stroke="#0f380f" stroke-width="2"/><ellipse cx="15.5" cy="12" rx="2.5" ry="3" fill="#0f380f"/><ellipse cx="24.5" cy="12" rx="2.5" ry="3" fill="#0f380f"/><path d="M15 17 Q20 21 25 17" stroke="#0f380f" stroke-width="2" fill="none"/><rect x="9" y="6" width="22" height="4" rx="2" fill="#0f380f"/><line x1="12" y1="8.5" x2="18" y2="9.5" stroke="#0f380f" stroke-width="1.5"/><line x1="28" y1="8.5" x2="22" y2="9.5" stroke="#0f380f" stroke-width="1.5"/></svg>`},
+  { id:'athlete', name:'ATHLETE', minWorkouts:30, desc:'30 workouts. Seriously swole.', messages:['BEAST MODE!','Do you even lift?','No excuses!'], mood_good:'CRUSHING IT!', mood_bad:'Feed me!',
+    render:(sz)=>`<svg width="${sz}" height="${sz*1.4}" viewBox="0 0 44 62" style="image-rendering:pixelated;animation:tama-flex 1.5s ease-in-out infinite"><rect x="10" y="44" width="9" height="18" rx="3" fill="#9bbc0f" stroke="#0f380f" stroke-width="2"/><rect x="25" y="44" width="9" height="18" rx="3" fill="#9bbc0f" stroke="#0f380f" stroke-width="2"/><ellipse cx="14.5" cy="46" rx="5" ry="4" fill="#8bac0f" stroke="#0f380f" stroke-width="1"/><ellipse cx="29.5" cy="46" rx="5" ry="4" fill="#8bac0f" stroke="#0f380f" stroke-width="1"/><rect x="6" y="24" width="32" height="22" rx="3" fill="#9bbc0f" stroke="#0f380f" stroke-width="2"/><rect x="17" y="27" width="4" height="4" rx="1" fill="#8bac0f" stroke="#0f380f" stroke-width="1"/><rect x="23" y="27" width="4" height="4" rx="1" fill="#8bac0f" stroke="#0f380f" stroke-width="1"/><rect x="17" y="33" width="4" height="4" rx="1" fill="#8bac0f" stroke="#0f380f" stroke-width="1"/><rect x="23" y="33" width="4" height="4" rx="1" fill="#8bac0f" stroke="#0f380f" stroke-width="1"/><ellipse cx="6" cy="26" rx="5" ry="5" fill="#8bac0f" stroke="#0f380f" stroke-width="2"/><ellipse cx="38" cy="26" rx="5" ry="5" fill="#8bac0f" stroke="#0f380f" stroke-width="2"/><rect x="0" y="24" width="7" height="16" rx="3" fill="#9bbc0f" stroke="#0f380f" stroke-width="2"/><ellipse cx="3.5" cy="28" rx="4" ry="4" fill="#8bac0f" stroke="#0f380f" stroke-width="1"/><rect x="37" y="24" width="7" height="16" rx="3" fill="#9bbc0f" stroke="#0f380f" stroke-width="2"/><ellipse cx="40.5" cy="28" rx="4" ry="4" fill="#8bac0f" stroke="#0f380f" stroke-width="1"/><ellipse cx="22" cy="14" rx="12" ry="11" fill="#9bbc0f" stroke="#0f380f" stroke-width="2"/><ellipse cx="17" cy="13" rx="3" ry="3.5" fill="#0f380f"/><ellipse cx="27" cy="13" rx="3" ry="3.5" fill="#0f380f"/><path d="M16 19 Q22 24 28 19" stroke="#0f380f" stroke-width="2" fill="none"/><line x1="13" y1="9" x2="20" y2="10.5" stroke="#0f380f" stroke-width="2"/><line x1="31" y1="9" x2="24" y2="10.5" stroke="#0f380f" stroke-width="2"/><rect x="10" y="5" width="24" height="5" rx="2" fill="#0f380f"/></svg>`},
+  { id:'warrior', name:'WARRIOR', minWorkouts:50, desc:'50 workouts. Absolute unit.', messages:['RARGH!','Impossible? LOL','Iron will!'], mood_good:'UNSTOPPABLE!', mood_bad:'WHERE GAINS?!',
+    render:(sz)=>`<svg width="${sz}" height="${sz*1.4}" viewBox="0 0 50 70" style="image-rendering:pixelated;animation:tama-flex 1.2s ease-in-out infinite"><rect x="9" y="48" width="12" height="22" rx="3" fill="#9bbc0f" stroke="#0f380f" stroke-width="2"/><rect x="29" y="48" width="12" height="22" rx="3" fill="#9bbc0f" stroke="#0f380f" stroke-width="2"/><ellipse cx="15" cy="50" rx="7" ry="5" fill="#8bac0f" stroke="#0f380f" stroke-width="1"/><ellipse cx="35" cy="50" rx="7" ry="5" fill="#8bac0f" stroke="#0f380f" stroke-width="1"/><rect x="4" y="26" width="42" height="26" rx="4" fill="#9bbc0f" stroke="#0f380f" stroke-width="2.5"/><rect x="19" y="30" width="5" height="5" rx="1" fill="#8bac0f" stroke="#0f380f" stroke-width="1"/><rect x="26" y="30" width="5" height="5" rx="1" fill="#8bac0f" stroke="#0f380f" stroke-width="1"/><rect x="19" y="37" width="5" height="5" rx="1" fill="#8bac0f" stroke="#0f380f" stroke-width="1"/><rect x="26" y="37" width="5" height="5" rx="1" fill="#8bac0f" stroke="#0f380f" stroke-width="1"/><rect x="19" y="44" width="5" height="4" rx="1" fill="#8bac0f" stroke="#0f380f" stroke-width="1"/><rect x="26" y="44" width="5" height="4" rx="1" fill="#8bac0f" stroke="#0f380f" stroke-width="1"/><ellipse cx="4" cy="28" rx="7" ry="6" fill="#8bac0f" stroke="#0f380f" stroke-width="2"/><ellipse cx="46" cy="28" rx="7" ry="6" fill="#8bac0f" stroke="#0f380f" stroke-width="2"/><rect x="-3" y="25" width="9" height="20" rx="4" fill="#9bbc0f" stroke="#0f380f" stroke-width="2"/><ellipse cx="1.5" cy="30" rx="5" ry="5" fill="#8bac0f" stroke="#0f380f" stroke-width="1.5"/><rect x="44" y="25" width="9" height="20" rx="4" fill="#9bbc0f" stroke="#0f380f" stroke-width="2"/><ellipse cx="48.5" cy="30" rx="5" ry="5" fill="#8bac0f" stroke="#0f380f" stroke-width="1.5"/><ellipse cx="25" cy="15" rx="13" ry="12" fill="#9bbc0f" stroke="#0f380f" stroke-width="2.5"/><ellipse cx="19.5" cy="14" rx="3.5" ry="4" fill="#0f380f"/><ellipse cx="30.5" cy="14" rx="3.5" ry="4" fill="#0f380f"/><path d="M18 20 Q25 26 32 20" stroke="#0f380f" stroke-width="2.5" fill="none"/><line x1="14" y1="8" x2="22" y2="10" stroke="#0f380f" stroke-width="2.5"/><line x1="36" y1="8" x2="28" y2="10" stroke="#0f380f" stroke-width="2.5"/><rect x="12" y="4" width="26" height="6" rx="2" fill="#0f380f"/><text x="25" y="11" text-anchor="middle" font-size="6" fill="#ffd700">★</text></svg>`},
+  { id:'champion', name:'CHAMPION', minWorkouts:75, desc:'75 workouts. Peak physique.', messages:['GODLIKE!','I AM THE GAINS','BOW DOWN!'], mood_good:'★ LEGENDARY ★', mood_bad:'Even legends rest',
+    render:(sz)=>`<svg width="${sz}" height="${sz*1.5}" viewBox="0 0 54 80" style="image-rendering:pixelated;animation:tama-happy 1s ease-in-out infinite"><polygon points="27,2 20,10 14,6 17,16 37,16 40,6 34,10" fill="#ffd700" stroke="#0f380f" stroke-width="1.5"/><rect x="10" y="56" width="13" height="22" rx="3" fill="#9bbc0f" stroke="#0f380f" stroke-width="2"/><rect x="31" y="56" width="13" height="22" rx="3" fill="#9bbc0f" stroke="#0f380f" stroke-width="2"/><ellipse cx="16.5" cy="58" rx="8" ry="6" fill="#8bac0f" stroke="#0f380f" stroke-width="1.5"/><ellipse cx="37.5" cy="58" rx="8" ry="6" fill="#8bac0f" stroke="#0f380f" stroke-width="1.5"/><rect x="3" y="30" width="48" height="30" rx="4" fill="#9bbc0f" stroke="#0f380f" stroke-width="2.5"/><ellipse cx="16" cy="38" rx="7" ry="7" fill="#8bac0f" stroke="#0f380f" stroke-width="1.5"/><ellipse cx="38" cy="38" rx="7" ry="7" fill="#8bac0f" stroke="#0f380f" stroke-width="1.5"/><rect x="21" y="46" width="5" height="5" rx="1" fill="#8bac0f" stroke="#0f380f" stroke-width="1"/><rect x="28" y="46" width="5" height="5" rx="1" fill="#8bac0f" stroke="#0f380f" stroke-width="1"/><ellipse cx="3" cy="32" rx="8" ry="7" fill="#8bac0f" stroke="#0f380f" stroke-width="2"/><ellipse cx="51" cy="32" rx="8" ry="7" fill="#8bac0f" stroke="#0f380f" stroke-width="2"/><rect x="-5" y="28" width="10" height="22" rx="5" fill="#9bbc0f" stroke="#0f380f" stroke-width="2"/><ellipse cx="0" cy="33" rx="6" ry="6" fill="#8bac0f" stroke="#0f380f" stroke-width="1.5"/><rect x="49" y="28" width="10" height="22" rx="5" fill="#9bbc0f" stroke="#0f380f" stroke-width="2"/><ellipse cx="54" cy="33" rx="6" ry="6" fill="#8bac0f" stroke="#0f380f" stroke-width="1.5"/><ellipse cx="27" cy="22" rx="14" ry="13" fill="#9bbc0f" stroke="#0f380f" stroke-width="2.5"/><ellipse cx="21" cy="21" rx="4" ry="4.5" fill="#0f380f"/><ellipse cx="33" cy="21" rx="4" ry="4.5" fill="#0f380f"/><ellipse cx="22.5" cy="19" rx="1.8" ry="1.8" fill="#ffd700"/><ellipse cx="34.5" cy="19" rx="1.8" ry="1.8" fill="#ffd700"/><path d="M19 27 Q27 33 35 27" stroke="#0f380f" stroke-width="2.5" fill="none"/></svg>`},
+  { id:'legend', name:'★ LEGEND ★', minWorkouts:100, desc:'100 workouts. You ARE the gains.', messages:['TRANSCENDENT','100% GAINS','I AM LEGEND'], mood_good:'★ ASCENDED ★', mood_bad:'Even gods rest',
+    render:(sz)=>`<svg width="${sz}" height="${sz*1.5}" viewBox="0 0 58 88" style="image-rendering:pixelated;animation:tama-levelup 2s ease-in-out infinite"><ellipse cx="29" cy="6" rx="18" ry="5" fill="none" stroke="#ffd700" stroke-width="3" opacity="0.8"/><polygon points="29,2 20,12 12,7 16,20 42,20 46,7 38,12" fill="#ffd700" stroke="#0f380f" stroke-width="1.5"/><circle cx="5" cy="40" r="3" fill="#ffd700" opacity="0.6"/><circle cx="53" cy="40" r="3" fill="#ffd700" opacity="0.6"/><rect x="10" y="62" width="14" height="26" rx="4" fill="#9bbc0f" stroke="#0f380f" stroke-width="2.5"/><rect x="34" y="62" width="14" height="26" rx="4" fill="#9bbc0f" stroke="#0f380f" stroke-width="2.5"/><ellipse cx="17" cy="64" rx="9" ry="7" fill="#8bac0f" stroke="#0f380f" stroke-width="2"/><ellipse cx="41" cy="64" rx="9" ry="7" fill="#8bac0f" stroke="#0f380f" stroke-width="2"/><rect x="2" y="34" width="54" height="32" rx="5" fill="#9bbc0f" stroke="#0f380f" stroke-width="3"/><ellipse cx="14" cy="42" rx="9" ry="9" fill="#8bac0f" stroke="#0f380f" stroke-width="2"/><ellipse cx="44" cy="42" rx="9" ry="9" fill="#8bac0f" stroke="#0f380f" stroke-width="2"/><text x="29" y="56" text-anchor="middle" font-size="10" fill="#ffd700">✦✦</text><text x="29" y="64" text-anchor="middle" font-size="8" fill="#ffd700">✦</text><ellipse cx="2" cy="36" rx="10" ry="9" fill="#8bac0f" stroke="#0f380f" stroke-width="2.5"/><ellipse cx="56" cy="36" rx="10" ry="9" fill="#8bac0f" stroke="#0f380f" stroke-width="2.5"/><rect x="-8" y="30" width="12" height="25" rx="6" fill="#9bbc0f" stroke="#0f380f" stroke-width="2.5"/><ellipse cx="-2" cy="37" rx="7" ry="7" fill="#8bac0f" stroke="#0f380f" stroke-width="2"/><rect x="54" y="30" width="12" height="25" rx="6" fill="#9bbc0f" stroke="#0f380f" stroke-width="2.5"/><ellipse cx="60" cy="37" rx="7" ry="7" fill="#8bac0f" stroke="#0f380f" stroke-width="2"/><ellipse cx="29" cy="26" rx="16" ry="15" fill="#9bbc0f" stroke="#0f380f" stroke-width="3"/><ellipse cx="23" cy="25" rx="4.5" ry="5" fill="#0f380f"/><ellipse cx="35" cy="25" rx="4.5" ry="5" fill="#0f380f"/><ellipse cx="24.5" cy="23" rx="2" ry="2" fill="#ffd700"/><ellipse cx="36.5" cy="23" rx="2" ry="2" fill="#ffd700"/><path d="M20 31 Q29 38 38 31" stroke="#0f380f" stroke-width="3" fill="none"/></svg>`},
+];
+
+function getTamaState() {
+  const totalWorkouts = workoutEntries.length;
+  const today = new Date().toDateString();
+  const yesterday = new Date(Date.now()-86400000).toDateString();
+  const twoDaysAgo = new Date(Date.now()-172800000).toDateString();
+  let stage = TAMAFIT_STAGES[0];
+  for(const s of TAMAFIT_STAGES) { if(totalWorkouts >= s.minWorkouts) stage = s; }
+  const weightVol = workoutEntries.filter(e=>e.type==='weights').reduce((s,e)=>s+(e.sets||[]).reduce((ss,set)=>ss+(set.weight||0)*set.reps,0),0);
+  const cardioMins = workoutEntries.filter(e=>e.type!=='weights').reduce((s,e)=>s+(e.duration||0),0);
+  const calistCount = workoutEntries.filter(e=>(e.muscles||[]).some(m=>m==='Core')).length;
+  const strength = Math.min(100, Math.floor(weightVol/500));
+  const cardio = Math.min(100, Math.floor(cardioMins/10));
+  const balance = Math.min(100, Math.floor(calistCount*5));
+  const recentDates = workoutEntries.map(e=>new Date(e.date).toDateString());
+  const hungry = !recentDates.includes(today)&&!recentDates.includes(yesterday)&&!recentDates.includes(twoDaysAgo);
+  const happy = recentDates.includes(today);
+  const msgs = happy?[stage.mood_good]:hungry?[stage.mood_bad]:stage.messages;
+  const msg = msgs[Math.floor(Date.now()/8000)%msgs.length];
+  return {stage, totalWorkouts, strength, cardio, balance, hungry, happy, msg};
+}
+
+window.renderTamaFit = function() {
+  const container = document.getElementById('tamafit-container');
+  if(!container) return;
+  const {stage, totalWorkouts, strength, cardio, balance, hungry, happy, msg} = getTamaState();
+  const stageIdx = TAMAFIT_STAGES.findIndex(s=>s.id===stage.id);
+  const nextStage = TAMAFIT_STAGES[stageIdx+1];
+  const progressToNext = nextStage ? Math.floor(((totalWorkouts-stage.minWorkouts)/(nextStage.minWorkouts-stage.minWorkouts))*100) : 100;
+  const charSz = hungry?50:happy?72:62;
+  const bgCol = hungry?'#306230':happy?'#9bbc0f':'#8bac0f';
+  container.innerHTML = `<div class="tamafit-wrap">
+    <div class="tamafit-screen" style="background:${bgCol}">
+      <div class="tamafit-scanlines"></div>
+      <div class="tamafit-scene">
+        <div class="tamafit-char" style="${hungry?'opacity:0.65;filter:grayscale(0.4)':''}">
+          ${msg?`<div class="tamafit-bubble">${msg}</div>`:''}
+          ${stage.render(charSz)}
+        </div>
+        <div class="tamafit-ground"></div>
+        ${happy?'<div style="position:absolute;top:10px;right:14px;font-size:16px;animation:tama-happy 1s infinite">✨</div>':''}
+        ${hungry?'<div style="position:absolute;top:10px;left:14px;font-size:14px">💀</div>':''}
+      </div>
+    </div>
+    <div class="tamafit-info">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+        <div class="tamafit-stage-badge">${stage.name}</div>
+        <div style="font-size:8px;font-family:var(--pixel);color:var(--muted)">${totalWorkouts} sessions</div>
+      </div>
+      <div style="font-size:11px;color:var(--muted);margin-bottom:10px;line-height:1.6">${stage.desc}</div>
+      ${nextStage?`<div style="margin-bottom:10px"><div style="display:flex;justify-content:space-between;margin-bottom:4px"><span style="font-size:7px;font-family:var(--pixel);color:var(--muted)">NEXT: ${nextStage.name}</span><span style="font-size:7px;font-family:var(--pixel);color:var(--accent)">${progressToNext}%</span></div><div style="height:6px;background:var(--border)"><div style="height:100%;width:${progressToNext}%;background:#0f380f;transition:width .5s"></div></div><div style="font-size:7px;color:var(--muted);margin-top:3px;font-family:var(--pixel)">${nextStage.minWorkouts-totalWorkouts} sessions to evolve</div></div>`:'<div style="font-size:8px;font-family:var(--pixel);color:#ffd700;text-align:center;margin-bottom:10px">★ MAX LEVEL ★</div>'}
+      <div class="tamafit-stats">
+        <div class="tamafit-stat"><div class="tamafit-stat-val">${strength}</div><div class="tamafit-stat-bar"><div class="tamafit-stat-fill" style="width:${strength}%"></div></div><div class="tamafit-stat-lbl">STR</div></div>
+        <div class="tamafit-stat"><div class="tamafit-stat-val">${cardio}</div><div class="tamafit-stat-bar"><div class="tamafit-stat-fill" style="width:${cardio}%"></div></div><div class="tamafit-stat-lbl">CARD</div></div>
+        <div class="tamafit-stat"><div class="tamafit-stat-val">${balance}</div><div class="tamafit-stat-bar"><div class="tamafit-stat-fill" style="width:${balance}%"></div></div><div class="tamafit-stat-lbl">BAL</div></div>
+      </div>
+      <div style="font-size:7px;color:var(--muted);text-align:center;font-family:var(--pixel);margin-top:8px;line-height:2">${hungry?'\u26a0\ufe0f HUNGRY! LOG A WORKOUT!':happy?'\u2705 FED TODAY!':'\u23f0 LOG A WORKOUT TO FEED!'}</div>
+    </div>
+  </div>`;
+  setTimeout(()=>{ if(document.getElementById('tamafit-container')?.style.display!=='none') renderTamaFit(); }, 8000);
+};
+
+
 function renderFitness() {
   const fp = fitnessProfile;
   if (!fp?.optedIn) {
@@ -2175,12 +2291,14 @@ function renderFitness() {
   if (activeSession) { renderActiveSession(); return; }
   g('fitness-panel').innerHTML = `
     <div class="fit-tabs">
+      <button class="fit-tab" id="ft-tama" onclick="switchFitTab('tama',this)">🥚 TamaFit</button>
       <button class="fit-tab active" id="ft-body" onclick="switchFitTab('body',this)"><img src="https://maplestory.io/api/GMS/255/item/1652000/icon" alt="Body" width="16" height="16" style="image-rendering:pixelated;vertical-align:middle"> Body</button>
       <button class="fit-tab" id="ft-diary" onclick="switchFitTab('diary',this)"><img src="https://maplestory.io/api/GMS/255/item/4161000/icon" alt="Diary" width="16" height="16" style="image-rendering:pixelated;vertical-align:middle"> Diary</button>
       <button class="fit-tab" id="ft-library" onclick="switchFitTab('library',this)"><img src="https://maplestory.io/api/GMS/255/item/1472000/icon" alt="Library" width="16" height="16" style="image-rendering:pixelated;vertical-align:middle"> Library</button>
       <button class="fit-tab" id="ft-coach" onclick="switchFitTab('coach',this)"><img src="https://maplestory.io/api/GMS/255/item/2022000/icon" alt="Coach" width="16" height="16" style="image-rendering:pixelated;vertical-align:middle"> Coach</button>
       <button class="fit-tab" id="ft-guides" onclick="switchFitTab('guides',this)"><img src="https://maplestory.io/api/GMS/255/item/2040000/icon" alt="Guides" width="16" height="16" style="image-rendering:pixelated;vertical-align:middle"> Guides</button>
     </div>
+    <div id="tamafit-container" style="display:none"></div>
     <div id="fit-sub-panel"></div>`;
   renderBodyComp();
 }
@@ -2188,6 +2306,17 @@ function renderFitness() {
 window.switchFitTab = (tab, el) => {
   document.querySelectorAll('.fit-tab').forEach(b=>b.classList.remove('active'));
   if(el) el.classList.add('active');
+  // Show/hide tamafit and sub-panel based on tab
+  const tamaContainer = document.getElementById('tamafit-container');
+  const subPanel = document.getElementById('fit-sub-panel');
+  if(tab==='tama') {
+    if(tamaContainer) tamaContainer.style.display='block';
+    if(subPanel) subPanel.innerHTML='';
+    renderTamaFit();
+    return;
+  } else {
+    if(tamaContainer) tamaContainer.style.display='none';
+  }
   if(tab==='body') renderBodyComp();
   if(tab==='diary') renderDiary();
   if(tab==='library') renderLibrary();
@@ -2886,7 +3015,7 @@ window.switchTab = tab => {
   if(tab==='settings') renderSettings();
 };
 
-window.openModal=id=>{const el=g(id);if(el)el.classList.add('open');};
+window.openModal=id=>{const el=g(id);if(el)el.classList.add('open');if(id==='settings-modal'&&typeof renderSettings==='function')renderSettings();};
 window.closeModal=id=>{const el=g(id);if(el)el.classList.remove('open');};
 
 window.setPill=(el,group)=>{document.querySelectorAll(`[data-group="${group}"]`).forEach(b=>b.classList.remove('active'));el.classList.add('active');};
@@ -2959,11 +3088,11 @@ window.addEventListener('popstate', function(e) {
   overlay.id = 'exit-confirm-overlay';
   overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px';
   overlay.innerHTML = `<div style="background:var(--surf);border:3px solid var(--accent);border-radius:0;padding:24px;max-width:300px;width:100%;box-shadow:4px 4px 0 rgba(0,0,0,.6);text-align:center">
-    <div style="font-size:10px;font-family:'Press Start 2P',monospace;color:var(--accent);margin-bottom:12px;line-height:2">LEAVE INTASK?</div>
+    <div style="font-size:10px;font-family:var(--pixel);color:var(--accent);margin-bottom:12px;line-height:2">LEAVE INTASK?</div>
     <div style="font-size:13px;color:var(--muted);margin-bottom:20px;line-height:1.6">Your data is saved. Sign out?</div>
     <div style="display:flex;gap:10px">
-      <button onclick="document.getElementById('exit-confirm-overlay').remove()" style="flex:1;padding:12px;border-radius:0;border:2px solid var(--border);background:var(--surf2);color:var(--text);font-family:'Press Start 2P',monospace;font-size:8px;cursor:pointer">Stay</button>
-      <button onclick="window.doLogout&&window.doLogout()" style="flex:1;padding:12px;border-radius:0;border:2px solid var(--accent);background:var(--accent);color:#0a0a1a;font-family:'Press Start 2P',monospace;font-size:8px;cursor:pointer">Sign Out</button>
+      <button onclick="document.getElementById('exit-confirm-overlay').remove()" style="flex:1;padding:12px;border-radius:0;border:2px solid var(--border);background:var(--surf2);color:var(--text);font-family:var(--pixel);font-size:8px;cursor:pointer">Stay</button>
+      <button onclick="window.doLogout&&window.doLogout()" style="flex:1;padding:12px;border-radius:0;border:2px solid var(--accent);background:var(--accent);color:#0a0a1a;font-family:var(--pixel);font-size:8px;cursor:pointer">Sign Out</button>
     </div>
   </div>`;
   document.body.appendChild(overlay);
@@ -3358,6 +3487,8 @@ function logBodyEntry(){window.logBodyEntry&&window.logBodyEntry();}
 function deleteBodyEntry(i){window.deleteBodyEntry&&window.deleteBodyEntry(i);}
 function toggleSetMode(m){window.toggleSetMode&&window.toggleSetMode(m);}
 function switchFitTab(t,el){window.switchFitTab&&window.switchFitTab(t,el);}
+function renderTamaFit(){window.renderTamaFit&&window.renderTamaFit();}
+function renderTamaFit(){window.renderTamaFit&&window.renderTamaFit();}
 function startWorkoutSession(){window.startWorkoutSession&&window.startWorkoutSession();}
 function finishSession(){window.finishSession&&window.finishSession();}
 function cancelSession(){window.cancelSession&&window.cancelSession();}
@@ -3429,22 +3560,39 @@ function switchCrewTab(tab) {
 // Using community-hosted MapleStory OST audio
 // Henesys: hosted on archive.org (public domain game music mirror)
 const BGM_TRACKS = {
-  henesys: 'https://archive.org/download/MapleStoryOST/Henesys.mp3',
-  login:   'https://archive.org/download/MapleStoryOST/Title.mp3',
+  henesys: [
+    'https://archive.org/download/maplestory-ost/Henesys.mp3',
+    'https://archive.org/download/MapleStoryOST/Henesys.mp3',
+    'https://vgmsite.com/soundtracks/maplestory-original-soundtrack/tqrvnwltpt/1-11.%20Henesys.mp3',
+  ],
+  login: [
+    'https://archive.org/download/maplestory-ost/Title.mp3',
+    'https://archive.org/download/MapleStoryOST/Title.mp3',
+  ],
 };
 
 let bgmAudio = null, bgmPlaying = false, currentTrack = 'henesys';
 let loginAudio = null, loginPlaying = false;
 
-function createAudio(src) {
-  const a = new Audio(src);
+function createAudio(srcs) {
+  const sources = Array.isArray(srcs) ? srcs : [srcs];
+  const a = new Audio();
   a.loop = true;
   a.volume = 0.4;
+  // Try each source until one works
+  let idx = 0;
+  function tryNext() {
+    if(idx >= sources.length) return;
+    a.src = sources[idx++];
+    a.load();
+  }
+  a.addEventListener('error', () => { if(idx < sources.length) tryNext(); });
+  tryNext();
   return a;
 }
 
 function toggleBGM() {
-  if (!bgmAudio) bgmAudio = createAudio(BGM_TRACKS.henesys);
+  if (!bgmAudio) { bgmAudio = createAudio(BGM_TRACKS.henesys); bgmAudio.volume=0.4; }
   const btn = document.getElementById('bgm-btn');
   const lbl = document.getElementById('bgm-label');
   if (bgmPlaying) {
@@ -3458,27 +3606,17 @@ function toggleBGM() {
       if(btn){ btn.textContent='🔊'; btn.style.borderColor='var(--green)'; btn.style.color='var(--green)'; }
       if(lbl) lbl.style.display='block';
     }).catch(()=>{
-      // Autoplay blocked - show tap prompt
-      showMusicPrompt();
+      // Autoplay blocked - will play on next user interaction
+      bgmPlaying = false;
     });
   }
 }
 
-function showMusicPrompt() {
-  const existing = document.getElementById('music-prompt');
-  if(existing) return;
-  const el = document.createElement('div');
-  el.id = 'music-prompt';
-  el.style.cssText = 'position:fixed;bottom:85px;left:50%;transform:translateX(-50%);background:var(--surf);border:2px solid var(--accent);border-radius:0;padding:10px 20px;z-index:400;font-family:"Press Start 2P",monospace;font-size:9px;color:var(--accent);cursor:pointer;box-shadow:3px 3px 0 rgba(0,0,0,.5);white-space:nowrap';
-  el.textContent = '🎵 Tap to play BGM';
-  el.onclick = () => { el.remove(); toggleBGM(); };
-  document.body.appendChild(el);
-  setTimeout(()=>el.remove(), 8000);
-}
+function showMusicPrompt() { /* removed */ }
 
 // Login music
 window.playLoginMusic = function() {
-  if(!loginAudio) loginAudio = createAudio(BGM_TRACKS.login);
+  if(!loginAudio) { loginAudio = createAudio(BGM_TRACKS.login); loginAudio.volume=0.35; }
   loginAudio.volume = 0.35;
   loginAudio.play().catch(()=>{});
 }
