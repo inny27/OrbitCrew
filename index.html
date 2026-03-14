@@ -556,6 +556,15 @@ body::before{
 /* ── Exercise Demo ── */
 .ex-demo-card{display:none;}
 .ex-detail-banner{display:flex;align-items:center;justify-content:center;}
+
+.set-mode-row{display:flex;align-items:center;gap:8px;margin-bottom:10px;}
+.set-mode-btn{padding:5px 14px;border-radius:4px;border:1px solid var(--border);background:var(--surf2);color:var(--muted);font-family:'Nunito',sans-serif;font-size:12px;font-weight:600;cursor:pointer;transition:.15s;}
+.set-mode-btn.active{background:rgba(38,132,255,.15);border-color:var(--accent);color:var(--accent);}
+
+/* ── Set mode toggle ── */
+.set-mode-row{display:flex;gap:6px;margin-bottom:10px;}
+.set-mode-btn{flex:1;padding:7px;border-radius:6px;border:1px solid var(--border);background:transparent;color:var(--muted);font-family:'Nunito',sans-serif;font-size:12px;font-weight:700;cursor:pointer;transition:.15s;}
+.set-mode-btn.active{background:rgba(38,132,255,.15);border-color:var(--accent);color:var(--accent);}
 </style>
 
 <!-- Firebase -->
@@ -830,7 +839,7 @@ let activeSession = null;
 let selAvatar = '👨‍🚀', selColor = '#7c3aed';
 let taskType = 'personal', taskPriority = 'medium', taskRepeat = 'none';
 let habitTime = 'morning';
-let selEx = null, exQuery = '', currentSets = [{reps:8,weight:''}], currentFeel = 'good';
+let selEx = null, exQuery = '', currentSets = [{reps:8,weight:'',dur:''}], currentFeel = 'good', setMode = 'reps'; // setMode: 'reps' | 'duration'
 let libFilter = 'all', libSearch = '';
 let streakMult = 1;
 
@@ -1251,7 +1260,7 @@ window.startWorkoutSession = () => {
 
 window.selectExercise = id => {
   selEx = EXERCISE_DB.find(e=>e.id===id);
-  exQuery = selEx?.name||''; currentSets=[{reps:8,weight:''}]; currentFeel='good';
+  exQuery = selEx?.name||''; currentSets=[{reps:8,weight:'',dur:30}]; currentFeel='good'; setMode='reps';
   if (activeSession) {
     // Only update the dynamic section, keep search input intact
     updateExFormSection();
@@ -1285,11 +1294,12 @@ function updateExFormSection() {
         <div style="flex:1"><div class="sel-ex-name">${selEx.name}</div><div class="sel-ex-muscles">${selEx.muscles.join(' · ')}</div></div>
         <button class="change-btn" onclick="clearExSelection()">Change</button>
       </div>
-      <div class="sets-grid-head">
-        <span class="sgh-lbl">SET</span><span class="sgh-lbl">kg</span>
-        <span class="sgh-lbl"></span><span class="sgh-lbl">reps</span>
-        <span class="sgh-lbl">✓</span><span class="sgh-lbl">×</span>
+      <div class="set-mode-row">
+        <span class="field-label" style="margin:0;white-space:nowrap">MODE</span>
+        <button class="set-mode-btn${setMode==='reps'?' active':''}" id="smb-reps" onclick="toggleSetMode('reps')">Reps</button>
+        <button class="set-mode-btn${setMode==='duration'?' active':''}" id="smb-duration" onclick="toggleSetMode('duration')">Duration</button>
       </div>
+      <div class="sets-grid-head" id="sets-mode-header">${setModeHeader()}</div>
       <div id="sets-builder">${currentSets.map((s,i)=>setRowHTML(s,i)).join('')}</div>
       <button class="add-set-btn" onclick="addSet()">＋ Add Set</button>
       <div class="feel-row">
@@ -1327,7 +1337,7 @@ function updateExFormSection() {
 
 window.addExToSession = () => {
   if (!selEx) { toast('Select an exercise!'); return; }
-  const sets = currentSets.map(s=>({weight:parseFloat(s.weight)||0,reps:parseInt(s.reps)||8}));
+  const sets = currentSets.map(s=>({weight:parseFloat(s.weight)||0,reps:parseInt(s.reps)||0,duration:parseInt(s.duration)||0,mode:s.mode||setMode}));
   if (!sets.length) { toast('Add at least one set!'); return; }
   const exName = selEx.name;
   activeSession.exercises.push({exId:selEx.id,exName,muscles:selEx.muscles,sets,feel:currentFeel,notes:g('ex-notes')?.value||''});
@@ -1357,7 +1367,7 @@ window.cancelSession = () => {
 
 window.logWorkoutEntry = async () => {
   if (!selEx) { toast('Select an exercise!'); return; }
-  const sets = currentSets.map(s=>({weight:parseFloat(s.weight)||0,reps:parseInt(s.reps)||8}));
+  const sets = currentSets.map(s=>({weight:parseFloat(s.weight)||0,reps:parseInt(s.reps)||0,duration:parseInt(s.duration)||0,mode:s.mode||setMode}));
   if (!sets.length) { toast('Add at least one set!'); return; }
   const entry = {id:Date.now().toString(), date:new Date().toISOString(), type:'weights', exercise:selEx.id, exerciseName:selEx.name, muscles:selEx.muscles, sets, feel:currentFeel, notes:g('ex-notes')?.value||''};
   await saveWorkoutEntry(entry);
@@ -1480,6 +1490,7 @@ function timerCardHTML() {
 
 // ─── SET BUILDER ──────────────────────────────────────────
 function setRowHTML(s, i) {
+  const isDur = setMode === 'duration';
   return `<div class="set-row${s.done?' done-set':''}" id="sr${i}">
     <div class="set-badge mono">S${i+1}</div>
     <div class="set-fg">
@@ -1488,11 +1499,21 @@ function setRowHTML(s, i) {
       <button class="set-adj" onclick="adjSet(${i},'weight',2.5)">+</button>
     </div>
     <span class="set-x-lbl">×</span>
+    ${isDur ? `
+    <div class="set-fg">
+      <button class="set-adj" onclick="adjSet(${i},'dur',-5)">−</button>
+      <input class="set-num-input" type="number" inputmode="numeric" value="${s.dur||30}" placeholder="30" oninput="updSet(${i},'dur',this.value)" id="sr_d${i}" style="width:48px">
+      <button class="set-adj" onclick="adjSet(${i},'dur',5)">+</button>
+    </div>
+    <span style="font-size:10px;color:var(--muted);flex-shrink:0">sec</span>
+    ` : `
     <div class="set-fg">
       <button class="set-adj" onclick="adjSet(${i},'reps',-1)">−</button>
       <input class="set-num-input" type="number" inputmode="numeric" value="${s.reps||8}" oninput="updSet(${i},'reps',this.value)" id="sr_r${i}">
       <button class="set-adj" onclick="adjSet(${i},'reps',1)">+</button>
     </div>
+    <span style="font-size:10px;color:var(--muted);flex-shrink:0">reps</span>
+    `}
     <button class="set-check-btn" id="scb${i}" onclick="doneSet(${i})">✓</button>
     <button class="set-del-btn" onclick="delSet(${i})">×</button>
   </div>`;
@@ -1519,9 +1540,22 @@ window.delSet = i => {
   currentSets.splice(i,1);
   const b = document.getElementById('sets-builder'); if (b) b.innerHTML = currentSets.map((s,j)=>setRowHTML(s,j)).join('');
 };
+function setModeHeader() {
+  const label = setMode === 'reps' ? 'reps' : 'sec';
+  return `<span class="sgh-lbl">SET</span><span class="sgh-lbl">kg</span><span class="sgh-lbl"></span><span class="sgh-lbl">${label}</span><span class="sgh-lbl">✓</span><span class="sgh-lbl">×</span>`;
+}
+
+window.switchSetMode = mode => {
+  setMode = mode;
+  // Update all current sets to new mode
+  currentSets = currentSets.map(s => ({...s, mode}));
+  // Rebuild the form section
+  updateExFormSection();
+};
+
 window.addSet = () => {
   const last = currentSets[currentSets.length-1]||{};
-  currentSets.push({reps:last.reps||8, weight:last.weight||'', done:false});
+  currentSets.push({reps:last.reps||8, weight:last.weight||'', dur:last.dur||30, done:false});
   const b = document.getElementById('sets-builder'); if (b) b.innerHTML = currentSets.map((s,j)=>setRowHTML(s,j)).join('');
 };
 window.setFeel = (feel, el) => {
@@ -1529,6 +1563,22 @@ window.setFeel = (feel, el) => {
   document.querySelectorAll('.feel-btn').forEach(b=>b.classList.remove('sel'));
   el.classList.add('sel');
 };
+
+window.toggleSetMode = (mode) => {
+  setMode = mode;
+  // Update toggle button states
+  document.querySelectorAll('.set-mode-btn').forEach(b => b.classList.remove('active'));
+  const activeBtn = document.getElementById('smb-' + mode);
+  if (activeBtn) activeBtn.classList.add('active');
+  // Re-render sets builder only
+  const builder = document.getElementById('sets-builder');
+  if (builder) builder.innerHTML = currentSets.map((s,i) => setRowHTML(s,i)).join('');
+  // Update header labels
+  const header = document.getElementById('sets-mode-header');
+  if (header) header.innerHTML = setModeHeader();
+};
+
+
 
 // ─── SMART SEARCH ─────────────────────────────────────────
 function smartSearch(q) {
@@ -1916,14 +1966,12 @@ function renderLogForm(type) {
           <div style="flex:1"><div class="sel-ex-name">${selEx.name}</div><div class="sel-ex-muscles">${selEx.muscles.join(' · ')}</div></div>
           <button class="change-btn" onclick="clearExSelection()">Change</button>
         </div>
-        <div class="sets-grid-head">
-          <span class="sgh-lbl">SET</span>
-          <span class="sgh-lbl">kg</span>
-          <span class="sgh-lbl"></span>
-          <span class="sgh-lbl">reps</span>
-          <span class="sgh-lbl">✓</span>
-          <span class="sgh-lbl">×</span>
+        <div class="set-mode-row">
+          <span class="field-label" style="margin:0;white-space:nowrap">MODE</span>
+          <button class="set-mode-btn${setMode==='reps'?' active':''}" id="smb-reps" onclick="toggleSetMode('reps')">Reps</button>
+          <button class="set-mode-btn${setMode==='duration'?' active':''}" id="smb-duration" onclick="toggleSetMode('duration')">Duration</button>
         </div>
+        <div class="sets-grid-head" id="sets-mode-header">${setModeHeader()}</div>
         <div id="sets-builder">${currentSets.map((s,i)=>setRowHTML(s,i)).join('')}</div>
         <button class="add-set-btn" onclick="addSet()">＋ Add Set</button>
         <div class="feel-row">
@@ -2745,6 +2793,7 @@ function setBodyMode(m){window.setBodyMode&&window.setBodyMode(m);}
 function setFitnessGoal(g){window.setFitnessGoal&&window.setFitnessGoal(g);}
 function logBodyEntry(){window.logBodyEntry&&window.logBodyEntry();}
 function deleteBodyEntry(i){window.deleteBodyEntry&&window.deleteBodyEntry(i);}
+function toggleSetMode(m){window.toggleSetMode&&window.toggleSetMode(m);}
 function switchFitTab(t,el){window.switchFitTab&&window.switchFitTab(t,el);}
 function startWorkoutSession(){window.startWorkoutSession&&window.startWorkoutSession();}
 function finishSession(){window.finishSession&&window.finishSession();}
@@ -2759,6 +2808,7 @@ function logSwimEntry(){window.logSwimEntry&&window.logSwimEntry();}
 function logCardioEntry(){window.logCardioEntry&&window.logCardioEntry();}
 function exportCSV(){window.exportCSV&&window.exportCSV();}
 function setLogType(t,el){window.setLogType&&window.setLogType(t,el);}
+function switchSetMode(m){window.switchSetMode&&window.switchSetMode(m);}
 function updateExSearch(q){if(window._doExSearch)window._doExSearch(q);else if(window.updateExSearch)window.updateExSearch(q);}
 function setPill(el,g){window.setPill&&window.setPill(el,g);}
 function setTaskPill(v,g,el){window.setTaskPill&&window.setTaskPill(v,g,el);}
