@@ -553,10 +553,9 @@ body::before{
 .wec-actions{display:flex;gap:4px;align-items:center;flex-shrink:0;}
 .login-logo{margin-bottom:4px;animation:float 3s ease-in-out infinite;}
 
-/* ── Exercise Demo GIF ── */
-.ex-demo-gif{width:100%;height:200px;border-radius:10px;background:var(--surf2);border:1px solid var(--border);overflow:hidden;margin-bottom:14px;display:flex;align-items:center;justify-content:center;}
-.ex-demo-gif img{width:100%;height:100%;object-fit:contain;background:#fff;}
-.ex-demo-placeholder{width:100%;height:100px;border-radius:10px;background:var(--surf2);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:40px;margin-bottom:14px;color:var(--muted);}
+/* ── Exercise Demo ── */
+.ex-demo-card{display:none;}
+.ex-detail-banner{display:flex;align-items:center;justify-content:center;}
 </style>
 
 <!-- Firebase -->
@@ -626,188 +625,188 @@ const XP = {high:50,medium:30,low:20,habit:25,boost:10};
 const EXERCISE_DB = [
   // ── CHEST ──
   {id:'bench_press',name:'Bench Press',muscles:['Chest','Triceps','Shoulders'],type:'weights',difficulty:2,category:'compound',
-   demo:`<div class="ex-demo-gif"><img src="https://v2.exercisedb.io/image/CZFn73uFX5xhUT" alt="" loading="lazy"></div>`,
+   demo:"",
    desc:'Lie flat on bench, grip bar slightly wider than shoulders, lower to chest, press up explosively.',tips:'Keep shoulder blades retracted, feet flat. Slight arch for stability.',cues:'Squeeze the bar like bending it. Push the floor away with your feet.'},
 
   {id:'pushup',name:'Push Up',muscles:['Chest','Triceps','Shoulders','Core'],type:'calisthenics',difficulty:1,category:'compound',
-   demo:`<div class="ex-demo-gif"><img src="https://v2.exercisedb.io/image/WN9a5o4BVJX39y" alt="" loading="lazy"></div>`,
+   demo:"",
    desc:'Hands shoulder-width apart, body straight, lower chest to floor and push up.',tips:'Keep core tight. Don\'t let hips sag or pike.',cues:'Full body tension. Screw hands into floor to activate chest.'},
 
   {id:'dips',name:'Chest Dips',muscles:['Chest','Triceps','Shoulders'],type:'calisthenics',difficulty:2,category:'compound',
-   demo:`<div class="ex-demo-gif"><img src="https://v2.exercisedb.io/image/PgBQCE98mf3kAn" alt="" loading="lazy"></div>`,
+   demo:"",
    desc:'Lean forward on parallel bars, lower until elbows at 90°, push up powerfully.',tips:'Lean forward for chest emphasis, stay upright for triceps.',cues:'Let elbows flare slightly outward as you descend.'},
 
   // ── BACK ──
   {id:'pullup',name:'Pull Up',muscles:['Back','Biceps','Core'],type:'calisthenics',difficulty:3,category:'compound',
-   demo:`<div class="ex-demo-gif"><img src="https://v2.exercisedb.io/image/0znHlZS6D8Bwtf" alt="" loading="lazy"></div>`,
+   demo:"",
    desc:'Hang from bar with overhand grip, pull chest to bar, lower with full control.',tips:'Full dead hang at bottom. Think elbows to back pockets.',cues:'Initiate by depressing shoulder blades first — don\'t just pull with arms.'},
 
   {id:'bent_row',name:'Bent Over Row',muscles:['Back','Biceps','Rear Delts'],type:'weights',difficulty:3,category:'compound',
-   demo:`<div class="ex-demo-gif"><img src="https://v2.exercisedb.io/image/wbl-H2MbsEHJbq" alt="" loading="lazy"></div>`,
+   demo:"",
    desc:'Hinge at hips, back parallel to floor, row bar to lower chest/upper abdomen.',tips:'Keep lower back neutral. Pull elbows past torso for full contraction.',cues:'Imagine cracking a walnut between your shoulder blades.'},
 
   {id:'deadlift',name:'Deadlift',muscles:['Back','Glutes','Hamstrings','Core'],type:'weights',difficulty:4,category:'compound',
-   demo:`<div class="ex-demo-gif"><img src="https://v2.exercisedb.io/image/f3KFdlYMmLmFPb" alt="" loading="lazy"></div>`,
+   demo:"",
    desc:'Hip-width stance, hinge to grip bar, drive through floor keeping back flat.',tips:'Brace core like absorbing a punch. Bar stays close to legs.',cues:'Push the floor away — don\'t think of pulling the bar up.'},
 
   {id:'lat_pulldown',name:'Lat Pulldown',muscles:['Back','Biceps'],type:'weights',difficulty:1,category:'compound',
-   demo:`<div class="ex-demo-gif"><img src="https://v2.exercisedb.io/image/HlnBiNjMEfJtSJ" alt="" loading="lazy"></div>`,
+   demo:"",
    desc:'Wide grip, pull bar down to upper chest, control the return slowly.',tips:'Slight lean back. Never pull behind neck.',cues:'Think of pulling your elbows to your hips — not your hands.'},
 
   // ── SHOULDERS ──
   {id:'ohp',name:'Overhead Press',muscles:['Shoulders','Triceps','Core'],type:'weights',difficulty:3,category:'compound',
-   demo:`<div class="ex-demo-gif"><img src="https://v2.exercisedb.io/image/6RRr5x5CmxNQ0A" alt="" loading="lazy"></div>`,
+   demo:"",
    desc:'Press barbell from shoulders to overhead, full lockout at top.',tips:'Squeeze glutes and core. Bar path slightly back at top.',cues:'Push your head through the window at the top. Full lockout.'},
 
   {id:'lateral_raise',name:'Lateral Raise',muscles:['Side Delts'],type:'weights',difficulty:1,category:'isolation',
-   demo:`<div class="ex-demo-gif"><img src="https://v2.exercisedb.io/image/Y5gVL9tSS7W5mt" alt="" loading="lazy"></div>`,
+   demo:"",
    desc:'Raise dumbbells to sides to shoulder height, slight lean forward.',tips:'Lead with elbows. Go lighter than you think.',cues:'Imagine pouring water from a jug at the top.'},
 
   // ── BICEPS ──
   {id:'bicep_curl',name:'Bicep Curl',muscles:['Biceps','Forearms'],type:'weights',difficulty:1,category:'isolation',
-   demo:`<div class="ex-demo-gif"><img src="https://v2.exercisedb.io/image/3C6HXMeM3xEEFF" alt="" loading="lazy"></div>`,
+   demo:"",
    desc:'Curl up supinating wrist, squeeze at top, lower slowly with control.',tips:'Full range — full extension at bottom, full squeeze at top.',cues:'Elbow pinned to side. Wrist supinates as you curl up.'},
 
   {id:'hammer_curl',name:'Hammer Curl',muscles:['Biceps','Brachialis','Forearms'],type:'weights',difficulty:1,category:'isolation',
-   demo:`<div class="ex-demo-gif"><img src="https://v2.exercisedb.io/image/yVDyS-WSGwUj5T" alt="" loading="lazy"></div>`,
+   demo:"",
    desc:'Neutral grip (thumbs up), curl without rotating wrist.',tips:'Great for arm thickness and brachialis development.',cues:'Keep neutral grip throughout. Same motion as a hammer.'},
 
   // ── TRICEPS ──
   {id:'skull_crusher',name:'Skull Crusher',muscles:['Triceps'],type:'weights',difficulty:2,category:'isolation',
-   demo:`<div class="ex-demo-gif"><img src="https://v2.exercisedb.io/image/mz-BhXpQ7PXVvp" alt="" loading="lazy"></div>`,
+   demo:"",
    desc:'Lie on bench, lower bar to forehead bending only at elbows.',tips:'Keep elbows pointing to ceiling throughout.',cues:'Only the forearm moves — upper arm stays stationary.'},
 
   {id:'tricep_pushdown',name:'Tricep Pushdown',muscles:['Triceps'],type:'weights',difficulty:1,category:'isolation',
-   demo:`<div class="ex-demo-gif"><img src="https://v2.exercisedb.io/image/2fFoJvBBR2R4LV" alt="" loading="lazy"></div>`,
+   demo:"",
    desc:'Push rope or bar down extending arms fully at cable machine.',tips:'Keep elbows pinned to sides.',cues:'Separate rope at bottom for full contraction.'},
 
   // ── LEGS ──
   {id:'squat',name:'Back Squat',muscles:['Quads','Glutes','Hamstrings','Core'],type:'weights',difficulty:4,category:'compound',
-   demo:`<div class="ex-demo-gif"><img src="https://v2.exercisedb.io/image/z5oEL5XrKVtHcA" alt="" loading="lazy"></div>`,
+   demo:"",
    desc:'Bar on traps, squat to parallel or below, knees track over toes, drive up.',tips:'Chest stays up. Weight in mid-foot throughout.',cues:'Break at hips and knees simultaneously. Spread the floor with your feet.'},
 
   {id:'rdl',name:'Romanian Deadlift',muscles:['Hamstrings','Glutes','Back'],type:'weights',difficulty:2,category:'compound',
-   demo:`<div class="ex-demo-gif"><img src="https://v2.exercisedb.io/image/gp0ijeFIMfFvgC" alt="" loading="lazy"></div>`,
+   demo:"",
    desc:'Slight knee bend, hinge at hips lowering bar down legs, feel the hamstring stretch.',tips:'Bar stays close to legs throughout.',cues:'Push your hips back to a wall behind you. Feel the hamstring load.'},
 
   {id:'leg_press',name:'Leg Press',muscles:['Quads','Glutes','Hamstrings'],type:'weights',difficulty:1,category:'compound',
-   demo:`<div class="ex-demo-gif"><img src="https://v2.exercisedb.io/image/MnFhS56wqQXdDt" alt="" loading="lazy"></div>`,
+   demo:"",
    desc:'Feet shoulder-width on platform, lower sled, press back without locking knees.',tips:'Don\'t let lower back peel off the pad at the bottom.',cues:'Press through full foot. Don\'t just push with toes.'},
 
   {id:'lunge',name:'Walking Lunge',muscles:['Quads','Glutes','Hamstrings'],type:'calisthenics',difficulty:2,category:'compound',
-   demo:`<div class="ex-demo-gif"><img src="https://v2.exercisedb.io/image/kkTx28gJGQoBMH" alt="" loading="lazy"></div>`,
+   demo:"",
    desc:'Step forward, lower back knee toward floor, push off front foot, repeat.',tips:'Keep torso upright. Front knee tracks over toes.',cues:'Step out, drop down — don\'t lean forward.'},
 
   {id:'glute_bridge',name:'Glute Bridge',muscles:['Glutes','Hamstrings','Core'],type:'calisthenics',difficulty:1,category:'isolation',
-   demo:`<div class="ex-demo-gif"><img src="https://v2.exercisedb.io/image/N1tBFGDJhXJ4CB" alt="" loading="lazy"></div>`,
+   demo:"",
    desc:'Lie on back, feet flat, drive hips up squeezing glutes hard at top.',tips:'Tuck pelvis under at top for full glute activation.',cues:'Push through heels. Posterior pelvic tilt at the top.'},
 
   // ── CORE ──
   {id:'plank',name:'Plank',muscles:['Core','Shoulders','Glutes'],type:'calisthenics',difficulty:1,category:'isolation',
-   demo:`<div class="ex-demo-gif"><img src="https://v2.exercisedb.io/image/N1tBFGDJhXJ4CB" alt="" loading="lazy"></div>`,
+   demo:"",
    desc:'Forearms on floor, body straight, hold position. No sagging or piking.',tips:'Breathe steadily. Full body tension throughout.',cues:'Squeeze everything — glutes, abs, quads. Push floor away with forearms.'},
 
   {id:'dead_bug',name:'Dead Bug',muscles:['Core','Hip Flexors'],type:'calisthenics',difficulty:2,category:'isolation',
-   demo:`<div class="ex-demo-gif"><img src="https://v2.exercisedb.io/image/EFNnpRYTcMfEkW" alt="" loading="lazy"></div>`,
+   demo:"",
    desc:'Lie on back, extend opposite arm and leg keeping lower back flat on floor.',tips:'Lower back must stay glued to floor throughout.',cues:'Press lower back into floor before you move anything.'},
 
   {id:'hanging_leg_raise',name:'Hanging Leg Raise',muscles:['Core','Hip Flexors'],type:'calisthenics',difficulty:3,category:'isolation',
-   demo:`<div class="ex-demo-gif"><img src="https://v2.exercisedb.io/image/kkTx28gJGQoBMH" alt="" loading="lazy"></div>`,
+   demo:"",
    desc:'Hang from bar, raise legs to parallel or above with posterior pelvic tilt.',tips:'Don\'t swing. Hollow body position throughout.',cues:'Think about tilting your pelvis back at the top to fully engage the abs.'},
 
   // ── ADVANCED CALISTHENICS ──
   {id:'muscle_up',name:'Muscle Up',muscles:['Back','Chest','Triceps','Core'],type:'calisthenics',difficulty:5,category:'compound',
-   demo:`<div class="ex-demo-gif"><img src="https://v2.exercisedb.io/image/0znHlZS6D8Bwtf" alt="" loading="lazy"></div>`,
+   demo:"",
    desc:'Explosive pull up transitioning over the bar into a dip — the king of calisthenics.',tips:'Master strict pull ups and dips first. False grip helps the transition.',cues:'Explosive pull, lean slightly forward, drive elbows back and over the bar.'},
 
   {id:'pistol_squat',name:'Pistol Squat',muscles:['Quads','Glutes','Balance'],type:'calisthenics',difficulty:4,category:'compound',
-   demo:`<div class="ex-demo-gif"><img src="https://v2.exercisedb.io/image/z5oEL5XrKVtHcA" alt="" loading="lazy"></div>`,
+   demo:"",
    desc:'Single leg squat to full depth while extending other leg forward.',tips:'Use TRX or a pole for assistance while building strength.',cues:'Sit back into your heel. Counter-balance with arms outstretched.'},
 
   {id:'planche_lean',name:'Planche Lean',muscles:['Chest','Shoulders','Core','Wrists'],type:'calisthenics',difficulty:4,category:'compound',
-   demo:`<div class="ex-demo-gif"><img src="https://v2.exercisedb.io/image/WN9a5o4BVJX39y" alt="" loading="lazy"></div>`,
+   demo:"",
    desc:'Lean forward on straight arms beyond your hands until body is parallel to ground. Start with a lean and progress to tuck, advanced tuck, straddle, full.',tips:'Wrist conditioning is critical before training planche. Protracted scapula is essential.',cues:'Depress and protract shoulder blades hard. Push the ground away.'},
 
   {id:'tuck_planche',name:'Tuck Planche',muscles:['Chest','Shoulders','Core','Triceps'],type:'calisthenics',difficulty:5,category:'compound',
-   demo:`<div class="ex-demo-gif"><img src="https://v2.exercisedb.io/image/WN9a5o4BVJX39y" alt="" loading="lazy"></div>`,
+   demo:"",
    desc:'Both legs tucked to chest while holding straight arms parallel to ground. First step to full planche.',tips:'Build planche leans for 3+ months before attempting tuck planche holds.',cues:'Squeeze everything. Protract scapula maximally. Aim for 5-10 second holds.'},
 
   {id:'straddle_planche',name:'Straddle Planche',muscles:['Chest','Shoulders','Core','Triceps'],type:'calisthenics',difficulty:5,category:'compound',
-   demo:`<div class="ex-demo-placeholder">💪</div>`,
+   demo:"",
    desc:'Body parallel to ground, legs straddled wide, arms straight. Advanced progression from tuck planche.',tips:'Straddle reduces difficulty versus full planche. Build 10s+ tuck planche first.',cues:'Wide straddle reduces lever length. Push the ground. Protract scapula.'},
 
   {id:'full_planche',name:'Full Planche',muscles:['Chest','Shoulders','Core','Triceps','Full Body'],type:'calisthenics',difficulty:5,category:'compound',
-   demo:`<div class="ex-demo-gif"><img src="https://v2.exercisedb.io/image/WN9a5o4BVJX39y" alt="" loading="lazy"></div>`,
+   demo:"",
    desc:'Entire body horizontal, legs together, arms straight. The ultimate calisthenics strength skill. Takes 1-3+ years of dedicated training.',tips:'Requires exceptional shoulder, chest, and core strength. Progressive overload through lean → tuck → adv tuck → straddle → full.',cues:'Every muscle engaged. Think of a rigid plank floating in the air. Protract and depress scapula hard.'},
 
   {id:'front_lever',name:'Front Lever',muscles:['Back','Core','Biceps','Shoulders'],type:'calisthenics',difficulty:5,category:'compound',
-   demo:`<div class="ex-demo-gif"><img src="https://v2.exercisedb.io/image/0znHlZS6D8Bwtf" alt="" loading="lazy"></div>`,
+   demo:"",
    desc:'Hang from bar, body horizontal facing up, arms straight. Requires exceptional back and core strength.',tips:'Progress: tuck → advanced tuck → one leg → straddle → full. Each stage takes months.',cues:'Depress shoulder blades. Pull the bar toward your hips. Keep body rigid like a plank.'},
 
   {id:'tuck_front_lever',name:'Tuck Front Lever',muscles:['Back','Core','Biceps'],type:'calisthenics',difficulty:4,category:'compound',
-   demo:`<div class="ex-demo-gif"><img src="https://v2.exercisedb.io/image/0znHlZS6D8Bwtf" alt="" loading="lazy"></div>`,
+   demo:"",
    desc:'Front lever with knees tucked to chest. The entry point for front lever training.',tips:'Aim for 3 sets of 10 second holds before progressing to advanced tuck.',cues:'Pull the bar towards your waist. Depress scapula. Core braced hard.'},
 
   {id:'back_lever',name:'Back Lever',muscles:['Chest','Shoulders','Biceps','Core'],type:'calisthenics',difficulty:4,category:'compound',
-   demo:`<div class="ex-demo-gif"><img src="https://v2.exercisedb.io/image/0znHlZS6D8Bwtf" alt="" loading="lazy"></div>`,
+   demo:"",
    desc:'Hang from bar, body horizontal facing down, arms straight. Often learned before front lever.',tips:'Start with skin the cat to condition the shoulder joints.',cues:'Supinated grip typically easier. Keep body rigid and horizontal.'},
 
   {id:'dragon_flag',name:'Dragon Flag',muscles:['Core','Lower Back','Shoulders'],type:'calisthenics',difficulty:4,category:'isolation',
-   demo:`<div class="ex-demo-gif"><img src="https://v2.exercisedb.io/image/EFNnpRYTcMfEkW" alt="" loading="lazy"></div>`,
+   demo:"",
    desc:'Lie on bench gripping behind head, raise entire body except shoulders to horizontal, lower with control. Made famous by Bruce Lee.',tips:'Learn tucked dragon flag first. Requires tremendous core strength.',cues:'The body moves as one rigid unit. No hinging at the hips.'},
 
   {id:'human_flag',name:'Human Flag',muscles:['Core','Shoulders','Back','Full Body'],type:'calisthenics',difficulty:5,category:'compound',
-   demo:`<div class="ex-demo-gif"><img src="https://v2.exercisedb.io/image/0znHlZS6D8Bwtf" alt="" loading="lazy"></div>`,
+   demo:"",
    desc:'Body held horizontally perpendicular to a vertical pole using only arm strength. One of the rarest calisthenics skills.',tips:'Years of dedicated lateral strength work required. Train lever exercises first.',cues:'Bottom arm pushes, top arm pulls. Body forms one rigid line.'},
 
   {id:'handstand_pushup',name:'Handstand Push Up',muscles:['Shoulders','Triceps','Core'],type:'calisthenics',difficulty:5,category:'compound',
-   demo:`<div class="ex-demo-gif"><img src="https://v2.exercisedb.io/image/6RRr5x5CmxNQ0A" alt="" loading="lazy"></div>`,
+   demo:"",
    desc:'Inverted against wall, bend arms lowering head to floor, press back up. Upper body squat.',tips:'Master handstand hold first. Pike push ups as regression.',cues:'Wide hand placement. Push through entire palm. Full lockout at top.'},
 
   {id:'l_sit',name:'L-Sit',muscles:['Core','Hip Flexors','Triceps','Shoulders'],type:'calisthenics',difficulty:4,category:'isolation',
-   demo:`<div class="ex-demo-gif"><img src="https://v2.exercisedb.io/image/N1tBFGDJhXJ4CB" alt="" loading="lazy"></div>`,
+   demo:"",
    desc:'Support on hands/parallettes, hold legs parallel to floor with straight knees.',tips:'Build tuck L-sit first. Requires both core and pressing strength.',cues:'Push down hard into the ground. Protract shoulders. Point toes.'},
 
   {id:'v_sit',name:'V-Sit',muscles:['Core','Hip Flexors','Shoulders'],type:'calisthenics',difficulty:5,category:'isolation',
-   demo:`<div class="ex-demo-gif"><img src="https://v2.exercisedb.io/image/N1tBFGDJhXJ4CB" alt="" loading="lazy"></div>`,
+   demo:"",
    desc:'Like an L-sit but legs angled upward, body forming a V shape. Extreme core compression strength.',tips:'Master L-sit for 30+ seconds before attempting V-sit.',cues:'Compress hip flexors maximally. Push down into ground. Point toes to ceiling.'},
 
   {id:'skin_cat',name:'Skin the Cat',muscles:['Shoulders','Back','Core'],type:'calisthenics',difficulty:3,category:'compound',
-   demo:`<div class="ex-demo-placeholder">💪</div>`,
+   demo:"",
    desc:'Hang from bar, pull legs through arms rotating body into German hang, then reverse. Excellent shoulder prep.',tips:'Essential prerequisite for back lever and iron cross work.',cues:'Control the movement throughout. Don\'t just drop into German hang.'},
 
   {id:'archer_pushup',name:'Archer Push Up',muscles:['Chest','Triceps','Shoulders'],type:'calisthenics',difficulty:3,category:'compound',
-   demo:`<div class="ex-demo-gif"><img src="https://v2.exercisedb.io/image/WN9a5o4BVJX39y" alt="" loading="lazy"></div>`,
+   demo:"",
    desc:'Wide stance push up shifting weight to one arm at a time. Progression toward one-arm push up.',tips:'One arm nearly straight, other arm does the work.',cues:'Keep hips square. Full range of motion on working arm.'},
 
   {id:'one_arm_pushup',name:'One Arm Push Up',muscles:['Chest','Triceps','Core'],type:'calisthenics',difficulty:5,category:'compound',
-   demo:`<div class="ex-demo-gif"><img src="https://v2.exercisedb.io/image/WN9a5o4BVJX39y" alt="" loading="lazy"></div>`,
+   demo:"",
    desc:'Full push up on one arm. Requires exceptional unilateral pushing strength and core stability.',tips:'Widen feet stance. Build archer push ups first.',cues:'Keep body from rotating. Core braced. Push explosively.'},
 
   {id:'typewriter_pullup',name:'Typewriter Pull Up',muscles:['Back','Biceps','Core'],type:'calisthenics',difficulty:4,category:'compound',
-   demo:`<div class="ex-demo-placeholder">💪</div>`,
+   demo:"",
    desc:'Pull up then travel laterally across the bar, shifting weight from arm to arm at the top. Like a typewriter.',tips:'Master strict pull ups first. Requires strong lateral pulling.',cues:'Keep chin above bar throughout the lateral movement.'},
 
   // ── RUNNING ──
   {id:'easy_run',name:'Easy Run',muscles:['Full Body','Cardio'],type:'run',difficulty:1,category:'cardio',
-   demo:`<div class="ex-demo-gif"><img src="https://v2.exercisedb.io/image/HlnBiNjMEfJtSJ" alt="" loading="lazy"></div>`,
+   demo:"",
    desc:'Comfortable conversational pace. You should be able to hold a full conversation.',tips:'60-70% of training should be at this pace. Builds aerobic base.',cues:'Nose breathing comfortable. Land midfoot, not heel. Relax shoulders.'},
 
   {id:'interval_run',name:'Interval Run',muscles:['Full Body','Cardio'],type:'run',difficulty:3,category:'cardio',
-   demo:`<div class="ex-demo-gif"><img src="https://v2.exercisedb.io/image/HlnBiNjMEfJtSJ" alt="" loading="lazy"></div>`,
+   demo:"",
    desc:'Alternate hard efforts with recovery. e.g. 400m hard, 200m easy jog.',tips:'Full recovery between hard efforts. Quality over quantity.',cues:'Hard efforts feel like 8/10. Recovery is genuinely slow.'},
 
   {id:'tempo_run',name:'Tempo Run',muscles:['Full Body','Cardio'],type:'run',difficulty:3,category:'cardio',
-   demo:`<div class="ex-demo-gif"><img src="https://v2.exercisedb.io/image/HlnBiNjMEfJtSJ" alt="" loading="lazy"></div>`,
+   demo:"",
    desc:'Comfortably hard pace sustained for 20-40 minutes. Lactate threshold training.',tips:'Should be able to say a few words but not hold a conversation.',cues:'Find a pace that feels hard but sustainable. Breathe rhythmically.'},
 
   // ── SWIMMING ──
   {id:'freestyle',name:'Freestyle',muscles:['Shoulders','Back','Core','Legs'],type:'swim',difficulty:2,category:'cardio',
-   demo:`<div class="ex-demo-gif"><img src="https://v2.exercisedb.io/image/HlnBiNjMEfJtSJ" alt="" loading="lazy"></div>`,
+   demo:"",
    desc:'Alternating arm stroke with flutter kick. Most efficient swimming stroke.',tips:'Rotate body with each stroke. Breathe every 2-3 strokes.',cues:'High elbow catch. Pull water past hip before recovering arm.'},
 
   {id:'breaststroke',name:'Breaststroke',muscles:['Chest','Back','Legs'],type:'swim',difficulty:2,category:'cardio',
-   demo:`<div class="ex-demo-gif"><img src="https://v2.exercisedb.io/image/HlnBiNjMEfJtSJ" alt="" loading="lazy"></div>`,
+   demo:"",
    desc:'Simultaneous arm pull with frog kick. Great for beginners.',tips:'Glide phase after each stroke — don\'t rush.',cues:'Arms pull while legs recover. Legs kick while arms recover.'},
 ];
 
@@ -1271,11 +1270,13 @@ window.clearExSelection = () => {
 function updateExFormSection() {
   const section = g('ex-form-section');
   if (!section) {
-    // Form not rendered yet, do full render
     if (activeSession) renderActiveSession(); else renderLogForm('weights');
     return;
   }
-  // Just update the dynamic section without touching the search input
+  // Save search input state before updating
+  const searchEl = g('ex-search');
+  const hadFocus = searchEl && document.activeElement === searchEl;
+  const cursorPos = searchEl ? searchEl.selectionStart : 0;
   if (selEx) {
     const ti = {weights:'🏋️',calisthenics:'💪',run:'🏃',swim:'🏊',cardio:'❤️'};
     section.innerHTML = `
@@ -1311,9 +1312,16 @@ function updateExFormSection() {
       <p>Search above or pick a common exercise:</p>
       <div class="quick-picks-grid">${['Bench Press','Back Squat','Deadlift','Pull Up','Bicep Curl','Push Up','Plank','Lat Pulldown','Overhead Press','Romanian Deadlift'].map(n=>{
         const ex=EXERCISE_DB.find(e=>e.name===n);
-        return ex?`<button class="qp-btn" onclick="selectExercise('${ex.id}')">${ex.name}</button>`:'';
+        return ex?`<button class="qp-btn" onmousedown="event.preventDefault();selectExercise('${ex.id}')">${ex.name}</button>`:'';
       }).join('')}</div>
     </div>`;
+  }
+  // Restore focus to search input if it had focus before
+  if (hadFocus && searchEl) {
+    requestAnimationFrame(() => {
+      searchEl.focus();
+      try { searchEl.setSelectionRange(cursorPos, cursorPos); } catch(e) {}
+    });
   }
 }
 
@@ -1537,9 +1545,11 @@ window.updateExSearch = q => {
   const filtered = smartSearch(q);
   const ti = {weights:'🏋️',calisthenics:'💪',run:'🏃',swim:'🏊',cardio:'❤️'};
   c.innerHTML = filtered.length
-    ? `<div class="ex-results-list">${filtered.map(ex=>`<div class="ex-result-row" onclick="selectExercise('${ex.id}')"><span class="ex-result-icon">${ti[ex.type]||'💪'}</span><div style="flex:1"><div class="ex-result-name">${ex.name}</div><div class="ex-result-muscles">${ex.muscles.join(', ')}</div></div><span class="ex-result-stars">${'⭐'.repeat(ex.difficulty)}</span></div>`).join('')}</div>`
+    ? `<div class="ex-results-list">${filtered.map(ex=>`<div class="ex-result-row" onmousedown="event.preventDefault();selectExercise('${ex.id}')"><span class="ex-result-icon">${ti[ex.type]||'💪'}</span><div style="flex:1"><div class="ex-result-name">${ex.name}</div><div class="ex-result-muscles">${ex.muscles.join(', ')}</div></div><span class="ex-result-stars">${'⭐'.repeat(ex.difficulty)}</span></div>`).join('')}</div>`
     : `<div style="padding:12px;color:var(--muted);font-size:13px;font-weight:600">No results for "${q}"</div>`;
 };
+// Expose as direct global so search input can call without bridge delay
+window._doExSearch = window.updateExSearch;
 
 // ─── RENDER ───────────────────────────────────────────────
 function showApp() {
@@ -1898,11 +1908,11 @@ function renderLogForm(type) {
   if(type==='weights') {
     c.innerHTML=`${timerCardHTML()}<div class="log-card">
       <div class="log-card-title">➕ LOG EXERCISE</div>
-      <input id="ex-search" class="ex-search" placeholder="🔍 Search exercise or muscle (e.g. bicep, chest, back)..." autocomplete="off" oninput="updateExSearch(this.value)">
+      <input id="ex-search" class="ex-search" placeholder="🔍 Search exercise or muscle (e.g. bicep, chest, back)..." autocomplete="off" oninput="window._sq=this.value;window._doExSearch&&window._doExSearch(this.value)" onkeydown="event.stopPropagation()">
       <div id="ex-results-container"></div>
       ${selEx?`
         <div class="sel-ex-banner">
-          <span style="font-size:24px">${selEx.gif}</span>
+          <span style="font-size:22px">${{weights:"🏋️",calisthenics:"💪",run:"🏃",swim:"🏊",cardio:"❤️"}[selEx.type]||"💪"}</span>
           <div style="flex:1"><div class="sel-ex-name">${selEx.name}</div><div class="sel-ex-muscles">${selEx.muscles.join(' · ')}</div></div>
           <button class="change-btn" onclick="clearExSelection()">Change</button>
         </div>
@@ -2013,14 +2023,14 @@ function renderActiveSession() {
     <div class="session-ex-list">${sess.exercises.map((ex,i)=>`
       <div class="session-ex-item">
         <div class="sei-left">
-          <span class="sei-gif">${EXERCISE_DB.find(e=>e.id===ex.exId)?.gif||'🏋️'}</span>
+          <span class="sei-gif">${{weights:'🏋️',calisthenics:'💪',run:'🏃',swim:'🏊',cardio:'❤️'}[EXERCISE_DB.find(e=>e.id===ex.exId)?.type||'weights']||'🏋️'}</span>
           <div><div class="sei-name">${ex.exName}</div><div class="sei-sets-text">${ex.sets.map((s,j)=>`Set ${j+1}: ${s.weight?s.weight+'kg × ':''}${s.reps} reps`).join(' · ')}</div></div>
         </div>
         <button class="sei-del" onclick="removeSessionEx(${i})">🗑️</button>
       </div>`).join('')}
     </div>`:''}
     <div class="sec-title" style="margin:16px 0 10px">➕ ADD EXERCISE</div>
-    <input id="ex-search" class="ex-search" placeholder="🔍 Search exercise or muscle..." autocomplete="off" oninput="updateExSearch(this.value)">
+    <input id="ex-search" class="ex-search" placeholder="🔍 Search exercise or muscle..." autocomplete="off" oninput="window._sq=this.value;window._doExSearch&&window._doExSearch(this.value)" onkeydown="event.stopPropagation()">
     <div id="ex-results-container"></div>
     <div id="ex-form-section"></div>
     <button class="finish-session-big-btn" onclick="finishSession()" ${sess.exercises.length===0?'disabled':''}>
@@ -2249,7 +2259,7 @@ window.showExDetail = id => {
   s.innerHTML=`
     <button class="back-btn" onclick="window.renderLibrary()">← Back to Library</button>
     <div class="ex-detail-wrap">
-      ${ex.demo||''}
+      <div class="ex-detail-banner" style="background:var(--surf2);border:1px solid var(--border);border-radius:8px;padding:24px;text-align:center;margin-bottom:16px;font-size:48px;">${{weights:'🏋️',calisthenics:'💪',run:'🏃',swim:'🏊',cardio:'❤️'}[ex.type]||'💪'}</div>
       <div class="ex-detail-top" style="margin-top:4px">
         <div>
           <div class="ex-detail-title">${ex.name}</div>
@@ -2749,7 +2759,7 @@ function logSwimEntry(){window.logSwimEntry&&window.logSwimEntry();}
 function logCardioEntry(){window.logCardioEntry&&window.logCardioEntry();}
 function exportCSV(){window.exportCSV&&window.exportCSV();}
 function setLogType(t,el){window.setLogType&&window.setLogType(t,el);}
-function updateExSearch(q){window.updateExSearch&&window.updateExSearch(q);}
+function updateExSearch(q){if(window._doExSearch)window._doExSearch(q);else if(window.updateExSearch)window.updateExSearch(q);}
 function setPill(el,g){window.setPill&&window.setPill(el,g);}
 function setTaskPill(v,g,el){window.setTaskPill&&window.setTaskPill(v,g,el);}
 function setHabitPill(v,el){window.setHabitPill&&window.setHabitPill(v,el);}
