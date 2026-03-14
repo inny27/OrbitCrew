@@ -616,9 +616,6 @@ body.colorblind{filter:url(#colorblind-filter);}
 .install-step{display:flex;align-items:flex-start;gap:10px;font-size:12px;color:var(--text);line-height:1.6;}
 .install-step-num{width:22px;height:22px;border-radius:0;background:var(--accent);color:#0a0a1a;font-family:'Press Start 2P',monospace;font-size:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;}
 
-/* ── MapleStory cursor (PC only) ── */
-@media (pointer: fine) {
-  * { cursor: url('https://maplestory.io/api/GMS/255/item/2000000/icon') 8 8, auto !important; }
   button, a, [onclick], select, input[type="checkbox"], input[type="radio"], label {
     cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32"><text y="28" font-size="28">👆</text></svg>') 8 4, pointer !important;
   }
@@ -3550,4 +3547,12 @@ window.addEventListener('appinstalled', () => {
 if(localStorage.getItem('intask_colorblind')==='1') document.body.classList.add('colorblind');
 </script>
 </body>
-</html>
+</html><!-- Settings Modal -->
+<div class="modal-overlay" id="settings-modal" onclick="if(event.target===this)closeModal('settings-modal')">
+  <div class="modal" style="max-height:85vh;overflow-y:auto">
+    <div class="modal-handle"></div>
+    <div id="settings-panel"></div>
+  </div>
+</div>
+
+
