@@ -2280,7 +2280,7 @@ window.renderCoach = function() {
     ${neglected.length?`<div class="coach-alert-card">
       <div class="coach-card-title">⚠️ Muscles Needing Attention</div>
       <div class="coach-card-body">You have not trained <strong>${neglected.join(', ')}</strong> recently. Balance prevents injury.</div>
-      <div class="coach-rec-list">${neglected.slice(0,2).flatMap(m=>EXERCISE_DB.filter(ex=>ex.muscles.includes(m)).slice(0,2).map(ex=>`<div class="coach-rec-item" onclick="selectExercise('${ex.id}');switchFitTab('diary',document.getElementById('ft-diary'))"><span style="font-size:22px">${ex.gif}</span><div><div style="font-weight:700;font-size:13px">${ex.name}</div><div style="font-size:11px;color:var(--muted)">${ex.muscles.join(', ')}</div></div><span style="font-size:11px;color:var(--accent2)">Add →</span></div>`)).join('')}
+      <div class="coach-rec-list">${neglected.slice(0,2).flatMap(m=>EXERCISE_DB.filter(ex=>ex.muscles.includes(m)).slice(0,2).map(ex=>`<div class="coach-rec-item" onclick="selectExercise('${ex.id}');switchFitTab('diary',document.getElementById('ft-diary'))"><span style="font-size:22px">${{weights:"🏋️",calisthenics:"💪",run:"🏃",swim:"🏊",cardio:"❤️"}[ex.type]||"💪"}</span><div><div style="font-weight:700;font-size:13px">${ex.name}</div><div style="font-size:11px;color:var(--muted)">${ex.muscles.join(', ')}</div></div><span style="font-size:11px;color:var(--accent2)">Add →</span></div>`)).join('')}
       </div>
     </div>`:'' }
     ${overworked.length?`<div class='coach-warn-card'><div class='coach-card-title'>🔥 High Frequency Alert</div><div class='coach-card-body'><strong>${overworked.join(', ')}</strong> trained very frequently. Consider a deload week.</div></div>`:''}\n    <div class='coach-tip-card'>
@@ -2313,7 +2313,7 @@ window.showGuide = id => {
       <p style="color:var(--muted);font-size:13px;font-weight:600;margin:12px 0 20px">${guide.desc}</p>
       <div class="sec-title" style="margin-bottom:12px">EXERCISES</div>
       ${exes.map(ex=>`<div class="guide-ex-row">
-        <span class="guide-ex-gif">${ex.gif}</span>
+        <span class="guide-ex-gif">${{weights:"🏋️",calisthenics:"💪",run:"🏃",swim:"🏊",cardio:"❤️"}[ex.type]||"💪"}</span>
         <div class="guide-ex-info"><div class="guide-ex-name">${ex.name}</div><div class="guide-ex-muscles">${ex.muscles.join(', ')}</div></div>
         <div class="guide-reps-wrap">
           <span class="guide-reps-num" id="gr${ex.id}">8</span>reps
