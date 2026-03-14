@@ -1658,7 +1658,20 @@ window.finishSession = async () => {
 };
 
 window.cancelSession = () => {
-  if (!confirm('Cancel this workout?')) return;
+  const el = document.createElement('div');
+  el.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:6000;display:flex;align-items:center;justify-content:center;padding:20px';
+  el.innerHTML = `<div style="background:var(--surf);border:3px solid var(--red);padding:24px;max-width:300px;width:100%;box-shadow:4px 4px 0 rgba(0,0,0,.6);text-align:center">
+    <div style="font-size:10px;font-family:var(--pixel);color:var(--red);margin-bottom:12px;line-height:2">CANCEL WORKOUT?</div>
+    <div style="font-size:12px;color:var(--muted);margin-bottom:20px;line-height:1.6">All progress will be lost.</div>
+    <div style="display:flex;gap:10px">
+      <button onclick="this.closest('div[style]').remove()" style="flex:1;padding:12px;border:2px solid var(--border);background:var(--surf2);color:var(--text);font-family:var(--pixel);font-size:8px;cursor:pointer;border-radius:0">Keep Going</button>
+      <button onclick="this.closest('div[style]').remove();window.doCancelSession()" style="flex:1;padding:12px;border:2px solid var(--red);background:var(--red);color:#fff;font-family:var(--pixel);font-size:8px;cursor:pointer;border-radius:0">Cancel</button>
+    </div>
+  </div>`;
+  document.body.appendChild(el);
+};
+
+window.doCancelSession = () => {
   activeSession=null; resetTimer(); renderFitness();
 };
 
@@ -2237,9 +2250,21 @@ window.renderSettings = function renderSettings() {
       <select class="form-input" style="margin-bottom:8px" onchange="setSongPref('bgm',this.value)">
         ${[['Above the Treetops - Lith Harbour','Above the Treetops - Lith Harbour'],['Floral Life - Henesys','Floral Life - Henesys'],['Missing You - Ellinia','Missing You - Ellinia'],['Title - Login','Title - Login']].map(([v,l])=>`<option value="${v}"${v===(localStorage.getItem('intask_bgm_song')||DEFAULT_BGM_SONG)?' selected':''}>${l}</option>`).join('')}
       </select>
-      <div style="display:flex;gap:8px">
-        <button class="big-btn" style="flex:1;font-size:8px;padding:10px" onclick="previewSong('login')">▶ Preview Login</button>
-        <button class="big-btn" style="flex:1;font-size:8px;padding:10px;background:var(--surf2);border-color:var(--border);color:var(--text)" onclick="previewSong('bgm')">▶ Preview BGM</button>
+      <div style="display:flex;gap:8px;margin-bottom:12px">
+        <button class="big-btn" style="flex:1;font-size:8px;padding:10px" onclick="previewSong('login')">▶ Login</button>
+        <button class="big-btn" style="flex:1;font-size:8px;padding:10px;background:var(--surf2);border-color:var(--border);color:var(--text)" onclick="previewSong('bgm')">▶ BGM</button>
+        <button id="settings-stop-music" class="big-btn" style="flex:1;font-size:8px;padding:10px;background:transparent;border-color:var(--red);color:var(--red);opacity:0.4" onclick="stopAllMusic()">⏹ Stop</button>
+      </div>
+      <div id="settings-now-playing" style="display:none;font-size:8px;font-family:var(--pixel);color:var(--green);margin-bottom:12px;padding:6px 10px;background:rgba(87,217,163,.1);border:1px solid var(--green)"></div>
+      <label class="field-label">VOLUME</label>
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:4px">
+        <span style="font-size:14px">🔈</span>
+        <input type="range" id="settings-volume" min="0" max="1" step="0.05"
+          value="${parseFloat(localStorage.getItem('intask_volume')||'0.4').toFixed(2)}"
+          oninput="setMusicVolume(this.value)"
+          style="flex:1;accent-color:var(--accent);height:6px;cursor:pointer">
+        <span style="font-size:14px">🔊</span>
+        <span id="vol-pct" style="font-size:8px;font-family:var(--pixel);color:var(--accent);min-width:36px">${Math.round(parseFloat(localStorage.getItem('intask_volume')||'0.4')*100)}%</span>
       </div>
     </div>
 
@@ -2257,6 +2282,8 @@ window.renderSettings = function renderSettings() {
   const colRow = g('settings-col-row');
   if(colRow) colRow.innerHTML = COLORS.map(c=>`<div class="col-dot${(u.color||'#7c3aed')===c?' sel':''}" style="background:${c}" onclick="settingsSelectColor('${c}',this)"></div>`).join('');
 
+  // Update music UI state
+  setTimeout(() => { if(typeof updateMusicUI==='function') updateMusicUI(); }, 50);
   // Show native install button if available (Android Chrome)
   setTimeout(() => {
     const promptRow = document.getElementById('install-prompt-row');
@@ -2366,6 +2393,17 @@ window.addEventListener('DOMContentLoaded', () => {
   setTimeout(() => applyIconDensity(saved), 500);
 });
 
+window.setMusicVolume = (val) => {
+  const v = parseFloat(val);
+  localStorage.setItem('intask_volume', v.toFixed(2));
+  // Apply to all active audio
+  if(bgmAudio) bgmAudio.volume = v;
+  if(loginAudio) loginAudio.volume = v;
+  if(_previewAudio) _previewAudio.volume = v;
+  const pct = document.getElementById('vol-pct');
+  if(pct) pct.textContent = Math.round(v*100) + '%';
+};
+
 window.setSongPref = (type, value) => {
   localStorage.setItem(type === 'login' ? 'intask_login_song' : 'intask_bgm_song', value);
   // Reset audio so next play uses new song
@@ -2377,20 +2415,67 @@ window.setSongPref = (type, value) => {
   toast('🎵 Song updated!');
 };
 
+let _previewAudio = null; // track current preview
+
+window.stopAllMusic = () => {
+  // Stop preview
+  if(_previewAudio) { _previewAudio.pause(); _previewAudio.currentTime=0; _previewAudio=null; }
+  // Stop BGM
+  if(bgmAudio && bgmPlaying) {
+    bgmAudio.pause(); bgmPlaying=false;
+    const btn=document.getElementById('bgm-btn');
+    if(btn){btn.textContent='🎵';btn.style.borderColor='var(--accent)';btn.style.color='var(--accent)';}
+    const lbl=document.getElementById('bgm-label');
+    if(lbl) lbl.style.display='none';
+  }
+  // Stop login audio
+  if(loginAudio){loginAudio.pause();loginAudio.currentTime=0;}
+  updateMusicUI();
+  toast('⏹ Music stopped');
+};
+
+function updateMusicUI() {
+  const isPlaying = (bgmPlaying) || (_previewAudio && !_previewAudio.paused);
+  const stopBtn = document.getElementById('settings-stop-music');
+  if(stopBtn) stopBtn.style.opacity = isPlaying ? '1' : '0.4';
+  const nowPlaying = document.getElementById('settings-now-playing');
+  if(nowPlaying) {
+    if(bgmPlaying) {
+      const songName = localStorage.getItem('intask_bgm_song') || DEFAULT_BGM_SONG;
+      nowPlaying.textContent = '♪ ' + songName;
+      nowPlaying.style.display = 'block';
+    } else if(_previewAudio && !_previewAudio.paused) {
+      nowPlaying.textContent = '♪ Previewing...';
+      nowPlaying.style.display = 'block';
+    } else {
+      nowPlaying.style.display = 'none';
+    }
+  }
+}
+
 window.previewSong = (type) => {
   const key = type === 'login' ? 'intask_login_song' : 'intask_bgm_song';
   const def = type === 'login' ? DEFAULT_LOGIN_SONG : DEFAULT_BGM_SONG;
   const url = getSongUrl(localStorage.getItem(key) || def);
   if(!url) { toast('Song file not found on server.'); return; }
-  // Stop any playing audio first
-  if(bgmAudio && bgmPlaying) { bgmAudio.pause(); bgmPlaying = false; }
-  if(loginAudio) loginAudio.pause();
+  // Stop ALL currently playing audio first (one at a time)
+  window.stopAllMusic();
   const preview = new Audio(url);
-  preview.volume = 0.4;
+  const vol = parseFloat(localStorage.getItem('intask_volume') || '0.4');
+  preview.volume = vol;
   preview.play().then(() => {
-    toast('🎵 Previewing — tap BGM button to stop');
-    setTimeout(() => preview.pause(), 15000);
-  }).catch(() => toast('❌ Could not load song. Is the file uploaded to GitHub?'));
+    _previewAudio = preview;
+    updateMusicUI();
+    toast('🎵 Previewing ' + (type==='login'?'Login':'BGM') + ' — 15s');
+    setTimeout(() => {
+      if(_previewAudio === preview) {
+        preview.pause();
+        _previewAudio = null;
+        updateMusicUI();
+      }
+    }, 15000);
+    preview.onended = () => { _previewAudio = null; updateMusicUI(); };
+  }).catch(() => toast('❌ Could not load — is the file uploaded to GitHub?'));
 };
 
 window.toggleBgmDefault = () => {
@@ -2987,12 +3072,12 @@ function renderLogForm(type) {
 function renderActiveSession() {
   const s = g('fitness-panel'); if(!s) return;
   const sess = activeSession;
-  const elapsed = Math.floor((Date.now()-sess.startTime)/1000);
+  const elapsed = timerSecs; // Use the running workout timer
   s.innerHTML = `
     <div class="session-hdr">
       <div class="session-hdr-info">
         <input class="session-name-input" id="session-name-input" value="${sess.name}" placeholder="Name your workout (e.g. Push Day)" oninput="activeSession.name=this.value">
-        <div class="session-meta-text">⏱ ${fmtTime(elapsed)} elapsed · ${sess.exercises.length} exercise${sess.exercises.length!==1?'s':''} logged</div>
+        <div class="session-meta-text">⏱ ${fmtTime(timerSecs)} elapsed · ${sess.exercises.length} exercise${sess.exercises.length!==1?'s':''} logged</div>
       </div>
       <div style="display:flex;gap:8px">
         <button class="session-finish-btn" onclick="finishSession()">✅ Done</button>
@@ -4009,6 +4094,8 @@ function playLoginMusic(){window.playLoginMusic&&window.playLoginMusic();}
 function toggleBgmDefault(){window.toggleBgmDefault&&window.toggleBgmDefault();}
 function setSongPref(t,v){window.setSongPref&&window.setSongPref(t,v);}
 function previewSong(t){window.previewSong&&window.previewSong(t);}
+function stopAllMusic(){window.stopAllMusic&&window.stopAllMusic();}
+function setMusicVolume(v){window.setMusicVolume&&window.setMusicVolume(v);}
 function confirmDeleteAccount(){window.confirmDeleteAccount&&window.confirmDeleteAccount();}
 function executeDeleteAccount(el){window.executeDeleteAccount&&window.executeDeleteAccount(el);}
 function completeProfile(){window.completeProfile&&window.completeProfile();}
@@ -4043,6 +4130,7 @@ function showTamaPostWorkout(a,b,c,d,e,f){window.showTamaPostWorkout&&window.sho
 function startWorkoutSession(){window.startWorkoutSession&&window.startWorkoutSession();}
 function finishSession(){window.finishSession&&window.finishSession();}
 function cancelSession(){window.cancelSession&&window.cancelSession();}
+function doCancelSession(){window.doCancelSession&&window.doCancelSession();}
 function addExToSession(){window.addExToSession&&window.addExToSession();}
 function removeSessionEx(i){window.removeSessionEx&&window.removeSessionEx(i);}
 function clearExSelection(){window.clearExSelection&&window.clearExSelection();}
