@@ -1640,7 +1640,7 @@ window.finishSession = async () => {
   }
   const xpEarned = activeSession.exercises.length*15+25;
   const sessionExercises = [...activeSession.exercises];
-  const statsBefore = getTotalStats();
+  const statsBefore = getTotalStats(); // snapshot before new entries
   await gainXP(xpEarned,{totalDone:activeSession.exercises.length});
   resetTimer(); activeSession=null;
   const statsAfter = getTotalStats();
@@ -2596,6 +2596,7 @@ const CARDIO_MUSCLES = new Set(['Cardio','Endurance','Active Recovery','Full Bod
 const BALANCE_MUSCLES = new Set(['Core','Balance','Hip Flexors','Rotator Cuff','Coordination']);
 
 window.calcExPoints = function calcExPoints(exEntry) {
+  if(!exEntry || typeof exEntry !== 'object') return {str:0, crd:0, bal:0};
   const exDef = EXERCISE_DB.find(e=>e.id===(exEntry.exId||exEntry.exercise));
   const difficulty = exDef ? exDef.difficulty : 2;
   const muscles = exEntry.muscles || exDef?.muscles || [];
@@ -2638,6 +2639,7 @@ window.calcExPoints = function calcExPoints(exEntry) {
 window.getTotalStats = function getTotalStats() {
   let str=0, crd=0, bal=0;
   for(const e of workoutEntries) {
+    if(!e || typeof e !== 'object') continue;
     const pts = calcExPoints(e);
     str+=pts.str; crd+=pts.crd; bal+=pts.bal;
   }
