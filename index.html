@@ -5,7 +5,12 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="theme-color" content="#07071a">
+<meta name="theme-color" content="#0a0a1a">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="InTask">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-192.png">
 <title>InTask</title>
 <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <style>
@@ -114,7 +119,7 @@ body::after{
 .header{padding:48px 16px 10px;background:rgba(10,10,26,.97);border-bottom:2px solid var(--accent);position:sticky;top:0;z-index:100;}
 .hdr-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
 .hdr-left{display:flex;align-items:center;gap:10px;}
-.hdr-avatar{font-size:24px;width:36px;height:36px;border-radius:8px;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;background:var(--surf2);}
+.hdr-avatar{font-size:22px;width:36px;height:36px;border-radius:0;border:2px solid var(--accent);display:flex;align-items:center;justify-content:center;background:var(--surf2);box-shadow:2px 2px 0 rgba(0,0,0,.5);}
 .hdr-name{font-size:9px;font-weight:400;color:var(--text);font-family:'Press Start 2P',monospace;}
 .hdr-badge{display:inline-block;font-size:7px;font-weight:400;color:var(--accent3);padding:2px 0;margin-top:4px;font-family:'Press Start 2P',monospace;}
 .hdr-right{display:flex;align-items:center;gap:8px;}
@@ -139,7 +144,7 @@ body::after{
 .bnav-btn{display:flex;flex-direction:column;align-items:center;gap:2px;cursor:pointer;color:var(--muted);padding:4px 10px;border:none;background:transparent;transition:.15s;position:relative;}
 .bnav-btn.active{color:var(--accent);}
 .bnav-btn.active::before{content:'▲';position:absolute;top:-14px;left:50%;transform:translateX(-50%);font-size:8px;color:var(--accent);}
-.bnav-icon{font-size:18px;}
+.bnav-icon{font-size:18px;} .bnav-btn img{width:28px;height:28px;image-rendering:pixelated;object-fit:contain;}
 .bnav-label{font-size:8px;font-weight:700;font-family:'Press Start 2P',monospace;}
 
 /* ============================================================
@@ -588,10 +593,23 @@ body::after{
 
 .set-col-lbl{font-size:8px;font-weight:700;color:var(--muted);flex-shrink:0;}
 
-/* ── YouTube embed ── */
-.ex-yt-wrap{width:100%;position:relative;padding-bottom:56.25%;height:0;overflow:hidden;border-radius:0;border:2px solid var(--border);margin-bottom:14px;background:#000;}
-.ex-yt-frame{position:absolute;top:0;left:0;width:100%;height:100%;border:0;}
+/* ── YouTube thumbnail link ── */
+.ex-yt-thumb{display:block;position:relative;width:100%;border-radius:0;border:2px solid var(--accent);margin-bottom:14px;overflow:hidden;text-decoration:none;background:#000;}
+.ex-yt-thumb img{width:100%;display:block;object-fit:cover;}
+.ex-yt-play{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:56px;height:56px;background:rgba(255,0,0,.9);border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:22px;color:#fff;box-shadow:0 4px 20px rgba(0,0,0,.5);}
+.ex-yt-label{position:absolute;bottom:0;left:0;right:0;background:rgba(0,0,0,.7);color:#fff;font-size:10px;font-family:'Press Start 2P',monospace;padding:8px;text-align:center;letter-spacing:1px;}
 .ex-detail-banner{background:var(--surf2);border:2px solid var(--border);margin-bottom:14px;}
+
+/* ── Settings ── */
+.settings-section{background:var(--surf);border:2px solid var(--border);border-radius:0;padding:16px;margin-bottom:12px;box-shadow:3px 3px 0 rgba(0,0,0,.4);}
+.settings-section-title{font-size:8px;font-family:'Press Start 2P',monospace;color:var(--accent);letter-spacing:1px;margin-bottom:14px;}
+.settings-row{display:flex;align-items:center;justify-content:space-between;gap:12px;}
+.settings-row-label{font-size:13px;font-weight:700;color:var(--text);margin-bottom:3px;}
+.settings-row-sub{font-size:11px;color:var(--muted);font-weight:500;}
+.settings-toggle{padding:6px 14px;border-radius:0;border:2px solid var(--border);background:var(--surf2);color:var(--muted);font-family:'Press Start 2P',monospace;font-size:8px;cursor:pointer;transition:.1s;}
+.settings-toggle.active{background:var(--accent);border-color:var(--accent);color:#0a0a1a;}
+/* Colorblind mode */
+body.colorblind{filter:url(#colorblind-filter);}
 </style>
 
 <!-- Firebase -->
@@ -856,6 +874,7 @@ const WORKOUT_GUIDES = [
 ];
 
 // ─── STATE ────────────────────────────────────────────────
+const BASE_URL = 'https://maplestory.io/api/GMS/255/item';
 let currentUser = null, userProfile = null;
 let tasks = [], habits = [], crew = null, crewMembers = [], crewMessages = [], boss = null;
 let bodyEntries = [], workoutEntries = [], fitnessProfile = null;
@@ -1346,7 +1365,7 @@ function updateExFormSection() {
     const rc = g('ex-results-container'); if(rc) rc.innerHTML='';
   } else {
     section.innerHTML = `<div class="quick-picks-wrap">
-      <p>Search above or pick a common exercise:</p>
+      <p><img src="https://maplestory.io/api/GMS/255/item/1302000/icon" alt="" width="16" height="16" style="image-rendering:pixelated;vertical-align:middle"> Search above or pick a common exercise:</p>
       <div class="quick-picks-grid">${['Bench Press','Back Squat','Deadlift','Pull Up','Bicep Curl','Push Up','Plank','Lat Pulldown','Overhead Press','Romanian Deadlift'].map(n=>{
         const ex=EXERCISE_DB.find(e=>e.name===n);
         return ex?`<button class="qp-btn" onmousedown="event.preventDefault();selectExercise('${ex.id}')">${ex.name}</button>`:'';
@@ -1625,6 +1644,10 @@ function showApp() {
   g('login').classList.remove('active'); g('profile-setup').classList.remove('active');
   document.getElementById('app').classList.add('active');
   renderHeader(); switchTab('today'); updateBg();
+  // Auto-start BGM if user has it set as default
+  if(localStorage.getItem('intask_bgm_default')==='1') {
+    setTimeout(() => { if(typeof toggleBGM === 'function') toggleBGM(); }, 1200);
+  }
 }
 function showScreen(id) {
   ['login','profile-setup'].forEach(s => g(s).classList.remove('active'));
@@ -1653,11 +1676,11 @@ function renderHeader() {
   g('hdr-badge').textContent = `⚡ LVL ${u.level||1} · ${u.title||'Cadet'}`;
   g('hdr-badge').style.color = 'var(--accent)';
   g('xp-fill').style.width = pct+'%';
-  g('xp-fill').style.background = 'var(--accent)';
+  g('xp-fill').style.background = 'linear-gradient(90deg,#ffd700,#ffaa00)';
   g('xp-text').textContent = `${u.xp||0}/${u.maxXp||1000}`;
   g('mult-badge').textContent = `×${mult}`;
   g('mult-badge').style.color = streak>=5?'#f59e0b':streak>=3?'#06b6d4':'#94a3b8';
-  g('sp-badge').textContent = `🧠 ${u.skillPoints||0}SP`;
+  const spEl=g('sp-badge'); if(spEl) spEl.innerHTML = `<img src='${BASE_URL}/2030000/icon' alt='' width='16' height='16' style='image-rendering:pixelated;vertical-align:middle'> ${u.skillPoints||0}SP`;
 }
 
 function renderToday() {
@@ -1686,7 +1709,7 @@ function taskCard(t) {
     <div class="task-body">
       <div class="task-name">${t.name}</div>
       <div class="task-tags">
-        <span class="tag" style="color:${tc[t.type]||'#7c3aed'};border-color:${tc[t.type]||'#7c3aed'}">${t.type==='shared'?'👫':t.type==='chore'?'🏠':t.type==='goal'?'⭐':'👤'} ${t.type}</span>
+        <span class="tag" style="color:${tc[t.type]||'#7c3aed'};border-color:${tc[t.type]||'#7c3aed'}">${t.type==='shared'?'<img src="https://maplestory.io/api/GMS/255/item/1302086/icon" width="12" height="12" style="image-rendering:pixelated;vertical-align:middle">':t.type==='chore'?'<img src="https://maplestory.io/api/GMS/255/item/1322000/icon" width="12" height="12" style="image-rendering:pixelated;vertical-align:middle">':t.type==='goal'?'<img src="https://maplestory.io/api/GMS/255/item/1402000/icon" width="12" height="12" style="image-rendering:pixelated;vertical-align:middle">':'<img src="https://maplestory.io/api/GMS/255/item/1302000/icon" width="12" height="12" style="image-rendering:pixelated;vertical-align:middle">'} ${t.type}</span>
         <span class="tag" style="color:${c};border-color:${c}">${t.priority}</span>
         ${rep?`<span class="repeat-badge">${rep}</span>`:''}
       </div>
@@ -1718,7 +1741,7 @@ function habitCard(h) {
       <div style="text-align:right"><div class="streak-count">${h.streak||0}</div><div style="font-size:11px;color:var(--muted)">🔥 days</div></div>
     </div>
     <div class="days-row">${last7.map(d=>`<div class="day-dot${d.done?' done':''}${d.today?' today':''}">${d.label}</div>`).join('')}</div>
-    <button class="done-btn${doneToday?' done-btn-done':''}" onclick="${doneToday?'':'completeHabit(\''+h.id+'\')'}">${doneToday?'✅ Done! Come back tomorrow':'✓ Mark Done · +XP × multiplier'}</button>
+    <button class="done-btn${doneToday?' done-btn-done':''}" onclick="${doneToday?'':'completeHabit(\''+h.id+'\')'}">${doneToday?'✅ Done! Come back tomorrow':'✓ Mark Done  +XP × multiplier'}</button>
   </div>`;
 }
 
@@ -1737,7 +1760,7 @@ function renderCrew() {
       <div><div class="crew-name-text">${crew.name}</div><div class="crew-sub-text">${crewMembers.length} pilots · Code: <span style="color:var(--accent3);font-weight:900;letter-spacing:2px">${crew.code}</span></div></div>
       <button class="leave-btn" onclick="leaveCrew()">↩ Leave</button>
     </div>
-    <div class="sec-title" style="margin-bottom:10px">🏆 CREW LEADERBOARD</div>
+    <div class="sec-title" style="margin-bottom:10px"><img src="https://maplestory.io/api/GMS/255/item/4031138/icon" alt="" width="18" height="18" style="image-rendering:pixelated;vertical-align:middle;margin-right:4px"> CREW LEADERBOARD</div>
     <div class="lb-wrap">${sorted.map((m,i)=>`
       <div class="lb-row${m.id===currentUser?.uid?' me':''}">
         <span class="lb-rank">${medals[i]||'#'+(i+1)}</span>
@@ -1767,7 +1790,7 @@ function renderBoss() {
   const hpCol = pct>50?'#10b981':pct>25?'#f59e0b':'#ef4444';
   s.innerHTML = `<div class="boss-card${boss.defeated?' defeated':''}">
     <div class="boss-top">
-      <span class="boss-icon${boss.defeated?'':''}">${boss.icon||'👾'}</span>
+      <span class="boss-icon${boss.defeated?'':''}">${'<img src="https://maplestory.io/api/GMS/255/mob/8800000/render/stand" alt="Boss" width="48" height="48" style="image-rendering:pixelated" onerror="this.src=\'https://maplestory.io/api/GMS/255/mob/100100/render/stand\'">'}</span>
       <div style="flex:1"><div class="boss-name-text">${boss.name||'Boss'}</div><div class="boss-sub">${boss.defeated?'💀 DEFEATED':'⚔️ Attack by completing missions!'}</div></div>
       <div class="boss-hp-num" style="color:${hpCol}">${boss.hp||0}<span style="font-size:11px;color:var(--muted)">/${boss.maxHp}</span></div>
     </div>
@@ -1827,6 +1850,220 @@ function renderAwards() {
     </div>`).join('');
 }
 
+function renderSettings() {
+  const panel = g('settings-panel'); if(!panel) return;
+  const u = userProfile||{};
+  const iconCount = parseInt(localStorage.getItem('intask_icon_count')||'5');
+  const cbMode = localStorage.getItem('intask_colorblind')==='1';
+  const bgmDefault = localStorage.getItem('intask_bgm_default')==='1';
+  panel.innerHTML = `
+    <div class="sec-title" style="margin-bottom:16px">⚙️ SETTINGS</div>
+
+    <!-- Profile -->
+    <div class="settings-section">
+      <div class="settings-section-title">👤 PROFILE</div>
+      <label class="field-label">DISPLAY NAME / NICKNAME</label>
+      <div style="display:flex;gap:8px;margin-bottom:14px">
+        <input id="settings-nickname" class="form-input" style="margin-bottom:0;flex:1" value="${u.displayName||''}" placeholder="Enter your nickname...">
+        <button class="icon-btn" onclick="saveNickname()">Save</button>
+      </div>
+      <label class="field-label">YOUR AVATAR</label>
+      <div class="av-grid" id="settings-av-grid" style="margin-bottom:14px"></div>
+      <label class="field-label">YOUR COLOUR</label>
+      <div class="col-row" id="settings-col-row" style="margin-bottom:0"></div>
+    </div>
+
+    <!-- Accessibility -->
+    <div class="settings-section">
+      <div class="settings-section-title">♿ ACCESSIBILITY</div>
+      <div class="settings-row">
+        <div>
+          <div class="settings-row-label">Colour Blind Mode</div>
+          <div class="settings-row-sub">Replaces colour cues with patterns & labels</div>
+        </div>
+        <button class="settings-toggle${cbMode?' active':''}" id="cb-toggle" onclick="toggleColorBlind()">${cbMode?'ON':'OFF'}</button>
+      </div>
+      <div class="settings-row" style="margin-top:12px">
+        <div>
+          <div class="settings-row-label">UI Icon Count</div>
+          <div class="settings-row-sub">How many icons show in the interface</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px">
+          <button class="set-adj" onclick="changeIconCount(-1)">−</button>
+          <span id="icon-count-val" style="font-family:'Press Start 2P',monospace;font-size:12px;color:var(--accent);min-width:20px;text-align:center">${iconCount}</span>
+          <button class="set-adj" onclick="changeIconCount(1)">+</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- App -->
+    <div class="settings-section">
+      <div class="settings-section-title">📱 APP</div>
+      <div class="settings-row" style="cursor:pointer" onclick="showInstallInstructions()">
+        <div>
+          <div class="settings-row-label">📲 Add to Home Screen</div>
+          <div class="settings-row-sub">Install InTask as an app on your device</div>
+        </div>
+        <span style="color:var(--accent);font-size:16px">›</span>
+      </div>
+    </div>
+
+    <!-- Music -->
+    <div class="settings-section">
+      <div class="settings-section-title">🎵 MUSIC</div>
+      <div class="settings-row">
+        <div>
+          <div class="settings-row-label">Henesys BGM</div>
+          <div class="settings-row-sub">Play MapleStory music by default on launch</div>
+        </div>
+        <button class="settings-toggle${bgmDefault?' active':''}" id="bgm-default-toggle" onclick="toggleBgmDefault()">${bgmDefault?'ON':'OFF'}</button>
+      </div>
+    </div>
+
+    <!-- Account -->
+    <div class="settings-section">
+      <div class="settings-section-title">🔐 ACCOUNT</div>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:14px;font-weight:600">${u.email||'Guest account'}</div>
+      <button class="big-btn" style="margin-bottom:10px" onclick="doLogout()">↩ Sign Out</button>
+      <button class="big-btn" style="background:transparent;border-color:var(--red);color:var(--red)" onclick="confirmDeleteAccount()">🗑️ Delete Account</button>
+    </div>
+  `;
+
+  // Build avatar and colour pickers for settings
+  const avGrid = g('settings-av-grid');
+  if(avGrid) avGrid.innerHTML = AVATARS.map(a=>`<button class="av-btn${(u.avatar||'👨‍🚀')===a?' sel':''}" onclick="settingsSelectAvatar('${a}',this)">${a}</button>`).join('');
+  const colRow = g('settings-col-row');
+  if(colRow) colRow.innerHTML = COLORS.map(c=>`<div class="col-dot${(u.color||'#7c3aed')===c?' sel':''}" style="background:${c}" onclick="settingsSelectColor('${c}',this)"></div>`).join('');
+
+  // Show install prompt if available
+  if(window._deferredInstallPrompt) {
+    const installRow = document.querySelector('[onclick="showInstallInstructions()"]');
+    if(installRow) {
+      installRow.querySelector('.settings-row-label').textContent = '📲 Install InTask App';
+      installRow.querySelector('.settings-row-sub').textContent = 'Tap to install — no app store needed!';
+      installRow.onclick = () => promptInstall();
+    }
+  }
+}
+
+window.saveNickname = async () => {
+  const name = g('settings-nickname')?.value?.trim();
+  if (!name) { toast('Enter a nickname!'); return; }
+  await updateDoc(doc(db,'users',currentUser.uid), {displayName:name});
+  toast('✅ Nickname saved!');
+};
+
+window.settingsSelectAvatar = async (a, el) => {
+  document.querySelectorAll('#settings-av-grid .av-btn').forEach(x=>x.classList.remove('sel'));
+  el.classList.add('sel');
+  await updateDoc(doc(db,'users',currentUser.uid), {avatar:a});
+  toast('Avatar updated!');
+};
+
+window.settingsSelectColor = async (c, el) => {
+  document.querySelectorAll('#settings-col-row .col-dot').forEach(x=>x.classList.remove('sel'));
+  el.classList.add('sel');
+  await updateDoc(doc(db,'users',currentUser.uid), {color:c});
+  toast('Colour updated!');
+};
+
+window.toggleColorBlind = () => {
+  const current = localStorage.getItem('intask_colorblind')==='1';
+  localStorage.setItem('intask_colorblind', current?'0':'1');
+  document.body.classList.toggle('colorblind', !current);
+  renderSettings();
+  toast(current?'Colour blind mode off':'Colour blind mode on');
+};
+
+window.changeIconCount = (d) => {
+  const cur = parseInt(localStorage.getItem('intask_icon_count')||'5');
+  const nv = Math.max(0, Math.min(10, cur+d));
+  localStorage.setItem('intask_icon_count', nv);
+  const el = g('icon-count-val'); if(el) el.textContent = nv;
+  toast(`Icons: ${nv}`);
+};
+
+window.toggleBgmDefault = () => {
+  const current = localStorage.getItem('intask_bgm_default')==='1';
+  localStorage.setItem('intask_bgm_default', current?'0':'1');
+  const btn = g('bgm-default-toggle');
+  if(btn){ btn.textContent=current?'OFF':'ON'; btn.classList.toggle('active',!current); }
+  toast(current ? '🔇 Music off by default' : '🎵 Music on by default — starts next launch');
+};
+
+window.confirmDeleteAccount = () => {
+  const overlay = document.createElement('div');
+  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px';
+  overlay.innerHTML = `<div style="background:var(--surf);border:3px solid var(--red);border-radius:0;padding:24px;max-width:340px;width:100%;box-shadow:4px 4px 0 rgba(0,0,0,.6);text-align:center">
+    <div style="font-size:11px;font-family:'Press Start 2P',monospace;color:var(--red);margin-bottom:12px;line-height:2">⚠️ DELETE ACCOUNT</div>
+    <div style="font-size:13px;color:var(--text);margin-bottom:6px;font-weight:700">This cannot be undone.</div>
+    <div style="font-size:12px;color:var(--muted);margin-bottom:20px;line-height:1.6">All your tasks, habits, workouts and progress will be permanently deleted.</div>
+    <input id="delete-confirm-input" class="form-input" placeholder='Type "DELETE" to confirm' style="text-align:center;margin-bottom:14px">
+    <div style="display:flex;gap:10px">
+      <button onclick="this.closest('div[style]').remove()" style="flex:1;padding:12px;border-radius:0;border:2px solid var(--border);background:var(--surf2);color:var(--text);font-family:'Press Start 2P',monospace;font-size:8px;cursor:pointer">Cancel</button>
+      <button onclick="executeDeleteAccount(this.closest('div[style]'))" style="flex:1;padding:12px;border-radius:0;border:2px solid var(--red);background:var(--red);color:#fff;font-family:'Press Start 2P',monospace;font-size:8px;cursor:pointer">DELETE</button>
+    </div>
+  </div>`;
+  document.body.appendChild(overlay);
+};
+
+window.executeDeleteAccount = async (overlay) => {
+  const input = document.getElementById('delete-confirm-input');
+  if(!input || input.value.trim().toUpperCase() !== 'DELETE') {
+    input.style.borderColor = 'var(--red)';
+    input.placeholder = 'Type DELETE exactly';
+    return;
+  }
+  overlay.remove();
+  try {
+    // Delete Firestore data
+    if(currentUser) {
+      const uid = currentUser.uid;
+      // Delete user tasks, habits, fitness data
+      const tasksSnap = await getDocs(query(collection(db,'tasks'),where('uid','==',uid)));
+      for(const d of tasksSnap.docs) await deleteDoc(doc(db,'tasks',d.id));
+      const habitsSnap = await getDocs(query(collection(db,'habits'),where('uid','==',uid)));
+      for(const d of habitsSnap.docs) await deleteDoc(doc(db,'habits',d.id));
+      await deleteDoc(doc(db,'users',uid));
+      try { await deleteDoc(doc(db,'fitness',uid)); } catch(e) {}
+      // Delete Firebase Auth account
+      await currentUser.delete();
+    }
+    localStorage.clear();
+    toast('Account deleted. Goodbye! 👋');
+    setTimeout(() => location.reload(), 1500);
+  } catch(e) {
+    if(e.code === 'auth/requires-recent-login') {
+      toast('Please sign out and sign back in, then try again.');
+    } else {
+      toast('Error deleting account. Try again.');
+      console.error(e);
+    }
+  }
+};
+
+
+window.showInstallInstructions = () => {
+  const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
+  const isAndroid = /android/i.test(navigator.userAgent);
+  let msg = '';
+  if(isIOS) {
+    msg = '📱 iOS: Tap the Share button (□↑) at the bottom of Safari, then tap "Add to Home Screen"';
+  } else if(isAndroid) {
+    msg = '📱 Android: Tap the ⋮ menu in Chrome, then tap "Add to Home Screen" or "Install App"';
+  } else {
+    msg = "💻 Desktop: Click the install icon in your browser address bar";
+  }
+  alert(msg);
+};
+
+window.promptInstall = async () => {
+  if(!window._deferredInstallPrompt) { showInstallInstructions(); return; }
+  window._deferredInstallPrompt.prompt();
+  const {outcome} = await window._deferredInstallPrompt.userChoice;
+  if(outcome==='accepted') { window._deferredInstallPrompt=null; toast("🎉 InTask installed!"); }
+};
+
 function renderFitness() {
   const fp = fitnessProfile;
   if (!fp?.optedIn) {
@@ -1847,11 +2084,11 @@ function renderFitness() {
   if (activeSession) { renderActiveSession(); return; }
   g('fitness-panel').innerHTML = `
     <div class="fit-tabs">
-      <button class="fit-tab active" id="ft-body" onclick="switchFitTab('body',this)">📊 Body</button>
-      <button class="fit-tab" id="ft-diary" onclick="switchFitTab('diary',this)">📓 Diary</button>
-      <button class="fit-tab" id="ft-library" onclick="switchFitTab('library',this)">📚 Library</button>
-      <button class="fit-tab" id="ft-coach" onclick="switchFitTab('coach',this)">🤖 Coach</button>
-      <button class="fit-tab" id="ft-guides" onclick="switchFitTab('guides',this)">📋 Guides</button>
+      <button class="fit-tab active" id="ft-body" onclick="switchFitTab('body',this)"><img src="https://maplestory.io/api/GMS/255/item/1652000/icon" alt="Body" width="16" height="16" style="image-rendering:pixelated;vertical-align:middle"> Body</button>
+      <button class="fit-tab" id="ft-diary" onclick="switchFitTab('diary',this)"><img src="https://maplestory.io/api/GMS/255/item/4161000/icon" alt="Diary" width="16" height="16" style="image-rendering:pixelated;vertical-align:middle"> Diary</button>
+      <button class="fit-tab" id="ft-library" onclick="switchFitTab('library',this)"><img src="https://maplestory.io/api/GMS/255/item/1472000/icon" alt="Library" width="16" height="16" style="image-rendering:pixelated;vertical-align:middle"> Library</button>
+      <button class="fit-tab" id="ft-coach" onclick="switchFitTab('coach',this)"><img src="https://maplestory.io/api/GMS/255/item/2022000/icon" alt="Coach" width="16" height="16" style="image-rendering:pixelated;vertical-align:middle"> Coach</button>
+      <button class="fit-tab" id="ft-guides" onclick="switchFitTab('guides',this)"><img src="https://maplestory.io/api/GMS/255/item/2040000/icon" alt="Guides" width="16" height="16" style="image-rendering:pixelated;vertical-align:middle"> Guides</button>
     </div>
     <div id="fit-sub-panel"></div>`;
   renderBodyComp();
@@ -1876,7 +2113,7 @@ window.renderBodyComp = function() {
   const s = getFitSub(); if(!s) return;
   s.innerHTML = `
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
-      <div class="sec-title" style="margin:0">📊 BODY COMPOSITION</div>
+      <div class="sec-title" style="margin:0"><img src="https://maplestory.io/api/GMS/255/item/1652000/icon" alt="" width="18" height="18" style="image-rendering:pixelated;vertical-align:middle;margin-right:4px"> BODY COMPOSITION</div>
       <div class="mode-row">
         <button class="mode-btn${mode==='basic'?' active':''}" onclick="setBodyMode('basic')">Basic</button>
         <button class="mode-btn${mode==='advanced'?' active':''}" onclick="setBodyMode('advanced')">Advanced</button>
@@ -1943,7 +2180,7 @@ window.renderDiary = function() {
   const todayE=workoutEntries.filter(e=>new Date(e.date).toDateString()===today);
   s.innerHTML = `
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
-      <div class="sec-title" style="margin:0">📓 WORKOUT DIARY</div>
+      <div class="sec-title" style="margin:0"><img src="https://maplestory.io/api/GMS/255/item/4161000/icon" alt="" width="18" height="18" style="image-rendering:pixelated;vertical-align:middle;margin-right:4px"> WORKOUT DIARY</div>
       <div style="display:flex;gap:8px">
         <button class="icon-btn" onclick="exportCSV()">📥 CSV</button>
       </div>
@@ -2325,7 +2562,7 @@ window.renderLibrary = function(keepFocus) {
 
   // First render: build full scaffold
   s.innerHTML=`
-    <div class="sec-title" style="margin-bottom:12px">📚 EXERCISE LIBRARY</div>
+    <div class="sec-title" style="margin-bottom:12px"><img src="https://maplestory.io/api/GMS/255/item/1472000/icon" alt="" width="18" height="18" style="image-rendering:pixelated;vertical-align:middle;margin-right:4px"> EXERCISE LIBRARY</div>
     <input id="lib-search-input" class="form-input" placeholder="🔍 Search exercises or muscles..." style="margin-bottom:10px" autocomplete="off">
     <div id="lib-filters" class="lib-filters"></div>
     <div id="lib-count" style="font-size:10px;color:var(--muted);font-weight:600;margin-bottom:10px"></div>
@@ -2402,13 +2639,21 @@ window.showExDetail = id => {
     'calf_raise':'-M4-G8p1vyg',
     'ab_wheel':'j2iaMqnXm8k'
   };
-  const ytId = ytMap[ex.id] || null;
+  const ytId = ytMap[ex.id]||null;
   const typeIcon = {weights:'🏋️',calisthenics:'💪',run:'🏃',swim:'🏊',cardio:'❤️'};
+  const videoHTML = ytId
+    ? `<a href="https://www.youtube.com/watch?v=${ytId}" target="_blank" rel="noopener" class="ex-yt-thumb">
+        <img src="https://img.youtube.com/vi/${ytId}/mqdefault.jpg"
+             onerror="this.src='https://img.youtube.com/vi/${ytId}/hqdefault.jpg'"
+             alt="${ex.name} tutorial" loading="lazy">
+        <div class="ex-yt-play">▶</div>
+        <div class="ex-yt-label">Watch on YouTube</div>
+      </a>`
+    : `<div class="ex-detail-banner" style="font-size:48px;text-align:center;padding:20px">${typeIcon[ex.type]||'💪'}</div>`;
   s.innerHTML=`
     <button class="back-btn" onclick="window.renderLibrary()">← Back to Library</button>
     <div class="ex-detail-wrap">
-      <!-- yt handled above -->
-      ${false ? `<div src="https://www.youtube.com/embed/${ytId}?rel=0&modestbranding=1&playsinline=1" frameborder="0" allow="accelerometer;autoplay;clipboard-write;encrypted-media;gyroscope;picture-in-picture" allowfullscreen loading="lazy"></iframe></div>` : `<div class="ex-detail-banner" style="font-size:48px;text-align:center;padding:20px">${typeIcon[ex.type]||'💪'}</div>`}
+      ${videoHTML}
       <div class="ex-detail-top" style="margin-top:8px">
         <div>
           <div class="ex-detail-title">${ex.name}</div>
@@ -2435,7 +2680,7 @@ window.renderCoach = function() {
   const overworked=Object.entries(muscleFreq).filter(([,v])=>v>5).map(([k])=>k);
   const tips=['Progressive overload is the #1 driver of muscle growth. Add a small amount of weight or an extra rep each week.','The best workout is the one you actually do. Consistency over perfection, every single time.','Breathe out on exertion — exhale when lifting, inhale on the way down.','Sleep is where the gains happen. 7-9 hours is non-negotiable for elite performance.','Mind-muscle connection is real. Thinking about the muscle you\'re working can increase activation by up to 22%.','Dehydration of just 2% reduces performance by up to 10%. Drink water before you feel thirsty.','For weight loss: you cannot out-train a bad diet. But training reshapes your body in ways dieting alone cannot.'];
   s.innerHTML=`
-    <div class="sec-title" style="margin-bottom:16px">🤖 YOUR AI COACH</div>
+    <div class="sec-title" style="margin-bottom:16px"><img src="https://maplestory.io/api/GMS/255/item/2022000/icon" alt="" width="18" height="18" style="image-rendering:pixelated;vertical-align:middle;margin-right:4px"> YOUR AI COACH</div>
     ${neglected.length?`<div class="coach-alert-card">
       <div class="coach-card-title">⚠️ Muscles Needing Attention</div>
       <div class="coach-card-body">You have not trained <strong>${neglected.join(', ')}</strong> recently. Balance prevents injury.</div>
@@ -2451,7 +2696,7 @@ window.renderCoach = function() {
 
 window.renderGuides = function() {
   const s=getFitSub(); if(!s) return;
-  s.innerHTML=`<div class="sec-title" style="margin-bottom:16px">📋 WORKOUT GUIDES</div>
+  s.innerHTML=`<div class="sec-title" style="margin-bottom:16px"><img src="https://maplestory.io/api/GMS/255/item/2040000/icon" alt="" width="18" height="18" style="image-rendering:pixelated;vertical-align:middle;margin-right:4px"> WORKOUT GUIDES</div>
     <div class="guide-list">${WORKOUT_GUIDES.map(g2=>`
       <div class="guide-item" onclick="showGuide('${g2.id}')">
         <span class="guide-icon">${g2.icon}</span>
@@ -2544,6 +2789,7 @@ window.switchTab = tab => {
   if(tab==='crew') renderCrew();
   if(tab==='awards') renderAwards();
   if(tab==='fitness') renderFitness();
+  if(tab==='settings') renderSettings();
 };
 
 window.openModal=id=>{g(id).classList.add('open');};
@@ -2562,6 +2808,28 @@ function toast(msg){const t=g('toast');t.textContent=msg;t.classList.add('show')
 // Celebrate overlay close
 g('celebration').addEventListener('click',()=>g('celebration').classList.remove('show'));
 
+// ── Back button: confirm before leaving app ──────────────────
+history.pushState({page:'app'}, '', location.href);
+window.addEventListener('popstate', function(e) {
+  const appActive = document.getElementById('app')?.classList.contains('active');
+  if(!appActive) return; // not in app, let browser handle
+  // Push state again so back button still works next time
+  history.pushState({page:'app'}, '', location.href);
+  // Show confirmation
+  const overlay = document.createElement('div');
+  overlay.id = 'exit-confirm-overlay';
+  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px';
+  overlay.innerHTML = `<div style="background:var(--surf);border:3px solid var(--accent);border-radius:0;padding:24px;max-width:300px;width:100%;box-shadow:4px 4px 0 rgba(0,0,0,.6);text-align:center">
+    <div style="font-size:10px;font-family:'Press Start 2P',monospace;color:var(--accent);margin-bottom:12px;line-height:2">LEAVE INTASK?</div>
+    <div style="font-size:13px;color:var(--muted);margin-bottom:20px;line-height:1.6">Your data is saved. Are you sure you want to exit?</div>
+    <div style="display:flex;gap:10px">
+      <button onclick="document.getElementById('exit-confirm-overlay').remove()" style="flex:1;padding:12px;border-radius:0;border:2px solid var(--border);background:var(--surf2);color:var(--text);font-family:'Press Start 2P',monospace;font-size:8px;cursor:pointer">Stay</button>
+      <button onclick="window.doLogout&&window.doLogout()" style="flex:1;padding:12px;border-radius:0;border:2px solid var(--accent);background:var(--accent);color:#0a0a1a;font-family:'Press Start 2P',monospace;font-size:8px;cursor:pointer">Sign Out</button>
+    </div>
+  </div>`;
+  document.body.appendChild(overlay);
+});
+
 // Build pickers
 const avGrid=g('av-grid'); if(avGrid) avGrid.innerHTML=AVATARS.map((a,i)=>`<button class="av-btn${i===0?' sel':''}" onclick="selectAvatar('${a}',this)">${a}</button>`).join('');
 const colRow=g('col-row'); if(colRow) colRow.innerHTML=COLORS.map((c,i)=>`<div class="col-dot${i===0?' sel':''}" style="background:${c}" onclick="selectColor('${c}',this)"></div>`).join('');
@@ -2569,12 +2837,24 @@ const colRow=g('col-row'); if(colRow) colRow.innerHTML=COLORS.map((c,i)=>`<div c
 </script>
 </head>
 <body>
+<svg style="display:none">
+  <defs>
+    <filter id="colorblind-filter">
+      <feColorMatrix type="matrix" values="0.567,0.433,0,0,0 0.558,0.442,0,0,0 0,0.242,0.758,0,0 0,0,0,1,0"/>
+    </filter>
+  </defs>
+</svg>
 
 <!-- ═══ LOGIN SCREEN ═══ -->
 <div id="login" class="screen active">
-  <div class="login-logo" style="font-size:56px;filter:drop-shadow(0 0 20px rgba(255,215,0,.6))">🍄</div>
+  <div class="login-logo"><img src="https://maplestory.io/api/GMS/255/mob/100100/render/stand" alt="Mushroom" width="80" height="80" style="image-rendering:pixelated" onerror="this.outerHTML='<span style=font-size:56px>🍄</span>'"></div>
   <div class="login-title">⚔️ In<span>Task</span></div>
-  <div class="login-sub">Productivity. Simplified.</div>
+  <div class="login-sub">⚔️ Level Up Life ⚔️</div>
+  <div style="display:flex;gap:12px;margin-top:8px;justify-content:center;align-items:flex-end">
+    <img src="https://maplestory.io/api/GMS/255/mob/100100/render/stand" alt="" width="48" style="image-rendering:pixelated" onerror="this.style.display='none'">
+    <img src="https://maplestory.io/api/GMS/255/mob/100101/render/stand" alt="" width="48" style="image-rendering:pixelated" onerror="this.style.display='none'">
+    <img src="https://maplestory.io/api/GMS/255/mob/120100/render/stand" alt="" width="48" style="image-rendering:pixelated" onerror="this.style.display='none'">
+  </div>
   <div class="auth-card">
     <div id="auth-err" class="auth-error"></div>
 
@@ -2666,12 +2946,12 @@ const colRow=g('col-row'); if(colRow) colRow.innerHTML=COLORS.map((c,i)=>`<div c
       <div class="hdr-right">
         <div class="sync-pill"><div class="sync-dot"></div><span class="sync-text">LIVE</span></div>
         <div class="mult-pill" id="mult-badge">×1.0</div>
-        <div class="sp-pill" id="sp-badge">🧠 0SP</div>
-        <button class="logout-btn" onclick="doLogout()">↩</button>
+        <div class="sp-pill" id="sp-badge"><img src="https://maplestory.io/api/GMS/255/item/2030000/icon" alt="SP" width="16" height="16" style="image-rendering:pixelated;vertical-align:middle"> <span id="sp-text">0SP</span></div>
+        <button class="logout-btn" onclick="openModal('settings-modal')" style="font-size:16px">⚙️</button>
       </div>
     </div>
     <div class="xp-row">
-      <span class="xp-label">XP</span>
+      <img src="https://maplestory.io/api/GMS/255/item/2000001/icon" alt="XP" width="18" height="18" style="image-rendering:pixelated;vertical-align:middle;flex-shrink:0">
       <div class="xp-bar"><div class="xp-fill" id="xp-fill" style="width:0%"></div></div>
       <span class="xp-text" id="xp-text">0/1000</span>
     </div>
@@ -2684,7 +2964,7 @@ const colRow=g('col-row'); if(colRow) colRow.innerHTML=COLORS.map((c,i)=>`<div c
     <div class="panel active" id="panel-today">
       <div class="progress-card">
         <div style="flex:1">
-          <div class="prog-label">TODAY'S PROGRESS</div>
+          <div class="prog-label" style="display:flex;align-items:center;gap:6px"><img src="https://maplestory.io/api/GMS/255/item/2000000/icon" alt="" width="20" height="20" style="image-rendering:pixelated">TODAY'S PROGRESS</div>
           <div style="display:flex;align-items:baseline;gap:2px;margin:4px 0 8px">
             <span class="prog-count" id="prog-count">0</span>
             <span class="prog-total" id="prog-total"> / 0</span>
@@ -2707,7 +2987,7 @@ const colRow=g('col-row'); if(colRow) colRow.innerHTML=COLORS.map((c,i)=>`<div c
     <div class="panel" id="panel-habits">
       <div class="mult-card">
         <div class="mult-header">
-          <span class="mult-label">⚡ STREAK MULTIPLIER</span>
+          <span class="mult-label" style="display:flex;align-items:center;gap:6px"><img src="https://maplestory.io/api/GMS/255/item/2000006/icon" alt="" width="18" height="18" style="image-rendering:pixelated"> STREAK MULTIPLIER</span>
           <span class="mult-val" id="mult-val">×1.0</span>
         </div>
         <div class="mult-track"><div class="mult-bar" id="mult-bar" style="width:10%"></div></div>
@@ -2725,10 +3005,10 @@ const colRow=g('col-row'); if(colRow) colRow.innerHTML=COLORS.map((c,i)=>`<div c
     <!-- AWARDS -->
     <div class="panel" id="panel-awards">
       <div class="stats-row">
-        <div class="stat-card"><div class="stat-icon">🏅</div><div class="stat-val" id="stat-badges" style="color:var(--accent3)">0</div><div class="stat-lbl">Badges</div></div>
-        <div class="stat-card"><div class="stat-icon">⚡</div><div class="stat-val" id="stat-xp" style="color:var(--accent2)">0</div><div class="stat-lbl">Total XP</div></div>
-        <div class="stat-card"><div class="stat-icon">🔥</div><div class="stat-val" id="stat-streak" style="color:var(--pink)">0</div><div class="stat-lbl">Best Streak</div></div>
-        <div class="stat-card"><div class="stat-icon">✅</div><div class="stat-val" id="stat-done" style="color:var(--green)">0</div><div class="stat-lbl">Done</div></div>
+        <div class="stat-card"><div class="stat-icon"><img src="https://maplestory.io/api/GMS/255/item/4031138/icon" alt="Badges" width="24" height="24" style="image-rendering:pixelated"></div><div class="stat-val" id="stat-badges" style="color:var(--accent3)">0</div><div class="stat-lbl">Badges</div></div>
+        <div class="stat-card"><div class="stat-icon"><img src="https://maplestory.io/api/GMS/255/item/2000001/icon" alt="XP" width="24" height="24" style="image-rendering:pixelated"></div><div class="stat-val" id="stat-xp" style="color:var(--accent2)">0</div><div class="stat-lbl">Total XP</div></div>
+        <div class="stat-card"><div class="stat-icon"><img src="https://maplestory.io/api/GMS/255/item/2000006/icon" alt="Streak" width="24" height="24" style="image-rendering:pixelated"></div><div class="stat-val" id="stat-streak" style="color:var(--pink)">0</div><div class="stat-lbl">Best Streak</div></div>
+        <div class="stat-card"><div class="stat-icon"><img src="https://maplestory.io/api/GMS/255/item/4031019/icon" alt="Done" width="24" height="24" style="image-rendering:pixelated"></div><div class="stat-val" id="stat-done" style="color:var(--green)">0</div><div class="stat-lbl">Done</div></div>
       </div>
       <div class="sp-info" id="sp-info-text">🧠 Earn Skill Points by levelling up</div>
       <div class="sec-title" style="margin-bottom:12px">🧠 SKILL TREE</div>
@@ -2742,15 +3022,21 @@ const colRow=g('col-row'); if(colRow) colRow.innerHTML=COLORS.map((c,i)=>`<div c
       <div id="fitness-panel"></div>
     </div>
 
+    <!-- SETTINGS -->
+    <div class="panel" id="panel-settings">
+      <div id="settings-panel"></div>
+    </div>
+
   </div>
 
   <!-- BOTTOM NAV -->
   <div class="bottom-nav">
-    <button class="bnav-btn active" data-tab="today" onclick="switchTab('today')"><span class="bnav-icon">🎯</span><span class="bnav-label">Today</span></button>
-    <button class="bnav-btn" data-tab="habits" onclick="switchTab('habits')"><span class="bnav-icon">🔥</span><span class="bnav-label">Habits</span></button>
-    <button class="bnav-btn" data-tab="crew" onclick="switchTab('crew')"><span class="bnav-icon">🪐</span><span class="bnav-label">Crew</span></button>
-    <button class="bnav-btn" data-tab="awards" onclick="switchTab('awards')"><span class="bnav-icon">🏆</span><span class="bnav-label">Awards</span></button>
-    <button class="bnav-btn" data-tab="fitness" onclick="switchTab('fitness')"><span class="bnav-icon">💪</span><span class="bnav-label">Fitness</span></button>
+    <button class="bnav-btn active" data-tab="today" onclick="switchTab('today')"><img src="https://maplestory.io/api/GMS/255/item/2000000/icon" alt="Today" width="28" height="28" style="image-rendering:pixelated;object-fit:contain" onerror="this.outerHTML='<span class=bnav-icon>🎯</span>'"><span class="bnav-label">Today</span></button>
+    <button class="bnav-btn" data-tab="habits" onclick="switchTab('habits')"><img src="https://maplestory.io/api/GMS/255/item/2000006/icon" alt="Habits" width="28" height="28" style="image-rendering:pixelated;object-fit:contain" onerror="this.outerHTML='<span class=bnav-icon>🔥</span>'"><span class="bnav-label">Habits</span></button>
+    <button class="bnav-btn" data-tab="crew" onclick="switchTab('crew')"><img src="https://maplestory.io/api/GMS/255/item/2022000/icon" alt="Crew" width="28" height="28" style="image-rendering:pixelated;object-fit:contain" onerror="this.outerHTML='<span class=bnav-icon>🪐</span>'"><span class="bnav-label">Crew</span></button>
+    <button class="bnav-btn" data-tab="awards" onclick="switchTab('awards')"><img src="https://maplestory.io/api/GMS/255/item/4031138/icon" alt="Awards" width="28" height="28" style="image-rendering:pixelated;object-fit:contain" onerror="this.outerHTML='<span class=bnav-icon>🏆</span>'"><span class="bnav-label">Awards</span></button>
+    <button class="bnav-btn" data-tab="fitness" onclick="switchTab('fitness')"><img src="https://maplestory.io/api/GMS/255/item/1302000/icon" alt="Fitness" width="28" height="28" style="image-rendering:pixelated;object-fit:contain" onerror="this.outerHTML='<span class=bnav-icon>💪</span>'"><span class="bnav-label">Fitness</span></button>
+    <button class="bnav-btn" data-tab="settings" onclick="switchTab('settings')"><span class="bnav-icon">⚙️</span><span class="bnav-label">Settings</span></button>
   </div>
 
 </div><!-- end app -->
@@ -2761,7 +3047,7 @@ const colRow=g('col-row'); if(colRow) colRow.innerHTML=COLORS.map((c,i)=>`<div c
 <div class="modal-overlay" id="task-modal" onclick="if(event.target===this)closeModal('task-modal')">
   <div class="modal">
     <div class="modal-handle"></div>
-    <div class="modal-title">🚀 NEW MISSION</div>
+    <div class="modal-title">NEW MISSION</div>
     <label class="field-label">MISSION NAME</label>
     <input id="new-task-name" class="form-input" placeholder="e.g. Take medication, Call dentist...">
     <label class="field-label">TYPE</label>
@@ -2843,7 +3129,7 @@ const colRow=g('col-row'); if(colRow) colRow.innerHTML=COLORS.map((c,i)=>`<div c
 <div id="celebration">
   <div id="cel-title">MISSION COMPLETE!</div>
   <div id="cel-sub"></div>
-  <div id="cel-xp">+30 XP</div>
+  <div id="cel-xp">+30 XP</div><img src="https://maplestory.io/api/GMS/255/item/4031138/icon" id="cel-meso" alt="" width="40" height="40" style="image-rendering:pixelated;display:none;margin-top:8px">
   <div id="cel-extra"></div>
   <div id="cel-hint" style="font-size:12px;color:var(--muted);margin-top:24px;font-weight:600">Tap anywhere to continue</div>
 </div>
@@ -2864,6 +3150,17 @@ function doEmailLogin(){window.doEmailLogin&&window.doEmailLogin();}
 function doGuestLogin(){window.doGuestLogin&&window.doGuestLogin();}
 function doGuestReturn(){window.doGuestReturn&&window.doGuestReturn();}
 function doLogout(){window.doLogout&&window.doLogout();}
+function saveNickname(){window.saveNickname&&window.saveNickname();}
+function settingsSelectAvatar(a,el){window.settingsSelectAvatar&&window.settingsSelectAvatar(a,el);}
+function settingsSelectColor(c,el){window.settingsSelectColor&&window.settingsSelectColor(c,el);}
+function toggleColorBlind(){window.toggleColorBlind&&window.toggleColorBlind();}
+function changeIconCount(d){window.changeIconCount&&window.changeIconCount(d);}
+function showInstallInstructions(){window.showInstallInstructions&&window.showInstallInstructions();}
+function promptInstall(){window.promptInstall&&window.promptInstall();}
+function renderSettings(){window.renderSettings&&window.renderSettings();}
+function toggleBgmDefault(){window.toggleBgmDefault&&window.toggleBgmDefault();}
+function confirmDeleteAccount(){window.confirmDeleteAccount&&window.confirmDeleteAccount();}
+function executeDeleteAccount(el){window.executeDeleteAccount&&window.executeDeleteAccount(el);}
 function completeProfile(){window.completeProfile&&window.completeProfile();}
 function switchTab(t){window.switchTab&&window.switchTab(t);}
 function openModal(id){window.openModal&&window.openModal(id);}
@@ -3010,6 +3307,29 @@ function toggleBGM() {
   }
 }
 
+</script>
+<script>
+// Register service worker
+if('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/OrbitCrew/sw.js')
+    .then(() => console.log('SW registered'))
+    .catch(e => console.log('SW failed:', e));
+}
+
+// PWA install prompt
+window._deferredInstallPrompt = null;
+window.addEventListener('beforeinstallprompt', e => {
+  e.preventDefault();
+  window._deferredInstallPrompt = e;
+  // Show a subtle banner if user is on settings
+  console.log('InTask can be installed!');
+});
+window.addEventListener('appinstalled', () => {
+  window._deferredInstallPrompt = null;
+  if(window.toast) toast('🎉 InTask installed successfully!');
+});
+// Apply saved preferences on load
+if(localStorage.getItem('intask_colorblind')==='1') document.body.classList.add('colorblind');
 </script>
 </body>
 </html>
