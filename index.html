@@ -7,42 +7,61 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="theme-color" content="#07071a">
 <title>InTask</title>
-<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <style>
 /* ============================================================
    RESET & VARIABLES
 ============================================================ */
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
 :root{
-  --bg:#0d1117;
-  --surf:#161b22;
-  --surf2:#1c2128;
-  --border:#30363d;
-  --accent:#2684ff;
-  --accent2:#4c9aff;
-  --accent3:#ffc400;
-  --green:#57d9a3;
-  --pink:#f77fbe;
-  --red:#ff5630;
-  --text:#c9d1d9;
-  --muted:#8b949e;
-  --r:8px;
+  --bg:#0a0a1a;
+  --surf:#12122a;
+  --surf2:#1a1a35;
+  --border:#2a2a55;
+  --accent:#ffd700;
+  --accent2:#ff6b9d;
+  --accent3:#7ec8e3;
+  --green:#57e89e;
+  --pink:#ff6b9d;
+  --red:#ff4757;
+  --text:#e8e8ff;
+  --muted:#9090b8;
+  --r:4px;
+  --pixel:'Press Start 2P',monospace;
 }
 body{
-  font-family:-apple-system,'Nunito',BlinkMacSystemFont,'Segoe UI',sans-serif;
+  font-family:'Nunito',sans-serif;
   background:var(--bg);
   color:var(--text);
   min-height:100vh;
   overflow-x:hidden;
-  -webkit-font-smoothing:antialiased;
+  image-rendering:pixelated;
 }
+/* MapleStory pixel sky background */
 body::before{
   content:'';
   position:fixed;inset:0;pointer-events:none;z-index:0;
   background:
-    radial-gradient(ellipse at 0% 0%,rgba(38,132,255,.06) 0%,transparent 60%),
-    radial-gradient(ellipse at 100% 100%,rgba(87,217,163,.04) 0%,transparent 60%);
+    linear-gradient(180deg,#0a0a2e 0%,#1a1a4e 40%,#0d0d25 100%);
 }
+/* Pixel stars */
+body::after{
+  content:'';
+  position:fixed;inset:0;pointer-events:none;z-index:0;
+  background-image:
+    radial-gradient(1px 1px at 10% 15%,#fff 0%,transparent 100%),
+    radial-gradient(1px 1px at 25% 8%,#ffd700 0%,transparent 100%),
+    radial-gradient(1px 1px at 40% 20%,#fff 0%,transparent 100%),
+    radial-gradient(1px 1px at 55% 5%,#ff6b9d 0%,transparent 100%),
+    radial-gradient(1px 1px at 70% 12%,#fff 0%,transparent 100%),
+    radial-gradient(1px 1px at 85% 18%,#7ec8e3 0%,transparent 100%),
+    radial-gradient(1px 1px at 92% 6%,#fff 0%,transparent 100%),
+    radial-gradient(1px 1px at 15% 30%,#ffd700 0%,transparent 100%),
+    radial-gradient(1px 1px at 60% 25%,#fff 0%,transparent 100%),
+    radial-gradient(1px 1px at 78% 22%,#fff 0%,transparent 100%);
+  animation:twinkle 3s ease-in-out infinite alternate;
+}
+@keyframes twinkle{0%{opacity:.5;}100%{opacity:1;}}
 
 /* ============================================================
    TYPOGRAPHY HELPERS
@@ -63,21 +82,21 @@ body::before{
 ============================================================ */
 .login-planet{font-size:52px;display:block;}
 @keyframes float{0%,100%{transform:translateY(0);}50%{transform:translateY(-6px);}}
-.login-title{font-family:'Nunito',sans-serif;font-size:32px;font-weight:900;color:var(--text);letter-spacing:-0.5px;margin-top:12px;}
+.login-title{font-family:'Press Start 2P',monospace;font-size:22px;font-weight:400;color:var(--text);letter-spacing:2px;margin-top:12px;text-shadow:3px 3px 0px rgba(255,215,0,.3);}
 .login-title span{color:var(--accent);}
-.login-sub{color:var(--muted);font-size:14px;font-weight:500;margin-top:6px;}
-.auth-card{width:100%;max-width:400px;background:var(--surf);border-radius:12px;padding:28px;border:1px solid var(--border);margin-top:24px;box-shadow:0 8px 32px rgba(0,0,0,.4);}
+.login-sub{color:var(--muted);font-size:10px;font-family:'Press Start 2P',monospace;margin-top:10px;line-height:2;}
+.auth-card{width:100%;max-width:400px;background:var(--surf);border-radius:0;padding:24px;border:2px solid var(--accent);margin-top:20px;box-shadow:4px 4px 0px var(--accent),inset 0 0 60px rgba(255,215,0,.03);}
 .google-btn{width:100%;padding:12px 16px;border-radius:6px;border:1px solid var(--border);background:var(--surf2);color:var(--text);font-family:'Nunito',sans-serif;font-size:14px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;transition:all .15s;}
 .google-btn:hover{border-color:var(--accent);background:rgba(38,132,255,.08);}
 .divider{display:flex;align-items:center;gap:12px;margin:16px 0;}
 .divider-line{flex:1;height:1px;background:var(--border);}
 .divider-text{font-size:11px;font-weight:600;color:var(--muted);}
 .field-label{font-size:12px;font-weight:600;color:var(--muted);letter-spacing:0;margin-bottom:6px;display:block;}
-.form-input{width:100%;background:var(--surf2);border:2px solid var(--border);border-radius:6px;padding:10px 12px;color:var(--text);font-family:'Nunito',sans-serif;font-size:14px;outline:none;margin-bottom:12px;transition:border-color .15s;}
+.form-input{width:100%;background:var(--surf2);border:2px solid var(--border);border-radius:0;padding:10px 12px;color:var(--text);font-family:'Nunito',sans-serif;font-size:13px;outline:none;margin-bottom:12px;transition:border-color .1s;}
 .form-input:focus{border-color:var(--accent);background:var(--bg);}
-.big-btn{width:100%;padding:12px 16px;border-radius:6px;border:none;background:var(--accent);color:#fff;font-family:'Nunito',sans-serif;font-size:14px;font-weight:700;cursor:pointer;transition:all .15s;}
-.big-btn:hover{background:var(--accent2);transform:none;}
-.big-btn:active{transform:scale(.98);}
+.big-btn{width:100%;padding:12px 16px;border-radius:0;border:2px solid var(--accent);background:var(--accent);color:#0a0a1a;font-family:'Press Start 2P',monospace;font-size:10px;cursor:pointer;transition:all .1s;box-shadow:3px 3px 0 rgba(0,0,0,.5);}
+.big-btn:hover{transform:translate(-1px,-1px);box-shadow:4px 4px 0 rgba(0,0,0,.5);}
+.big-btn:active{transform:translate(1px,1px);box-shadow:1px 1px 0 rgba(0,0,0,.5);}
 .big-btn:disabled{opacity:.5;cursor:not-allowed;}
 .auth-error{display:none;background:rgba(239,68,68,.15);border:1px solid var(--red);border-radius:10px;padding:12px;color:var(--red);font-size:13px;font-weight:600;margin-bottom:14px;}
 
@@ -92,12 +111,12 @@ body::before{
 /* ============================================================
    APP HEADER
 ============================================================ */
-.header{padding:48px 16px 10px;background:var(--surf);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100;}
+.header{padding:48px 16px 10px;background:rgba(10,10,26,.97);border-bottom:2px solid var(--accent);position:sticky;top:0;z-index:100;}
 .hdr-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
 .hdr-left{display:flex;align-items:center;gap:10px;}
 .hdr-avatar{font-size:24px;width:36px;height:36px;border-radius:8px;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;background:var(--surf2);}
-.hdr-name{font-size:14px;font-weight:700;color:var(--text);}
-.hdr-badge{display:inline-block;font-size:10px;font-weight:600;color:var(--accent);padding:2px 0;margin-top:2px;}
+.hdr-name{font-size:9px;font-weight:400;color:var(--text);font-family:'Press Start 2P',monospace;}
+.hdr-badge{display:inline-block;font-size:7px;font-weight:400;color:var(--accent3);padding:2px 0;margin-top:4px;font-family:'Press Start 2P',monospace;}
 .hdr-right{display:flex;align-items:center;gap:8px;}
 .sync-pill{display:flex;align-items:center;gap:4px;background:transparent;border:none;padding:0;}
 .sync-dot{width:6px;height:6px;border-radius:99px;background:var(--green);}
@@ -116,12 +135,12 @@ body::before{
 /* ============================================================
    BOTTOM NAV
 ============================================================ */
-.bottom-nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:430px;background:var(--surf);border-top:1px solid var(--border);display:flex;justify-content:space-around;align-items:center;padding:8px 0 20px;z-index:200;}
+.bottom-nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:430px;background:rgba(10,10,26,.97);border-top:2px solid var(--accent);display:flex;justify-content:space-around;align-items:center;padding:8px 0 20px;z-index:200;}
 .bnav-btn{display:flex;flex-direction:column;align-items:center;gap:2px;cursor:pointer;color:var(--muted);padding:4px 10px;border:none;background:transparent;transition:.15s;position:relative;}
 .bnav-btn.active{color:var(--accent);}
-.bnav-btn.active::before{content:'';position:absolute;top:-8px;left:50%;transform:translateX(-50%);width:32px;height:2px;background:var(--accent);border-radius:99px;}
+.bnav-btn.active::before{content:'▲';position:absolute;top:-14px;left:50%;transform:translateX(-50%);font-size:8px;color:var(--accent);}
 .bnav-icon{font-size:18px;}
-.bnav-label{font-size:10px;font-weight:700;}
+.bnav-label{font-size:8px;font-weight:700;font-family:'Press Start 2P',monospace;}
 
 /* ============================================================
    TAB PANELS
@@ -134,14 +153,14 @@ body::before{
    SHARED COMPONENTS
 ============================================================ */
 .sec-head{display:flex;align-items:center;justify-content:space-between;margin:16px 0 8px;}
-.sec-title{font-size:11px;font-weight:700;color:var(--muted);letter-spacing:1px;text-transform:uppercase;}
+.sec-title{font-size:8px;font-weight:400;color:var(--accent);letter-spacing:1px;text-transform:uppercase;font-family:'Press Start 2P',monospace;}
 .add-btn{width:28px;height:28px;border-radius:6px;border:1px solid var(--border);background:var(--surf2);color:var(--accent);font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.15s;}
 .add-btn:hover{background:rgba(38,132,255,.15);border-color:var(--accent);}
-.card{background:var(--surf);border:1px solid var(--border);border-radius:var(--r);}
+.card{background:var(--surf);border:2px solid var(--border);border-radius:0;}
 .pill-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;}
-.pill{padding:6px 14px;border-radius:4px;border:1px solid var(--border);background:var(--surf2);font-size:13px;font-weight:600;cursor:pointer;color:var(--muted);transition:.15s;}
-.pill:hover{border-color:var(--accent);color:var(--text);}
-.pill.active{background:rgba(38,132,255,.15);border-color:var(--accent);color:var(--accent);}
+.pill{padding:6px 12px;border-radius:0;border:2px solid var(--border);background:var(--surf2);font-size:11px;font-weight:600;cursor:pointer;color:var(--muted);transition:.1s;}
+.pill:hover{border-color:var(--accent);color:var(--accent);}
+.pill.active{background:rgba(255,215,0,.15);border-color:var(--accent);color:var(--accent);}
 .empty-state{text-align:center;padding:40px 0;color:var(--muted);}
 .empty-icon{font-size:40px;opacity:.3;margin-bottom:8px;}
 .empty-text{font-size:14px;font-weight:600;}
@@ -151,16 +170,16 @@ body::before{
 /* ============================================================
    TODAY TAB
 ============================================================ */
-.progress-card{background:var(--surf);border:1px solid var(--border);border-radius:8px;padding:16px 20px;margin-bottom:8px;display:flex;align-items:center;gap:16px;}
+.progress-card{background:var(--surf);border:2px solid var(--border);border-radius:0;padding:14px 16px;margin-bottom:8px;display:flex;align-items:center;gap:16px;box-shadow:3px 3px 0 rgba(0,0,0,.4);}
 .prog-label{font-size:11px;font-weight:600;color:var(--muted);margin-bottom:2px;}
 .prog-count{font-size:36px;font-weight:800;line-height:1;color:var(--text);}
 .prog-total{font-size:20px;color:var(--muted);font-weight:600;}
 .prog-sub{font-size:12px;color:var(--muted);font-weight:500;margin:4px 0 8px;}
 .prog-bar{height:4px;background:var(--border);border-radius:99px;overflow:hidden;}
 .prog-fill{height:100%;border-radius:99px;background:var(--accent);transition:width .5s ease;}
-.task-card{background:var(--surf);border:1px solid var(--border);border-left:3px solid var(--tc,var(--accent));border-radius:6px;padding:12px 14px;margin-bottom:8px;display:flex;align-items:center;gap:12px;cursor:pointer;transition:all .15s;}
-.task-card:hover{background:var(--surf2);border-color:var(--tc,var(--accent));}
-.task-card.done{opacity:.45;}
+.task-card{background:var(--surf);border:2px solid var(--border);border-left:4px solid var(--tc,var(--accent));border-radius:0;padding:10px 12px;margin-bottom:6px;display:flex;align-items:center;gap:12px;cursor:pointer;transition:all .1s;box-shadow:2px 2px 0 rgba(0,0,0,.4);}
+.task-card:hover{background:var(--surf2);transform:translate(-1px,-1px);box-shadow:3px 3px 0 rgba(0,0,0,.5);}
+.task-card.done{opacity:.4;}
 .task-check{width:26px;height:26px;border-radius:99px;border:2px solid;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .3s;}
 .task-body{flex:1;min-width:0;}
 .task-name{font-size:14px;font-weight:700;margin-bottom:5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
@@ -179,7 +198,7 @@ body::before{
 .mult-val{font-family:'Inter',sans-serif;font-variant-numeric:tabular-nums;font-size:22px;font-weight:900;color:var(--accent3);}
 .mult-track{height:8px;background:var(--border);border-radius:99px;overflow:hidden;}
 .mult-bar{height:100%;border-radius:99px;background:linear-gradient(90deg,#f59e0b,#ef4444);transition:width .5s;}
-.habit-card{background:var(--surf);border:1px solid var(--border);border-radius:8px;padding:14px;margin-bottom:8px;}
+.habit-card{background:var(--surf);border:2px solid var(--border);border-radius:0;padding:12px;margin-bottom:8px;box-shadow:3px 3px 0 rgba(0,0,0,.4);}
 .habit-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px;}
 .habit-name{font-size:15px;font-weight:800;margin-bottom:3px;}
 .habit-meta{font-size:11px;color:var(--muted);font-weight:600;}
@@ -188,9 +207,9 @@ body::before{
 .day-dot{flex:1;aspect-ratio:1;border-radius:8px;border:1px solid var(--border);background:var(--surf2);display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:800;color:var(--muted);}
 .day-dot.done{background:linear-gradient(135deg,var(--accent),var(--accent2));border-color:transparent;color:#fff;box-shadow:0 2px 8px rgba(124,58,237,.4);}
 .day-dot.today{border-color:var(--accent3);color:var(--accent3);}
-.done-btn{width:100%;padding:10px;border-radius:6px;border:none;background:var(--accent);color:#fff;font-family:'Nunito',sans-serif;font-size:13px;font-weight:700;cursor:pointer;transition:.15s;}
-.done-btn:hover{background:var(--accent2);}
-.done-btn.done-btn-done{background:rgba(87,217,163,.1);border:1px solid var(--green);color:var(--green);cursor:default;}
+.done-btn{width:100%;padding:10px;border-radius:0;border:2px solid var(--accent);background:var(--accent);color:#0a0a1a;font-family:'Press Start 2P',monospace;font-size:9px;cursor:pointer;transition:.1s;box-shadow:2px 2px 0 rgba(0,0,0,.5);}
+.done-btn:hover{transform:translate(-1px,-1px);}
+.done-btn.done-btn-done{background:rgba(87,217,163,.1);border:2px solid var(--green);color:var(--green);cursor:default;transform:none;box-shadow:none;}
 
 /* ============================================================
    CREW TAB
@@ -278,9 +297,9 @@ body::before{
 ============================================================ */
 .fit-tabs{display:flex;gap:6px;overflow-x:auto;margin-bottom:16px;padding-bottom:2px;}
 .fit-tabs::-webkit-scrollbar{display:none;}
-.fit-tab{padding:8px 14px;border-radius:4px;border:1px solid transparent;background:transparent;font-family:'Nunito',sans-serif;font-size:12px;font-weight:600;cursor:pointer;color:var(--muted);white-space:nowrap;transition:.15s;}
+.fit-tab{padding:7px 12px;border-radius:0;border:2px solid transparent;background:transparent;font-family:'Press Start 2P',monospace;font-size:7px;cursor:pointer;color:var(--muted);white-space:nowrap;transition:.1s;}
 .fit-tab:hover{color:var(--text);background:var(--surf2);}
-.fit-tab.active{background:rgba(38,132,255,.15);border-color:var(--accent);color:var(--accent);}
+.fit-tab.active{background:rgba(255,215,0,.1);border-color:var(--accent);color:var(--accent);}
 .fit-welcome{display:flex;flex-direction:column;align-items:center;text-align:center;padding:20px 0;}
 .fit-welcome-icon{font-size:72px;margin-bottom:12px;animation:float 3s ease-in-out infinite;}
 .fit-welcome-title{font-family:'Inter',sans-serif;font-variant-numeric:tabular-nums;font-size:20px;font-weight:900;color:var(--accent2);margin-bottom:8px;}
@@ -299,8 +318,8 @@ body::before{
 .bsc-diff{font-size:11px;font-weight:800;margin-top:3px;}
 .bsc-diff.pos{color:var(--green);}
 .bsc-diff.neg{color:var(--red);}
-.log-card{background:var(--surf);border:1px solid var(--border);border-radius:8px;padding:16px;margin-bottom:12px;}
-.log-card-title{font-size:12px;font-weight:700;color:var(--muted);letter-spacing:1px;margin-bottom:14px;text-transform:uppercase;}
+.log-card{background:var(--surf);border:2px solid var(--border);border-radius:0;padding:14px;margin-bottom:10px;box-shadow:3px 3px 0 rgba(0,0,0,.4);}
+.log-card-title{font-size:8px;font-weight:400;color:var(--accent3);letter-spacing:1px;margin-bottom:12px;text-transform:uppercase;font-family:'Press Start 2P',monospace;}
 .entry-card{background:var(--surf);border:1px solid var(--border);border-radius:12px;padding:12px;margin-bottom:8px;}
 .entry-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:5px;}
 .entry-date-text{font-size:11px;font-weight:800;color:var(--accent2);}
@@ -325,9 +344,9 @@ body::before{
 /* Log type */
 .log-type-row{display:flex;gap:8px;overflow-x:auto;margin-bottom:16px;padding-bottom:2px;}
 .log-type-row::-webkit-scrollbar{display:none;}
-.log-type-btn{padding:7px 16px;border-radius:4px;border:1px solid transparent;background:transparent;font-family:'Nunito',sans-serif;font-size:13px;font-weight:600;cursor:pointer;color:var(--muted);white-space:nowrap;transition:.15s;}
+.log-type-btn{padding:7px 12px;border-radius:0;border:2px solid transparent;background:transparent;font-family:'Press Start 2P',monospace;font-size:7px;cursor:pointer;color:var(--muted);white-space:nowrap;transition:.1s;}
 .log-type-btn:hover{color:var(--text);background:var(--surf2);}
-.log-type-btn.active{background:rgba(38,132,255,.15);border-color:var(--accent);color:var(--accent);}
+.log-type-btn.active{background:rgba(255,215,0,.1);border-color:var(--accent);color:var(--accent);}
 /* Exercise search */
 .ex-search{width:100%;background:var(--surf2);border:2px solid var(--accent);border-radius:14px;padding:14px 16px;color:var(--text);font-family:'Nunito',sans-serif;font-size:15px;outline:none;margin-bottom:12px;}
 .ex-search:focus{border-color:var(--accent2);}
@@ -346,17 +365,17 @@ body::before{
 /* Sets builder */
 .sets-head{display:flex;align-items:center;padding:0 8px;margin-bottom:8px;}
 .sets-head-lbl{font-size:10px;font-weight:800;color:var(--muted);letter-spacing:1px;text-transform:uppercase;}
-.set-row{display:grid;grid-template-columns:28px 1fr auto 1fr auto auto;align-items:center;gap:6px;background:var(--surf2);border-radius:12px;padding:8px 10px;margin-bottom:8px;border:1.5px solid transparent;transition:.2s;}
-.set-row.done-set{border-color:var(--green);background:rgba(16,185,129,.08);}
-.set-badge{width:24px;height:24px;border-radius:4px;background:rgba(38,132,255,.15);color:var(--accent);font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.set-row{display:flex;align-items:center;gap:3px;background:var(--surf2);border-radius:0;padding:6px 8px;margin-bottom:6px;border:2px solid var(--border);transition:.1s;width:100%;box-sizing:border-box;}
+.set-row.done-set{border-color:var(--green);background:rgba(87,217,163,.06);}
+.set-badge{width:20px;height:20px;border-radius:0;background:var(--accent);color:#0a0a1a;font-size:7px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-family:'Press Start 2P',monospace;}
 .set-fg{display:flex;align-items:center;gap:3px;}
 .set-adj{width:32px;height:32px;border-radius:9px;border:1px solid var(--border);background:var(--surf);color:var(--text);font-size:20px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:.15s;user-select:none;}
 .set-adj:active{background:var(--accent);border-color:var(--accent);color:#fff;transform:scale(.94);}
 .set-num-input{width:44px;background:var(--surf);border:1px solid var(--border);border-radius:8px;padding:5px 2px;color:var(--text);font-family:'Inter',sans-serif;font-variant-numeric:tabular-nums;font-size:15px;font-weight:700;text-align:center;outline:none;}
 .set-unit-lbl{display:none;}
-.set-x-lbl{font-size:14px;font-weight:900;color:var(--muted);flex-shrink:0;margin:0 2px;}
-.set-check-btn{width:32px;height:32px;border-radius:9px;border:1px solid var(--border);background:var(--surf2);color:var(--green);font-size:14px;font-weight:900;cursor:pointer;flex-shrink:0;transition:.2s;}
-.set-del-btn{background:none;border:none;color:var(--red);font-size:16px;cursor:pointer;flex-shrink:0;opacity:.6;padding:0;}
+.set-x-lbl{font-size:12px;font-weight:900;color:var(--muted);flex-shrink:0;margin:0 1px;}
+.set-check-btn{width:26px;height:26px;border-radius:0;border:2px solid var(--green);background:var(--surf2);color:var(--green);font-size:11px;font-weight:900;cursor:pointer;flex-shrink:0;transition:.1s;}
+.set-del-btn{background:none;border:none;color:var(--red);font-size:14px;cursor:pointer;flex-shrink:0;opacity:.7;padding:0 2px;}
 .set-del-btn:hover{opacity:1;}
 /* Set header labels */
 .sets-grid-head{display:grid;grid-template-columns:28px 1fr auto 1fr auto auto;gap:6px;padding:0 10px;margin-bottom:4px;}
@@ -367,8 +386,8 @@ body::before{
 .feel-btns{display:flex;gap:8px;}
 .feel-btn{width:48px;height:48px;border-radius:14px;border:2px solid var(--border);background:var(--surf2);font-size:22px;cursor:pointer;transition:.2s;display:flex;align-items:center;justify-content:center;}
 .feel-btn.sel{border-color:var(--accent);background:rgba(38,132,255,.15);transform:none;}
-.log-big-btn{width:100%;padding:14px;border-radius:6px;border:none;background:var(--accent);color:#fff;font-family:'Nunito',sans-serif;font-size:15px;font-weight:700;cursor:pointer;margin-top:12px;transition:.15s;}
-.log-big-btn:hover{background:var(--accent2);}
+.log-big-btn{width:100%;padding:14px;border-radius:0;border:2px solid var(--accent);background:var(--accent);color:#0a0a1a;font-family:'Press Start 2P',monospace;font-size:9px;cursor:pointer;margin-top:12px;transition:.1s;box-shadow:3px 3px 0 rgba(0,0,0,.5);}
+.log-big-btn:hover{transform:translate(-1px,-1px);box-shadow:4px 4px 0 rgba(0,0,0,.5);}
 .big-input-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px;}
 .big-input-wrap{display:flex;align-items:center;background:var(--surf2);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-top:5px;}
 .big-num-input{flex:1;background:transparent;border:none;padding:13px 10px;color:var(--text);font-family:'Inter',sans-serif;font-variant-numeric:tabular-nums;font-size:18px;font-weight:700;outline:none;width:0;min-width:0;}
@@ -397,11 +416,11 @@ body::before{
 .sei-sets-text{font-size:11px;color:var(--muted);font-weight:600;margin-top:2px;}
 .sei-del{background:none;border:none;font-size:16px;cursor:pointer;color:var(--red);opacity:.5;padding:4px;}
 .sei-del:hover{opacity:1;}
-.add-to-session-btn{width:100%;padding:16px;border-radius:14px;border:none;background:linear-gradient(135deg,#10b981,#059669);color:#fff;font-family:'Nunito',sans-serif;font-size:15px;font-weight:900;cursor:pointer;margin-top:12px;box-shadow:0 6px 20px rgba(16,185,129,.35);transition:.2s;}
-.add-to-session-btn:hover{transform:translateY(-2px);}
-.finish-session-big-btn{width:100%;padding:18px;border-radius:16px;border:none;background:linear-gradient(135deg,#10b981,#059669);color:#fff;font-family:'Nunito',sans-serif;font-size:17px;font-weight:900;cursor:pointer;margin-top:20px;box-shadow:0 8px 24px rgba(16,185,129,.4);transition:.2s;}
+.add-to-session-btn{width:100%;padding:14px;border-radius:0;border:2px solid var(--green);background:var(--green);color:#0a0a1a;font-family:'Press Start 2P',monospace;font-size:9px;cursor:pointer;margin-top:12px;transition:.1s;box-shadow:3px 3px 0 rgba(0,0,0,.5);}
+.add-to-session-btn:hover{transform:translate(-1px,-1px);}
+.finish-session-big-btn{width:100%;padding:14px;border-radius:0;border:2px solid var(--green);background:var(--green);color:#0a0a1a;font-family:'Press Start 2P',monospace;font-size:9px;cursor:pointer;margin-top:16px;transition:.1s;box-shadow:3px 3px 0 rgba(0,0,0,.5);}
 .finish-session-big-btn:disabled{opacity:.4;cursor:not-allowed;}
-.finish-session-big-btn:hover:not(:disabled){transform:translateY(-2px);}
+.finish-session-big-btn:hover:not(:disabled){transform:translate(-1px,-1px);}
 .start-workout-card{background:linear-gradient(135deg,rgba(124,58,237,.18),rgba(6,182,212,.1));border:1px solid rgba(124,58,237,.4);border-radius:20px;padding:20px;display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:16px;box-shadow:0 8px 32px rgba(124,58,237,.15);}
 .swc-info{flex:1;}
 .swc-title{font-size:17px;font-weight:900;margin-bottom:5px;}
@@ -487,22 +506,22 @@ body::before{
 ============================================================ */
 .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:500;display:flex;align-items:flex-end;justify-content:center;opacity:0;pointer-events:none;transition:opacity .2s;}
 .modal-overlay.open{opacity:1;pointer-events:all;}
-.modal{background:var(--surf);border-radius:12px 12px 0 0;width:100%;max-width:430px;padding:20px;padding-bottom:40px;border-top:1px solid var(--border);transform:translateY(100%);transition:transform .3s ease;max-height:90vh;overflow-y:auto;}
+.modal{background:var(--surf);border-radius:0;width:100%;max-width:430px;padding:20px;padding-bottom:40px;border-top:3px solid var(--accent);transform:translateY(100%);transition:transform .3s ease;max-height:90vh;overflow-y:auto;}
 .modal-overlay.open .modal{transform:translateY(0);}
 .modal-handle{width:36px;height:3px;background:var(--border);border-radius:99px;margin:0 auto 18px;}
-.modal-title{font-size:16px;font-weight:700;text-align:center;margin-bottom:18px;color:var(--text);}
-.modal-tabs{display:flex;background:var(--surf2);border-radius:6px;padding:3px;margin-bottom:16px;border:1px solid var(--border);}
-.modal-tab{flex:1;padding:8px;border-radius:4px;border:none;background:transparent;color:var(--muted);font-family:'Nunito',sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:.15s;}
-.modal-tab.active{background:var(--accent);color:#fff;}
+.modal-title{font-size:11px;font-weight:400;text-align:center;margin-bottom:18px;color:var(--accent);font-family:'Press Start 2P',monospace;text-shadow:2px 2px 0 rgba(0,0,0,.5);}
+.modal-tabs{display:flex;background:var(--surf2);border-radius:0;padding:3px;margin-bottom:16px;border:2px solid var(--border);}
+.modal-tab{flex:1;padding:8px;border-radius:0;border:none;background:transparent;color:var(--muted);font-family:'Press Start 2P',monospace;font-size:8px;cursor:pointer;transition:.1s;}
+.modal-tab.active{background:var(--accent);color:#0a0a1a;}
 
 /* ============================================================
    CELEBRATION OVERLAY
 ============================================================ */
 #celebration{position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:9000;display:none;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;}
 #celebration.show{display:flex;}
-#cel-title{font-size:22px;font-weight:800;color:var(--text);text-align:center;margin-bottom:10px;animation:celPop .4s ease;}
+#cel-title{font-size:14px;font-weight:400;color:var(--accent);text-align:center;margin-bottom:10px;animation:celPop .4s ease;font-family:'Press Start 2P',monospace;text-shadow:2px 2px 0 rgba(0,0,0,.8);}
 #cel-sub{font-size:15px;font-weight:600;text-align:center;margin-bottom:8px;color:var(--muted);}
-#cel-xp{font-size:40px;font-weight:800;color:var(--accent3);animation:celPop .4s .15s ease both;}
+#cel-xp{font-size:28px;font-weight:400;color:var(--accent);animation:celPop .4s .15s ease both;font-family:'Press Start 2P',monospace;text-shadow:3px 3px 0 rgba(255,107,157,.5);}
 #cel-extra{font-size:13px;color:var(--accent);font-weight:600;margin-top:8px;}
 #cel-hint{font-size:11px;color:var(--muted);margin-top:20px;font-weight:500;}
 @keyframes celPop{from{transform:scale(.7);opacity:0;}to{transform:scale(1);opacity:1;}}
@@ -552,6 +571,7 @@ body::before{
 .edit-btn:hover{opacity:1;background:rgba(6,182,212,.15);}
 .wec-actions{display:flex;gap:4px;align-items:center;flex-shrink:0;}
 .login-logo{margin-bottom:4px;animation:float 3s ease-in-out infinite;}
+@keyframes float{0%,100%{transform:translateY(0);}50%{transform:translateY(-8px);}}
 
 /* ── Exercise Demo ── */
 .ex-demo-card{display:none;}
@@ -565,6 +585,13 @@ body::before{
 .set-mode-row{display:flex;gap:6px;margin-bottom:10px;}
 .set-mode-btn{flex:1;padding:7px;border-radius:6px;border:1px solid var(--border);background:transparent;color:var(--muted);font-family:'Nunito',sans-serif;font-size:12px;font-weight:700;cursor:pointer;transition:.15s;}
 .set-mode-btn.active{background:rgba(38,132,255,.15);border-color:var(--accent);color:var(--accent);}
+
+.set-col-lbl{font-size:8px;font-weight:700;color:var(--muted);flex-shrink:0;}
+
+/* ── YouTube embed ── */
+.ex-yt-wrap{width:100%;position:relative;padding-bottom:56.25%;height:0;overflow:hidden;border-radius:0;border:2px solid var(--border);margin-bottom:14px;background:#000;}
+.ex-yt-frame{position:absolute;top:0;left:0;width:100%;height:100%;border:0;}
+.ex-detail-banner{background:var(--surf2);border:2px solid var(--border);margin-bottom:14px;}
 </style>
 
 <!-- Firebase -->
@@ -1299,7 +1326,7 @@ function updateExFormSection() {
         <button class="set-mode-btn${setMode==='reps'?' active':''}" id="smb-reps" onclick="toggleSetMode('reps')">Reps</button>
         <button class="set-mode-btn${setMode==='duration'?' active':''}" id="smb-duration" onclick="toggleSetMode('duration')">Duration</button>
       </div>
-      <div class="sets-grid-head" id="sets-mode-header">${setModeHeader()}</div>
+      
       <div id="sets-builder">${currentSets.map((s,i)=>setRowHTML(s,i)).join('')}</div>
       <button class="add-set-btn" onclick="addSet()">＋ Add Set</button>
       <div class="feel-row">
@@ -1490,32 +1517,24 @@ function timerCardHTML() {
 
 // ─── SET BUILDER ──────────────────────────────────────────
 function setRowHTML(s, i) {
-  const isDur = setMode === 'duration';
+  const isReps = setMode !== 'duration';
+  const secondVal = isReps ? (s.reps||8) : (s.duration||30);
+  const secondId = isReps ? `sr_r${i}` : `sr_d${i}`;
+  const secondField = isReps ? 'reps' : 'duration';
+  const secondStep = isReps ? 1 : 5;
+  const secondLabel = isReps ? 'reps' : 'sec';
   return `<div class="set-row${s.done?' done-set':''}" id="sr${i}">
-    <div class="set-badge mono">S${i+1}</div>
-    <div class="set-fg">
-      <button class="set-adj" onclick="adjSet(${i},'weight',-2.5)">−</button>
-      <input class="set-num-input" type="number" inputmode="decimal" value="${s.weight||''}" placeholder="—" oninput="updSet(${i},'weight',this.value)" id="sw${i}">
-      <button class="set-adj" onclick="adjSet(${i},'weight',2.5)">+</button>
-    </div>
+    <span class="set-badge">${i+1}</span>
+    <button class="set-adj" onclick="adjSet(${i},'weight',-2.5)">−</button>
+    <input class="set-num-input" type="number" inputmode="decimal" value="${s.weight||''}" placeholder="0" oninput="updSet(${i},'weight',this.value)" id="sw${i}">
+    <button class="set-adj" onclick="adjSet(${i},'weight',2.5)">+</button>
     <span class="set-x-lbl">×</span>
-    ${isDur ? `
-    <div class="set-fg">
-      <button class="set-adj" onclick="adjSet(${i},'dur',-5)">−</button>
-      <input class="set-num-input" type="number" inputmode="numeric" value="${s.dur||30}" placeholder="30" oninput="updSet(${i},'dur',this.value)" id="sr_d${i}" style="width:48px">
-      <button class="set-adj" onclick="adjSet(${i},'dur',5)">+</button>
-    </div>
-    <span style="font-size:10px;color:var(--muted);flex-shrink:0">sec</span>
-    ` : `
-    <div class="set-fg">
-      <button class="set-adj" onclick="adjSet(${i},'reps',-1)">−</button>
-      <input class="set-num-input" type="number" inputmode="numeric" value="${s.reps||8}" oninput="updSet(${i},'reps',this.value)" id="sr_r${i}">
-      <button class="set-adj" onclick="adjSet(${i},'reps',1)">+</button>
-    </div>
-    <span style="font-size:10px;color:var(--muted);flex-shrink:0">reps</span>
-    `}
+    <button class="set-adj" onclick="adjSet(${i},'${secondField}',-${secondStep})">−</button>
+    <input class="set-num-input" type="number" inputmode="numeric" value="${secondVal}" oninput="updSet(${i},'${secondField}',this.value)" id="${secondId}">
+    <button class="set-adj" onclick="adjSet(${i},'${secondField}',${secondStep})">+</button>
+    <span class="set-col-lbl" style="font-size:8px;color:var(--muted);flex-shrink:0">${secondLabel}</span>
     <button class="set-check-btn" id="scb${i}" onclick="doneSet(${i})">✓</button>
-    <button class="set-del-btn" onclick="delSet(${i})">×</button>
+    <button class="set-del-btn" onclick="delSet(${i})">✕</button>
   </div>`;
 }
 
@@ -1958,7 +1977,7 @@ function renderLogForm(type) {
   if(type==='weights') {
     c.innerHTML=`${timerCardHTML()}<div class="log-card">
       <div class="log-card-title">➕ LOG EXERCISE</div>
-      <input id="ex-search" class="ex-search" placeholder="🔍 Search exercise or muscle (e.g. bicep, chest, back)..." autocomplete="off" oninput="window._sq=this.value;window._doExSearch&&window._doExSearch(this.value)" onkeydown="event.stopPropagation()">
+      <input id="ex-search" class="ex-search" placeholder="🔍 Search exercise or muscle (e.g. bicep, chest, back)..." autocomplete="off" oninput="if(window._doExSearch){window._doExSearch(this.value)}" autocomplete="off">
       <div id="ex-results-container"></div>
       ${selEx?`
         <div class="sel-ex-banner">
@@ -1971,7 +1990,7 @@ function renderLogForm(type) {
           <button class="set-mode-btn${setMode==='reps'?' active':''}" id="smb-reps" onclick="toggleSetMode('reps')">Reps</button>
           <button class="set-mode-btn${setMode==='duration'?' active':''}" id="smb-duration" onclick="toggleSetMode('duration')">Duration</button>
         </div>
-        <div class="sets-grid-head" id="sets-mode-header">${setModeHeader()}</div>
+        
         <div id="sets-builder">${currentSets.map((s,i)=>setRowHTML(s,i)).join('')}</div>
         <button class="add-set-btn" onclick="addSet()">＋ Add Set</button>
         <div class="feel-row">
@@ -2078,7 +2097,7 @@ function renderActiveSession() {
       </div>`).join('')}
     </div>`:''}
     <div class="sec-title" style="margin:16px 0 10px">➕ ADD EXERCISE</div>
-    <input id="ex-search" class="ex-search" placeholder="🔍 Search exercise or muscle..." autocomplete="off" oninput="window._sq=this.value;window._doExSearch&&window._doExSearch(this.value)" onkeydown="event.stopPropagation()">
+    <input id="ex-search" class="ex-search" placeholder="🔍 Search exercise or muscle..." autocomplete="off" oninput="if(window._doExSearch){window._doExSearch(this.value)}" autocomplete="off">
     <div id="ex-results-container"></div>
     <div id="ex-form-section"></div>
     <button class="finish-session-big-btn" onclick="finishSession()" ${sess.exercises.length===0?'disabled':''}>
@@ -2276,7 +2295,7 @@ function groupByDate(entries) {
   }));
 }
 
-window.renderLibrary = function() {
+window.renderLibrary = function(keepFocus) {
   const lf = window._libFilter||'all';
   const ls = window._libSearch||'';
   const filtered=EXERCISE_DB.filter(ex=>{
@@ -2286,17 +2305,47 @@ window.renderLibrary = function() {
   });
   const typeIcon = {weights:'🏋️',calisthenics:'💪',run:'🏃',swim:'🏊',cardio:'❤️'};
   const s=getFitSub(); if(!s) return;
-  s.innerHTML=`<div class="sec-title" style="margin-bottom:12px">📚 EXERCISE LIBRARY</div>
-    <input class="form-input" placeholder="🔍 Search exercises or muscles..." value="${ls}" oninput="window._libSearch=this.value;window.renderLibrary()" style="margin-bottom:12px">
-    <div class="lib-filters">${[['all','All'],['weights','🏋️ Weights'],['calisthenics','💪 Calisthenics'],['run','🏃 Running'],['swim','🏊 Swimming']].map(([v,l])=>`<button class="lib-filter-btn${lf===v?' active':''}" onclick="window._libFilter='${v}';window.renderLibrary()">${l}</button>`).join('')}</div>
-    <div style="font-size:11px;color:var(--muted);font-weight:600;margin-bottom:12px">${filtered.length} exercises</div>
-    <div class="ex-lib-list">${filtered.map(ex=>`
+
+  // If the library scaffold already exists, only update results (preserves search input focus)
+  const existingResults = document.getElementById('lib-results');
+  if (existingResults) {
+    // Only update filters and results, leave search input alone
+    const filtersEl = document.getElementById('lib-filters');
+    if(filtersEl) filtersEl.innerHTML = [['all','All'],['weights','🏋️ Weights'],['calisthenics','💪 Calisthenics'],['run','🏃 Running'],['swim','🏊 Swimming']].map(([v,l])=>`<button class="lib-filter-btn${lf===v?' active':''}" onclick="window._libFilter='${v}';window.renderLibrary(true)">${l}</button>`).join('');
+    const countEl = document.getElementById('lib-count');
+    if(countEl) countEl.textContent = filtered.length + ' exercises';
+    existingResults.innerHTML = filtered.map(ex=>`
       <div class="ex-lib-card" onclick="showExDetail('${ex.id}')">
         <span class="ex-lib-gif">${typeIcon[ex.type]||'💪'}</span>
         <div class="ex-lib-info"><div class="ex-lib-name">${ex.name}</div><div class="ex-lib-muscles">${ex.muscles.join(', ')}</div></div>
         <div class="ex-lib-right"><div class="ex-lib-diff">${'●'.repeat(ex.difficulty)}${'○'.repeat(5-ex.difficulty)}</div><div class="ex-lib-type">${ex.type}</div></div>
-      </div>`).join('')}
-    </div>`;
+      </div>`).join('');
+    return;
+  }
+
+  // First render: build full scaffold
+  s.innerHTML=`
+    <div class="sec-title" style="margin-bottom:12px">📚 EXERCISE LIBRARY</div>
+    <input id="lib-search-input" class="form-input" placeholder="🔍 Search exercises or muscles..." style="margin-bottom:10px" autocomplete="off">
+    <div id="lib-filters" class="lib-filters"></div>
+    <div id="lib-count" style="font-size:10px;color:var(--muted);font-weight:600;margin-bottom:10px"></div>
+    <div id="lib-results" class="ex-lib-list"></div>`;
+
+  // Wire up search input with persistent event listener
+  const inp = document.getElementById('lib-search-input');
+  if(inp) {
+    inp.value = ls;
+    inp.addEventListener('input', function() {
+      window._libSearch = this.value;
+      window.renderLibrary(true);
+    });
+    inp.addEventListener('compositionend', function() {
+      window._libSearch = this.value;
+      window.renderLibrary(true);
+    });
+  }
+  // Now populate filters and results
+  window.renderLibrary(false);
 }
 
 
@@ -2304,11 +2353,63 @@ window.showExDetail = id => {
   const ex=EXERCISE_DB.find(e=>e.id===id); if(!ex) return;
   const s=getFitSub(); if(!s) return;
   const diffLabels=['Beginner','Beginner','Intermediate','Advanced','Elite'];
+  const ytMap = {
+    'bench_press':'vcBig73ojpE',
+    'incline_press':'DbFgADa2PL8',
+    'pushup':'IODxDxX7oi4',
+    'dips':'yN6Q1UI_xb0',
+    'pullup':'eGo4IYlbE5g',
+    'bent_row':'FWJR5Ve8bnQ',
+    'deadlift':'op9kVnSso6Q',
+    'lat_pulldown':'CAwf7n6Luuc',
+    'ohp':'2yjwXTZbDtY',
+    'lateral_raise':'FeSmKQlv_kA',
+    'bicep_curl':'ykJmrZ5v0Oo',
+    'hammer_curl':'zC3nLlEvin4',
+    'skull_crusher':'d_KpyzTerms',
+    'tricep_pushdown':'2-LAMcpzODU',
+    'squat':'ultWZbUMPL8',
+    'rdl':'hCDzSR6Ppis',
+    'leg_press':'IZxyjW7MPJQ',
+    'lunge':'QOVaHwm-Q6U',
+    'glute_bridge':'wPM8icPu6H8',
+    'plank':'pvIjFBVFgVM',
+    'dead_bug':'4XLEnwUr1d8',
+    'hanging_leg_raise':'hdng3Nm1x70',
+    'muscle_up':'F-xEL4Gkzos',
+    'pistol_squat':'vq5-vdgJc0I',
+    'planche_lean':'Cd5DUuMFNJs',
+    'tuck_planche':'FDMZiZGVLpg',
+    'straddle_planche':'1UqRb6AZKJE',
+    'full_planche':'1UqRb6AZKJE',
+    'front_lever':'tiLHaste9dY',
+    'tuck_front_lever':'WbHqBaHR0ac',
+    'back_lever':'NKjWZfSEAFM',
+    'dragon_flag':'pvz7k5gOKAw',
+    'human_flag':'kAsYB5yb8jQ',
+    'handstand_pushup':'tQhrk6WqDSg',
+    'l_sit':'IUZKcvEOaG4',
+    'v_sit':'HoE-C85ZWCg',
+    'skin_cat':'dZVFGXDqpGI',
+    'archer_pushup':'qbDFBuFGJXM',
+    'one_arm_pushup':'qbDFBuFGJXM',
+    'typewriter_pullup':'Bn6sauqHZVo',
+    'easy_run':'brFHyOtTwH4',
+    'interval_run':'brFHyOtTwH4',
+    'tempo_run':'brFHyOtTwH4',
+    'freestyle':'gh5mAtmeR3Y',
+    'breaststroke':'Lp-TKN-we8U',
+    'calf_raise':'-M4-G8p1vyg',
+    'ab_wheel':'j2iaMqnXm8k'
+  };
+  const ytId = ytMap[ex.id] || null;
+  const typeIcon = {weights:'🏋️',calisthenics:'💪',run:'🏃',swim:'🏊',cardio:'❤️'};
   s.innerHTML=`
     <button class="back-btn" onclick="window.renderLibrary()">← Back to Library</button>
     <div class="ex-detail-wrap">
-      <div class="ex-detail-banner" style="background:var(--surf2);border:1px solid var(--border);border-radius:8px;padding:24px;text-align:center;margin-bottom:16px;font-size:48px;">${{weights:'🏋️',calisthenics:'💪',run:'🏃',swim:'🏊',cardio:'❤️'}[ex.type]||'💪'}</div>
-      <div class="ex-detail-top" style="margin-top:4px">
+      <!-- yt handled above -->
+      ${false ? `<div src="https://www.youtube.com/embed/${ytId}?rel=0&modestbranding=1&playsinline=1" frameborder="0" allow="accelerometer;autoplay;clipboard-write;encrypted-media;gyroscope;picture-in-picture" allowfullscreen loading="lazy"></iframe></div>` : `<div class="ex-detail-banner" style="font-size:48px;text-align:center;padding:20px">${typeIcon[ex.type]||'💪'}</div>`}
+      <div class="ex-detail-top" style="margin-top:8px">
         <div>
           <div class="ex-detail-title">${ex.name}</div>
           <div class="ex-detail-meta">${ex.type} · ${ex.category}</div>
@@ -2471,15 +2572,8 @@ const colRow=g('col-row'); if(colRow) colRow.innerHTML=COLORS.map((c,i)=>`<div c
 
 <!-- ═══ LOGIN SCREEN ═══ -->
 <div id="login" class="screen active">
-  <div class="login-logo">
-    <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
-      <rect width="48" height="48" rx="12" fill="#2684FF"/>
-      <rect x="10" y="14" width="28" height="3" rx="1.5" fill="white" opacity=".9"/>
-      <rect x="10" y="22" width="20" height="3" rx="1.5" fill="white" opacity=".7"/>
-      <rect x="10" y="30" width="24" height="3" rx="1.5" fill="white" opacity=".8"/>
-    </svg>
-  </div>
-  <div class="login-title">In<span>Task</span></div>
+  <div class="login-logo" style="font-size:56px;filter:drop-shadow(0 0 20px rgba(255,215,0,.6))">🍄</div>
+  <div class="login-title">⚔️ In<span>Task</span></div>
   <div class="login-sub">Productivity. Simplified.</div>
   <div class="auth-card">
     <div id="auth-err" class="auth-error"></div>
@@ -2861,6 +2955,61 @@ function switchCrewTab(tab) {
   document.getElementById('crew-create-section').style.display = tab==='create'?'block':'none';
   document.getElementById('crew-join-section').style.display = tab==='join'?'block':'none';
 }
+
+// ── MapleStory BGM ──────────────────────────────────────
+let bgmPlayer = null, bgmPlaying = false, bgmReady = false;
+
+function loadYTApi() {
+  if (window.YT) { initBGMPlayer(); return; }
+  const tag = document.createElement('script');
+  tag.src = 'https://www.youtube.com/iframe_api';
+  document.head.appendChild(tag);
+}
+
+window.onYouTubeIframeAPIReady = function() {
+  initBGMPlayer();
+};
+
+function initBGMPlayer() {
+  bgmPlayer = new YT.Player('yt-player', {
+    height:'1', width:'1',
+    // Henesys theme - MapleStory OST on YouTube
+    videoId: 'vlhKWXE7TRw',
+    playerVars: { autoplay:0, loop:1, playlist:'vlhKWXE7TRw', controls:0, mute:0 },
+    events: {
+      onReady: () => { bgmReady = true; },
+      onStateChange: (e) => {
+        if (e.data === YT.PlayerState.ENDED) bgmPlayer.playVideo();
+      }
+    }
+  });
+}
+
+function toggleBGM() {
+  if (!bgmReady) {
+    loadYTApi();
+    setTimeout(toggleBGM, 1500);
+    return;
+  }
+  const btn = document.getElementById('bgm-btn');
+  const lbl = document.getElementById('bgm-label');
+  if (bgmPlaying) {
+    bgmPlayer.pauseVideo();
+    bgmPlaying = false;
+    btn.textContent = '🎵';
+    btn.style.borderColor = 'var(--accent)';
+    btn.style.color = 'var(--accent)';
+    if(lbl) lbl.style.display='none';
+  } else {
+    bgmPlayer.playVideo();
+    bgmPlaying = true;
+    btn.textContent = '🔊';
+    btn.style.borderColor = 'var(--green)';
+    btn.style.color = 'var(--green)';
+    if(lbl) lbl.style.display='block';
+  }
+}
+
 </script>
 </body>
 </html>
