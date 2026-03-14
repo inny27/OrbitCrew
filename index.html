@@ -1720,6 +1720,73 @@ window.exportPDF = function() {
   <div style="font-size:14px;color:var(--muted);font-weight:600;margin:16px 0">Recover. Breathe. Next set incoming.</div>
   <button onclick="skipRest()" style="background:var(--surf);border:1px solid var(--border);border-radius:99px;padding:14px 32px;color:var(--text);font-family:'Nunito',sans-serif;font-size:15px;font-weight:800;cursor:pointer">Skip Rest →</button>
 </div>
+<script>
+// Bridge module functions to global scope for onclick handlers
+function doGoogleLogin(){window.doGoogleLogin && window.doGoogleLogin();}
+function doEmailLogin(){window.doEmailLogin && window.doEmailLogin();}
+function doLogout(){window.doLogout && window.doLogout();}
+function completeProfile(){window.completeProfile && window.completeProfile();}
+function switchTab(t){window.switchTab && window.switchTab(t);}
+function openModal(id){window.openModal && window.openModal(id);}
+function closeModal(id){window.closeModal && window.closeModal(id);}
+function switchCrewTab(t){window.switchCrewTab && window.switchCrewTab(t);}
+function selectAvatar(a,el){window.selectAvatar && window.selectAvatar(a,el);}
+function selectColor(c,el){window.selectColor && window.selectColor(c,el);}
+function selectPill(v,g,el){window.selectPill && window.selectPill(v,g,el);}
+function addTask(){window.addTask && window.addTask();}
+function deleteTask(id){window.deleteTask && window.deleteTask(id);}
+function completeTask(id){window.completeTask && window.completeTask(id);}
+function addHabit(){window.addHabit && window.addHabit();}
+function completeHabit(id){window.completeHabit && window.completeHabit(id);}
+function createCrew(){window.createCrew && window.createCrew();}
+function joinCrew(){window.joinCrew && window.joinCrew();}
+function leaveCrew(){window.leaveCrew && window.leaveCrew();}
+function sendCrewMessage(){window.sendCrewMessage && window.sendCrewMessage();}
+function sendNudge(t){window.sendNudge && window.sendNudge(t);}
+function sendBoost(n){window.sendBoost && window.sendBoost(n);}
+function exportCSV(){window.exportCSV && window.exportCSV();}
+function exportPDF(){window.exportPDF && window.exportPDF();}
+function renderFitness(){window.renderFitness && window.renderFitness();}
+function switchFitnessTab(t,el){window.switchFitnessTab && window.switchFitnessTab(t,el);}
+function optIntoFitness(){window.optIntoFitness && window.optIntoFitness();}
+function setBodyMode(m){window.setBodyMode && window.setBodyMode(m);}
+function setFitnessGoal(g){window.setFitnessGoal && window.setFitnessGoal(g);}
+function logBodyEntry(){window.logBodyEntry && window.logBodyEntry();}
+function deleteBodyEntry(i){window.deleteBodyEntry && window.deleteBodyEntry(i);}
+function deleteWorkoutEntry(id){window.deleteWorkoutEntry && window.deleteWorkoutEntry(id);}
+function setLogType(t,el){window.setLogType && window.setLogType(t,el);}
+function startStopTimer(){window.startStopTimer && window.startStopTimer();}
+function resetTimer(){window.resetTimer && window.resetTimer();}
+function startRestTimer(s){window.startRestTimer && window.startRestTimer(s);}
+function skipRest(){window.skipRest && window.skipRest();}
+function updateExSearch(q){window.updateExSearch && window.updateExSearch(q);}
+function updateExSearchLive(q){window.updateExSearchLive && window.updateExSearchLive(q);}
+function selectExercise(id){window.selectExercise && window.selectExercise(id);}
+function addSet(){window.addSet && window.addSet();}
+function removeSet(i){window.removeSet && window.removeSet(i);}
+function updateSet(i,f,v){window.updateSet && window.updateSet(i,f,v);}
+function adjustSetVal(i,f,d){window.adjustSetVal && window.adjustSetVal(i,f,d);}
+function markSetDone(i){window.markSetDone && window.markSetDone(i);}
+function setFeel(f,el){window.setFeel && window.setFeel(f,el);}
+function selectTypeBig(el,g){window.selectTypeBig && window.selectTypeBig(el,g);}
+function logWorkoutEntry(){window.logWorkoutEntry && window.logWorkoutEntry();}
+function logRunEntry(){window.logRunEntry && window.logRunEntry();}
+function logSwimEntry(){window.logSwimEntry && window.logSwimEntry();}
+function logCardioEntry(){window.logCardioEntry && window.logCardioEntry();}
+function startWorkoutSession(){window.startWorkoutSession && window.startWorkoutSession();}
+function finishSession(){window.finishSession && window.finishSession();}
+function cancelSession(){window.cancelSession && window.cancelSession();}
+function addExToSession(){window.addExToSession && window.addExToSession();}
+function clearExSelection(){window.clearExSelection && window.clearExSelection();}
+function removeSessionEx(i){window.removeSessionEx && window.removeSessionEx(i);}
+function filterLibrary(q){window.filterLibrary && window.filterLibrary(q);}
+function setLibFilter(f){window.setLibFilter && window.setLibFilter(f);}
+function showExDetail(id){window.showExDetail && window.showExDetail(id);}
+function unlockSkill(id){window.unlockSkill && window.unlockSkill(id);}
+function adjustReps(id,d){window.adjustReps && window.adjustReps(id,d);}
+function addGuideToDay(id){window.addGuideToDay && window.addGuideToDay(id);}
+function showGuideDetail(id){window.showGuideDetail && window.showGuideDetail(id);}
+</script>
 </body></html>`);
   win.document.close();
   toast('📄 PDF report generated!');
