@@ -992,6 +992,14 @@ async function loadFitness(uid) {
 
 async function saveFitness() {
   if (!currentUser) return;
+  // Deduplicate entries by ID before saving (prevent any overwrites)
+  const seen = new Set();
+  const deduped = workoutEntries.filter(e => {
+    if (seen.has(e.id)) return false;
+    seen.add(e.id);
+    return true;
+  });
+  workoutEntries = deduped;
   const data = { optedIn:true, ...(fitnessProfile||{}), bodyEntries, workoutEntries, updatedAt:serverTimestamp() };
   await setDoc(doc(db,'fitness',currentUser.uid), data, {merge:true});
 }
@@ -1349,14 +1357,21 @@ window.startWorkoutSession = () => {
 };
 
 window.selectExercise = id => {
-  selEx = EXERCISE_DB.find(e=>e.id===id);
-  exQuery = selEx?.name||''; currentSets=[{reps:8,weight:'',dur:30}]; currentFeel='good'; setMode='reps';
-  if (activeSession) {
-    // Only update the dynamic section, keep search input intact
-    updateExFormSection();
-  } else {
-    updateExFormSection();
+  // Auto-save current exercise if it has data and we're switching
+  if (selEx && activeSession) {
+    const hasData = currentSets.some(s => (s.reps && s.reps > 0) || (s.weight && parseFloat(s.weight) > 0) || (s.duration && s.duration > 0));
+    if (hasData) {
+      // Auto-add the current exercise before switching
+      const sets = currentSets.map(s=>({weight:parseFloat(s.weight)||0,reps:parseInt(s.reps)||0,duration:parseInt(s.duration)||0,mode:s.mode||setMode}));
+      const notes = g('ex-notes')?.value||'';
+      activeSession.exercises.push({exId:selEx.id,exName:selEx.name,muscles:selEx.muscles,sets,feel:currentFeel,notes});
+      toast(`✅ ${selEx.name} auto-saved!`);
+      playSound('complete');
+    }
   }
+  selEx = EXERCISE_DB.find(e=>e.id===id);
+  exQuery = selEx?.name||''; currentSets=[{reps:8,weight:'',duration:30,mode:'reps'}]; currentFeel='good'; setMode='reps';
+  updateExFormSection();
 };
 
 window.clearExSelection = () => {
@@ -1441,8 +1456,10 @@ window.finishSession = async () => {
   if (!activeSession?.exercises.length) { toast('Add at least one exercise!'); return; }
   const sessionName = activeSession.name || `Workout ${new Date().toLocaleDateString('en-GB',{day:'numeric',month:'short'})}`;
   const sessionId = Date.now().toString();
-  for (const ex of activeSession.exercises) {
-    await saveWorkoutEntry({id:sessionId+ex.exId, date:new Date().toISOString(), type:'weights', sessionId, sessionName, exercise:ex.exId, exerciseName:ex.exName, muscles:ex.muscles, sets:ex.sets, feel:ex.feel, notes:ex.notes, workoutTime:timerSecs});
+  for (let i = 0; i < activeSession.exercises.length; i++) {
+    const ex = activeSession.exercises[i];
+    // Use index in ID so duplicate exercises in same session get unique IDs
+    await saveWorkoutEntry({id:`${sessionId}_${i}_${ex.exId}`, date:new Date().toISOString(), type:'weights', sessionId, sessionName, exercise:ex.exId, exerciseName:ex.exName, muscles:ex.muscles, sets:ex.sets, feel:ex.feel, notes:ex.notes, workoutTime:timerSecs});
   }
   const xpEarned = activeSession.exercises.length*15+25;
   await gainXP(xpEarned,{totalDone:activeSession.exercises.length});
@@ -2997,10 +3014,11 @@ window.adjGuideReps = (id,d) => { const el=document.getElementById('gr'+id); if(
 window.addGuideToDiary = async id => {
   const guide=WORKOUT_GUIDES.find(g2=>g2.id===id); if(!guide) return;
   const exes=guide.exercises.map(n=>EXERCISE_DB.find(e=>e.name===n)).filter(Boolean);
-  for(const ex of exes){
+  for(let gi=0; gi<exes.length; gi++){
+    const ex=exes[gi];
     const repsEl=document.getElementById('gr'+ex.id);
     const reps=repsEl?parseInt(repsEl.textContent)||8:8;
-    await saveWorkoutEntry({id:Date.now().toString()+ex.id, date:new Date().toISOString(), type:'weights', exercise:ex.id, exerciseName:ex.name, muscles:ex.muscles, sets:[{weight:0,reps},{weight:0,reps},{weight:0,reps}], feel:'good', notes:`From guide: ${guide.name}`});
+    await saveWorkoutEntry({id:`${Date.now()}_${gi}_${ex.id}`, date:new Date().toISOString(), type:'weights', exercise:ex.id, exerciseName:ex.name, muscles:ex.muscles, sets:[{weight:0,reps},{weight:0,reps},{weight:0,reps}], feel:'good', notes:`From guide: ${guide.name}`});
   }
   await gainXP(25,{totalDone:1});
   toast(`📋 ${guide.name} added to diary! +25 XP`);
