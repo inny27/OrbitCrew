@@ -1686,7 +1686,304 @@ window.exportPDF = function() {
   const insights = generateInsights(entries, bodyE);
   const win = window.open('','_blank');
   win.document.write(`<!DOCTYPE html><html><head><title>OrbitCrew Fitness Report</title>
-  <style>
+  
+</head><body>
+  <h1>🪐 OrbitCrew Fitness Report</h1>
+  <div class="subtitle">Generated ${new Date().toLocaleDateString('en-GB',{weekday:'long',year:'numeric',month:'long',day:'numeric'})} · ${currentUser?.displayName||'Athlete'}</div>
+
+  <h2>📊 Performance Summary</h2>
+  <div class="stat-grid">
+    <div class="stat-card"><div class="stat-val">${entries.length}</div><div class="stat-lbl">Total Sessions</div></div>
+    <div class="stat-card"><div class="stat-val">${entries.filter(e=>e.type==='run').length}</div><div class="stat-lbl">Runs Logged</div></div>
+    <div class="stat-card"><div class="stat-val">${entries.filter(e=>e.type==='weights').length}</div><div class="stat-lbl">Weight Sessions</div></div>
+  </div>
+
+  <h2>🧠 Coach Insights</h2>
+  <div class="insight-box">${insights.map(i=>`<p>✦ ${i}</p>`).join('')}</div>
+
+  ${bodyE.length>0?`<h2>⚖️ Body Composition Progress</h2>
+  <table><tr><th>Date</th><th>Weight</th><th>Body Fat %</th><th>Muscle Mass</th><th>Notes</th></tr>
+  ${bodyE.map(e=>`<tr><td>${new Date(e.date).toLocaleDateString()}</td><td>${e.weight}kg</td><td>${e.bodyFat||'—'}%</td><td>${e.muscleMass||'—'}kg</td><td>${e.notes||''}</td></tr>`).join('')}
+  </table>`:''}
+
+  <h2>💪 Workout Log</h2>
+  <table><tr><th>Date</th><th>Type</th><th>Exercise</th><th>Sets × Reps</th><th>Weight</th><th>Feel</th></tr>
+  ${entries.filter(e=>e.type==='weights').map(e=>`
+    ${e.sets?.map((s,i)=>`<tr><td>${i===0?new Date(e.date).toLocaleDateString():''}</td><td>${i===0?'Weights':''}</td><td>${i===0?e.exerciseName:''}</td><td>Set ${i+1}: ${s.reps} reps</td><td>${s.weight?s.weight+'kg':''}</td><td>${i===0?e.feel||'':''}</td></tr>`).join('')||''}`).join('')}
+  ${entries.filter(e=>e.type==='run').map(e=>`<tr><td>${new Date(e.date).toLocaleDateString()}</td><td>🏃 Run</td><td>${e.runType}</td><td>${e.duration}min</td><td>${e.distance}km</td><td></td></tr>`).join('')}
+  </table>
+  <script>window.print();<\/script>
+<!-- REST TIMER OVERLAY -->
+<div id="rest-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:9500;flex-direction:column;align-items:center;justify-content:center;backdrop-filter:blur(16px)">
+  <div style="font-size:16px;font-weight:800;color:var(--muted);letter-spacing:2px;margin-bottom:12px">⏸ REST PERIOD</div>
+  <div id="rest-display" style="font-family:'Orbitron',monospace;font-size:80px;font-weight:900;color:#f59e0b;text-shadow:0 0 40px rgba(245,158,11,.6);line-height:1">01:00</div>
+  <div style="font-size:14px;color:var(--muted);font-weight:600;margin:16px 0">Recover. Breathe. Next set incoming.</div>
+  <button onclick="skipRest()" style="background:var(--surf);border:1px solid var(--border);border-radius:99px;padding:14px 32px;color:var(--text);font-family:'Nunito',sans-serif;font-size:15px;font-weight:800;cursor:pointer">Skip Rest →</button>
+</div>
+</body></html>`);
+  win.document.close();
+  toast('📄 PDF report generated!');
+};
+
+function generateInsights(workouts, bodyData) {
+  const insights = [];
+  if(!workouts.length) return ['Start logging workouts to receive personalised coaching insights.'];
+
+  const muscleFreq = {};
+  workouts.filter(e=>e.type==='weights').forEach(e=>{
+    e.muscles?.forEach(m=>{ muscleFreq[m]=(muscleFreq[m]||0)+1; });
+  });
+  const sorted = Object.entries(muscleFreq).sort((a,b)=>b[1]-a[1]);
+  if(sorted.length>0) insights.push(`Your most trained muscle group is ${sorted[0][0]} (${sorted[0][1]} sessions). Excellent dedication to this area.`);
+
+  const allGroups = ['Chest','Back','Shoulders','Biceps','Triceps','Quads','Hamstrings','Glutes','Core'];
+  const untrained = allGroups.filter(g=>!muscleFreq[g]);
+  if(untrained.length>0) insights.push(`⚠️ You haven't trained ${untrained.slice(0,2).join(' or ')} recently. Muscle imbalances can lead to injury — consider adding these to your next session.`);
+
+  const runs = workouts.filter(e=>e.type==='run');
+  if(runs.length>=2) {
+    const first=runs[0], last=runs[runs.length-1];
+    if(first.distance&&last.distance) {
+      const distChange = ((last.distance-first.distance)/first.distance*100).toFixed(0);
+      insights.push(`Your running distance has ${distChange>0?'increased by '+distChange+'%':'changed by '+distChange+'%'} since your first logged run. ${distChange>20?'Outstanding progression — your aerobic base is building nicely.':'Keep building gradually — 10% increase per week is the golden rule.'}`);
+    }
+  }
+
+  if(bodyData.length>=2) {
+    const first=bodyData[0], last=bodyData[bodyData.length-1];
+    const wDiff=(last.weight-first.weight).toFixed(1);
+    insights.push(`Your weight has ${wDiff<0?'decreased by '+Math.abs(wDiff)+'kg':'increased by '+wDiff+'kg'} since you started tracking. ${wDiff<0&&last.muscleMass>=first.muscleMass?'Remarkably, your muscle mass has been maintained or increased — this is the ideal body recomposition result.':'Continue consistent training and nutrition to achieve your goals.'}`);
+  }
+
+  const maxEffort = workouts.filter(e=>e.feel==='max'||e.feel==='hard');
+  if(maxEffort.length>workouts.length*0.7) insights.push('⚠️ You\'re training at max/hard effort very frequently. Ensure you have adequate recovery days — overtraining leads to diminishing returns and injury risk.');
+
+  if(insights.length<3) insights.push('Consistency is your superpower. Based on your log, you\'re building excellent habits. The athletes who make the most progress are those who show up even on bad days.');
+
+  return insights;
+}
+
+// ═══════════════════════════════════════════════════════
+// EXERCISE LIBRARY
+// ═══════════════════════════════════════════════════════
+window.renderLibrary = function() {
+  const filter = window._libFilter||'all';
+  const search = window._libSearch||'';
+  const filtered = EXERCISE_DB.filter(ex=>{
+    const typeMatch = filter==='all'||ex.type===filter;
+    const searchMatch = !search||ex.name.toLowerCase().includes(search.toLowerCase())||ex.muscles.some(m=>m.toLowerCase().includes(search.toLowerCase()));
+    return typeMatch&&searchMatch;
+  });
+
+  ge('fitness-panel').innerHTML = `
+    <div class="section-title" style="margin-bottom:12px">📚 EXERCISE LIBRARY</div>
+    <input class="form-input" placeholder="🔍 Search exercises or muscles..." value="${search}" oninput="filterLibrary(this.value)" style="margin-bottom:12px">
+    <div class="lib-filters">
+      ${[['all','All'],['weights','🏋️ Weights'],['calisthenics','💪 Calisthenics'],['run','🏃 Running'],['swim','🏊 Swimming']].map(([v,l])=>
+        `<button class="lib-filter${filter===v?' active':''}" onclick="setLibFilter('${v}')">${l}</button>`).join('')}
+    </div>
+    <div style="font-size:11px;color:var(--muted);font-weight:600;margin-bottom:12px">${filtered.length} exercises</div>
+    <div class="ex-library">
+      ${filtered.map(ex=>`
+        <div class="ex-card" onclick="showExDetail('${ex.id}')">
+          <div class="ex-card-top">
+            <span class="ex-card-gif">${ex.gif}</span>
+            <div class="ex-card-info">
+              <div class="ex-card-name">${ex.name}</div>
+              <div class="ex-card-muscles">${ex.muscles.join(', ')}</div>
+            </div>
+            <div class="ex-card-right">
+              <div class="ex-diff">${'●'.repeat(ex.difficulty)}${'○'.repeat(5-ex.difficulty)}</div>
+              <div class="ex-type-badge">${ex.type}</div>
+            </div>
+          </div>
+        </div>`).join('')}
+    </div>`;
+};
+
+window.filterLibrary = function(q) { window._libSearch=q; renderLibrary(); };
+window.setLibFilter = function(f) { window._libFilter=f; renderLibrary(); };
+window.showExDetail = function(id) {
+  const ex = EXERCISE_DB.find(e=>e.id===id);
+  if(!ex)return;
+  ge('fitness-panel').innerHTML = `
+    <button class="back-btn" onclick="renderLibrary()">← Back to Library</button>
+    <div class="ex-detail">
+      <div class="ex-detail-header">
+        <span class="ex-detail-gif">${ex.gif}</span>
+        <div>
+          <div class="ex-detail-name">${ex.name}</div>
+          <div class="ex-detail-type">${ex.type} · ${ex.category}</div>
+          <div class="ex-detail-diff">${'⭐'.repeat(ex.difficulty)} ${'Beginner,Beginner,Intermediate,Advanced,Elite'.split(',')[ex.difficulty-1]}</div>
+        </div>
+      </div>
+      <div class="ex-detail-muscles"><b>Muscles:</b> ${ex.muscles.join(' · ')}</div>
+      <div class="ex-detail-section"><div class="ex-detail-label">HOW TO PERFORM</div><p>${ex.desc}</p></div>
+      <div class="ex-detail-section"><div class="ex-detail-label">COACHING TIPS</div><p>${ex.tips}</p></div>
+      <div class="ex-detail-section coaching-cues"><div class="ex-detail-label">🧠 MIND-MUSCLE CUES</div><p>"${ex.cues}"</p></div>
+      <button class="big-btn" style="margin-top:16px" onclick="window._selEx=EXERCISE_DB.find(e=>e.id==='${ex.id}');window._exQuery='${ex.name}';window._currentSets=[{reps:8,weight:'',feel:'good'}];switchFitnessTab('diary',null)">+ Add to Today's Diary</button>
+    </div>`;
+};
+
+// ═══════════════════════════════════════════════════════
+// COACH RECOMMENDATIONS
+// ═══════════════════════════════════════════════════════
+window.renderCoach = function() {
+  const entries = window.workoutEntries||[];
+  const muscleFreq = {};
+  const recentDates = {};
+  entries.filter(e=>e.type==='weights').forEach(e=>{
+    e.muscles?.forEach(m=>{
+      muscleFreq[m]=(muscleFreq[m]||0)+1;
+      if(!recentDates[m]||new Date(e.date)>new Date(recentDates[m])) recentDates[m]=e.date;
+    });
+  });
+  const allGroups = ['Chest','Back','Shoulders','Biceps','Triceps','Quads','Hamstrings','Glutes','Core'];
+  const neglected = allGroups.filter(g=>{
+    if(!recentDates[g]) return true;
+    const daysSince = (Date.now()-new Date(recentDates[g]))/(1000*60*60*24);
+    return daysSince>14;
+  });
+  const overworked = Object.entries(muscleFreq).filter(([,v])=>v>5).map(([k])=>k);
+
+  ge('fitness-panel').innerHTML = `
+    <div class="section-title" style="margin-bottom:16px">🤖 YOUR AI COACH</div>
+
+    ${neglected.length>0?`
+    <div class="coach-alert">
+      <div class="coach-alert-title">⚠️ Muscles Needing Attention</div>
+      <div class="coach-alert-body">You haven't trained <strong>${neglected.join(', ')}</strong> recently. Here's what I recommend:</div>
+      ${neglected.slice(0,2).map(m=>{
+        const rec = EXERCISE_DB.filter(ex=>ex.muscles.includes(m)).slice(0,3);
+        return `<div class="coach-rec-group">
+          <div class="crg-muscle">${m} Focus</div>
+          ${rec.map(ex=>`<div class="crg-ex" onclick="window._selEx=ex;window._exQuery='${ex.name}';window._currentSets=[{reps:8,weight:'',feel:'good'}];switchFitnessTab('diary',null)">
+            <span>${ex.gif}</span><div><div style="font-weight:700">${ex.name}</div><div style="font-size:11px;color:var(--muted)">${ex.muscles.join(', ')}</div></div>
+            <span style="font-size:11px;color:var(--accent2)">Add →</span>
+          </div>`).join('')}
+        </div>`;
+      }).join('')}
+    </div>`:''}
+
+    ${overworked.length>0?`
+    <div class="coach-warning">
+      <div class="coach-alert-title">🔥 High Frequency Alert</div>
+      <div class="coach-alert-body">Your <strong>${overworked.join(', ')}</strong> ${overworked.length>1?'are':'is'} being trained very frequently. Consider a deload week or swap some sessions for recovery work to avoid overtraining.</div>
+    </div>`:''}
+
+    <div class="coach-tip-card">
+      <div class="ctc-title">💡 Coach's Tip of the Day</div>
+      <div class="ctc-body">${getDailyTip()}</div>
+    </div>
+
+    ${entries.length===0?`<div class="empty-state"><div>🤖</div><p>Log some workouts and I'll give you personalised recommendations!</p></div>`:''}`;
+};
+
+function getDailyTip() {
+  const tips = [
+    'Progressive overload is the #1 driver of muscle growth. Add a small amount of weight or an extra rep each week — 1% better every session compounds into extraordinary results.',
+    'The best workout is the one you actually do. Consistency over perfection, every single time.',
+    'Breathe out on exertion — exhale when lifting/pushing, inhale on the way down. This stabilises your core and helps you generate more force.',
+    'Sleep is where the gains happen. Your muscles don\'t grow during training — they grow during recovery. 7-9 hours is non-negotiable for elite performance.',
+    'Mind-muscle connection is real science. Thinking about the muscle you\'re working during a rep can increase activation by up to 22%. Slow down and feel the movement.',
+    'Dehydration of just 2% reduces performance by up to 10%. Drink water before you feel thirsty — by then you\'re already behind.',
+    'For weight loss: you cannot out-train a bad diet. But consistent training reshapes your body in ways that dieting alone never can.',
+  ];
+  return tips[new Date().getDay()%tips.length];
+}
+
+// ═══════════════════════════════════════════════════════
+// WORKOUT GUIDES
+// ═══════════════════════════════════════════════════════
+window.renderGuides = function() {
+  const guides = [
+    {id:'push_pull_legs',name:'Push Pull Legs',icon:'🏋️',type:'weights',level:'Intermediate',days:6,desc:'The gold standard split for muscle building. Push (chest/shoulders/triceps), Pull (back/biceps), Legs — repeat.',exercises:['Bench Press','Overhead Press','Tricep Pushdown','Pull Up','Bent Over Barbell Row','Bicep Curl','Back Squat','Romanian Deadlift','Calf Raise']},
+    {id:'full_body_3',name:'Full Body 3x Week',icon:'💪',type:'weights',level:'Beginner',days:3,desc:'Perfect for beginners. Hit every muscle group 3 times per week with compound movements.',exercises:['Back Squat','Bench Press','Bent Over Barbell Row','Overhead Press','Deadlift','Pull Up']},
+    {id:'couch_5k',name:'Couch to 5K',icon:'🏃',type:'run',level:'Beginner',days:3,desc:'The legendary programme that takes complete beginners to running 5K in 9 weeks. Walk/run intervals that progress weekly.',exercises:['Easy Run','Walking Lunge','Calf Raise']},
+    {id:'swim_endurance',name:'Swim Endurance Builder',icon:'🏊',type:'swim',level:'Intermediate',days:3,desc:'Build your swimming endurance with structured distance and technique work.',exercises:['Freestyle','Breaststroke','Backstroke']},
+    {id:'calisthenics_foundation',name:'Calisthenics Foundation',icon:'💪',type:'calisthenics',level:'Beginner',days:4,desc:'Master the foundational movements: push ups, pull ups, dips, squats and core work.',exercises:['Push Up','Pull Up','Dips','Plank','Dead Bug','Glute Bridge']},
+    {id:'hiit_conditioning',name:'HIIT Conditioning',icon:'⚡',type:'cardio',level:'Advanced',days:3,desc:'High intensity interval training to maximise fat burning and cardiovascular fitness in minimum time.',exercises:['Interval Run','Push Up','Plank','Walking Lunge']},
+  ];
+
+  ge('fitness-panel').innerHTML = `
+    <div class="section-title" style="margin-bottom:16px">📋 WORKOUT GUIDES</div>
+    <div class="guides-list">
+      ${guides.map(g=>`
+        <div class="guide-card" onclick="showGuideDetail('${g.id}')">
+          <div class="gc-icon">${g.icon}</div>
+          <div class="gc-info">
+            <div class="gc-name">${g.name}</div>
+            <div class="gc-meta">${g.level} · ${g.days} days/week · ${g.type}</div>
+            <div class="gc-desc">${g.desc}</div>
+          </div>
+          <span style="color:var(--accent2);font-size:18px">›</span>
+        </div>`).join('')}
+    </div>`;
+  window._guides = guides;
+};
+
+window.showGuideDetail = function(id) {
+  const guide = window._guides?.find(g=>g.id===id);
+  if(!guide)return;
+  const exercises = guide.exercises.map(name=>EXERCISE_DB.find(e=>e.name===name)).filter(Boolean);
+  ge('fitness-panel').innerHTML = `
+    <button class="back-btn" onclick="renderGuides()">← Back to Guides</button>
+    <div class="guide-detail">
+      <div class="gd-header"><span style="font-size:48px">${guide.icon}</span>
+        <div><div class="gd-name">${guide.name}</div><div class="gd-meta">${guide.level} · ${guide.days} days/week</div></div>
+      </div>
+      <p style="color:var(--muted);font-size:13px;font-weight:600;margin:12px 0 20px">${guide.desc}</p>
+      <div class="section-title" style="margin-bottom:12px">EXERCISES IN THIS GUIDE</div>
+      ${exercises.map(ex=>`
+        <div class="guide-ex-row">
+          <span class="gex-gif">${ex.gif}</span>
+          <div class="gex-info"><div class="gex-name">${ex.name}</div><div class="gex-muscles">${ex.muscles.join(', ')}</div></div>
+          <div class="gex-sets"><span class="gex-reps" id="reps-${ex.id}">8</span> reps
+            <div style="display:flex;gap:4px;margin-top:4px">
+              <button class="reps-adj" onclick="adjustReps('${ex.id}',-1)">-</button>
+              <button class="reps-adj" onclick="adjustReps('${ex.id}',1)">+</button>
+            </div>
+          </div>
+        </div>`).join('')}
+      <button class="big-btn" style="margin-top:20px" onclick="addGuideToDay('${id}')">➕ Add to Today's Diary</button>
+    </div>`;
+};
+
+window.adjustReps = function(exId, delta) {
+  const el = ge('reps-'+exId); if(!el)return;
+  el.textContent = Math.max(1, parseInt(el.textContent)+delta);
+};
+
+window.addGuideToDay = async function(guideId) {
+  const guide = window._guides?.find(g=>g.id===guideId);
+  if(!guide)return;
+  const exercises = guide.exercises.map(name=>EXERCISE_DB.find(e=>e.name===name)).filter(Boolean);
+  for(const ex of exercises) {
+    const repsEl = ge('reps-'+ex.id);
+    const reps = repsEl ? parseInt(repsEl.textContent)||8 : 8;
+    await saveWorkoutEntry({
+      id:Date.now().toString()+ex.id, date:new Date().toISOString(), type:'weights',
+      exercise:ex.id, exerciseName:ex.name, muscles:ex.muscles,
+      sets:[{weight:'',reps},{weight:'',reps},{weight:'',reps}],
+      feel:'good', notes:`From guide: ${guide.name}`
+    });
+  }
+  await gainXP(25,{totalDone:1});
+  toast(`📋 ${guide.name} added to diary! +25 XP`);
+  switchFitnessTab('diary', ge('ft-diary'));
+};
+
+
+function ge(id){return document.getElementById(id);}
+function v(id){return(ge(id)?.value||'').trim();}
+window._selAvatar='👨‍🚀';window._selColor='#7c3aed';
+window._taskType='personal';window._taskPriority='medium';window._habitTime='morning';
+</script>
+
+
+
+
+<style>
 :root{--bg:#04040f;--surf:#0a0a20;--surf2:#12122e;--border:#1e1e45;--accent:#7c3aed;--accent2:#06b6d4;--accent3:#f59e0b;--green:#10b981;--pink:#ec4899;--red:#ef4444;--text:#e2e8f0;--muted:#94a3b8;--r:16px;}
 
 /* ── DYNAMIC BACKGROUNDS ── */
@@ -2184,300 +2481,6 @@ animation:twinkle 4s ease-in-out infinite alternate;}
 .delete-entry-btn:hover{opacity:1;background:rgba(239,68,68,.15);}
 
 </style>
-</head><body>
-  <h1>🪐 OrbitCrew Fitness Report</h1>
-  <div class="subtitle">Generated ${new Date().toLocaleDateString('en-GB',{weekday:'long',year:'numeric',month:'long',day:'numeric'})} · ${currentUser?.displayName||'Athlete'}</div>
-
-  <h2>📊 Performance Summary</h2>
-  <div class="stat-grid">
-    <div class="stat-card"><div class="stat-val">${entries.length}</div><div class="stat-lbl">Total Sessions</div></div>
-    <div class="stat-card"><div class="stat-val">${entries.filter(e=>e.type==='run').length}</div><div class="stat-lbl">Runs Logged</div></div>
-    <div class="stat-card"><div class="stat-val">${entries.filter(e=>e.type==='weights').length}</div><div class="stat-lbl">Weight Sessions</div></div>
-  </div>
-
-  <h2>🧠 Coach Insights</h2>
-  <div class="insight-box">${insights.map(i=>`<p>✦ ${i}</p>`).join('')}</div>
-
-  ${bodyE.length>0?`<h2>⚖️ Body Composition Progress</h2>
-  <table><tr><th>Date</th><th>Weight</th><th>Body Fat %</th><th>Muscle Mass</th><th>Notes</th></tr>
-  ${bodyE.map(e=>`<tr><td>${new Date(e.date).toLocaleDateString()}</td><td>${e.weight}kg</td><td>${e.bodyFat||'—'}%</td><td>${e.muscleMass||'—'}kg</td><td>${e.notes||''}</td></tr>`).join('')}
-  </table>`:''}
-
-  <h2>💪 Workout Log</h2>
-  <table><tr><th>Date</th><th>Type</th><th>Exercise</th><th>Sets × Reps</th><th>Weight</th><th>Feel</th></tr>
-  ${entries.filter(e=>e.type==='weights').map(e=>`
-    ${e.sets?.map((s,i)=>`<tr><td>${i===0?new Date(e.date).toLocaleDateString():''}</td><td>${i===0?'Weights':''}</td><td>${i===0?e.exerciseName:''}</td><td>Set ${i+1}: ${s.reps} reps</td><td>${s.weight?s.weight+'kg':''}</td><td>${i===0?e.feel||'':''}</td></tr>`).join('')||''}`).join('')}
-  ${entries.filter(e=>e.type==='run').map(e=>`<tr><td>${new Date(e.date).toLocaleDateString()}</td><td>🏃 Run</td><td>${e.runType}</td><td>${e.duration}min</td><td>${e.distance}km</td><td></td></tr>`).join('')}
-  </table>
-  <script>window.print();<\/script>
-<!-- REST TIMER OVERLAY -->
-<div id="rest-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:9500;flex-direction:column;align-items:center;justify-content:center;backdrop-filter:blur(16px)">
-  <div style="font-size:16px;font-weight:800;color:var(--muted);letter-spacing:2px;margin-bottom:12px">⏸ REST PERIOD</div>
-  <div id="rest-display" style="font-family:'Orbitron',monospace;font-size:80px;font-weight:900;color:#f59e0b;text-shadow:0 0 40px rgba(245,158,11,.6);line-height:1">01:00</div>
-  <div style="font-size:14px;color:var(--muted);font-weight:600;margin:16px 0">Recover. Breathe. Next set incoming.</div>
-  <button onclick="skipRest()" style="background:var(--surf);border:1px solid var(--border);border-radius:99px;padding:14px 32px;color:var(--text);font-family:'Nunito',sans-serif;font-size:15px;font-weight:800;cursor:pointer">Skip Rest →</button>
-</div>
-</body></html>`);
-  win.document.close();
-  toast('📄 PDF report generated!');
-};
-
-function generateInsights(workouts, bodyData) {
-  const insights = [];
-  if(!workouts.length) return ['Start logging workouts to receive personalised coaching insights.'];
-
-  const muscleFreq = {};
-  workouts.filter(e=>e.type==='weights').forEach(e=>{
-    e.muscles?.forEach(m=>{ muscleFreq[m]=(muscleFreq[m]||0)+1; });
-  });
-  const sorted = Object.entries(muscleFreq).sort((a,b)=>b[1]-a[1]);
-  if(sorted.length>0) insights.push(`Your most trained muscle group is ${sorted[0][0]} (${sorted[0][1]} sessions). Excellent dedication to this area.`);
-
-  const allGroups = ['Chest','Back','Shoulders','Biceps','Triceps','Quads','Hamstrings','Glutes','Core'];
-  const untrained = allGroups.filter(g=>!muscleFreq[g]);
-  if(untrained.length>0) insights.push(`⚠️ You haven't trained ${untrained.slice(0,2).join(' or ')} recently. Muscle imbalances can lead to injury — consider adding these to your next session.`);
-
-  const runs = workouts.filter(e=>e.type==='run');
-  if(runs.length>=2) {
-    const first=runs[0], last=runs[runs.length-1];
-    if(first.distance&&last.distance) {
-      const distChange = ((last.distance-first.distance)/first.distance*100).toFixed(0);
-      insights.push(`Your running distance has ${distChange>0?'increased by '+distChange+'%':'changed by '+distChange+'%'} since your first logged run. ${distChange>20?'Outstanding progression — your aerobic base is building nicely.':'Keep building gradually — 10% increase per week is the golden rule.'}`);
-    }
-  }
-
-  if(bodyData.length>=2) {
-    const first=bodyData[0], last=bodyData[bodyData.length-1];
-    const wDiff=(last.weight-first.weight).toFixed(1);
-    insights.push(`Your weight has ${wDiff<0?'decreased by '+Math.abs(wDiff)+'kg':'increased by '+wDiff+'kg'} since you started tracking. ${wDiff<0&&last.muscleMass>=first.muscleMass?'Remarkably, your muscle mass has been maintained or increased — this is the ideal body recomposition result.':'Continue consistent training and nutrition to achieve your goals.'}`);
-  }
-
-  const maxEffort = workouts.filter(e=>e.feel==='max'||e.feel==='hard');
-  if(maxEffort.length>workouts.length*0.7) insights.push('⚠️ You\'re training at max/hard effort very frequently. Ensure you have adequate recovery days — overtraining leads to diminishing returns and injury risk.');
-
-  if(insights.length<3) insights.push('Consistency is your superpower. Based on your log, you\'re building excellent habits. The athletes who make the most progress are those who show up even on bad days.');
-
-  return insights;
-}
-
-// ═══════════════════════════════════════════════════════
-// EXERCISE LIBRARY
-// ═══════════════════════════════════════════════════════
-window.renderLibrary = function() {
-  const filter = window._libFilter||'all';
-  const search = window._libSearch||'';
-  const filtered = EXERCISE_DB.filter(ex=>{
-    const typeMatch = filter==='all'||ex.type===filter;
-    const searchMatch = !search||ex.name.toLowerCase().includes(search.toLowerCase())||ex.muscles.some(m=>m.toLowerCase().includes(search.toLowerCase()));
-    return typeMatch&&searchMatch;
-  });
-
-  ge('fitness-panel').innerHTML = `
-    <div class="section-title" style="margin-bottom:12px">📚 EXERCISE LIBRARY</div>
-    <input class="form-input" placeholder="🔍 Search exercises or muscles..." value="${search}" oninput="filterLibrary(this.value)" style="margin-bottom:12px">
-    <div class="lib-filters">
-      ${[['all','All'],['weights','🏋️ Weights'],['calisthenics','💪 Calisthenics'],['run','🏃 Running'],['swim','🏊 Swimming']].map(([v,l])=>
-        `<button class="lib-filter${filter===v?' active':''}" onclick="setLibFilter('${v}')">${l}</button>`).join('')}
-    </div>
-    <div style="font-size:11px;color:var(--muted);font-weight:600;margin-bottom:12px">${filtered.length} exercises</div>
-    <div class="ex-library">
-      ${filtered.map(ex=>`
-        <div class="ex-card" onclick="showExDetail('${ex.id}')">
-          <div class="ex-card-top">
-            <span class="ex-card-gif">${ex.gif}</span>
-            <div class="ex-card-info">
-              <div class="ex-card-name">${ex.name}</div>
-              <div class="ex-card-muscles">${ex.muscles.join(', ')}</div>
-            </div>
-            <div class="ex-card-right">
-              <div class="ex-diff">${'●'.repeat(ex.difficulty)}${'○'.repeat(5-ex.difficulty)}</div>
-              <div class="ex-type-badge">${ex.type}</div>
-            </div>
-          </div>
-        </div>`).join('')}
-    </div>`;
-};
-
-window.filterLibrary = function(q) { window._libSearch=q; renderLibrary(); };
-window.setLibFilter = function(f) { window._libFilter=f; renderLibrary(); };
-window.showExDetail = function(id) {
-  const ex = EXERCISE_DB.find(e=>e.id===id);
-  if(!ex)return;
-  ge('fitness-panel').innerHTML = `
-    <button class="back-btn" onclick="renderLibrary()">← Back to Library</button>
-    <div class="ex-detail">
-      <div class="ex-detail-header">
-        <span class="ex-detail-gif">${ex.gif}</span>
-        <div>
-          <div class="ex-detail-name">${ex.name}</div>
-          <div class="ex-detail-type">${ex.type} · ${ex.category}</div>
-          <div class="ex-detail-diff">${'⭐'.repeat(ex.difficulty)} ${'Beginner,Beginner,Intermediate,Advanced,Elite'.split(',')[ex.difficulty-1]}</div>
-        </div>
-      </div>
-      <div class="ex-detail-muscles"><b>Muscles:</b> ${ex.muscles.join(' · ')}</div>
-      <div class="ex-detail-section"><div class="ex-detail-label">HOW TO PERFORM</div><p>${ex.desc}</p></div>
-      <div class="ex-detail-section"><div class="ex-detail-label">COACHING TIPS</div><p>${ex.tips}</p></div>
-      <div class="ex-detail-section coaching-cues"><div class="ex-detail-label">🧠 MIND-MUSCLE CUES</div><p>"${ex.cues}"</p></div>
-      <button class="big-btn" style="margin-top:16px" onclick="window._selEx=EXERCISE_DB.find(e=>e.id==='${ex.id}');window._exQuery='${ex.name}';window._currentSets=[{reps:8,weight:'',feel:'good'}];switchFitnessTab('diary',null)">+ Add to Today's Diary</button>
-    </div>`;
-};
-
-// ═══════════════════════════════════════════════════════
-// COACH RECOMMENDATIONS
-// ═══════════════════════════════════════════════════════
-window.renderCoach = function() {
-  const entries = window.workoutEntries||[];
-  const muscleFreq = {};
-  const recentDates = {};
-  entries.filter(e=>e.type==='weights').forEach(e=>{
-    e.muscles?.forEach(m=>{
-      muscleFreq[m]=(muscleFreq[m]||0)+1;
-      if(!recentDates[m]||new Date(e.date)>new Date(recentDates[m])) recentDates[m]=e.date;
-    });
-  });
-  const allGroups = ['Chest','Back','Shoulders','Biceps','Triceps','Quads','Hamstrings','Glutes','Core'];
-  const neglected = allGroups.filter(g=>{
-    if(!recentDates[g]) return true;
-    const daysSince = (Date.now()-new Date(recentDates[g]))/(1000*60*60*24);
-    return daysSince>14;
-  });
-  const overworked = Object.entries(muscleFreq).filter(([,v])=>v>5).map(([k])=>k);
-
-  ge('fitness-panel').innerHTML = `
-    <div class="section-title" style="margin-bottom:16px">🤖 YOUR AI COACH</div>
-
-    ${neglected.length>0?`
-    <div class="coach-alert">
-      <div class="coach-alert-title">⚠️ Muscles Needing Attention</div>
-      <div class="coach-alert-body">You haven't trained <strong>${neglected.join(', ')}</strong> recently. Here's what I recommend:</div>
-      ${neglected.slice(0,2).map(m=>{
-        const rec = EXERCISE_DB.filter(ex=>ex.muscles.includes(m)).slice(0,3);
-        return `<div class="coach-rec-group">
-          <div class="crg-muscle">${m} Focus</div>
-          ${rec.map(ex=>`<div class="crg-ex" onclick="window._selEx=ex;window._exQuery='${ex.name}';window._currentSets=[{reps:8,weight:'',feel:'good'}];switchFitnessTab('diary',null)">
-            <span>${ex.gif}</span><div><div style="font-weight:700">${ex.name}</div><div style="font-size:11px;color:var(--muted)">${ex.muscles.join(', ')}</div></div>
-            <span style="font-size:11px;color:var(--accent2)">Add →</span>
-          </div>`).join('')}
-        </div>`;
-      }).join('')}
-    </div>`:''}
-
-    ${overworked.length>0?`
-    <div class="coach-warning">
-      <div class="coach-alert-title">🔥 High Frequency Alert</div>
-      <div class="coach-alert-body">Your <strong>${overworked.join(', ')}</strong> ${overworked.length>1?'are':'is'} being trained very frequently. Consider a deload week or swap some sessions for recovery work to avoid overtraining.</div>
-    </div>`:''}
-
-    <div class="coach-tip-card">
-      <div class="ctc-title">💡 Coach's Tip of the Day</div>
-      <div class="ctc-body">${getDailyTip()}</div>
-    </div>
-
-    ${entries.length===0?`<div class="empty-state"><div>🤖</div><p>Log some workouts and I'll give you personalised recommendations!</p></div>`:''}`;
-};
-
-function getDailyTip() {
-  const tips = [
-    'Progressive overload is the #1 driver of muscle growth. Add a small amount of weight or an extra rep each week — 1% better every session compounds into extraordinary results.',
-    'The best workout is the one you actually do. Consistency over perfection, every single time.',
-    'Breathe out on exertion — exhale when lifting/pushing, inhale on the way down. This stabilises your core and helps you generate more force.',
-    'Sleep is where the gains happen. Your muscles don\'t grow during training — they grow during recovery. 7-9 hours is non-negotiable for elite performance.',
-    'Mind-muscle connection is real science. Thinking about the muscle you\'re working during a rep can increase activation by up to 22%. Slow down and feel the movement.',
-    'Dehydration of just 2% reduces performance by up to 10%. Drink water before you feel thirsty — by then you\'re already behind.',
-    'For weight loss: you cannot out-train a bad diet. But consistent training reshapes your body in ways that dieting alone never can.',
-  ];
-  return tips[new Date().getDay()%tips.length];
-}
-
-// ═══════════════════════════════════════════════════════
-// WORKOUT GUIDES
-// ═══════════════════════════════════════════════════════
-window.renderGuides = function() {
-  const guides = [
-    {id:'push_pull_legs',name:'Push Pull Legs',icon:'🏋️',type:'weights',level:'Intermediate',days:6,desc:'The gold standard split for muscle building. Push (chest/shoulders/triceps), Pull (back/biceps), Legs — repeat.',exercises:['Bench Press','Overhead Press','Tricep Pushdown','Pull Up','Bent Over Barbell Row','Bicep Curl','Back Squat','Romanian Deadlift','Calf Raise']},
-    {id:'full_body_3',name:'Full Body 3x Week',icon:'💪',type:'weights',level:'Beginner',days:3,desc:'Perfect for beginners. Hit every muscle group 3 times per week with compound movements.',exercises:['Back Squat','Bench Press','Bent Over Barbell Row','Overhead Press','Deadlift','Pull Up']},
-    {id:'couch_5k',name:'Couch to 5K',icon:'🏃',type:'run',level:'Beginner',days:3,desc:'The legendary programme that takes complete beginners to running 5K in 9 weeks. Walk/run intervals that progress weekly.',exercises:['Easy Run','Walking Lunge','Calf Raise']},
-    {id:'swim_endurance',name:'Swim Endurance Builder',icon:'🏊',type:'swim',level:'Intermediate',days:3,desc:'Build your swimming endurance with structured distance and technique work.',exercises:['Freestyle','Breaststroke','Backstroke']},
-    {id:'calisthenics_foundation',name:'Calisthenics Foundation',icon:'💪',type:'calisthenics',level:'Beginner',days:4,desc:'Master the foundational movements: push ups, pull ups, dips, squats and core work.',exercises:['Push Up','Pull Up','Dips','Plank','Dead Bug','Glute Bridge']},
-    {id:'hiit_conditioning',name:'HIIT Conditioning',icon:'⚡',type:'cardio',level:'Advanced',days:3,desc:'High intensity interval training to maximise fat burning and cardiovascular fitness in minimum time.',exercises:['Interval Run','Push Up','Plank','Walking Lunge']},
-  ];
-
-  ge('fitness-panel').innerHTML = `
-    <div class="section-title" style="margin-bottom:16px">📋 WORKOUT GUIDES</div>
-    <div class="guides-list">
-      ${guides.map(g=>`
-        <div class="guide-card" onclick="showGuideDetail('${g.id}')">
-          <div class="gc-icon">${g.icon}</div>
-          <div class="gc-info">
-            <div class="gc-name">${g.name}</div>
-            <div class="gc-meta">${g.level} · ${g.days} days/week · ${g.type}</div>
-            <div class="gc-desc">${g.desc}</div>
-          </div>
-          <span style="color:var(--accent2);font-size:18px">›</span>
-        </div>`).join('')}
-    </div>`;
-  window._guides = guides;
-};
-
-window.showGuideDetail = function(id) {
-  const guide = window._guides?.find(g=>g.id===id);
-  if(!guide)return;
-  const exercises = guide.exercises.map(name=>EXERCISE_DB.find(e=>e.name===name)).filter(Boolean);
-  ge('fitness-panel').innerHTML = `
-    <button class="back-btn" onclick="renderGuides()">← Back to Guides</button>
-    <div class="guide-detail">
-      <div class="gd-header"><span style="font-size:48px">${guide.icon}</span>
-        <div><div class="gd-name">${guide.name}</div><div class="gd-meta">${guide.level} · ${guide.days} days/week</div></div>
-      </div>
-      <p style="color:var(--muted);font-size:13px;font-weight:600;margin:12px 0 20px">${guide.desc}</p>
-      <div class="section-title" style="margin-bottom:12px">EXERCISES IN THIS GUIDE</div>
-      ${exercises.map(ex=>`
-        <div class="guide-ex-row">
-          <span class="gex-gif">${ex.gif}</span>
-          <div class="gex-info"><div class="gex-name">${ex.name}</div><div class="gex-muscles">${ex.muscles.join(', ')}</div></div>
-          <div class="gex-sets"><span class="gex-reps" id="reps-${ex.id}">8</span> reps
-            <div style="display:flex;gap:4px;margin-top:4px">
-              <button class="reps-adj" onclick="adjustReps('${ex.id}',-1)">-</button>
-              <button class="reps-adj" onclick="adjustReps('${ex.id}',1)">+</button>
-            </div>
-          </div>
-        </div>`).join('')}
-      <button class="big-btn" style="margin-top:20px" onclick="addGuideToDay('${id}')">➕ Add to Today's Diary</button>
-    </div>`;
-};
-
-window.adjustReps = function(exId, delta) {
-  const el = ge('reps-'+exId); if(!el)return;
-  el.textContent = Math.max(1, parseInt(el.textContent)+delta);
-};
-
-window.addGuideToDay = async function(guideId) {
-  const guide = window._guides?.find(g=>g.id===guideId);
-  if(!guide)return;
-  const exercises = guide.exercises.map(name=>EXERCISE_DB.find(e=>e.name===name)).filter(Boolean);
-  for(const ex of exercises) {
-    const repsEl = ge('reps-'+ex.id);
-    const reps = repsEl ? parseInt(repsEl.textContent)||8 : 8;
-    await saveWorkoutEntry({
-      id:Date.now().toString()+ex.id, date:new Date().toISOString(), type:'weights',
-      exercise:ex.id, exerciseName:ex.name, muscles:ex.muscles,
-      sets:[{weight:'',reps},{weight:'',reps},{weight:'',reps}],
-      feel:'good', notes:`From guide: ${guide.name}`
-    });
-  }
-  await gainXP(25,{totalDone:1});
-  toast(`📋 ${guide.name} added to diary! +25 XP`);
-  switchFitnessTab('diary', ge('ft-diary'));
-};
-
-
-function ge(id){return document.getElementById(id);}
-function v(id){return(ge(id)?.value||'').trim();}
-window._selAvatar='👨‍🚀';window._selColor='#7c3aed';
-window._taskType='personal';window._taskPriority='medium';window._habitTime='morning';
-</script>
-
-
 </head>
 <body class="bg-space">
 
