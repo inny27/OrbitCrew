@@ -9,7 +9,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="InTask">
-<link rel="manifest" href="manifest.json">
+<link rel="manifest" href="data:application/manifest+json;base64,eyJuYW1lIjoiSW5UYXNrIiwic2hvcnRfbmFtZSI6IkluVGFzayIsImRlc2NyaXB0aW9uIjoiTGV2ZWwgdXAgbGlmZS4gVG9nZXRoZXIuIiwic3RhcnRfdXJsIjoiLi8iLCJzY29wZSI6Ii4vIiwiZGlzcGxheSI6InN0YW5kYWxvbmUiLCJvcmllbnRhdGlvbiI6InBvcnRyYWl0IiwiYmFja2dyb3VuZF9jb2xvciI6IiMwYTBhMWEiLCJ0aGVtZV9jb2xvciI6IiNmZmQ3MDAiLCJpY29ucyI6W3sic3JjIjoiaHR0cHM6Ly9tYXBsZXN0b3J5LmlvL2FwaS9HTVMvMjU1L21vYi8xMDAxMDAvcmVuZGVyL3N0YW5kIiwic2l6ZXMiOiIxOTJ4MTkyIiwidHlwZSI6ImltYWdlL3BuZyJ9LHsic3JjIjoiaHR0cHM6Ly9tYXBsZXN0b3J5LmlvL2FwaS9HTVMvMjU1L21vYi8xMDAxMDAvcmVuZGVyL3N0YW5kIiwic2l6ZXMiOiI1MTJ4NTEyIiwidHlwZSI6ImltYWdlL3BuZyJ9XSwiY2F0ZWdvcmllcyI6WyJwcm9kdWN0aXZpdHkiLCJsaWZlc3R5bGUiXX0=">
 <link rel="apple-touch-icon" href="icon-192.png">
 <title>InTask</title>
 <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
@@ -610,6 +610,11 @@ body::after{
 .settings-toggle.active{background:var(--accent);border-color:var(--accent);color:#0a0a1a;}
 /* Colorblind mode */
 body.colorblind{filter:url(#colorblind-filter);}
+
+/* ── PWA Install ── */
+.install-steps{display:flex;flex-direction:column;gap:10px;}
+.install-step{display:flex;align-items:flex-start;gap:10px;font-size:12px;color:var(--text);line-height:1.6;}
+.install-step-num{width:22px;height:22px;border-radius:0;background:var(--accent);color:#0a0a1a;font-family:'Press Start 2P',monospace;font-size:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;}
 </style>
 
 <!-- Firebase -->
@@ -1896,15 +1901,39 @@ function renderSettings() {
       </div>
     </div>
 
-    <!-- App -->
-    <div class="settings-section">
-      <div class="settings-section-title">📱 APP</div>
-      <div class="settings-row" style="cursor:pointer" onclick="showInstallInstructions()">
-        <div>
-          <div class="settings-row-label">📲 Add to Home Screen</div>
-          <div class="settings-row-sub">Install InTask as an app on your device</div>
+    <!-- App / Install -->
+    <div class="settings-section" id="install-section">
+      <div class="settings-section-title">📱 INSTALL APP</div>
+
+      <!-- Android / Chrome install prompt (shown when available) -->
+      <div id="install-prompt-row" style="display:none">
+        <div style="font-size:12px;color:var(--muted);margin-bottom:12px;line-height:1.8">
+          Install InTask as a native app — no App Store needed. Works offline, launches from your home screen.
         </div>
-        <span style="color:var(--accent);font-size:16px">›</span>
+        <button class="big-btn" id="install-btn" onclick="promptInstall()" style="margin-bottom:10px">
+          ⬇️ Install InTask App
+        </button>
+      </div>
+
+      <!-- iOS instructions (always shown on iOS, since iOS can't do programmatic prompt) -->
+      <div id="ios-install-row">
+        <div style="font-size:11px;color:var(--muted);margin-bottom:14px;line-height:2">
+          Add to your home screen for the full app experience:
+        </div>
+        <div class="install-steps">
+          <div class="install-step"><span class="install-step-num">1</span><div><strong>Android / Chrome:</strong> Tap the ⋮ menu → "Add to Home screen"</div></div>
+          <div class="install-step"><span class="install-step-num">2</span><div><strong>iPhone / Safari:</strong> Tap the <strong>Share</strong> button (□↑) → "Add to Home Screen"</div></div>
+          <div class="install-step"><span class="install-step-num">3</span><div><strong>Desktop Chrome:</strong> Click the ⊕ icon in the address bar</div></div>
+        </div>
+      </div>
+
+      <div style="margin-top:14px;padding:10px;background:rgba(255,215,0,.08);border:1px solid rgba(255,215,0,.2);border-radius:0">
+        <div style="font-size:9px;font-family:'Press Start 2P',monospace;color:var(--accent);margin-bottom:6px">SHARE WITH FRIENDS</div>
+        <div style="font-size:12px;color:var(--muted);margin-bottom:8px">Share InTask with your crew:</div>
+        <div style="display:flex;gap:8px;align-items:center;background:var(--surf2);border:1px solid var(--border);padding:8px;word-break:break-all">
+          <span style="font-size:11px;color:var(--accent2);flex:1">https://inny27.github.io/OrbitCrew</span>
+          <button onclick="copyInstallLink()" style="border:1px solid var(--accent);background:transparent;color:var(--accent);font-family:'Press Start 2P',monospace;font-size:8px;padding:6px 10px;cursor:pointer;white-space:nowrap">COPY</button>
+        </div>
       </div>
     </div>
 
@@ -1935,15 +1964,20 @@ function renderSettings() {
   const colRow = g('settings-col-row');
   if(colRow) colRow.innerHTML = COLORS.map(c=>`<div class="col-dot${(u.color||'#7c3aed')===c?' sel':''}" style="background:${c}" onclick="settingsSelectColor('${c}',this)"></div>`).join('');
 
-  // Show install prompt if available
-  if(window._deferredInstallPrompt) {
-    const installRow = document.querySelector('[onclick="showInstallInstructions()"]');
-    if(installRow) {
-      installRow.querySelector('.settings-row-label').textContent = '📲 Install InTask App';
-      installRow.querySelector('.settings-row-sub').textContent = 'Tap to install — no app store needed!';
-      installRow.onclick = () => promptInstall();
+  // Show native install button if available (Android Chrome)
+  setTimeout(() => {
+    const promptRow = document.getElementById('install-prompt-row');
+    const iosRow = document.getElementById('ios-install-row');
+    if (promptRow && iosRow) {
+      if (window._deferredInstallPrompt) {
+        promptRow.style.display = 'block';
+        iosRow.style.display = 'none';
+      } else {
+        promptRow.style.display = 'none';
+        iosRow.style.display = 'block';
+      }
     }
-  }
+  }, 50);
 }
 
 window.saveNickname = async () => {
@@ -2792,8 +2826,8 @@ window.switchTab = tab => {
   if(tab==='settings') renderSettings();
 };
 
-window.openModal=id=>{g(id).classList.add('open');};
-window.closeModal=id=>{g(id).classList.remove('open');};
+window.openModal=id=>{const el=g(id);if(el)el.classList.add('open');};
+window.closeModal=id=>{const el=g(id);if(el)el.classList.remove('open');};
 
 window.setPill=(el,group)=>{document.querySelectorAll(`[data-group="${group}"]`).forEach(b=>b.classList.remove('active'));el.classList.add('active');};
 window.setTaskPill=(val,group,el)=>{setPill(el,group);if(group==='task-type')taskType=val;if(group==='task-priority')taskPriority=val;if(group==='task-repeat')taskRepeat=val;};
@@ -2947,7 +2981,7 @@ const colRow=g('col-row'); if(colRow) colRow.innerHTML=COLORS.map((c,i)=>`<div c
         <div class="sync-pill"><div class="sync-dot"></div><span class="sync-text">LIVE</span></div>
         <div class="mult-pill" id="mult-badge">×1.0</div>
         <div class="sp-pill" id="sp-badge"><img src="https://maplestory.io/api/GMS/255/item/2030000/icon" alt="SP" width="16" height="16" style="image-rendering:pixelated;vertical-align:middle"> <span id="sp-text">0SP</span></div>
-        <button class="logout-btn" onclick="openModal('settings-modal')" style="font-size:16px">⚙️</button>
+        <button class="logout-btn" onclick="switchTab('settings')" style="font-size:16px">⚙️</button>
       </div>
     </div>
     <div class="xp-row">
@@ -3156,6 +3190,38 @@ function settingsSelectColor(c,el){window.settingsSelectColor&&window.settingsSe
 function toggleColorBlind(){window.toggleColorBlind&&window.toggleColorBlind();}
 function changeIconCount(d){window.changeIconCount&&window.changeIconCount(d);}
 function showInstallInstructions(){window.showInstallInstructions&&window.showInstallInstructions();}
+function copyInstallLink(){window.copyInstallLink&&window.copyInstallLink();}
+
+window.showInstallInstructions = () => {
+  // Already shown inline in settings
+};
+
+window.promptInstall = async () => {
+  if (window._deferredInstallPrompt) {
+    window._deferredInstallPrompt.prompt();
+    const { outcome } = await window._deferredInstallPrompt.userChoice;
+    if (outcome === 'accepted') {
+      window._deferredInstallPrompt = null;
+      document.getElementById('install-prompt-row').style.display = 'none';
+      toast('🎉 InTask installed! Find it on your home screen.');
+    }
+  }
+};
+
+window.copyInstallLink = () => {
+  const url = 'https://inny27.github.io/OrbitCrew';
+  navigator.clipboard?.writeText(url).then(() => {
+    toast('📋 Link copied! Share with your crew.');
+  }).catch(() => {
+    // Fallback
+    const el = document.createElement('textarea');
+    el.value = url; document.body.appendChild(el);
+    el.select(); document.execCommand('copy');
+    document.body.removeChild(el);
+    toast('📋 Link copied!');
+  });
+};
+
 function promptInstall(){window.promptInstall&&window.promptInstall();}
 function renderSettings(){window.renderSettings&&window.renderSettings();}
 function toggleBgmDefault(){window.toggleBgmDefault&&window.toggleBgmDefault();}
@@ -3309,11 +3375,21 @@ function toggleBGM() {
 
 </script>
 <script>
-// Register service worker
+// Inline service worker
 if('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('/OrbitCrew/sw.js')
-    .then(() => console.log('SW registered'))
-    .catch(e => console.log('SW failed:', e));
+  try {
+    const swCode = [
+      "const C='intask-v2';",
+      "self.addEventListener('install',e=>{self.skipWaiting();});",
+      "self.addEventListener('activate',e=>{self.clients.claim();e.waitUntil(caches.keys().then(k=>Promise.all(k.filter(x=>x!==C).map(x=>caches.delete(x)))));});",
+      "self.addEventListener('fetch',e=>{if(e.request.method!=='GET')return;const u=new URL(e.request.url);if(u.origin!==self.location.origin)return;e.respondWith(caches.open(C).then(c=>c.match(e.request).then(r=>{const n=fetch(e.request).then(res=>{if(res.ok)c.put(e.request,res.clone());return res;}).catch(()=>r);return r||n;})));});"
+    ].join('\n');
+    const blob = new Blob([swCode], {type:'application/javascript'});
+    const url = URL.createObjectURL(blob);
+    navigator.serviceWorker.register(url, {scope:'./'})
+      .then(()=>console.log('SW ok'))
+      .catch(e=>console.log('SW skip:',e.message));
+  } catch(e) { console.log('SW not supported'); }
 }
 
 // PWA install prompt
@@ -3321,6 +3397,11 @@ window._deferredInstallPrompt = null;
 window.addEventListener('beforeinstallprompt', e => {
   e.preventDefault();
   window._deferredInstallPrompt = e;
+  // Show the install button in settings if open
+  const promptRow = document.getElementById('install-prompt-row');
+  if (promptRow) promptRow.style.display = 'block';
+  const iosRow = document.getElementById('ios-install-row');
+  if (iosRow) iosRow.style.display = 'none';
   // Show a subtle banner if user is on settings
   console.log('InTask can be installed!');
 });

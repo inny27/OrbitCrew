@@ -1,0 +1,42 @@
+{
+  "name": "InTask",
+  "short_name": "InTask",
+  "description": "Level up life. Together.",
+  "start_url": "/OrbitCrew/",
+  "scope": "/OrbitCrew/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0a0a1a",
+  "theme_color": "#ffd700",
+  "lang": "en",
+  "icons": [
+    {
+      "src": "https://maplestory.io/api/GMS/255/mob/100100/render/stand",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "https://maplestory.io/api/GMS/255/mob/100100/render/stand",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["productivity", "lifestyle"],
+  "screenshots": [],
+  "shortcuts": [
+    {
+      "name": "Today's Tasks",
+      "short_name": "Today",
+      "description": "View today's missions",
+      "url": "/OrbitCrew/?tab=today"
+    },
+    {
+      "name": "Workout Diary",
+      "short_name": "Fitness",
+      "description": "Log a workout",
+      "url": "/OrbitCrew/?tab=fitness"
+    }
+  ]
+}
