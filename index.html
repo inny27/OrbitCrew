@@ -320,9 +320,9 @@ body::before{
 .timer-card{background:linear-gradient(135deg,rgba(124,58,237,.12),rgba(6,182,212,.08));border:1px solid rgba(124,58,237,.35);border-radius:20px;padding:18px 20px;margin-bottom:14px;}
 .timer-inner{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
 .timer-lbl{font-size:10px;font-weight:800;color:var(--accent2);letter-spacing:2px;margin-bottom:6px;text-transform:uppercase;}
-.timer-display{font-family:'Orbitron',monospace;font-size:40px;font-weight:900;color:var(--text);line-height:1;letter-spacing:2px;}
-.timer-btn-row{display:flex;gap:10px;align-items:center;}
-.timer-start-btn{padding:13px 22px;border-radius:14px;border:none;color:#fff;font-family:'Nunito',sans-serif;font-size:14px;font-weight:900;cursor:pointer;transition:all .2s;min-width:110px;}
+.timer-display{font-family:'Orbitron',monospace;font-size:40px;font-weight:900;color:var(--text);line-height:1;letter-spacing:2px;min-width:140px;}
+.timer-btn-row{display:flex;gap:10px;align-items:center;flex-shrink:0;}
+.timer-start-btn{padding:13px 0;border-radius:14px;border:none;color:#fff;font-family:'Nunito',sans-serif;font-size:14px;font-weight:900;cursor:pointer;transition:background .2s;width:120px;text-align:center;}
 .timer-reset-btn{width:46px;height:46px;border-radius:14px;border:1px solid var(--border);background:var(--surf2);color:var(--muted);font-size:20px;cursor:pointer;transition:.2s;display:flex;align-items:center;justify-content:center;}
 .timer-reset-btn:hover{border-color:var(--red);color:var(--red);}
 .rest-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
@@ -535,13 +535,66 @@ body::before{
 .code-val{font-family:'Orbitron',monospace;font-size:42px;font-weight:900;color:var(--accent3);letter-spacing:8px;margin:12px 0;text-shadow:0 0 30px rgba(245,158,11,.4);}
 .code-sub{font-size:12px;color:var(--muted);font-weight:600;line-height:1.7;margin-bottom:20px;}
 .join-input{width:100%;background:var(--surf2);border:1px solid var(--border);border-radius:12px;padding:16px;color:var(--text);font-family:'Orbitron',monospace;font-size:24px;font-weight:700;text-align:center;letter-spacing:10px;outline:none;text-transform:uppercase;margin-bottom:8px;}
+
+/* ═══════════════════════════════════════════════
+   EXERCISE FORM ANIMATIONS
+═══════════════════════════════════════════════ */
+.ex-demo{width:100%;height:160px;border-radius:16px;background:linear-gradient(135deg,rgba(124,58,237,.15),rgba(6,182,212,.1));border:1px solid rgba(124,58,237,.25);display:flex;align-items:center;justify-content:center;margin-bottom:16px;overflow:hidden;position:relative;}
+.demo-scene{position:relative;width:120px;height:140px;}
+/* Stick figure base parts */
+.stick{position:absolute;background:var(--accent2);border-radius:99px;}
+.stick-head{width:22px;height:22px;border-radius:50%;background:transparent;border:3px solid var(--accent2);position:absolute;}
+/* Push up animation */
+@keyframes pushup-body{0%,100%{transform:rotate(-5deg) translateY(0);}50%{transform:rotate(-15deg) translateY(-18px);}}
+@keyframes pushup-arm{0%,100%{transform:rotate(60deg);}50%{transform:rotate(40deg);}}
+/* Pull up animation */
+@keyframes pullup-body{0%,100%{transform:translateY(0);}50%{transform:translateY(-30px);}}
+@keyframes pullup-arm{0%,100%{transform:rotate(-30deg);}50%{transform:rotate(-60deg);}}
+/* Squat animation */
+@keyframes squat-body{0%,100%{transform:translateY(0);}50%{transform:translateY(20px);}}
+@keyframes squat-leg{0%,100%{transform:rotate(10deg);}50%{transform:rotate(50deg);}}
+/* Curl animation */
+@keyframes curl-forearm{0%,100%{transform:rotate(160deg);}50%{transform:rotate(60deg);}}
+/* Press animation */
+@keyframes press-arm{0%,100%{transform:rotate(-30deg);}50%{transform:rotate(-80deg);}}
+/* Plank animation */
+@keyframes plank-hold{0%,100%{transform:scaleX(1);}50%{transform:scaleX(.98);}}
+/* Dip animation */
+@keyframes dip-body{0%,100%{transform:translateY(0);}50%{transform:translateY(20px);}}
+/* Deadlift animation */
+@keyframes deadlift-body{0%,100%{transform:rotate(0deg) translateY(0);}50%{transform:rotate(40deg) translateY(10px);}}
+/* Row animation */
+@keyframes row-arm{0%,100%{transform:rotate(20deg);}50%{transform:rotate(-20deg);}}
+/* Leg raise animation */
+@keyframes leg-raise{0%,100%{transform:rotate(0deg);}50%{transform:rotate(-80deg);}}
+/* Muscle up animation */
+@keyframes muscleup{0%{transform:translateY(0) rotate(0);}40%{transform:translateY(-35px) rotate(0);}70%{transform:translateY(-35px) rotate(-90deg);}100%{transform:translateY(-35px) rotate(-90deg);}}
+/* Planche animation */
+@keyframes planche-hold{0%,100%{transform:rotate(-10deg) translateY(2px);}50%{transform:rotate(-12deg) translateY(0);}}
+/* Front lever animation */
+@keyframes front-lever{0%,100%{transform:rotate(0deg);}50%{transform:rotate(-5deg);}}
+/* Dragon flag animation */
+@keyframes dragon-flag{0%,100%{transform:rotate(20deg);}50%{transform:rotate(5deg);}}
+/* Human flag animation */
+@keyframes human-flag{0%,100%{transform:rotate(90deg) translateX(2px);}50%{transform:rotate(88deg) translateX(0);}}
+/* Run animation */
+@keyframes run-leg1{0%,100%{transform:rotate(30deg);}50%{transform:rotate(-30deg);}}
+@keyframes run-leg2{0%,100%{transform:rotate(-30deg);}50%{transform:rotate(30deg);}}
+@keyframes run-arm1{0%,100%{transform:rotate(-20deg);}50%{transform:rotate(20deg);}}
+@keyframes run-arm2{0%,100%{transform:rotate(20deg);}50%{transform:rotate(-20deg);}}
+@keyframes run-body{0%,100%{transform:translateX(-5px);}50%{transform:translateX(5px);}}
+/* Swim animation */
+@keyframes swim-arm1{0%,100%{transform:rotate(-140deg);}50%{transform:rotate(20deg);}}
+@keyframes swim-arm2{0%,100%{transform:rotate(20deg);}50%{transform:rotate(-140deg);}}
+@keyframes swim-body{0%,100%{transform:rotate(-5deg);}50%{transform:rotate(5deg);}}
+
 </style>
 
 <!-- Firebase -->
 <script type="module">
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js';
 import { getFirestore,collection,doc,setDoc,onSnapshot,addDoc,updateDoc,serverTimestamp,getDoc,query,orderBy,where,getDocs,deleteDoc } from 'https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js';
-import { getAuth,signOut,onAuthStateChanged,GoogleAuthProvider,signInWithRedirect,getRedirectResult,createUserWithEmailAndPassword,signInWithEmailAndPassword } from 'https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js';
+import { getAuth,signOut,onAuthStateChanged,GoogleAuthProvider,signInWithRedirect,getRedirectResult,createUserWithEmailAndPassword,signInWithEmailAndPassword,signInAnonymously,updateProfile } from 'https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js';
 
 // ─── CONFIG ───────────────────────────────────────────────
 const fb = initializeApp({
@@ -602,36 +655,392 @@ const SKILL_TREES = {
 const XP = {high:50,medium:30,low:20,habit:25,boost:10};
 
 const EXERCISE_DB = [
-  {id:'bench_press',name:'Bench Press',muscles:['Chest','Triceps','Shoulders'],type:'weights',difficulty:2,category:'compound',gif:'🏋️',desc:'Lie flat, grip bar slightly wider than shoulders, lower to chest, press up.',tips:'Keep shoulder blades retracted, feet flat. Slight arch for stability.',cues:'Squeeze the bar like bending it. Push the floor away with your feet.'},
-  {id:'incline_press',name:'Incline Press',muscles:['Upper Chest','Shoulders','Triceps'],type:'weights',difficulty:2,category:'compound',gif:'🏋️',desc:'Set bench to 30-45°. Press dumbbells up and slightly together at top.',tips:'30° is optimal for upper chest. Don\'t go too steep.',cues:'Lead with your chest, not your hands.'},
-  {id:'pushup',name:'Push Up',muscles:['Chest','Triceps','Shoulders','Core'],type:'calisthenics',difficulty:1,category:'compound',gif:'💪',desc:'Hands shoulder-width apart, body straight, lower chest to floor and push up.',tips:'Keep core tight. Don\'t let hips sag.',cues:'Full body tension. Screw hands into floor.'},
-  {id:'dips',name:'Chest Dips',muscles:['Chest','Triceps','Shoulders'],type:'calisthenics',difficulty:2,category:'compound',gif:'💪',desc:'Lean forward on parallel bars, lower until elbows at 90°, push up.',tips:'Lean forward for chest, stay upright for triceps.',cues:'Let elbows flare slightly outward as you descend.'},
-  {id:'pullup',name:'Pull Up',muscles:['Back','Biceps','Core'],type:'calisthenics',difficulty:3,category:'compound',gif:'💪',desc:'Hang from bar, pull chest to bar, lower with control.',tips:'Full dead hang at bottom.',cues:'Initiate by depressing shoulder blades first.'},
-  {id:'bent_row',name:'Bent Over Row',muscles:['Back','Biceps','Rear Delts'],type:'weights',difficulty:3,category:'compound',gif:'🏋️',desc:'Hinge at hips, back parallel, row bar to lower chest.',tips:'Keep lower back neutral. Pull elbows past torso.',cues:'Imagine cracking a walnut between shoulder blades.'},
-  {id:'deadlift',name:'Deadlift',muscles:['Back','Glutes','Hamstrings','Core'],type:'weights',difficulty:4,category:'compound',gif:'🏋️',desc:'Hip-width stance, hinge to grip bar, drive through floor keeping back flat.',tips:'Brace core like absorbing a punch.',cues:'Push the floor away. Bar stays close to body.'},
-  {id:'lat_pulldown',name:'Lat Pulldown',muscles:['Back','Biceps'],type:'weights',difficulty:1,category:'compound',gif:'🏋️',desc:'Wide grip, pull down to upper chest, control the return.',tips:'Slight lean back. Never behind neck.',cues:'Pull elbows to your hips.'},
-  {id:'ohp',name:'Overhead Press',muscles:['Shoulders','Triceps','Core'],type:'weights',difficulty:3,category:'compound',gif:'🏋️',desc:'Press barbell from shoulders to overhead.',tips:'Squeeze glutes and core.',cues:'Push your head through the window at the top.'},
-  {id:'lateral_raise',name:'Lateral Raise',muscles:['Side Delts'],type:'weights',difficulty:1,category:'isolation',gif:'🏋️',desc:'Raise dumbbells to sides to shoulder height.',tips:'Lean forward 15°. Go lighter than you think.',cues:'Imagine pouring water from a jug at the top.'},
-  {id:'bicep_curl',name:'Bicep Curl',muscles:['Biceps','Forearms'],type:'weights',difficulty:1,category:'isolation',gif:'🏋️',desc:'Curl up supinating wrist, squeeze at top, lower slowly.',tips:'Full range. Full extension at bottom.',cues:'Elbow pinned to side. Wrist supinates as you curl.'},
-  {id:'hammer_curl',name:'Hammer Curl',muscles:['Biceps','Brachialis','Forearms'],type:'weights',difficulty:1,category:'isolation',gif:'🏋️',desc:'Neutral grip (thumbs up), curl without rotating wrist.',tips:'Great for arm thickness.',cues:'Keep neutral grip throughout.'},
-  {id:'skull_crusher',name:'Skull Crusher',muscles:['Triceps'],type:'weights',difficulty:2,category:'isolation',gif:'🏋️',desc:'Lie on bench, lower bar to forehead bending only at elbows.',tips:'Keep elbows pointing to ceiling.',cues:'Only the forearm moves.'},
-  {id:'tricep_pushdown',name:'Tricep Pushdown',muscles:['Triceps'],type:'weights',difficulty:1,category:'isolation',gif:'🏋️',desc:'Push rope or bar down extending arms fully.',tips:'Keep elbows pinned to sides.',cues:'Separate rope at bottom for full contraction.'},
-  {id:'squat',name:'Back Squat',muscles:['Quads','Glutes','Hamstrings','Core'],type:'weights',difficulty:4,category:'compound',gif:'🏋️',desc:'Bar on traps, squat to parallel or below, drive up.',tips:'Knees track over toes. Chest stays up.',cues:'Break hips and knees simultaneously.'},
-  {id:'rdl',name:'Romanian Deadlift',muscles:['Hamstrings','Glutes','Back'],type:'weights',difficulty:2,category:'compound',gif:'🏋️',desc:'Slight knee bend, hinge at hips, feel hamstring stretch, drive hips forward.',tips:'Bar stays close to legs.',cues:'Push your hips back to a wall behind you.'},
-  {id:'leg_press',name:'Leg Press',muscles:['Quads','Glutes','Hamstrings'],type:'weights',difficulty:1,category:'compound',gif:'🏋️',desc:'Feet shoulder-width, lower sled, press back up.',tips:'Don\'t let lower back peel off pad.',cues:'Press through full foot.'},
-  {id:'lunge',name:'Walking Lunge',muscles:['Quads','Glutes','Hamstrings'],type:'calisthenics',difficulty:2,category:'compound',gif:'💪',desc:'Step forward, lower back knee toward floor, push off front foot.',tips:'Keep torso upright.',cues:'Step out, drop down — don\'t lean forward.'},
-  {id:'glute_bridge',name:'Glute Bridge',muscles:['Glutes','Hamstrings','Core'],type:'calisthenics',difficulty:1,category:'isolation',gif:'💪',desc:'Lie on back, drive hips up squeezing glutes at top.',tips:'Tuck pelvis under at top.',cues:'Push through heels. Posterior tilt at the top.'},
-  {id:'plank',name:'Plank',muscles:['Core','Shoulders','Glutes'],type:'calisthenics',difficulty:1,category:'isolation',gif:'💪',desc:'Forearms on floor, body straight, hold. No sagging.',tips:'Breathe! Exhale sharply.',cues:'Squeeze everything. Push floor away with forearms.'},
-  {id:'dead_bug',name:'Dead Bug',muscles:['Core','Hip Flexors'],type:'calisthenics',difficulty:2,category:'isolation',gif:'💪',desc:'Lie on back, extend opposite arm and leg, keep low back flat.',tips:'Lower back must stay glued to floor.',cues:'Press lower back into floor before moving.'},
-  {id:'hanging_leg_raise',name:'Hanging Leg Raise',muscles:['Core','Hip Flexors'],type:'calisthenics',difficulty:3,category:'isolation',gif:'💪',desc:'Hang from bar, raise legs to parallel, lower with control.',tips:'Posterior pelvic tilt at top.',cues:'Don\'t swing. Hollow body throughout.'},
-  {id:'muscle_up',name:'Muscle Up',muscles:['Back','Chest','Triceps','Core'],type:'calisthenics',difficulty:5,category:'compound',gif:'💪',desc:'Start with pull up, transition over bar, push to full extension.',tips:'Master pull ups and dips first.',cues:'Explosive pull, lean forward, then push.'},
-  {id:'pistol_squat',name:'Pistol Squat',muscles:['Quads','Glutes','Balance'],type:'calisthenics',difficulty:4,category:'compound',gif:'💪',desc:'Single leg squat to full depth while extending other leg.',tips:'Use TRX for assistance while building.',cues:'Sit back into heel. Counter-balance with arms.'},
-  {id:'easy_run',name:'Easy Run',muscles:['Full Body','Cardio'],type:'run',difficulty:1,category:'cardio',gif:'🏃',desc:'Comfortable conversational pace.',tips:'60-70% of training should be at this pace.',cues:'Nose breathing comfortable. Land midfoot.'},
-  {id:'interval_run',name:'Interval Run',muscles:['Full Body','Cardio'],type:'run',difficulty:3,category:'cardio',gif:'🏃',desc:'Alternate hard efforts with recovery. E.g. 400m hard, 200m easy.',tips:'Full recovery between hard efforts.',cues:'Hard efforts 8/10. Recovery is SLOW.'},
-  {id:'tempo_run',name:'Tempo Run',muscles:['Full Body','Cardio'],type:'run',difficulty:3,category:'cardio',gif:'🏃',desc:'Comfortably hard pace for 20-40 minutes.',tips:'Should be able to say a few words.',cues:'Find hard but sustainable pace.'},
-  {id:'freestyle',name:'Freestyle',muscles:['Shoulders','Back','Core','Legs'],type:'swim',difficulty:2,category:'cardio',gif:'🏊',desc:'Alternating arm stroke with flutter kick.',tips:'Rotate body with each stroke.',cues:'High elbow catch. Pull water past hip.'},
-  {id:'breaststroke',name:'Breaststroke',muscles:['Chest','Back','Legs'],type:'swim',difficulty:2,category:'cardio',gif:'🏊',desc:'Simultaneous arm pull with frog kick.',tips:'Glide phase after each stroke.',cues:'Arms pull while legs recover, legs kick while arms recover.'},
+  // ── CHEST ──
+  {id:'bench_press',name:'Bench Press',muscles:['Chest','Triceps','Shoulders'],type:'weights',difficulty:2,category:'compound',
+   demo:`<div class="ex-demo"><div class="demo-scene" style="width:160px;height:120px">
+     <div style="position:absolute;bottom:10px;left:10px;right:10px;height:8px;background:rgba(6,182,212,.3);border-radius:4px"></div>
+     <div style="position:absolute;bottom:18px;left:50%;transform:translateX(-50%);width:80px;height:4px;background:var(--accent2);border-radius:2px;animation:press-arm 1.5s ease-in-out infinite;transform-origin:center bottom"></div>
+     <div style="position:absolute;bottom:22px;left:50%;transform:translateX(-50%);width:16px;height:16px;border-radius:50%;border:2.5px solid var(--accent2)"></div>
+     <div style="position:absolute;bottom:10px;left:50%;transform:translateX(-50%) rotate(-5deg);width:4px;height:30px;background:var(--accent2);border-radius:2px;animation:press-arm 1.5s ease-in-out infinite;transform-origin:top center"></div>
+     <div style="position:absolute;bottom:40px;left:15px;width:4px;height:50px;background:rgba(124,58,237,.4);border-radius:2px"></div>
+     <div style="position:absolute;bottom:40px;right:15px;width:4px;height:50px;background:rgba(124,58,237,.4);border-radius:2px"></div>
+     <div style="position:absolute;top:8px;left:50%;transform:translateX(-50%);font-size:9px;color:var(--accent2);font-weight:800;letter-spacing:1px">BENCH PRESS</div>
+   </div></div>`,
+   desc:'Lie flat on bench, grip bar slightly wider than shoulders, lower to chest, press up explosively.',tips:'Keep shoulder blades retracted, feet flat. Slight arch for stability.',cues:'Squeeze the bar like bending it. Push the floor away with your feet.'},
+
+  {id:'pushup',name:'Push Up',muscles:['Chest','Triceps','Shoulders','Core'],type:'calisthenics',difficulty:1,category:'compound',
+   demo:`<div class="ex-demo"><div class="demo-scene" style="width:180px;height:120px">
+     <div style="position:absolute;bottom:20px;left:10px;right:10px;height:3px;background:rgba(6,182,212,.2);border-radius:2px"></div>
+     <div style="position:absolute;bottom:20px;left:50%;transform-origin:left bottom;transform:translateX(-10px) rotate(-10deg);width:90px;height:5px;background:var(--accent2);border-radius:2px;animation:pushup-body 1.5s ease-in-out infinite"></div>
+     <div style="position:absolute;bottom:35px;left:38px;width:14px;height:14px;border-radius:50%;border:2.5px solid var(--accent2)"></div>
+     <div style="position:absolute;bottom:20px;left:20px;width:4px;height:22px;background:var(--accent2);border-radius:2px;animation:pushup-arm 1.5s ease-in-out infinite;transform-origin:bottom center"></div>
+     <div style="position:absolute;bottom:20px;right:40px;width:4px;height:22px;background:var(--accent2);border-radius:2px;animation:pushup-arm 1.5s ease-in-out infinite;transform-origin:bottom center"></div>
+     <div style="position:absolute;top:8px;left:50%;transform:translateX(-50%);font-size:9px;color:var(--accent2);font-weight:800;letter-spacing:1px">PUSH UP</div>
+   </div></div>`,
+   desc:'Hands shoulder-width apart, body straight, lower chest to floor and push up.',tips:'Keep core tight. Don't let hips sag or pike.',cues:'Full body tension. Screw hands into floor to activate chest.'},
+
+  {id:'dips',name:'Chest Dips',muscles:['Chest','Triceps','Shoulders'],type:'calisthenics',difficulty:2,category:'compound',
+   demo:`<div class="ex-demo"><div class="demo-scene" style="width:160px;height:140px">
+     <div style="position:absolute;top:10px;left:20px;right:20px;height:4px;background:rgba(124,58,237,.5);border-radius:2px"></div>
+     <div style="position:absolute;top:14px;left:25px;width:4px;height:30px;background:rgba(124,58,237,.4);border-radius:2px"></div>
+     <div style="position:absolute;top:14px;right:25px;width:4px;height:30px;background:rgba(124,58,237,.4);border-radius:2px"></div>
+     <div style="position:absolute;top:30px;left:50%;transform:translateX(-50%);width:14px;height:14px;border-radius:50%;border:2.5px solid var(--accent2)"></div>
+     <div style="position:absolute;top:44px;left:50%;transform:translateX(-50%) translateX(-4px);width:4px;height:35px;background:var(--accent2);border-radius:2px;animation:dip-body 1.5s ease-in-out infinite;transform-origin:top center"></div>
+     <div style="position:absolute;top:50px;left:30px;width:4px;height:25px;background:var(--accent2);border-radius:2px;animation:dip-body 1.5s ease-in-out infinite;transform-origin:top center;transform:rotate(20deg)"></div>
+     <div style="position:absolute;top:50px;right:30px;width:4px;height:25px;background:var(--accent2);border-radius:2px;animation:dip-body 1.5s ease-in-out infinite;transform-origin:top center;transform:rotate(-20deg)"></div>
+     <div style="position:absolute;top:4px;left:50%;transform:translateX(-50%);font-size:9px;color:var(--accent2);font-weight:800;letter-spacing:1px">DIPS</div>
+   </div></div>`,
+   desc:'Lean forward on parallel bars, lower until elbows at 90°, push up powerfully.',tips:'Lean forward for chest emphasis, stay upright for triceps.',cues:'Let elbows flare slightly outward as you descend.'},
+
+  // ── BACK ──
+  {id:'pullup',name:'Pull Up',muscles:['Back','Biceps','Core'],type:'calisthenics',difficulty:3,category:'compound',
+   demo:`<div class="ex-demo"><div class="demo-scene" style="width:140px;height:150px">
+     <div style="position:absolute;top:8px;left:15px;right:15px;height:5px;background:rgba(124,58,237,.6);border-radius:3px"></div>
+     <div style="position:absolute;top:13px;left:50%;transform:translateX(-50%);width:14px;height:14px;border-radius:50%;border:2.5px solid var(--accent2);animation:pullup-body 2s ease-in-out infinite"></div>
+     <div style="position:absolute;top:13px;left:28px;width:4px;height:28px;background:var(--accent2);border-radius:2px;animation:pullup-arm 2s ease-in-out infinite;transform-origin:top center;transform:rotate(-30deg)"></div>
+     <div style="position:absolute;top:13px;right:28px;width:4px;height:28px;background:var(--accent2);border-radius:2px;animation:pullup-arm 2s ease-in-out infinite;transform-origin:top center;transform:rotate(30deg)"></div>
+     <div style="position:absolute;top:27px;left:50%;transform:translateX(-50%) translateX(-3px);width:4px;height:40px;background:var(--accent2);border-radius:2px;animation:pullup-body 2s ease-in-out infinite;transform-origin:top center"></div>
+     <div style="position:absolute;top:67px;left:50%;transform:translateX(-50%) translateX(-8px) rotate(15deg);width:4px;height:35px;background:var(--accent2);border-radius:2px;animation:pullup-body 2s ease-in-out infinite;transform-origin:top center"></div>
+     <div style="position:absolute;top:67px;left:50%;transform:translateX(-50%) translateX(4px) rotate(-15deg);width:4px;height:35px;background:var(--accent2);border-radius:2px;animation:pullup-body 2s ease-in-out infinite;transform-origin:top center"></div>
+     <div style="position:absolute;top:2px;left:50%;transform:translateX(-50%);font-size:9px;color:var(--accent2);font-weight:800;letter-spacing:1px">PULL UP</div>
+   </div></div>`,
+   desc:'Hang from bar with overhand grip, pull chest to bar, lower with full control.',tips:'Full dead hang at bottom. Think elbows to back pockets.',cues:'Initiate by depressing shoulder blades first — don't just pull with arms.'},
+
+  {id:'bent_row',name:'Bent Over Row',muscles:['Back','Biceps','Rear Delts'],type:'weights',difficulty:3,category:'compound',
+   demo:`<div class="ex-demo"><div class="demo-scene" style="width:160px;height:130px">
+     <div style="position:absolute;bottom:15px;left:50%;transform:translateX(-50%) rotate(40deg);width:4px;height:55px;background:var(--accent2);border-radius:2px;transform-origin:bottom center"></div>
+     <div style="position:absolute;bottom:60px;left:44px;width:14px;height:14px;border-radius:50%;border:2.5px solid var(--accent2)"></div>
+     <div style="position:absolute;bottom:45px;left:20px;width:55px;height:4px;background:var(--accent2);border-radius:2px;animation:row-arm 1.5s ease-in-out infinite;transform-origin:right center"></div>
+     <div style="position:absolute;bottom:20px;left:20px;width:4px;height:25px;background:var(--accent2);border-radius:2px"></div>
+     <div style="position:absolute;bottom:20px;right:35px;width:4px;height:25px;background:var(--accent2);border-radius:2px"></div>
+     <div style="position:absolute;bottom:15px;left:20px;width:20px;height:5px;background:rgba(124,58,237,.4);border-radius:2px"></div>
+     <div style="position:absolute;bottom:15px;right:25px;width:20px;height:5px;background:rgba(124,58,237,.4);border-radius:2px"></div>
+     <div style="position:absolute;top:6px;left:50%;transform:translateX(-50%);font-size:9px;color:var(--accent2);font-weight:800;letter-spacing:1px">BENT OVER ROW</div>
+   </div></div>`,
+   desc:'Hinge at hips, back parallel to floor, row bar to lower chest/upper abdomen.',tips:'Keep lower back neutral. Pull elbows past torso for full contraction.',cues:'Imagine cracking a walnut between your shoulder blades.'},
+
+  {id:'deadlift',name:'Deadlift',muscles:['Back','Glutes','Hamstrings','Core'],type:'weights',difficulty:4,category:'compound',
+   demo:`<div class="ex-demo"><div class="demo-scene" style="width:160px;height:150px">
+     <div style="position:absolute;bottom:12px;left:10px;right:10px;height:6px;background:rgba(124,58,237,.4);border-radius:3px"></div>
+     <div style="position:absolute;bottom:18px;left:50%;transform:translateX(-50%);width:60px;height:4px;background:var(--accent2);border-radius:2px"></div>
+     <div style="position:absolute;bottom:22px;left:50%;transform:translateX(-50%) rotate(-5deg);width:4px;height:50px;background:var(--accent2);border-radius:2px;animation:deadlift-body 2s ease-in-out infinite;transform-origin:bottom center"></div>
+     <div style="position:absolute;bottom:68px;left:44px;width:14px;height:14px;border-radius:50%;border:2.5px solid var(--accent2)"></div>
+     <div style="position:absolute;bottom:22px;left:30px;width:4px;height:30px;background:var(--accent2);border-radius:2px"></div>
+     <div style="position:absolute;bottom:22px;right:38px;width:4px;height:30px;background:var(--accent2);border-radius:2px"></div>
+     <div style="position:absolute;top:6px;left:50%;transform:translateX(-50%);font-size:9px;color:var(--accent2);font-weight:800;letter-spacing:1px">DEADLIFT</div>
+   </div></div>`,
+   desc:'Hip-width stance, hinge to grip bar, drive through floor keeping back flat.',tips:'Brace core like absorbing a punch. Bar stays close to legs.',cues:'Push the floor away — don't think of pulling the bar up.'},
+
+  {id:'lat_pulldown',name:'Lat Pulldown',muscles:['Back','Biceps'],type:'weights',difficulty:1,category:'compound',
+   demo:`<div class="ex-demo"><div class="demo-scene" style="width:140px;height:150px">
+     <div style="position:absolute;top:8px;left:15px;right:15px;height:4px;background:rgba(6,182,212,.5);border-radius:2px"></div>
+     <div style="position:absolute;top:12px;left:50%;transform:translateX(-50%);width:2px;height:20px;background:rgba(6,182,212,.6)"></div>
+     <div style="position:absolute;top:30px;left:50%;transform:translateX(-50%);width:14px;height:14px;border-radius:50%;border:2.5px solid var(--accent2)"></div>
+     <div style="position:absolute;top:12px;left:28px;width:4px;height:28px;background:var(--accent2);border-radius:2px;animation:pullup-arm 2s ease-in-out infinite;transform-origin:top center;transform:rotate(-25deg)"></div>
+     <div style="position:absolute;top:12px;right:28px;width:4px;height:28px;background:var(--accent2);border-radius:2px;animation:pullup-arm 2s ease-in-out infinite;transform-origin:top center;transform:rotate(25deg)"></div>
+     <div style="position:absolute;top:44px;left:50%;transform:translateX(-50%) translateX(-3px);width:4px;height:40px;background:var(--accent2);border-radius:2px"></div>
+     <div style="position:absolute;top:84px;left:50%;transform:translateX(-50%) translateX(-8px) rotate(15deg);width:4px;height:30px;background:var(--accent2);border-radius:2px"></div>
+     <div style="position:absolute;top:84px;left:50%;transform:translateX(-50%) translateX(4px) rotate(-15deg);width:4px;height:30px;background:var(--accent2);border-radius:2px"></div>
+     <div style="position:absolute;top:2px;left:50%;transform:translateX(-50%);font-size:9px;color:var(--accent2);font-weight:800;letter-spacing:1px">LAT PULLDOWN</div>
+   </div></div>`,
+   desc:'Wide grip, pull bar down to upper chest, control the return slowly.',tips:'Slight lean back. Never pull behind neck.',cues:'Think of pulling your elbows to your hips — not your hands.'},
+
+  // ── SHOULDERS ──
+  {id:'ohp',name:'Overhead Press',muscles:['Shoulders','Triceps','Core'],type:'weights',difficulty:3,category:'compound',
+   demo:`<div class="ex-demo"><div class="demo-scene" style="width:140px;height:150px">
+     <div style="position:absolute;top:8px;left:50%;transform:translateX(-50%);width:70px;height:4px;background:var(--accent2);border-radius:2px;animation:press-arm 1.5s ease-in-out infinite;transform-origin:center bottom"></div>
+     <div style="position:absolute;top:25px;left:50%;transform:translateX(-50%);width:14px;height:14px;border-radius:50%;border:2.5px solid var(--accent2)"></div>
+     <div style="position:absolute;top:8px;left:25px;width:4px;height:30px;background:var(--accent2);border-radius:2px;animation:press-arm 1.5s ease-in-out infinite;transform-origin:top center;transform:rotate(20deg)"></div>
+     <div style="position:absolute;top:8px;right:25px;width:4px;height:30px;background:var(--accent2);border-radius:2px;animation:press-arm 1.5s ease-in-out infinite;transform-origin:top center;transform:rotate(-20deg)"></div>
+     <div style="position:absolute;top:39px;left:50%;transform:translateX(-50%) translateX(-3px);width:4px;height:45px;background:var(--accent2);border-radius:2px"></div>
+     <div style="position:absolute;top:84px;left:50%;transform:translateX(-50%) translateX(-8px) rotate(10deg);width:4px;height:35px;background:var(--accent2);border-radius:2px"></div>
+     <div style="position:absolute;top:84px;left:50%;transform:translateX(-50%) translateX(4px) rotate(-10deg);width:4px;height:35px;background:var(--accent2);border-radius:2px"></div>
+     <div style="position:absolute;bottom:4px;left:25px;right:25px;height:3px;background:rgba(6,182,212,.2);border-radius:2px"></div>
+     <div style="position:absolute;top:2px;left:50%;transform:translateX(-50%);font-size:9px;color:var(--accent2);font-weight:800;letter-spacing:1px">OHP</div>
+   </div></div>`,
+   desc:'Press barbell from shoulders to overhead, full lockout at top.',tips:'Squeeze glutes and core. Bar path slightly back at top.',cues:'Push your head through the window at the top. Full lockout.'},
+
+  {id:'lateral_raise',name:'Lateral Raise',muscles:['Side Delts'],type:'weights',difficulty:1,category:'isolation',
+   demo:`<div class="ex-demo"><div class="demo-scene" style="width:140px;height:130px">
+     <div style="position:absolute;top:15px;left:50%;transform:translateX(-50%);width:14px;height:14px;border-radius:50%;border:2.5px solid var(--accent2)"></div>
+     <div style="position:absolute;top:29px;left:50%;transform:translateX(-50%) translateX(-3px);width:4px;height:45px;background:var(--accent2);border-radius:2px"></div>
+     <div style="position:absolute;top:35px;left:15px;width:40px;height:4px;background:var(--accent2);border-radius:2px;animation:row-arm 1.5s ease-in-out infinite;transform-origin:right center;transform:rotate(-20deg)"></div>
+     <div style="position:absolute;top:35px;right:15px;width:40px;height:4px;background:var(--accent2);border-radius:2px;animation:row-arm 1.5s ease-in-out infinite;transform-origin:left center;transform:rotate(20deg)"></div>
+     <div style="position:absolute;top:74px;left:50%;transform:translateX(-50%) translateX(-8px) rotate(10deg);width:4px;height:35px;background:var(--accent2);border-radius:2px"></div>
+     <div style="position:absolute;top:74px;left:50%;transform:translateX(-50%) translateX(4px) rotate(-10deg);width:4px;height:35px;background:var(--accent2);border-radius:2px"></div>
+     <div style="position:absolute;top:8px;left:50%;transform:translateX(-50%);font-size:9px;color:var(--accent2);font-weight:800;letter-spacing:1px">LATERAL RAISE</div>
+   </div></div>`,
+   desc:'Raise dumbbells to sides to shoulder height, slight lean forward.',tips:'Lead with elbows. Go lighter than you think.',cues:'Imagine pouring water from a jug at the top.'},
+
+  // ── BICEPS ──
+  {id:'bicep_curl',name:'Bicep Curl',muscles:['Biceps','Forearms'],type:'weights',difficulty:1,category:'isolation',
+   demo:`<div class="ex-demo"><div class="demo-scene" style="width:120px;height:140px">
+     <div style="position:absolute;top:15px;left:50%;transform:translateX(-50%);width:14px;height:14px;border-radius:50%;border:2.5px solid var(--accent2)"></div>
+     <div style="position:absolute;top:29px;left:50%;transform:translateX(-50%) translateX(-3px);width:4px;height:40px;background:var(--accent2);border-radius:2px"></div>
+     <div style="position:absolute;top:40px;left:20px;width:4px;height:25px;background:var(--accent2);border-radius:2px;transform:rotate(10deg);transform-origin:top center"></div>
+     <div style="position:absolute;top:40px;left:20px;width:4px;height:25px;background:var(--accent3);border-radius:2px;animation:curl-forearm 1.5s ease-in-out infinite;transform-origin:top center"></div>
+     <div style="position:absolute;top:65px;left:16px;width:12px;height:6px;background:var(--accent3);border-radius:3px"></div>
+     <div style="position:absolute;top:69px;left:50%;transform:translateX(-50%) translateX(-8px) rotate(10deg);width:4px;height:35px;background:var(--accent2);border-radius:2px"></div>
+     <div style="position:absolute;top:69px;left:50%;transform:translateX(-50%) translateX(4px) rotate(-10deg);width:4px;height:35px;background:var(--accent2);border-radius:2px"></div>
+     <div style="position:absolute;bottom:4px;left:25px;right:25px;height:3px;background:rgba(6,182,212,.2);border-radius:2px"></div>
+     <div style="position:absolute;top:8px;left:50%;transform:translateX(-50%);font-size:9px;color:var(--accent2);font-weight:800;letter-spacing:1px">BICEP CURL</div>
+   </div></div>`,
+   desc:'Curl up supinating wrist, squeeze at top, lower slowly with control.',tips:'Full range — full extension at bottom, full squeeze at top.',cues:'Elbow pinned to side. Wrist supinates as you curl up.'},
+
+  {id:'hammer_curl',name:'Hammer Curl',muscles:['Biceps','Brachialis','Forearms'],type:'weights',difficulty:1,category:'isolation',
+   demo:`<div class="ex-demo"><span style="font-size:11px;color:var(--accent2);font-weight:800;letter-spacing:1px">HAMMER CURL</span></div>`,
+   desc:'Neutral grip (thumbs up), curl without rotating wrist.',tips:'Great for arm thickness and brachialis development.',cues:'Keep neutral grip throughout. Same motion as a hammer.'},
+
+  // ── TRICEPS ──
+  {id:'skull_crusher',name:'Skull Crusher',muscles:['Triceps'],type:'weights',difficulty:2,category:'isolation',
+   demo:`<div class="ex-demo"><span style="font-size:11px;color:var(--accent2);font-weight:800;letter-spacing:1px">SKULL CRUSHER</span></div>`,
+   desc:'Lie on bench, lower bar to forehead bending only at elbows.',tips:'Keep elbows pointing to ceiling throughout.',cues:'Only the forearm moves — upper arm stays stationary.'},
+
+  {id:'tricep_pushdown',name:'Tricep Pushdown',muscles:['Triceps'],type:'weights',difficulty:1,category:'isolation',
+   demo:`<div class="ex-demo"><span style="font-size:11px;color:var(--accent2);font-weight:800;letter-spacing:1px">TRICEP PUSHDOWN</span></div>`,
+   desc:'Push rope or bar down extending arms fully at cable machine.',tips:'Keep elbows pinned to sides.',cues:'Separate rope at bottom for full contraction.'},
+
+  // ── LEGS ──
+  {id:'squat',name:'Back Squat',muscles:['Quads','Glutes','Hamstrings','Core'],type:'weights',difficulty:4,category:'compound',
+   demo:`<div class="ex-demo"><div class="demo-scene" style="width:140px;height:150px">
+     <div style="position:absolute;top:8px;left:50%;transform:translateX(-50%);width:80px;height:4px;background:rgba(124,58,237,.5);border-radius:2px"></div>
+     <div style="position:absolute;top:15px;left:50%;transform:translateX(-50%);width:14px;height:14px;border-radius:50%;border:2.5px solid var(--accent2)"></div>
+     <div style="position:absolute;top:29px;left:50%;transform:translateX(-50%) translateX(-3px);width:4px;height:35px;background:var(--accent2);border-radius:2px;animation:squat-body 1.8s ease-in-out infinite;transform-origin:bottom center"></div>
+     <div style="position:absolute;top:60px;left:50%;transform:translateX(-50%) translateX(-8px);width:4px;height:35px;background:var(--accent2);border-radius:2px;animation:squat-leg 1.8s ease-in-out infinite;transform-origin:top center;transform:rotate(10deg)"></div>
+     <div style="position:absolute;top:60px;left:50%;transform:translateX(-50%) translateX(4px);width:4px;height:35px;background:var(--accent2);border-radius:2px;animation:squat-leg 1.8s ease-in-out infinite;transform-origin:top center;transform:rotate(-10deg)"></div>
+     <div style="position:absolute;bottom:10px;left:20px;right:20px;height:3px;background:rgba(6,182,212,.2);border-radius:2px"></div>
+     <div style="position:absolute;top:2px;left:50%;transform:translateX(-50%);font-size:9px;color:var(--accent2);font-weight:800;letter-spacing:1px">BACK SQUAT</div>
+   </div></div>`,
+   desc:'Bar on traps, squat to parallel or below, knees track over toes, drive up.',tips:'Chest stays up. Weight in mid-foot throughout.',cues:'Break at hips and knees simultaneously. Spread the floor with your feet.'},
+
+  {id:'rdl',name:'Romanian Deadlift',muscles:['Hamstrings','Glutes','Back'],type:'weights',difficulty:2,category:'compound',
+   demo:`<div class="ex-demo"><span style="font-size:11px;color:var(--accent2);font-weight:800;letter-spacing:1px">ROMANIAN DEADLIFT</span></div>`,
+   desc:'Slight knee bend, hinge at hips lowering bar down legs, feel the hamstring stretch.',tips:'Bar stays close to legs throughout.',cues:'Push your hips back to a wall behind you. Feel the hamstring load.'},
+
+  {id:'leg_press',name:'Leg Press',muscles:['Quads','Glutes','Hamstrings'],type:'weights',difficulty:1,category:'compound',
+   demo:`<div class="ex-demo"><span style="font-size:11px;color:var(--accent2);font-weight:800;letter-spacing:1px">LEG PRESS</span></div>`,
+   desc:'Feet shoulder-width on platform, lower sled, press back without locking knees.',tips:'Don't let lower back peel off the pad at the bottom.',cues:'Press through full foot. Don't just push with toes.'},
+
+  {id:'lunge',name:'Walking Lunge',muscles:['Quads','Glutes','Hamstrings'],type:'calisthenics',difficulty:2,category:'compound',
+   demo:`<div class="ex-demo"><span style="font-size:11px;color:var(--accent2);font-weight:800;letter-spacing:1px">WALKING LUNGE</span></div>`,
+   desc:'Step forward, lower back knee toward floor, push off front foot, repeat.',tips:'Keep torso upright. Front knee tracks over toes.',cues:'Step out, drop down — don't lean forward.'},
+
+  {id:'glute_bridge',name:'Glute Bridge',muscles:['Glutes','Hamstrings','Core'],type:'calisthenics',difficulty:1,category:'isolation',
+   demo:`<div class="ex-demo"><span style="font-size:11px;color:var(--accent2);font-weight:800;letter-spacing:1px">GLUTE BRIDGE</span></div>`,
+   desc:'Lie on back, feet flat, drive hips up squeezing glutes hard at top.',tips:'Tuck pelvis under at top for full glute activation.',cues:'Push through heels. Posterior pelvic tilt at the top.'},
+
+  // ── CORE ──
+  {id:'plank',name:'Plank',muscles:['Core','Shoulders','Glutes'],type:'calisthenics',difficulty:1,category:'isolation',
+   demo:`<div class="ex-demo"><div class="demo-scene" style="width:180px;height:100px">
+     <div style="position:absolute;bottom:20px;left:10px;right:10px;height:3px;background:rgba(6,182,212,.2);border-radius:2px"></div>
+     <div style="position:absolute;bottom:20px;left:50%;transform-origin:left bottom;transform:translateX(-10px) rotate(-5deg);width:90px;height:5px;background:var(--accent2);border-radius:2px;animation:plank-hold 3s ease-in-out infinite"></div>
+     <div style="position:absolute;bottom:35px;left:38px;width:14px;height:14px;border-radius:50%;border:2.5px solid var(--accent2)"></div>
+     <div style="position:absolute;bottom:20px;left:18px;width:4px;height:18px;background:var(--accent2);border-radius:2px"></div>
+     <div style="position:absolute;bottom:20px;right:42px;width:4px;height:18px;background:var(--accent2);border-radius:2px"></div>
+     <div style="position:absolute;top:8px;left:50%;transform:translateX(-50%);font-size:9px;color:var(--accent2);font-weight:800;letter-spacing:1px">PLANK</div>
+   </div></div>`,
+   desc:'Forearms on floor, body straight, hold position. No sagging or piking.',tips:'Breathe steadily. Full body tension throughout.',cues:'Squeeze everything — glutes, abs, quads. Push floor away with forearms.'},
+
+  {id:'dead_bug',name:'Dead Bug',muscles:['Core','Hip Flexors'],type:'calisthenics',difficulty:2,category:'isolation',
+   demo:`<div class="ex-demo"><span style="font-size:11px;color:var(--accent2);font-weight:800;letter-spacing:1px">DEAD BUG</span></div>`,
+   desc:'Lie on back, extend opposite arm and leg keeping lower back flat on floor.',tips:'Lower back must stay glued to floor throughout.',cues:'Press lower back into floor before you move anything.'},
+
+  {id:'hanging_leg_raise',name:'Hanging Leg Raise',muscles:['Core','Hip Flexors'],type:'calisthenics',difficulty:3,category:'isolation',
+   demo:`<div class="ex-demo"><div class="demo-scene" style="width:140px;height:160px">
+     <div style="position:absolute;top:8px;left:15px;right:15px;height:5px;background:rgba(124,58,237,.6);border-radius:3px"></div>
+     <div style="position:absolute;top:13px;left:50%;transform:translateX(-50%);width:14px;height:14px;border-radius:50%;border:2.5px solid var(--accent2)"></div>
+     <div style="position:absolute;top:13px;left:28px;width:4px;height:28px;background:var(--accent2);border-radius:2px;transform:rotate(-25deg);transform-origin:top center"></div>
+     <div style="position:absolute;top:13px;right:28px;width:4px;height:28px;background:var(--accent2);border-radius:2px;transform:rotate(25deg);transform-origin:top center"></div>
+     <div style="position:absolute;top:27px;left:50%;transform:translateX(-50%) translateX(-3px);width:4px;height:38px;background:var(--accent2);border-radius:2px"></div>
+     <div style="position:absolute;top:65px;left:50%;transform:translateX(-50%) translateX(-8px);width:4px;height:40px;background:var(--accent2);border-radius:2px;animation:leg-raise 2s ease-in-out infinite;transform-origin:top center;transform:rotate(5deg)"></div>
+     <div style="position:absolute;top:65px;left:50%;transform:translateX(-50%) translateX(4px);width:4px;height:40px;background:var(--accent2);border-radius:2px;animation:leg-raise 2s ease-in-out infinite;transform-origin:top center;transform:rotate(-5deg)"></div>
+     <div style="position:absolute;top:2px;left:50%;transform:translateX(-50%);font-size:9px;color:var(--accent2);font-weight:800;letter-spacing:1px">HANGING LEG RAISE</div>
+   </div></div>`,
+   desc:'Hang from bar, raise legs to parallel or above with posterior pelvic tilt.',tips:'Don't swing. Hollow body position throughout.',cues:'Think about tilting your pelvis back at the top to fully engage the abs.'},
+
+  // ── ADVANCED CALISTHENICS ──
+  {id:'muscle_up',name:'Muscle Up',muscles:['Back','Chest','Triceps','Core'],type:'calisthenics',difficulty:5,category:'compound',
+   demo:`<div class="ex-demo"><div class="demo-scene" style="width:140px;height:160px">
+     <div style="position:absolute;top:8px;left:15px;right:15px;height:5px;background:rgba(124,58,237,.6);border-radius:3px"></div>
+     <div style="position:absolute;top:10px;left:50%;transform:translateX(-50%);animation:muscleup 3s ease-in-out infinite;display:flex;flex-direction:column;align-items:center">
+       <div style="width:14px;height:14px;border-radius:50%;border:2.5px solid var(--accent2)"></div>
+       <div style="width:4px;height:40px;background:var(--accent2);border-radius:2px"></div>
+       <div style="width:40px;height:4px;background:var(--accent2);border-radius:2px;margin-top:-4px"></div>
+     </div>
+     <div style="position:absolute;top:2px;left:50%;transform:translateX(-50%);font-size:9px;color:var(--accent2);font-weight:800;letter-spacing:1px">MUSCLE UP</div>
+   </div></div>`,
+   desc:'Explosive pull up transitioning over the bar into a dip — the king of calisthenics.',tips:'Master strict pull ups and dips first. False grip helps the transition.',cues:'Explosive pull, lean slightly forward, drive elbows back and over the bar.'},
+
+  {id:'pistol_squat',name:'Pistol Squat',muscles:['Quads','Glutes','Balance'],type:'calisthenics',difficulty:4,category:'compound',
+   demo:`<div class="ex-demo"><span style="font-size:11px;color:var(--accent2);font-weight:800;letter-spacing:1px">PISTOL SQUAT</span></div>`,
+   desc:'Single leg squat to full depth while extending other leg forward.',tips:'Use TRX or a pole for assistance while building strength.',cues:'Sit back into your heel. Counter-balance with arms outstretched.'},
+
+  {id:'planche_lean',name:'Planche Lean',muscles:['Chest','Shoulders','Core','Wrists'],type:'calisthenics',difficulty:4,category:'compound',
+   demo:`<div class="ex-demo"><div class="demo-scene" style="width:180px;height:120px">
+     <div style="position:absolute;bottom:20px;left:10px;right:10px;height:3px;background:rgba(6,182,212,.2);border-radius:2px"></div>
+     <div style="position:absolute;bottom:20px;left:20px;width:4px;height:22px;background:var(--accent2);border-radius:2px"></div>
+     <div style="position:absolute;bottom:20px;right:50px;width:4px;height:22px;background:var(--accent2);border-radius:2px"></div>
+     <div style="position:absolute;bottom:42px;left:18px;width:75px;height:5px;background:var(--accent2);border-radius:2px;animation:planche-hold 2s ease-in-out infinite;transform-origin:left center;transform:rotate(-12deg)"></div>
+     <div style="position:absolute;bottom:70px;left:16px;width:14px;height:14px;border-radius:50%;border:2.5px solid var(--accent2)"></div>
+     <div style="position:absolute;top:8px;left:50%;transform:translateX(-50%);font-size:9px;color:var(--accent2);font-weight:800;letter-spacing:1px">PLANCHE LEAN</div>
+   </div></div>`,
+   desc:'Lean forward on straight arms beyond your hands until body is parallel to ground. Start with a lean and progress to tuck, advanced tuck, straddle, full.',tips:'Wrist conditioning is critical before training planche. Protracted scapula is essential.',cues:'Depress and protract shoulder blades hard. Push the ground away.'},
+
+  {id:'tuck_planche',name:'Tuck Planche',muscles:['Chest','Shoulders','Core','Triceps'],type:'calisthenics',difficulty:5,category:'compound',
+   demo:`<div class="ex-demo"><div class="demo-scene" style="width:160px;height:120px">
+     <div style="position:absolute;bottom:20px;left:10px;right:10px;height:3px;background:rgba(6,182,212,.2);border-radius:2px"></div>
+     <div style="position:absolute;bottom:20px;left:25px;width:4px;height:25px;background:var(--accent2);border-radius:2px"></div>
+     <div style="position:absolute;bottom:20px;right:45px;width:4px;height:25px;background:var(--accent2);border-radius:2px"></div>
+     <div style="position:absolute;bottom:45px;left:22px;width:55px;height:5px;background:var(--accent2);border-radius:2px;animation:planche-hold 2s ease-in-out infinite;transform-origin:left center"></div>
+     <div style="position:absolute;bottom:50px;left:55px;width:16px;height:16px;border-radius:50%;border:2.5px solid var(--accent2)"></div>
+     <div style="position:absolute;bottom:35px;left:58px;width:14px;height:14px;border-radius:50%;background:rgba(124,58,237,.3);border:2px solid rgba(124,58,237,.6)"></div>
+     <div style="position:absolute;top:8px;left:50%;transform:translateX(-50%);font-size:9px;color:var(--accent2);font-weight:800;letter-spacing:1px">TUCK PLANCHE</div>
+   </div></div>`,
+   desc:'Both legs tucked to chest while holding straight arms parallel to ground. First step to full planche.',tips:'Build planche leans for 3+ months before attempting tuck planche holds.',cues:'Squeeze everything. Protract scapula maximally. Aim for 5-10 second holds.'},
+
+  {id:'straddle_planche',name:'Straddle Planche',muscles:['Chest','Shoulders','Core','Triceps'],type:'calisthenics',difficulty:5,category:'compound',
+   demo:`<div class="ex-demo"><span style="font-size:11px;color:var(--accent2);font-weight:800;letter-spacing:1px">STRADDLE PLANCHE</span></div>`,
+   desc:'Body parallel to ground, legs straddled wide, arms straight. Advanced progression from tuck planche.',tips:'Straddle reduces difficulty versus full planche. Build 10s+ tuck planche first.',cues:'Wide straddle reduces lever length. Push the ground. Protract scapula.'},
+
+  {id:'full_planche',name:'Full Planche',muscles:['Chest','Shoulders','Core','Triceps','Full Body'],type:'calisthenics',difficulty:5,category:'compound',
+   demo:`<div class="ex-demo"><div class="demo-scene" style="width:200px;height:100px">
+     <div style="position:absolute;bottom:20px;left:10px;right:10px;height:3px;background:rgba(6,182,212,.2);border-radius:2px"></div>
+     <div style="position:absolute;bottom:20px;left:20px;width:4px;height:25px;background:var(--accent2);border-radius:2px"></div>
+     <div style="position:absolute;bottom:20px;right:30px;width:4px;height:25px;background:var(--accent2);border-radius:2px"></div>
+     <div style="position:absolute;bottom:45px;left:16px;width:130px;height:5px;background:var(--accent2);border-radius:2px;animation:planche-hold 2s ease-in-out infinite"></div>
+     <div style="position:absolute;bottom:50px;left:22px;width:14px;height:14px;border-radius:50%;border:2.5px solid var(--accent2)"></div>
+     <div style="position:absolute;top:8px;left:50%;transform:translateX(-50%);font-size:9px;color:var(--accent2);font-weight:800;letter-spacing:1px">FULL PLANCHE</div>
+   </div></div>`,
+   desc:'Entire body horizontal, legs together, arms straight. The ultimate calisthenics strength skill. Takes 1-3+ years of dedicated training.',tips:'Requires exceptional shoulder, chest, and core strength. Progressive overload through lean → tuck → adv tuck → straddle → full.',cues:'Every muscle engaged. Think of a rigid plank floating in the air. Protract and depress scapula hard.'},
+
+  {id:'front_lever',name:'Front Lever',muscles:['Back','Core','Biceps','Shoulders'],type:'calisthenics',difficulty:5,category:'compound',
+   demo:`<div class="ex-demo"><div class="demo-scene" style="width:180px;height:150px">
+     <div style="position:absolute;top:10px;left:15px;right:15px;height:5px;background:rgba(124,58,237,.6);border-radius:3px"></div>
+     <div style="position:absolute;top:15px;left:40px;width:4px;height:30px;background:var(--accent2);border-radius:2px;transform:rotate(-20deg);transform-origin:top center"></div>
+     <div style="position:absolute;top:15px;right:40px;width:4px;height:30px;background:var(--accent2);border-radius:2px;transform:rotate(20deg);transform-origin:top center"></div>
+     <div style="position:absolute;top:42px;left:50%;transform:translateX(-50%) rotate(0deg);width:100px;height:5px;background:var(--accent2);border-radius:2px;animation:front-lever 3s ease-in-out infinite;transform-origin:left center"></div>
+     <div style="position:absolute;top:36px;left:30px;width:14px;height:14px;border-radius:50%;border:2.5px solid var(--accent2)"></div>
+     <div style="position:absolute;top:4px;left:50%;transform:translateX(-50%);font-size:9px;color:var(--accent2);font-weight:800;letter-spacing:1px">FRONT LEVER</div>
+   </div></div>`,
+   desc:'Hang from bar, body horizontal facing up, arms straight. Requires exceptional back and core strength.',tips:'Progress: tuck → advanced tuck → one leg → straddle → full. Each stage takes months.',cues:'Depress shoulder blades. Pull the bar toward your hips. Keep body rigid like a plank.'},
+
+  {id:'tuck_front_lever',name:'Tuck Front Lever',muscles:['Back','Core','Biceps'],type:'calisthenics',difficulty:4,category:'compound',
+   demo:`<div class="ex-demo"><div class="demo-scene" style="width:160px;height:150px">
+     <div style="position:absolute;top:10px;left:15px;right:15px;height:5px;background:rgba(124,58,237,.6);border-radius:3px"></div>
+     <div style="position:absolute;top:15px;left:40px;width:4px;height:28px;background:var(--accent2);border-radius:2px;transform:rotate(-15deg);transform-origin:top center"></div>
+     <div style="position:absolute;top:15px;right:40px;width:4px;height:28px;background:var(--accent2);border-radius:2px;transform:rotate(15deg);transform-origin:top center"></div>
+     <div style="position:absolute;top:40px;left:38px;width:50px;height:5px;background:var(--accent2);border-radius:2px;animation:front-lever 3s ease-in-out infinite"></div>
+     <div style="position:absolute;top:34px;left:30px;width:14px;height:14px;border-radius:50%;border:2.5px solid var(--accent2)"></div>
+     <div style="position:absolute;top:45px;left:68px;width:20px;height:20px;border-radius:50%;background:rgba(124,58,237,.2);border:2px solid rgba(124,58,237,.5)"></div>
+     <div style="position:absolute;top:4px;left:50%;transform:translateX(-50%);font-size:9px;color:var(--accent2);font-weight:800;letter-spacing:1px">TUCK FRONT LEVER</div>
+   </div></div>`,
+   desc:'Front lever with knees tucked to chest. The entry point for front lever training.',tips:'Aim for 3 sets of 10 second holds before progressing to advanced tuck.',cues:'Pull the bar towards your waist. Depress scapula. Core braced hard.'},
+
+  {id:'back_lever',name:'Back Lever',muscles:['Chest','Shoulders','Biceps','Core'],type:'calisthenics',difficulty:4,category:'compound',
+   demo:`<div class="ex-demo"><span style="font-size:11px;color:var(--accent2);font-weight:800;letter-spacing:1px">BACK LEVER</span></div>`,
+   desc:'Hang from bar, body horizontal facing down, arms straight. Often learned before front lever.',tips:'Start with skin the cat to condition the shoulder joints.',cues:'Supinated grip typically easier. Keep body rigid and horizontal.'},
+
+  {id:'dragon_flag',name:'Dragon Flag',muscles:['Core','Lower Back','Shoulders'],type:'calisthenics',difficulty:4,category:'isolation',
+   demo:`<div class="ex-demo"><div class="demo-scene" style="width:180px;height:130px">
+     <div style="position:absolute;bottom:15px;left:15px;right:15px;height:6px;background:rgba(124,58,237,.4);border-radius:3px"></div>
+     <div style="position:absolute;bottom:21px;left:20px;width:16px;height:14px;border-radius:50%;border:2.5px solid var(--accent2)"></div>
+     <div style="position:absolute;bottom:21px;left:34px;width:120px;height:5px;background:var(--accent2);border-radius:2px;animation:dragon-flag 2s ease-in-out infinite;transform-origin:left center"></div>
+     <div style="position:absolute;top:8px;left:50%;transform:translateX(-50%);font-size:9px;color:var(--accent2);font-weight:800;letter-spacing:1px">DRAGON FLAG</div>
+   </div></div>`,
+   desc:'Lie on bench gripping behind head, raise entire body except shoulders to horizontal, lower with control. Made famous by Bruce Lee.',tips:'Learn tucked dragon flag first. Requires tremendous core strength.',cues:'The body moves as one rigid unit. No hinging at the hips.'},
+
+  {id:'human_flag',name:'Human Flag',muscles:['Core','Shoulders','Back','Full Body'],type:'calisthenics',difficulty:5,category:'compound',
+   demo:`<div class="ex-demo"><div class="demo-scene" style="width:160px;height:160px">
+     <div style="position:absolute;top:10px;bottom:10px;left:50%;transform:translateX(-50%);width:5px;background:rgba(124,58,237,.5);border-radius:3px"></div>
+     <div style="position:absolute;top:60px;left:50%;transform:translateX(-50%);width:85px;height:5px;background:var(--accent2);border-radius:2px;animation:human-flag 3s ease-in-out infinite;transform-origin:left center"></div>
+     <div style="position:absolute;top:54px;left:42px;width:14px;height:14px;border-radius:50%;border:2.5px solid var(--accent2)"></div>
+     <div style="position:absolute;top:4px;left:50%;transform:translateX(-50%);font-size:9px;color:var(--accent2);font-weight:800;letter-spacing:1px">HUMAN FLAG</div>
+   </div></div>`,
+   desc:'Body held horizontally perpendicular to a vertical pole using only arm strength. One of the rarest calisthenics skills.',tips:'Years of dedicated lateral strength work required. Train lever exercises first.',cues:'Bottom arm pushes, top arm pulls. Body forms one rigid line.'},
+
+  {id:'handstand_pushup',name:'Handstand Push Up',muscles:['Shoulders','Triceps','Core'],type:'calisthenics',difficulty:5,category:'compound',
+   demo:`<div class="ex-demo"><div class="demo-scene" style="width:120px;height:160px">
+     <div style="position:absolute;bottom:10px;left:30px;right:30px;height:3px;background:rgba(6,182,212,.2);border-radius:2px"></div>
+     <div style="position:absolute;bottom:10px;left:35px;width:4px;height:25px;background:var(--accent2);border-radius:2px;animation:press-arm 1.5s ease-in-out infinite;transform-origin:bottom center"></div>
+     <div style="position:absolute;bottom:10px;right:35px;width:4px;height:25px;background:var(--accent2);border-radius:2px;animation:press-arm 1.5s ease-in-out infinite;transform-origin:bottom center"></div>
+     <div style="position:absolute;bottom:35px;left:50%;transform:translateX(-50%) translateX(-3px);width:4px;height:50px;background:var(--accent2);border-radius:2px"></div>
+     <div style="position:absolute;bottom:85px;left:50%;transform:translateX(-50%) translateX(-8px) rotate(5deg);width:4px;height:40px;background:var(--accent2);border-radius:2px"></div>
+     <div style="position:absolute;bottom:85px;left:50%;transform:translateX(-50%) translateX(4px) rotate(-5deg);width:4px;height:40px;background:var(--accent2);border-radius:2px"></div>
+     <div style="position:absolute;top:8px;left:50%;transform:translateX(-50%);font-size:9px;color:var(--accent2);font-weight:800;letter-spacing:1px">HSPU</div>
+   </div></div>`,
+   desc:'Inverted against wall, bend arms lowering head to floor, press back up. Upper body squat.',tips:'Master handstand hold first. Pike push ups as regression.',cues:'Wide hand placement. Push through entire palm. Full lockout at top.'},
+
+  {id:'l_sit',name:'L-Sit',muscles:['Core','Hip Flexors','Triceps','Shoulders'],type:'calisthenics',difficulty:4,category:'isolation',
+   demo:`<div class="ex-demo"><div class="demo-scene" style="width:160px;height:120px">
+     <div style="position:absolute;bottom:20px;left:10px;right:10px;height:3px;background:rgba(6,182,212,.2);border-radius:2px"></div>
+     <div style="position:absolute;bottom:20px;left:25px;width:4px;height:30px;background:var(--accent2);border-radius:2px"></div>
+     <div style="position:absolute;bottom:20px;right:45px;width:4px;height:30px;background:var(--accent2);border-radius:2px"></div>
+     <div style="position:absolute;bottom:50px;left:22px;width:4px;height:35px;background:var(--accent2);border-radius:2px"></div>
+     <div style="position:absolute;bottom:82px;left:22px;width:14px;height:14px;border-radius:50%;border:2.5px solid var(--accent2)"></div>
+     <div style="position:absolute;bottom:53px;left:36px;width:65px;height:4px;background:var(--accent3);border-radius:2px"></div>
+     <div style="position:absolute;top:8px;left:50%;transform:translateX(-50%);font-size:9px;color:var(--accent2);font-weight:800;letter-spacing:1px">L-SIT</div>
+   </div></div>`,
+   desc:'Support on hands/parallettes, hold legs parallel to floor with straight knees.',tips:'Build tuck L-sit first. Requires both core and pressing strength.',cues:'Push down hard into the ground. Protract shoulders. Point toes.'},
+
+  {id:'v_sit',name:'V-Sit',muscles:['Core','Hip Flexors','Shoulders'],type:'calisthenics',difficulty:5,category:'isolation',
+   demo:`<div class="ex-demo"><span style="font-size:11px;color:var(--accent2);font-weight:800;letter-spacing:1px">V-SIT</span></div>`,
+   desc:'Like an L-sit but legs angled upward, body forming a V shape. Extreme core compression strength.',tips:'Master L-sit for 30+ seconds before attempting V-sit.',cues:'Compress hip flexors maximally. Push down into ground. Point toes to ceiling.'},
+
+  {id:'skin_cat',name:'Skin the Cat',muscles:['Shoulders','Back','Core'],type:'calisthenics',difficulty:3,category:'compound',
+   demo:`<div class="ex-demo"><span style="font-size:11px;color:var(--accent2);font-weight:800;letter-spacing:1px">SKIN THE CAT</span></div>`,
+   desc:'Hang from bar, pull legs through arms rotating body into German hang, then reverse. Excellent shoulder prep.',tips:'Essential prerequisite for back lever and iron cross work.',cues:'Control the movement throughout. Don't just drop into German hang.'},
+
+  {id:'archer_pushup',name:'Archer Push Up',muscles:['Chest','Triceps','Shoulders'],type:'calisthenics',difficulty:3,category:'compound',
+   demo:`<div class="ex-demo"><span style="font-size:11px;color:var(--accent2);font-weight:800;letter-spacing:1px">ARCHER PUSH UP</span></div>`,
+   desc:'Wide stance push up shifting weight to one arm at a time. Progression toward one-arm push up.',tips:'One arm nearly straight, other arm does the work.',cues:'Keep hips square. Full range of motion on working arm.'},
+
+  {id:'one_arm_pushup',name:'One Arm Push Up',muscles:['Chest','Triceps','Core'],type:'calisthenics',difficulty:5,category:'compound',
+   demo:`<div class="ex-demo"><span style="font-size:11px;color:var(--accent2);font-weight:800;letter-spacing:1px">ONE ARM PUSH UP</span></div>`,
+   desc:'Full push up on one arm. Requires exceptional unilateral pushing strength and core stability.',tips:'Widen feet stance. Build archer push ups first.',cues:'Keep body from rotating. Core braced. Push explosively.'},
+
+  {id:'typewriter_pullup',name:'Typewriter Pull Up',muscles:['Back','Biceps','Core'],type:'calisthenics',difficulty:4,category:'compound',
+   demo:`<div class="ex-demo"><span style="font-size:11px;color:var(--accent2);font-weight:800;letter-spacing:1px">TYPEWRITER PULL UP</span></div>`,
+   desc:'Pull up then travel laterally across the bar, shifting weight from arm to arm at the top. Like a typewriter.',tips:'Master strict pull ups first. Requires strong lateral pulling.',cues:'Keep chin above bar throughout the lateral movement.'},
+
+  // ── RUNNING ──
+  {id:'easy_run',name:'Easy Run',muscles:['Full Body','Cardio'],type:'run',difficulty:1,category:'cardio',
+   demo:`<div class="ex-demo"><div class="demo-scene" style="width:160px;height:130px">
+     <div style="position:absolute;bottom:15px;left:10px;right:10px;height:3px;background:rgba(6,182,212,.2);border-radius:2px"></div>
+     <div style="position:absolute;bottom:28px;left:50%;transform:translateX(-50%);width:14px;height:14px;border-radius:50%;border:2.5px solid var(--accent2);animation:run-body 0.6s ease-in-out infinite"></div>
+     <div style="position:absolute;bottom:28px;left:50%;transform:translateX(-50%) translateX(-3px);width:4px;height:35px;background:var(--accent2);border-radius:2px;animation:run-body 0.6s ease-in-out infinite"></div>
+     <div style="position:absolute;bottom:35px;left:35px;width:25px;height:4px;background:var(--accent2);border-radius:2px;animation:run-arm1 0.6s ease-in-out infinite;transform-origin:right center"></div>
+     <div style="position:absolute;bottom:35px;right:45px;width:25px;height:4px;background:var(--accent2);border-radius:2px;animation:run-arm2 0.6s ease-in-out infinite;transform-origin:left center"></div>
+     <div style="position:absolute;bottom:15px;left:38px;width:4px;height:28px;background:var(--accent2);border-radius:2px;animation:run-leg1 0.6s ease-in-out infinite;transform-origin:top center"></div>
+     <div style="position:absolute;bottom:15px;right:48px;width:4px;height:28px;background:var(--accent2);border-radius:2px;animation:run-leg2 0.6s ease-in-out infinite;transform-origin:top center"></div>
+     <div style="position:absolute;top:8px;left:50%;transform:translateX(-50%);font-size:9px;color:var(--accent2);font-weight:800;letter-spacing:1px">EASY RUN</div>
+   </div></div>`,
+   desc:'Comfortable conversational pace. You should be able to hold a full conversation.',tips:'60-70% of training should be at this pace. Builds aerobic base.',cues:'Nose breathing comfortable. Land midfoot, not heel. Relax shoulders.'},
+
+  {id:'interval_run',name:'Interval Run',muscles:['Full Body','Cardio'],type:'run',difficulty:3,category:'cardio',
+   demo:`<div class="ex-demo"><span style="font-size:11px;color:var(--accent2);font-weight:800;letter-spacing:1px">INTERVAL RUN</span></div>`,
+   desc:'Alternate hard efforts with recovery. e.g. 400m hard, 200m easy jog.',tips:'Full recovery between hard efforts. Quality over quantity.',cues:'Hard efforts feel like 8/10. Recovery is genuinely slow.'},
+
+  {id:'tempo_run',name:'Tempo Run',muscles:['Full Body','Cardio'],type:'run',difficulty:3,category:'cardio',
+   demo:`<div class="ex-demo"><span style="font-size:11px;color:var(--accent2);font-weight:800;letter-spacing:1px">TEMPO RUN</span></div>`,
+   desc:'Comfortably hard pace sustained for 20-40 minutes. Lactate threshold training.',tips:'Should be able to say a few words but not hold a conversation.',cues:'Find a pace that feels hard but sustainable. Breathe rhythmically.'},
+
+  // ── SWIMMING ──
+  {id:'freestyle',name:'Freestyle',muscles:['Shoulders','Back','Core','Legs'],type:'swim',difficulty:2,category:'cardio',
+   demo:`<div class="ex-demo"><div class="demo-scene" style="width:180px;height:100px">
+     <div style="position:absolute;top:40px;left:10px;right:10px;height:3px;background:rgba(6,182,212,.3);border-radius:2px"></div>
+     <div style="position:absolute;top:35px;left:50%;transform:translateX(-50%) rotate(-5deg);width:80px;height:5px;background:var(--accent2);border-radius:2px;animation:swim-body 1s ease-in-out infinite"></div>
+     <div style="position:absolute;top:28px;left:35px;width:14px;height:14px;border-radius:50%;border:2.5px solid var(--accent2)"></div>
+     <div style="position:absolute;top:15px;left:20px;width:35px;height:4px;background:var(--accent2);border-radius:2px;animation:swim-arm1 1s ease-in-out infinite;transform-origin:right center"></div>
+     <div style="position:absolute;top:45px;right:20px;width:35px;height:4px;background:var(--accent2);border-radius:2px;animation:swim-arm2 1s ease-in-out infinite;transform-origin:left center"></div>
+     <div style="position:absolute;top:8px;left:50%;transform:translateX(-50%);font-size:9px;color:var(--accent2);font-weight:800;letter-spacing:1px">FREESTYLE</div>
+   </div></div>`,
+   desc:'Alternating arm stroke with flutter kick. Most efficient swimming stroke.',tips:'Rotate body with each stroke. Breathe every 2-3 strokes.',cues:'High elbow catch. Pull water past hip before recovering arm.'},
+
+  {id:'breaststroke',name:'Breaststroke',muscles:['Chest','Back','Legs'],type:'swim',difficulty:2,category:'cardio',
+   demo:`<div class="ex-demo"><span style="font-size:11px;color:var(--accent2);font-weight:800;letter-spacing:1px">BREASTSTROKE</span></div>`,
+   desc:'Simultaneous arm pull with frog kick. Great for beginners.',tips:'Glide phase after each stroke — don't rush.',cues:'Arms pull while legs recover. Legs kick while arms recover.'},
 ];
+
 
 const WORKOUT_GUIDES = [
   {id:'ppl',name:'Push Pull Legs',icon:'🏋️',type:'weights',level:'Intermediate',days:6,desc:'The gold standard split for muscle building.',exercises:['Bench Press','Overhead Press','Tricep Pushdown','Pull Up','Bent Over Row','Bicep Curl','Back Squat','Romanian Deadlift']},
@@ -739,6 +1148,21 @@ window.doEmailLogin = async () => {
     } else { showAuthError(friendlyErr(e.code)); }
   }
   g('li-btn').disabled = false; g('li-btn').textContent = '🚀 Sign In / Sign Up';
+};
+
+window.doGuestLogin = async () => {
+  const username = g('guest-name').value.trim();
+  if (!username) { showAuthError('Enter a display name!'); return; }
+  const btn = g('guest-btn'); btn.disabled=true; btn.textContent='...';
+  try {
+    const result = await signInAnonymously(auth);
+    await updateProfile(result.user, { displayName: username });
+    currentUser = result.user;
+    toast('Welcome, ' + username + '! 🚀');
+  } catch(e) {
+    showAuthError('Guest login failed. Try again.');
+    btn.disabled=false; btn.textContent='👾 Play as Guest';
+  }
 };
 
 window.doLogout = async () => {
@@ -1231,7 +1655,7 @@ function smartSearch(q) {
   q = q.toLowerCase();
   const related = {'bicep':['Biceps','Forearms'],'curl':['Biceps','Forearms'],'chest':['Chest','Triceps'],'push':['Chest','Triceps','Shoulders'],'back':['Back','Biceps'],'pull':['Back','Biceps'],'shoulder':['Shoulders'],'delt':['Shoulders'],'leg':['Quads','Hamstrings','Glutes'],'squat':['Quads','Glutes'],'core':['Core'],'abs':['Core'],'tricep':['Triceps'],'glute':['Glutes'],'ham':['Hamstrings']};
   const relMuscles = Object.entries(related).filter(([k])=>q.includes(k)).flatMap(([,v])=>v);
-  return EXERCISE_DB.filter(ex => ex.name.toLowerCase().includes(q) || ex.muscles.some(m=>m.toLowerCase().includes(q)) || relMuscles.some(m=>ex.muscles.includes(m))).slice(0,6);
+  return EXERCISE_DB.filter(ex => ex.name.toLowerCase().includes(q) || ex.muscles.some(m=>m.toLowerCase().includes(q)) || ex.type.toLowerCase().includes(q) || relMuscles.some(m=>ex.muscles.includes(m))).slice(0,6);
 }
 
 window.updateExSearch = q => {
@@ -1239,8 +1663,9 @@ window.updateExSearch = q => {
   const c = document.getElementById('ex-results-container'); if (!c) return;
   if (!q||q.length<1) { c.innerHTML=''; return; }
   const filtered = smartSearch(q);
+  const ti = {weights:'🏋️',calisthenics:'💪',run:'🏃',swim:'🏊',cardio:'❤️'};
   c.innerHTML = filtered.length
-    ? `<div class="ex-results-list">${filtered.map(ex=>`<div class="ex-result-row" onclick="selectExercise('${ex.id}')"><span class="ex-result-icon">${ex.gif}</span><div style="flex:1"><div class="ex-result-name">${ex.name}</div><div class="ex-result-muscles">${ex.muscles.join(', ')}</div></div><span class="ex-result-stars">${'⭐'.repeat(ex.difficulty)}</span></div>`).join('')}</div>`
+    ? `<div class="ex-results-list">${filtered.map(ex=>`<div class="ex-result-row" onclick="selectExercise('${ex.id}')"><span class="ex-result-icon">${ti[ex.type]||'💪'}</span><div style="flex:1"><div class="ex-result-name">${ex.name}</div><div class="ex-result-muscles">${ex.muscles.join(', ')}</div></div><span class="ex-result-stars">${'⭐'.repeat(ex.difficulty)}</span></div>`).join('')}</div>`
     : `<div style="padding:12px;color:var(--muted);font-size:13px;font-weight:600">No results for "${q}"</div>`;
 };
 
@@ -1490,7 +1915,7 @@ window.switchFitTab = (tab, el) => {
 
 function getFitSub() { return g('fit-sub-panel'); }
 
-function renderBodyComp() {
+window.renderBodyComp = function() {
   const fp = fitnessProfile||{}, mode=fp.mode||'basic';
   const latest=bodyEntries[bodyEntries.length-1]||{}, first=bodyEntries[0]||{};
   const wDiff=latest.weight&&first.weight?(latest.weight-first.weight).toFixed(1):null;
@@ -1558,7 +1983,7 @@ function weightChartSVG(entries) {
   return `<svg viewBox="0 0 ${W} ${H}" style="width:100%;height:70px"><polyline points="${pts}" fill="none" stroke="#06b6d4" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>${weights.map((w,i)=>{const x=(i/(weights.length-1))*W,y=H-((w-min)/(max-min))*H;return `<circle cx="${x}" cy="${y}" r="4" fill="#06b6d4"/><text x="${x}" y="${y-8}" text-anchor="middle" font-size="9" fill="#94a3b8">${w}</text>`;}).join('')}</svg>`;
 }
 
-function renderDiary() {
+window.renderDiary = function() {
   const s = getFitSub(); if(!s) return;
   const today=new Date().toDateString();
   const todayE=workoutEntries.filter(e=>new Date(e.date).toDateString()===today);
@@ -1626,7 +2051,7 @@ function renderLogForm(type) {
         <button class="log-big-btn" onclick="logWorkoutEntry()">💪 LOG EXERCISE</button>
       `:`<div class="quick-picks-wrap">
         <p>Search above or pick a common exercise:</p>
-        <div class="quick-picks-grid">${['Bench Press','Back Squat','Deadlift','Pull Up','Bicep Curl','Push Up','Plank','Lat Pulldown'].map(n=>{const ex=EXERCISE_DB.find(e=>e.name===n);return ex?`<button class="qp-btn" onclick="selectExercise('${ex.id}')">${ex.gif} ${ex.name}</button>`:''}).join('')}</div>
+        <div class="quick-picks-grid">${['Bench Press','Back Squat','Deadlift','Pull Up','Bicep Curl','Push Up','Plank','Lat Pulldown'].map(n=>{const ex=EXERCISE_DB.find(e=>e.name===n);return ex?`<button class="qp-btn" onclick="selectExercise('${ex.id}')">${ex.name}</button>`:''}).join('')}</div>
       </div>`}
     </div>`;
     if(exQuery&&!selEx) { const el=g('ex-search'); if(el){el.value=exQuery;} updateExSearch(exQuery); }
@@ -1739,7 +2164,7 @@ function renderActiveSession() {
       </div>
       <input id="ex-notes" class="form-input" placeholder="Notes for this exercise..." style="margin-top:10px;margin-bottom:0">
       <button class="add-to-session-btn" onclick="addExToSession()">➕ Add to Workout</button>
-    `:`<div class="quick-picks-wrap"><p>Search above or pick:</p><div class="quick-picks-grid">${['Bench Press','Back Squat','Deadlift','Pull Up','Bicep Curl','Overhead Press','Romanian Deadlift','Push Up','Plank','Lat Pulldown'].map(n=>{const ex=EXERCISE_DB.find(e=>e.name===n);return ex?`<button class="qp-btn" onclick="selectExercise('${ex.id}')">${ex.gif} ${ex.name}</button>`:''}).join('')}</div></div>`}
+    `:`<div class="quick-picks-wrap"><p>Search above or pick:</p><div class="quick-picks-grid">${['Bench Press','Back Squat','Deadlift','Pull Up','Bicep Curl','Overhead Press','Romanian Deadlift','Push Up','Plank','Lat Pulldown'].map(n=>{const ex=EXERCISE_DB.find(e=>e.name===n);return ex?`<button class="qp-btn" onclick="selectExercise('${ex.id}')">${ex.name}</button>`:''}).join('')}</div></div>`}
     <button class="finish-session-big-btn" onclick="finishSession()" ${sess.exercises.length===0?'disabled':''}>
       ✅ Finish Workout ${sess.exercises.length>0?`(${sess.exercises.length} exercise${sess.exercises.length!==1?'s':''})`:' — add exercises above'}
     </button>`;
@@ -1794,38 +2219,45 @@ function groupByDate(entries) {
   }));
 }
 
-function renderLibrary() {
-  const s=getFitSub(); if(!s) return;
+window.renderLibrary = function() {
+  const lf = window._libFilter||'all';
+  const ls = window._libSearch||'';
   const filtered=EXERCISE_DB.filter(ex=>{
-    const tm=libFilter==='all'||ex.type===libFilter;
-    const sm=!libSearch||ex.name.toLowerCase().includes(libSearch.toLowerCase())||ex.muscles.some(m=>m.toLowerCase().includes(libSearch.toLowerCase()));
+    const tm=lf==='all'||ex.type===lf;
+    const sm=!ls||ex.name.toLowerCase().includes(ls.toLowerCase())||ex.muscles.some(m=>m.toLowerCase().includes(ls.toLowerCase()));
     return tm&&sm;
   });
-  s.innerHTML=`
-    <div class="sec-title" style="margin-bottom:12px">📚 EXERCISE LIBRARY</div>
-    <input class="form-input" placeholder="🔍 Search exercises or muscles..." value="${libSearch}" oninput="libSearch=this.value;renderLibrary()" style="margin-bottom:12px">
-    <div class="lib-filters">${[['all','All'],['weights','🏋️ Weights'],['calisthenics','💪 Calisthenics'],['run','🏃 Running'],['swim','🏊 Swimming']].map(([v,l])=>`<button class="lib-filter-btn${libFilter===v?' active':''}" onclick="libFilter='${v}';renderLibrary()">${l}</button>`).join('')}</div>
+  const typeIcon = {weights:'🏋️',calisthenics:'💪',run:'🏃',swim:'🏊',cardio:'❤️'};
+  const s=getFitSub(); if(!s) return;
+  s.innerHTML=`<div class="sec-title" style="margin-bottom:12px">📚 EXERCISE LIBRARY</div>
+    <input class="form-input" placeholder="🔍 Search exercises or muscles..." value="${ls}" oninput="window._libSearch=this.value;window.renderLibrary()" style="margin-bottom:12px">
+    <div class="lib-filters">${[['all','All'],['weights','🏋️ Weights'],['calisthenics','💪 Calisthenics'],['run','🏃 Running'],['swim','🏊 Swimming']].map(([v,l])=>`<button class="lib-filter-btn${lf===v?' active':''}" onclick="window._libFilter='${v}';window.renderLibrary()">${l}</button>`).join('')}</div>
     <div style="font-size:11px;color:var(--muted);font-weight:600;margin-bottom:12px">${filtered.length} exercises</div>
     <div class="ex-lib-list">${filtered.map(ex=>`
       <div class="ex-lib-card" onclick="showExDetail('${ex.id}')">
-        <span class="ex-lib-gif">${ex.gif}</span>
+        <span class="ex-lib-gif">${typeIcon[ex.type]||'💪'}</span>
         <div class="ex-lib-info"><div class="ex-lib-name">${ex.name}</div><div class="ex-lib-muscles">${ex.muscles.join(', ')}</div></div>
         <div class="ex-lib-right"><div class="ex-lib-diff">${'●'.repeat(ex.difficulty)}${'○'.repeat(5-ex.difficulty)}</div><div class="ex-lib-type">${ex.type}</div></div>
       </div>`).join('')}
     </div>`;
 }
 
+
 window.showExDetail = id => {
   const ex=EXERCISE_DB.find(e=>e.id===id); if(!ex) return;
   const s=getFitSub(); if(!s) return;
+  const diffLabels=['Beginner','Beginner','Intermediate','Advanced','Elite'];
   s.innerHTML=`
-    <button class="back-btn" onclick="renderLibrary()">← Back to Library</button>
+    <button class="back-btn" onclick="window.renderLibrary()">← Back to Library</button>
     <div class="ex-detail-wrap">
-      <div class="ex-detail-top"><span class="ex-detail-gif">${ex.gif}</span><div>
-        <div class="ex-detail-title">${ex.name}</div>
-        <div class="ex-detail-meta">${ex.type} · ${ex.category}</div>
-        <div class="ex-detail-diff-text">${'⭐'.repeat(ex.difficulty)} ${'Beginner,Beginner,Intermediate,Advanced,Elite'.split(',')[ex.difficulty-1]}</div>
-      </div></div>
+      ${ex.demo||''}
+      <div class="ex-detail-top" style="margin-top:4px">
+        <div>
+          <div class="ex-detail-title">${ex.name}</div>
+          <div class="ex-detail-meta">${ex.type} · ${ex.category}</div>
+          <div class="ex-detail-diff-text">${'⭐'.repeat(ex.difficulty)} ${diffLabels[ex.difficulty-1]||'Elite'}</div>
+        </div>
+      </div>
       <div class="ex-detail-muscles-text"><strong>Muscles:</strong> ${ex.muscles.join(' · ')}</div>
       <div class="ex-section"><div class="ex-section-lbl">HOW TO PERFORM</div><p>${ex.desc}</p></div>
       <div class="ex-section"><div class="ex-section-lbl">COACHING TIPS</div><p>${ex.tips}</p></div>
@@ -1834,7 +2266,7 @@ window.showExDetail = id => {
     </div>`;
 };
 
-function renderCoach() {
+window.renderCoach = function() {
   const s=getFitSub(); if(!s) return;
   const muscleFreq={}, recentDates={};
   workoutEntries.filter(e=>e.type==='weights').forEach(e=>{
@@ -1860,7 +2292,7 @@ function renderCoach() {
     ${workoutEntries.length===0?'<div class="empty-state" style="margin-top:20px"><div class="empty-icon">🤖</div><div class="empty-text">Log some workouts and I\'ll give you personalised recommendations!</div></div>':''}`;
 }
 
-function renderGuides() {
+window.renderGuides = function() {
   const s=getFitSub(); if(!s) return;
   s.innerHTML=`<div class="sec-title" style="margin-bottom:16px">📋 WORKOUT GUIDES</div>
     <div class="guide-list">${WORKOUT_GUIDES.map(g2=>`
@@ -1988,17 +2420,41 @@ const colRow=g('col-row'); if(colRow) colRow.innerHTML=COLORS.map((c,i)=>`<div c
   <div class="login-sub">Level up life. Together.</div>
   <div class="auth-card">
     <div id="auth-err" class="auth-error"></div>
-    <button class="google-btn" onclick="doGoogleLogin()">
-      <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="22" height="22"> Continue with Google
-    </button>
-    <div class="divider"><div class="divider-line"></div><span class="divider-text">OR</span><div class="divider-line"></div></div>
-    <label class="field-label">EMAIL</label>
-    <input id="li-email" class="form-input" type="email" placeholder="your@email.com" autocapitalize="none" autocomplete="email">
-    <label class="field-label">PASSWORD</label>
-    <input id="li-pw" class="form-input" type="password" placeholder="••••••••" autocomplete="current-password">
-    <button id="li-btn" class="big-btn" onclick="doEmailLogin()">🚀 Sign In / Sign Up</button>
-    <p style="color:var(--muted);font-size:11px;margin-top:12px;text-align:center;font-weight:600">New user? Just enter email &amp; password and we'll create your account.</p>
-    <p style="color:var(--border);font-size:11px;margin-top:12px;font-weight:600;text-align:center">Free forever · Private · No ads 🪐</p>
+
+    <!-- Auth tabs -->
+    <div class="modal-tabs" style="margin-bottom:20px">
+      <button class="modal-tab active" id="atab-account" onclick="switchAuthTab('account')">🚀 Account</button>
+      <button class="modal-tab" id="atab-guest" onclick="switchAuthTab('guest')">👾 Guest</button>
+    </div>
+
+    <!-- Account tab -->
+    <div id="auth-account-section">
+      <button class="google-btn" onclick="doGoogleLogin()">
+        <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="22" height="22"> Continue with Google
+      </button>
+      <div class="divider"><div class="divider-line"></div><span class="divider-text">OR</span><div class="divider-line"></div></div>
+      <label class="field-label">EMAIL</label>
+      <input id="li-email" class="form-input" type="email" placeholder="your@email.com" autocapitalize="none" autocomplete="email">
+      <label class="field-label">PASSWORD</label>
+      <input id="li-pw" class="form-input" type="password" placeholder="••••••••" autocomplete="current-password">
+      <button id="li-btn" class="big-btn" onclick="doEmailLogin()">🚀 Sign In / Sign Up</button>
+      <p style="color:var(--muted);font-size:11px;margin-top:12px;text-align:center;font-weight:600">New user? Just enter email &amp; password and we'll create your account.</p>
+    </div>
+
+    <!-- Guest tab -->
+    <div id="auth-guest-section" style="display:none">
+      <div style="text-align:center;padding:8px 0 16px">
+        <div style="font-size:40px;margin-bottom:8px">👾</div>
+        <div style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:4px">Play as Guest</div>
+        <div style="font-size:12px;color:var(--muted);font-weight:600;line-height:1.6">No account needed. Pick a name and jump in.<br>Your data saves on this device only.</div>
+      </div>
+      <label class="field-label">CHOOSE YOUR NAME</label>
+      <input id="guest-name" class="form-input" placeholder="e.g. StarPilot, NightOwl..." maxlength="20" autocorrect="off">
+      <button id="guest-btn" class="big-btn" style="background:linear-gradient(135deg,#f59e0b,#ec4899)" onclick="doGuestLogin()">👾 Play as Guest</button>
+      <p style="color:var(--muted);font-size:11px;margin-top:12px;text-align:center;font-weight:600">Create an account later to sync across devices.</p>
+    </div>
+
+    <p style="color:var(--border);font-size:11px;margin-top:16px;font-weight:600;text-align:center">Free forever · Private · No ads 🪐</p>
   </div>
 </div>
 
@@ -2215,6 +2671,14 @@ const colRow=g('col-row'); if(colRow) colRow.innerHTML=COLORS.map((c,i)=>`<div c
 <div id="toast"></div>
 
 <script>
+function switchAuthTab(tab) {
+  document.getElementById('atab-account').classList.toggle('active', tab==='account');
+  document.getElementById('atab-guest').classList.toggle('active', tab==='guest');
+  document.getElementById('auth-account-section').style.display = tab==='account'?'block':'none';
+  document.getElementById('auth-guest-section').style.display = tab==='guest'?'block':'none';
+  document.getElementById('auth-err').style.display = 'none';
+}
+
 function switchCrewTab(tab) {
   document.getElementById('ctab-create').classList.toggle('active', tab==='create');
   document.getElementById('ctab-join').classList.toggle('active', tab==='join');
