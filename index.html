@@ -2098,7 +2098,7 @@ function renderAwards() {
     </div>`).join('');
 }
 
-function renderSettings() {
+window.renderSettings = function renderSettings() {
   const panel = g('settings-panel'); if(!panel) return;
   const u = userProfile||{};
   const iconCount = parseInt(localStorage.getItem('intask_icon_count')||'5');
@@ -2241,7 +2241,7 @@ function renderSettings() {
       }
     }
   }, 50);
-}
+};
 
 window.savePetName = () => {
   const name = document.getElementById('settings-petname')?.value?.trim();
@@ -3506,7 +3506,7 @@ window.switchTab = tab => {
   if(tab==='settings') renderSettings();
 };
 
-window.openModal=id=>{const el=g(id);if(el)el.classList.add('open');if(id==='settings-modal'&&typeof renderSettings==='function')renderSettings();};
+window.openModal=id=>{const el=g(id);if(el)el.classList.add('open');if(id==='settings-modal'){if(typeof window.renderSettings==='function')window.renderSettings();else setTimeout(()=>window.renderSettings&&window.renderSettings(),100);}};
 window.closeModal=id=>{const el=g(id);if(el)el.classList.remove('open');};
 
 window.setPill=(el,group)=>{document.querySelectorAll(`[data-group="${group}"]`).forEach(b=>b.classList.remove('active'));el.classList.add('active');};
