@@ -1,0 +1,915 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#07071a">
+<title>OrbitCrew</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+
+<!-- Firebase -->
+<script type="module">
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js';
+import { getFirestore, collection, doc, setDoc, onSnapshot, addDoc, updateDoc, serverTimestamp, getDoc, query, orderBy, where, getDocs, deleteDoc } from 'https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js';
+import { getAuth, signOut, onAuthStateChanged, GoogleAuthProvider, signInWithPopup } from 'https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js';
+
+const firebaseConfig = {
+  apiKey: "AIzaSyCy2ufVfqp-IFCALuCfZ5bu2__C7KuU5M4",
+  authDomain: "missionbase-6e3d7.firebaseapp.com",
+  projectId: "missionbase-6e3d7",
+  storageBucket: "missionbase-6e3d7.firebasestorage.app",
+  messagingSenderId: "399260193738",
+  appId: "1:399260193738:web:3921fd5f5748ebf4373533"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const auth = getAuth(app);
+
+// ═══════════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════════
+let currentUser = null;
+let userProfile = null;
+let tasks = [];
+let habits = [];
+let crew = null;
+let crewMembers = [];
+let crewMessages = [];
+let activeTab = 'today';
+let unsubs = [];
+
+const AVATARS = ['👨‍🚀','👩‍🚀','🧑‍🚀','🦸','🦸‍♀️','🧙','🧙‍♀️','🥷','🧝','🧝‍♀️','🐉','🦊','🐺','🦁','🐯','🦋','🌟','⚡','🔥','🌈'];
+const COLORS  = ['#7c3aed','#06b6d4','#ec4899','#f59e0b','#10b981','#f97316','#3b82f6','#8b5cf6','#ef4444','#14b8a6'];
+const BADGES  = [
+  {id:'on_fire',icon:'🔥',name:'On Fire',desc:'7-day streak',check:s=>(s.maxStreak||0)>=7},
+  {id:'quick_draw',icon:'⚡',name:'Quick Draw',desc:'Done before noon',check:s=>(s.morningDone||0)>=1},
+  {id:'team_player',icon:'👫',name:'Team Player',desc:'10 shared tasks',check:s=>(s.sharedDone||0)>=10},
+  {id:'superstar',icon:'🌟',name:'Superstar',desc:'Reach level 10',check:s=>(s.level||1)>=10},
+  {id:'diamond',icon:'💎',name:'Diamond',desc:'30-day streak',check:s=>(s.maxStreak||0)>=30},
+  {id:'launcher',icon:'🚀',name:'Launcher',desc:'100 tasks done',check:s=>(s.totalDone||0)>=100},
+  {id:'champion',icon:'🏆',name:'Champion',desc:'Level 15',check:s=>(s.level||1)>=15},
+  {id:'night_owl',icon:'🌙',name:'Night Owl',desc:'5 evening tasks',check:s=>(s.eveningDone||0)>=5},
+  {id:'early_bird',icon:'🌅',name:'Early Bird',desc:'5 morning tasks',check:s=>(s.morningDone||0)>=5},
+  {id:'social',icon:'🌐',name:'Social',desc:'Join a crew',check:s=>(s.crewCount||0)>=1},
+  {id:'founder',icon:'👑',name:'Founder',desc:'Create a crew',check:s=>(s.crewsCreated||0)>=1},
+];
+const LEVEL_TITLES = ['Cadet','Pilot','Navigator','Commander','Captain','Major','Colonel','General','Admiral','Legend'];
+const getTitle = lvl => LEVEL_TITLES[Math.min(Math.floor((lvl-1)/2), LEVEL_TITLES.length-1)];
+const XP = {high:50,medium:30,low:20,habit:25,boost:10};
+
+// ═══════════════════════════════════════════════
+// AUTH
+// ═══════════════════════════════════════════════
+const provider = new GoogleAuthProvider();
+
+onAuthStateChanged(auth, async user => {
+  if (user) {
+    currentUser = user;
+    await loadProfile(user.uid);
+  } else {
+    currentUser = null; userProfile = null;
+    unsubs.forEach(u=>u()); unsubs=[];
+    hideApp();
+  }
+});
+
+async function loadProfile(uid) {
+  const ref = doc(db,'users',uid);
+  const snap = await getDoc(ref);
+  if (!snap.exists()) {
+    // First time Google login — show profile setup
+    ge('google-display-name').textContent = currentUser.displayName || 'Pilot';
+    ge('profile-setup-screen').style.display='flex';
+    ge('app').style.display='none';
+    ge('login-screen').style.display='none';
+  } else {
+    userProfile = snap.data();
+    subscribeAll(uid, userProfile.crewId);
+    showApp();
+  }
+}
+
+function subscribeAll(uid, crewId) {
+  unsubs.forEach(u=>u()); unsubs=[];
+  unsubs.push(onSnapshot(doc(db,'users',uid), s => { if(s.exists()){userProfile=s.data(); renderHeader(); renderAwards();} }));
+  // Try ordered query first, fall back to unordered if index not ready
+  try {
+    unsubs.push(onSnapshot(query(collection(db,'tasks'),where('uid','==',uid),orderBy('createdAt','desc')), s => { tasks=s.docs.map(d=>({id:d.id,...d.data()})); renderToday(); }, err => {
+      // Fallback without orderBy if index missing
+      unsubs.push(onSnapshot(query(collection(db,'tasks'),where('uid','==',uid)), s => { tasks=s.docs.map(d=>({id:d.id,...d.data()})); renderToday(); }));
+    }));
+  } catch(e) {
+    unsubs.push(onSnapshot(query(collection(db,'tasks'),where('uid','==',uid)), s => { tasks=s.docs.map(d=>({id:d.id,...d.data()})); renderToday(); }));
+  }
+  unsubs.push(onSnapshot(query(collection(db,'habits'),where('uid','==',uid)), s => { habits=s.docs.map(d=>({id:d.id,...d.data()})); renderHabits(); }));
+  if (crewId) subscribeCrew(crewId);
+}
+
+function subscribeCrew(crewId) {
+  unsubs.push(onSnapshot(doc(db,'crews',crewId), s => { if(s.exists()){crew={id:s.id,...s.data()}; renderCrew();} }));
+  unsubs.push(onSnapshot(query(collection(db,'users'),where('crewId','==',crewId)), s => { crewMembers=s.docs.map(d=>({id:d.id,...d.data()})); renderCrew(); }));
+  unsubs.push(onSnapshot(query(collection(db,'crews',crewId,'messages'),orderBy('createdAt','asc')), s => { crewMessages=s.docs.map(d=>({id:d.id,...d.data()})); renderMessages(); }));
+}
+
+window.doGoogleLogin = async function() {
+  try {
+    await signInWithPopup(auth, provider);
+  } catch(e) {
+    showAuthError('Sign-in failed. Please try again.');
+    console.error(e);
+  }
+}
+
+window.doLogout = async function() {
+  await signOut(auth); crew=null; crewMembers=[]; crewMessages=[];
+}
+
+window.completeProfile = async function() {
+  const avatar = window._selAvatar||'👨‍🚀';
+  const color = window._selColor||'#7c3aed';
+  const name = currentUser.displayName || 'Pilot';
+  await setDoc(doc(db,'users',currentUser.uid),{
+    uid:currentUser.uid,
+    email:currentUser.email,
+    displayName:name,
+    avatar, color,
+    level:1,xp:0,maxXp:1000,totalDone:0,maxStreak:0,sharedDone:0,
+    morningDone:0,eveningDone:0,crewsCreated:0,crewCount:0,
+    badges:[],crewId:null,title:getTitle(1),createdAt:serverTimestamp()
+  });
+  ge('profile-setup-screen').style.display='none';
+  toast(`Welcome to OrbitCrew, ${name}! 🚀`);
+  showApp();
+}
+
+// ═══════════════════════════════════════════════
+// XP & LEVELLING
+// ═══════════════════════════════════════════════
+async function gainXP(amount, stats={}) {
+  if(!currentUser) return;
+  const ref=doc(db,'users',currentUser.uid);
+  const s=await getDoc(ref); if(!s.exists()) return;
+  const u=s.data();
+  let xp=(u.xp||0)+amount, level=u.level||1, leveled=false;
+  if(xp>=(u.maxXp||1000)){xp-=(u.maxXp||1000);level++;leveled=true;}
+  const upd={xp,level,title:getTitle(level),
+    totalDone:(u.totalDone||0)+(stats.totalDone||0),
+    maxStreak:Math.max(u.maxStreak||0,stats.maxStreak||0),
+    morningDone:(u.morningDone||0)+(stats.morningDone||0),
+    eveningDone:(u.eveningDone||0)+(stats.eveningDone||0),
+    sharedDone:(u.sharedDone||0)+(stats.sharedDone||0),
+    crewsCreated:(u.crewsCreated||0)+(stats.crewsCreated||0),
+    crewCount:(u.crewCount||0)+(stats.crewCount||0),
+    updatedAt:serverTimestamp()};
+  const cur=u.badges||[];
+  const nb=BADGES.filter(b=>!cur.includes(b.id)&&b.check({...u,...upd})).map(b=>b.id);
+  if(nb.length) upd.badges=[...cur,...nb];
+  await updateDoc(ref,upd);
+  if(leveled) setTimeout(()=>toast(`🎉 LEVEL UP! You're now Level ${level} — ${getTitle(level)}!`),300);
+  if(nb.length){const b=BADGES.find(x=>x.id===nb[0]); setTimeout(()=>toast(`🏅 New badge: ${b.icon} ${b.name}!`),1800);}
+}
+
+// ═══════════════════════════════════════════════
+// TASKS
+// ═══════════════════════════════════════════════
+window.addTask = async function() {
+  const name=v('new-task-name'); if(!name){toast('⚠️ Give your mission a name!');return;}
+  const type=window._taskType||'personal';
+  const priority=window._taskPriority||'medium';
+  await addDoc(collection(db,'tasks'),{
+    name,type,priority,uid:currentUser.uid,
+    owner:type==='shared'||type==='chore'?'both':currentUser.uid,
+    xp:XP[priority]||XP.medium,done:false,createdAt:serverTimestamp()
+  });
+  closeModal('task-modal'); ge('new-task-name').value='';
+  toast('🚀 Mission launched!');
+}
+
+window.completeTask = async function(id) {
+  const t=tasks.find(x=>x.id===id); if(!t||t.done) return;
+  await updateDoc(doc(db,'tasks',id),{done:true,doneAt:serverTimestamp()});
+  await gainXP(t.xp||XP.medium,{totalDone:1});
+  spawnXP(`+${t.xp}XP`); toast(`✅ +${t.xp} XP! Keep going!`);
+}
+
+window.deleteTask = async function(id) {
+  if(confirm('Delete this mission?')) await deleteDoc(doc(db,'tasks',id));
+}
+
+// ═══════════════════════════════════════════════
+// HABITS
+// ═══════════════════════════════════════════════
+window.addHabit = async function() {
+  const name=v('new-habit-name'); if(!name){toast('⚠️ Name your habit!');return;}
+  await addDoc(collection(db,'habits'),{
+    name,time:window._habitTime||'morning',uid:currentUser.uid,
+    streak:0,maxStreak:0,doneDays:{},lastDoneDate:null,createdAt:serverTimestamp()
+  });
+  closeModal('habit-modal'); ge('new-habit-name').value='';
+  toast('🔥 Streak started!');
+}
+
+window.completeHabit = async function(id) {
+  const h=habits.find(x=>x.id===id); if(!h) return;
+  const today=new Date().toDateString();
+  if(h.doneDays?.[today]){toast('Already done today! 💪');return;}
+  const yesterday=new Date(Date.now()-86400000).toDateString();
+  const streak=h.lastDoneDate===yesterday?h.streak+1:1;
+  const maxStreak=Math.max(h.maxStreak||0,streak);
+  await updateDoc(doc(db,'habits',id),{streak,maxStreak,lastDoneDate:today,[`doneDays.${today}`]:true});
+  await gainXP(XP.habit,{maxStreak,morningDone:h.time==='morning'?1:0,eveningDone:h.time==='evening'?1:0});
+  toast(`🔥 ${streak}-day streak! +${XP.habit} XP`);
+}
+
+// ═══════════════════════════════════════════════
+// CREWS
+// ═══════════════════════════════════════════════
+const genCode = ()=>Math.random().toString(36).substring(2,8).toUpperCase();
+
+window.createCrew = async function() {
+  const name=v('crew-name-input'); if(!name){toast('⚠️ Give your crew a name!');return;}
+  const code=genCode();
+  const uSnap=await getDoc(doc(db,'users',currentUser.uid));
+  const uData=uSnap.data()||{};
+  const ref=await addDoc(collection(db,'crews'),{name,code,createdBy:currentUser.uid,createdAt:serverTimestamp(),memberCount:1});
+  await updateDoc(doc(db,'users',currentUser.uid),{crewId:ref.id,crewsCreated:(uData.crewsCreated||0)+1,crewCount:(uData.crewCount||0)+1});
+  subscribeCrew(ref.id);
+  await gainXP(50,{crewsCreated:1,crewCount:1});
+  ge('crew-code-display').textContent=code;
+  ge('crew-created-box').style.display='block';
+  ge('crew-create-form').style.display='none';
+  toast(`Crew "${name}" created! 👑`);
+}
+
+window.joinCrew = async function() {
+  const code=v('join-code-input').toUpperCase(); if(!code){toast('⚠️ Enter a crew code!');return;}
+  const q2=query(collection(db,'crews'),where('code','==',code));
+  const snap=await getDocs(q2);
+  if(snap.empty){toast('❌ Invalid crew code!');return;}
+  const cd=snap.docs[0];
+  const uSnap=await getDoc(doc(db,'users',currentUser.uid));
+  const uData=uSnap.data()||{};
+  await updateDoc(doc(db,'users',currentUser.uid),{crewId:cd.id,crewCount:(uData.crewCount||0)+1});
+  await updateDoc(doc(db,'crews',cd.id),{memberCount:(cd.data().memberCount||0)+1});
+  subscribeCrew(cd.id);
+  await gainXP(20,{crewCount:1});
+  closeModal('crew-modal');
+  toast(`Joined "${cd.data().name}"! 🎉`);
+}
+
+window.leaveCrew = async function() {
+  if(!confirm('Leave this crew?')) return;
+  await updateDoc(doc(db,'users',currentUser.uid),{crewId:null});
+  crew=null; crewMembers=[]; crewMessages=[];
+  renderCrew();
+  toast('Left the crew.');
+}
+
+window.sendBoost = async function(targetName) {
+  await sendMsg(`⚡ BOOST sent to ${targetName}! You're absolutely crushing it! 🚀`);
+  await gainXP(XP.boost);
+  toast(`⚡ Boost sent to ${targetName}!`); spawnConfetti();
+}
+
+// ═══════════════════════════════════════════════
+// MESSAGES
+// ═══════════════════════════════════════════════
+async function sendMsg(text) {
+  if(!userProfile?.crewId) return;
+  await addDoc(collection(db,'crews',userProfile.crewId,'messages'),{
+    from:currentUser.uid,displayName:userProfile.displayName,
+    avatar:userProfile.avatar,color:userProfile.color,
+    text:text.trim(),createdAt:serverTimestamp()
+  });
+}
+
+window.sendNudge = t => sendMsg(t);
+window.sendMessage = async function() {
+  const inp=ge('msg-input'); const t=inp.value.trim(); if(!t) return;
+  await sendMsg(t); inp.value='';
+}
+
+// ═══════════════════════════════════════════════
+// RENDER
+// ═══════════════════════════════════════════════
+function renderHeader() {
+  if(!userProfile) return;
+  const pct=Math.min(((userProfile.xp||0)/(userProfile.maxXp||1000))*100,100);
+  ge('hdr-avatar').textContent=userProfile.avatar||'🚀';
+  ge('hdr-avatar').style.borderColor=userProfile.color||'#7c3aed';
+  ge('hdr-name').textContent=userProfile.displayName||'Pilot';
+  ge('hdr-level').textContent=`⚡ LVL ${userProfile.level||1} · ${userProfile.title||'Cadet'}`;
+  ge('hdr-level').style.background=userProfile.color||'#7c3aed';
+  ge('xp-fill').style.width=pct+'%';
+  ge('xp-text').textContent=`${userProfile.xp||0}/${userProfile.maxXp||1000}`;
+}
+
+function renderToday() {
+  const myTasks=tasks.filter(t=>t.type!=='chore');
+  const myChores=tasks.filter(t=>t.type==='chore');
+  ge('tasks-list').innerHTML=myTasks.length?myTasks.map(taskCard).join(''):`<div class="empty-state"><div>🎯</div><p>No missions yet!</p></div>`;
+  ge('chores-list').innerHTML=myChores.length?myChores.map(taskCard).join(''):`<div class="empty-state"><div>🏠</div><p>No chores listed!</p></div>`;
+  const done=tasks.filter(t=>t.done).length;
+  ge('progress-count').textContent=done;
+  ge('progress-total').textContent='/'+tasks.length;
+  ge('progress-fill').style.width=(tasks.length?Math.round(done/tasks.length*100):0)+'%';
+}
+
+function taskCard(t) {
+  const pc={high:'#ef4444',medium:'#f59e0b',low:'#10b981'};
+  const tc={personal:'#7c3aed',shared:'#06b6d4',chore:'#10b981',goal:'#f59e0b'};
+  const c=pc[t.priority]||tc[t.type]||'#7c3aed';
+  const dl=t.deadline?deadlineTag(t.deadline):'';
+  return `<div class="task-card${t.done?' done':''}" style="--tc:${c}" onclick="completeTask('${t.id}')" oncontextmenu="event.preventDefault();deleteTask('${t.id}')">
+    <div class="task-check${t.done?' checked':''}" style="border-color:${c};${t.done?`background:${c}`:''}">
+      ${t.done?'<span>✓</span>':''}
+    </div>
+    <div class="task-body">
+      <div class="task-name">${t.name}</div>
+      <div class="task-tags">
+        <span class="tag" style="color:${tc[t.type]||'#7c3aed'};border-color:${tc[t.type]||'#7c3aed'}">${t.type==='shared'?'👫':t.type==='chore'?'🏠':t.type==='goal'?'⭐':'👤'} ${t.type}</span>
+        ${dl}
+      </div>
+    </div>
+    <span class="xp-badge">+${t.xp||30}XP</span>
+  </div>`;
+}
+
+function deadlineTag(dl) {
+  const d=new Date(dl),now=new Date(),diff=d-now;
+  const h=Math.floor(Math.abs(diff)/3600000);
+  const over=diff<0;
+  return `<span class="tag ${over?'overdue':'deadline'}">${over?`⚠️ Overdue ${h}h`:`⏰ ${h<1?'<1h':h+'h'} left`}</span>`;
+}
+
+function renderHabits() {
+  ge('habits-list').innerHTML=habits.length?habits.map(habitCard).join(''):`<div class="empty-state"><div>🔥</div><p>No streak missions yet!</p></div>`;
+}
+
+function habitCard(h) {
+  const today=new Date().toDateString();
+  const doneToday=!!(h.doneDays?.[today]);
+  const days=['M','T','W','T','F','S','S'];
+  const last7=Array.from({length:7},(_,i)=>{
+    const d=new Date(Date.now()-(6-i)*86400000);
+    return{label:days[d.getDay()===0?6:d.getDay()-1],done:!!(h.doneDays?.[d.toDateString()]),today:i===6};
+  });
+  return `<div class="habit-card">
+    <div class="habit-top">
+      <div><div class="habit-name">${h.name}</div><div class="habit-meta">⏰ ${h.time||'anytime'}</div></div>
+      <div class="streak-badge"><span class="streak-num">${h.streak||0}</span>🔥</div>
+    </div>
+    <div class="days-row">${last7.map(d=>`<div class="day-dot${d.done?' done':''}${d.today?' today':''}">${d.label}</div>`).join('')}</div>
+    <button class="done-btn${doneToday?' done-btn-done':''}" onclick="${doneToday?'':'completeHabit(\''+h.id+'\')'}">${doneToday?'✅ Done today!':'✓ Mark Done · +25XP'}</button>
+  </div>`;
+}
+
+function renderCrew() {
+  if(!userProfile?.crewId||!crew) {
+    ge('crew-content').innerHTML=`<div class="no-crew">
+      <div class="no-crew-icon">🪐</div>
+      <div class="no-crew-title">No Crew Yet</div>
+      <p class="no-crew-sub">Create a crew or join one with a code to connect with friends.</p>
+      <button class="big-btn" onclick="openModal('crew-modal')">🚀 Create or Join a Crew</button>
+    </div>`;
+    return;
+  }
+  const sorted=[...crewMembers].sort((a,b)=>(b.level*1000+(b.xp||0))-(a.level*1000+(a.xp||0)));
+  const medals=['🥇','🥈','🥉'];
+  ge('crew-content').innerHTML=`
+    <div class="crew-header">
+      <div><div class="crew-name">${crew.name}</div><div class="crew-sub">${crewMembers.length} members · Code: <span style="color:#f59e0b;font-weight:900">${crew.code}</span></div></div>
+      <button class="leave-btn" onclick="leaveCrew()">↩ Leave</button>
+    </div>
+    <div class="section-title">🏆 CREW LEADERBOARD</div>
+    <div class="leaderboard">${sorted.map((m,i)=>`
+      <div class="lb-row${m.id===currentUser?.uid?' lb-me':''}">
+        <span class="lb-rank">${medals[i]||'#'+(i+1)}</span>
+        <div class="lb-av" style="border-color:${m.color||'#7c3aed'};background:${m.color||'#7c3aed'}22">${m.avatar||'👤'}</div>
+        <div class="lb-info">
+          <div class="lb-name">${m.displayName} ${(m.badges||[]).slice(0,3).map(bid=>{const b=BADGES.find(x=>x.id===bid);return b?b.icon:''}).join('')}</div>
+          <div class="lb-level">LVL ${m.level} ${m.title} · ${m.xp} XP</div>
+        </div>
+        ${m.id!==currentUser?.uid?`<button class="boost-mini" onclick="sendBoost('${m.displayName}')">⚡</button>`:'<span style="color:#f59e0b;font-size:11px;font-weight:800">YOU</span>'}
+      </div>`).join('')}
+    </div>
+    <div class="section-title" style="margin-top:20px">QUICK NUDGES</div>
+    <div class="nudge-row">
+      ${['🚀 You got this!','💪 Keep going!','⭐ Proud of you!','🔔 Reminder!','🎯 Focus time!','❤️ Love you!','🔥 On fire!'].map(n=>`<button class="nudge-chip" onclick="sendNudge('${n}')">${n}</button>`).join('')}
+    </div>
+    <div class="section-title" style="margin-top:16px">CREW COMMS</div>
+    <div class="chat-box" id="chat-box"></div>
+    <div class="msg-row">
+      <input id="msg-input" class="msg-input" placeholder="Message the crew..." onkeydown="if(event.key==='Enter')sendMessage()">
+      <button class="send-btn" onclick="sendMessage()">➤</button>
+    </div>`;
+  renderMessages();
+}
+
+function renderMessages() {
+  const box=ge('chat-box'); if(!box) return;
+  if(!crewMessages.length){box.innerHTML='<div class="empty-chat">No messages yet. Say hi! 👋</div>';return;}
+  box.innerHTML=crewMessages.map(m=>{
+    const isMe=m.from===currentUser?.uid;
+    return `<div class="msg-wrap${isMe?' msg-me':''}">
+      ${!isMe?`<div class="msg-av" style="border-color:${m.color||'#7c3aed'};background:${m.color||'#7c3aed'}22">${m.avatar||'👤'}</div>`:''}
+      <div class="bubble${isMe?' bubble-me':''}" style="${isMe?`background:${m.color||'#7c3aed'}`:''}">
+        ${!isMe?`<div class="bubble-sender">${m.displayName}</div>`:''}
+        ${m.text}
+      </div>
+    </div>`;
+  }).join('');
+  box.scrollTop=box.scrollHeight;
+}
+
+function renderAwards() {
+  if(!userProfile) return;
+  const earned=userProfile.badges||[];
+  ge('badges-grid').innerHTML=BADGES.map(b=>`
+    <div class="badge-card${earned.includes(b.id)?' earned':''}">
+      <div class="badge-icon">${b.icon}</div>
+      <div class="badge-name">${b.name}</div>
+      <div class="badge-desc">${b.desc}</div>
+    </div>`).join('');
+  ge('stat-badges').textContent=earned.length;
+  ge('stat-xp').textContent=(userProfile.level||1)*1000+(userProfile.xp||0);
+  ge('stat-streak').textContent=userProfile.maxStreak||0;
+  ge('stat-done').textContent=userProfile.totalDone||0;
+}
+
+// ═══════════════════════════════════════════════
+// UI HELPERS
+// ═══════════════════════════════════════════════
+function showScreen(id){document.querySelectorAll('.screen').forEach(s=>s.style.display='none');ge(id).style.display='flex';}
+function showApp() { ge('app').style.display='flex'; ge('login-screen').style.display='none'; ge('profile-setup-screen').style.display='none'; renderHeader(); switchTab('today'); }
+function hideApp() { ge('app').style.display='none'; ge('login-screen').style.display='flex'; ge('profile-setup-screen').style.display='none'; }
+
+window.switchTab = function(tab) {
+  activeTab=tab;
+  document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.bottom-tab').forEach(b=>b.classList.remove('active'));
+  ge('tab-'+tab).classList.add('active');
+  document.querySelectorAll(`[data-tab="${tab}"]`).forEach(b=>b.classList.add('active'));
+  if(tab==='today') renderToday();
+  if(tab==='habits') renderHabits();
+  if(tab==='crew') renderCrew();
+  if(tab==='awards') renderAwards();
+}
+
+window.openModal = function(id) { ge(id).classList.add('open'); }
+window.closeModal = function(id) { ge(id).classList.remove('open'); }
+
+window.selectAvatar = function(a,el) {
+  window._selAvatar=a;
+  document.querySelectorAll('.av-btn').forEach(x=>x.classList.remove('sel'));
+  el.classList.add('sel');
+}
+window.selectColor = function(c,el) {
+  window._selColor=c;
+  document.querySelectorAll('.col-dot').forEach(x=>x.classList.remove('sel'));
+  el.classList.add('sel');
+  el.style.outline=`3px solid white`;
+}
+window.switchCrewTab = function(tab) {
+  ge('crew-tab-create').classList.toggle('active', tab==='create');
+  ge('crew-tab-join').classList.toggle('active', tab==='join');
+  ge('crew-create-section').style.display = tab==='create' ? 'block' : 'none';
+  ge('crew-join-section').style.display = tab==='join' ? 'block' : 'none';
+}
+
+window.selectPill = function(val,group,el) {
+  document.querySelectorAll(`[data-group="${group}"]`).forEach(x=>x.classList.remove('active'));
+  el.classList.add('active');
+  if(group==='task-type') window._taskType=val;
+  if(group==='task-priority') window._taskPriority=val;
+  if(group==='habit-time') window._habitTime=val;
+  if(group==='crew-tab') {
+    ge('crew-create-section').style.display=val==='create'?'block':'none';
+    ge('crew-join-section').style.display=val==='join'?'block':'none';
+  }
+}
+window.switchAuthTab = function(mode,el) {
+  document.querySelectorAll('.auth-tab').forEach(x=>x.classList.remove('active'));
+  el.classList.add('active');
+  ge('signup-form').style.display=mode==='signup'?'block':'none';
+  ge('login-form').style.display=mode==='login'?'block':'none';
+  clearAuthError();
+}
+
+function showAuthError(msg){ge('auth-error').textContent=msg;ge('auth-error').style.display='block';}
+function clearAuthError(){ge('auth-error').style.display='none';}
+function setAuthLoading(l){ge('auth-btn').disabled=l;ge('auth-btn').textContent=l?'...':ge('auth-btn').dataset.label;}
+
+function toast(msg) {
+  const t=ge('toast'); t.textContent=msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2800);
+}
+
+function spawnXP(msg) {
+  const el=document.createElement('div'); el.className='xp-pop'; el.textContent=msg;
+  el.style.cssText=`position:fixed;top:40%;left:50%;transform:translateX(-50%);font-size:22px;font-weight:900;color:#f59e0b;text-shadow:0 0 20px rgba(245,158,11,0.8);pointer-events:none;z-index:9999;animation:xpFloat 1.5s ease forwards;font-family:'Orbitron',monospace;`;
+  document.body.appendChild(el); setTimeout(()=>el.remove(),1600);
+}
+
+function spawnConfetti() {
+  const cols=['#7c3aed','#06b6d4','#f59e0b','#ec4899','#10b981'];
+  for(let i=0;i<25;i++){
+    const c=document.createElement('div');
+    c.style.cssText=`position:fixed;width:${4+Math.random()*8}px;height:${4+Math.random()*8}px;background:${cols[Math.floor(Math.random()*cols.length)]};border-radius:2px;left:${Math.random()*100}vw;top:0;pointer-events:none;z-index:9999;animation:fall ${1+Math.random()*0.8}s ease forwards;animation-delay:${Math.random()*0.4}s;`;
+    document.body.appendChild(c); setTimeout(()=>c.remove(),2000);
+  }
+}
+
+function ge(id){return document.getElementById(id);}
+function v(id){return(ge(id)?.value||'').trim();}
+
+// Init defaults
+window._selAvatar='👨‍🚀'; window._selColor='#7c3aed';
+window._taskType='personal'; window._taskPriority='medium'; window._habitTime='morning';
+</script>
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+:root{--bg:#07071a;--surf:#0f0f2a;--surf2:#171736;--border:#252550;--accent:#7c3aed;--accent2:#06b6d4;--accent3:#f59e0b;--green:#10b981;--pink:#ec4899;--red:#ef4444;--text:#e2e8f0;--muted:#94a3b8;--r:16px;}
+body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;}
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse at 20% 30%,rgba(124,58,237,.07) 0%,transparent 50%),radial-gradient(ellipse at 80% 70%,rgba(6,182,212,.05) 0%,transparent 50%);pointer-events:none;z-index:0;}
+
+/* ── LOGIN ── */
+#login-screen{display:flex;flex-direction:column;align-items:center;justify-content:flex-start;min-height:100vh;padding:40px 24px 40px;overflow-y:auto;position:relative;z-index:1;}
+.login-logo{text-align:center;margin-bottom:28px;}
+.login-planet{font-size:60px;display:block;animation:float 3s ease-in-out infinite;}
+.login-title{font-family:'Orbitron',monospace;font-size:28px;font-weight:900;color:var(--accent2);letter-spacing:4px;margin-top:8px;}
+.login-sub{color:var(--muted);font-size:13px;margin-top:6px;font-weight:600;}
+.auth-card{width:100%;max-width:420px;background:var(--surf);border-radius:24px;padding:24px;border:1px solid var(--border);}
+.auth-tabs{display:flex;background:var(--surf2);border-radius:12px;padding:4px;margin-bottom:20px;}
+.auth-tab{flex:1;padding:10px;border-radius:8px;border:none;background:transparent;color:var(--muted);font-family:'Nunito',sans-serif;font-size:13px;font-weight:700;cursor:pointer;transition:.2s;}
+.auth-tab.active{background:var(--accent);color:#fff;}
+#auth-error{display:none;background:rgba(239,68,68,.15);border:1px solid var(--red);border-radius:10px;padding:12px;color:var(--red);font-size:13px;font-weight:600;margin-bottom:16px;}
+.field-label{font-size:10px;font-weight:800;color:var(--muted);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:6px;display:block;}
+.form-input{width:100%;background:var(--surf2);border:1px solid var(--border);border-radius:12px;padding:13px 16px;color:var(--text);font-family:'Nunito',sans-serif;font-size:15px;outline:none;margin-bottom:14px;transition:border-color .2s;}
+.form-input:focus{border-color:var(--accent);}
+.av-grid{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px;}
+.av-btn{width:42px;height:42px;border-radius:10px;border:2px solid var(--border);background:var(--surf2);font-size:22px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.2s;}
+.av-btn.sel{border-color:var(--accent);background:rgba(124,58,237,.2);}
+.col-row{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px;}
+.col-dot{width:28px;height:28px;border-radius:99px;cursor:pointer;transition:.2s;border:2px solid transparent;}
+.col-dot.sel{outline:3px solid white;transform:scale(1.2);}
+.big-btn{width:100%;padding:16px;border-radius:14px;border:none;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;font-family:'Nunito',sans-serif;font-size:16px;font-weight:900;cursor:pointer;transition:.2s;box-shadow:0 8px 24px rgba(124,58,237,.4);}
+.big-btn:hover{transform:translateY(-2px);}
+.big-btn:disabled{opacity:.6;transform:none;}
+
+/* ── APP SHELL ── */
+#app{display:none;flex-direction:column;max-width:430px;margin:0 auto;min-height:100vh;position:relative;z-index:1;}
+
+/* ── HEADER ── */
+.header{padding:52px 20px 0;background:var(--bg);border-bottom:1px solid var(--border);padding-bottom:12px;position:sticky;top:0;z-index:100;}
+.hdr-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
+.hdr-user{display:flex;align-items:center;gap:10px;}
+#hdr-avatar{font-size:28px;width:44px;height:44px;border-radius:99px;border:2px solid var(--accent);display:flex;align-items:center;justify-content:center;background:rgba(124,58,237,.15);}
+#hdr-name{font-size:14px;font-weight:800;color:var(--text);}
+#hdr-level{font-size:9px;font-weight:800;color:#fff;border-radius:99px;padding:2px 8px;margin-top:3px;display:inline-block;}
+.sync-badge{display:flex;align-items:center;gap:4px;background:var(--surf);border:1px solid var(--border);border-radius:99px;padding:4px 10px;}
+.sync-dot{width:6px;height:6px;border-radius:99px;background:var(--green);animation:pulse 2s infinite;}
+.sync-text{font-size:9px;font-weight:800;color:var(--muted);letter-spacing:1px;}
+.xp-row{display:flex;align-items:center;gap:8px;}
+.xp-label{font-size:9px;font-weight:800;color:var(--muted);width:18px;}
+.xp-bar{flex:1;height:8px;background:var(--surf2);border-radius:99px;overflow:hidden;border:1px solid var(--border);}
+#xp-fill{height:100%;border-radius:99px;background:linear-gradient(90deg,var(--accent),var(--accent2),var(--accent3));background-size:200%;animation:shimmer 3s linear infinite;transition:width .8s cubic-bezier(.34,1.56,.64,1);}
+#xp-text{font-size:9px;font-weight:800;color:var(--muted);width:58px;text-align:right;}
+.logout-btn{background:var(--surf);border:1px solid var(--border);border-radius:99px;width:32px;height:32px;font-size:16px;cursor:pointer;color:var(--muted);}
+
+/* ── TABS ── */
+.tab-panels{flex:1;overflow:hidden;}
+.tab-panel{display:none;height:calc(100vh - 180px);overflow-y:auto;padding:16px 20px;padding-bottom:100px;}
+.tab-panel.active{display:block;}
+.bottom-nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:430px;background:rgba(15,15,42,.97);border-top:1px solid var(--border);display:flex;justify-content:space-around;align-items:center;padding:10px 0 24px;z-index:200;backdrop-filter:blur(20px);}
+.bottom-tab{display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;color:var(--muted);padding:4px 16px;border:none;background:transparent;transition:.2s;}
+.bottom-tab.active{color:var(--accent2);}
+.bottom-tab .t-icon{font-size:20px;}
+.bottom-tab .t-label{font-size:10px;font-weight:800;}
+
+/* ── TODAY ── */
+.progress-card{background:var(--surf);border:1px solid var(--border);border-radius:20px;padding:20px;text-align:center;margin-bottom:16px;}
+.progress-label{font-size:10px;font-weight:800;color:var(--muted);letter-spacing:2px;margin-bottom:4px;}
+.progress-big{font-size:48px;font-weight:900;line-height:1;}
+.progress-big span{font-size:28px;color:var(--muted);}
+.progress-sub{font-size:12px;color:var(--muted);font-weight:600;margin:6px 0 12px;}
+.prog-bar{height:8px;background:var(--border);border-radius:99px;overflow:hidden;}
+#progress-fill{height:100%;border-radius:99px;background:linear-gradient(90deg,var(--accent),var(--accent2));transition:width .6s ease;}
+.section-head{display:flex;align-items:center;justify-content:space-between;margin:16px 0 10px;}
+.section-title{font-size:11px;font-weight:800;color:var(--accent2);letter-spacing:2px;}
+.add-btn{width:30px;height:30px;border-radius:99px;border:none;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1;}
+.task-card{background:var(--surf);border:1px solid var(--border);border-left:3px solid var(--tc,var(--accent));border-radius:var(--r);padding:13px 14px;margin-bottom:10px;display:flex;align-items:center;gap:12px;cursor:pointer;transition:all .2s;}
+.task-card:hover{transform:translateX(4px);}
+.task-card.done{opacity:.45;}
+.task-check{width:24px;height:24px;border-radius:99px;border:2px solid;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:12px;color:#fff;transition:.2s;}
+.task-body{flex:1;min-width:0;}
+.task-name{font-size:14px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:5px;}
+.task-card.done .task-name{text-decoration:line-through;color:var(--muted);}
+.task-tags{display:flex;gap:6px;flex-wrap:wrap;}
+.tag{font-size:10px;font-weight:700;border:1px solid var(--border);border-radius:99px;padding:2px 8px;color:var(--muted);}
+.tag.deadline{color:var(--accent3);border-color:var(--accent3);}
+.tag.overdue{color:var(--red);border-color:var(--red);animation:pulse 2s infinite;}
+.xp-badge{font-size:11px;font-weight:800;color:var(--accent3);font-family:'Orbitron',monospace;flex-shrink:0;}
+.empty-state{text-align:center;padding:40px 0;color:var(--muted);}
+.empty-state div{font-size:40px;opacity:.3;margin-bottom:8px;}
+.empty-state p{font-size:14px;font-weight:600;}
+
+/* ── HABITS ── */
+.habit-card{background:var(--surf);border:1px solid var(--border);border-radius:20px;padding:16px;margin-bottom:12px;}
+.habit-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px;}
+.habit-name{font-size:15px;font-weight:800;margin-bottom:3px;}
+.habit-meta{font-size:11px;color:var(--muted);font-weight:600;}
+.streak-badge{text-align:center;}
+.streak-num{font-size:28px;font-weight:900;color:var(--accent3);display:block;line-height:1;}
+.days-row{display:flex;gap:5px;margin-bottom:12px;}
+.day-dot{flex:1;aspect-ratio:1;border-radius:8px;border:1px solid var(--border);background:var(--surf2);display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:800;color:var(--muted);}
+.day-dot.done{background:var(--accent);border-color:var(--accent);color:#fff;}
+.day-dot.today{border-color:var(--accent3);color:var(--accent3);}
+.done-btn{width:100%;padding:11px;border-radius:12px;border:none;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;font-family:'Nunito',sans-serif;font-size:13px;font-weight:800;cursor:pointer;transition:.2s;}
+.done-btn.done-btn-done{background:var(--surf2);border:1px solid var(--green);color:var(--green);cursor:default;}
+
+/* ── CREW ── */
+.no-crew{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:40px 20px;min-height:70vh;}
+.no-crew-icon{font-size:72px;margin-bottom:16px;}
+.no-crew-title{font-size:22px;font-weight:900;margin-bottom:8px;}
+.no-crew-sub{color:var(--muted);font-size:14px;line-height:1.7;margin-bottom:28px;font-weight:600;}
+.crew-header{display:flex;align-items:center;justify-content:space-between;padding:12px 0 16px;}
+.crew-name{font-size:18px;font-weight:900;}
+.crew-sub{font-size:12px;color:var(--muted);font-weight:600;margin-top:2px;}
+.leave-btn{background:var(--surf);border:1px solid var(--border);border-radius:99px;padding:6px 12px;color:var(--muted);font-size:12px;font-weight:700;cursor:pointer;}
+.leaderboard{background:var(--surf);border:1px solid var(--border);border-radius:20px;overflow:hidden;}
+.lb-row{display:flex;align-items:center;gap:10px;padding:13px 16px;border-bottom:1px solid var(--border);}
+.lb-row:last-child{border-bottom:none;}
+.lb-me{background:rgba(124,58,237,.1);}
+.lb-rank{font-size:16px;width:26px;text-align:center;}
+.lb-av{width:34px;height:34px;border-radius:99px;border:2px solid;display:flex;align-items:center;justify-content:center;font-size:18px;}
+.lb-info{flex:1;}
+.lb-name{font-size:14px;font-weight:800;}
+.lb-level{font-size:10px;color:var(--muted);font-weight:600;margin-top:2px;}
+.boost-mini{width:32px;height:32px;border-radius:99px;border:none;background:linear-gradient(135deg,var(--pink),var(--accent3));font-size:14px;cursor:pointer;}
+.nudge-row{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;margin-bottom:4px;}
+.nudge-row::-webkit-scrollbar{display:none;}
+.nudge-chip{background:var(--surf);border:1px solid var(--border);border-radius:99px;padding:7px 12px;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap;transition:.2s;color:var(--text);}
+.nudge-chip:hover{border-color:var(--accent2);color:var(--accent2);}
+.chat-box{background:var(--surf);border:1px solid var(--border);border-radius:16px;padding:14px;min-height:160px;max-height:280px;overflow-y:auto;margin-bottom:10px;}
+.empty-chat{text-align:center;color:var(--muted);padding:40px 0;font-size:13px;font-weight:600;}
+.msg-wrap{display:flex;align-items:flex-end;gap:7px;margin-bottom:10px;}
+.msg-me{justify-content:flex-end;}
+.msg-av{width:28px;height:28px;border-radius:99px;border:1.5px solid;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;}
+.bubble{max-width:75%;background:var(--surf2);border:1px solid var(--border);border-radius:16px;border-bottom-left-radius:3px;padding:10px 12px;font-size:13px;font-weight:600;}
+.bubble-me{border-bottom-left-radius:16px;border-bottom-right-radius:3px;border:none;color:#fff;}
+.bubble-sender{font-size:9px;font-weight:800;color:var(--accent2);margin-bottom:3px;letter-spacing:.5px;}
+.msg-row{display:flex;gap:8px;}
+.msg-input{flex:1;background:var(--surf);border:1px solid var(--border);border-radius:99px;padding:11px 16px;color:var(--text);font-family:'Nunito',sans-serif;font-size:14px;outline:none;}
+.msg-input:focus{border-color:var(--accent);}
+.send-btn{width:44px;height:44px;border-radius:99px;border:none;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;font-size:16px;cursor:pointer;}
+
+/* ── AWARDS ── */
+.stats-row{display:flex;gap:10px;margin-bottom:20px;}
+.stat-card{flex:1;background:var(--surf);border:1px solid var(--border);border-radius:16px;padding:12px;text-align:center;}
+.stat-icon{font-size:20px;margin-bottom:4px;}
+.stat-val{font-size:20px;font-weight:900;margin-bottom:2px;}
+.stat-lbl{font-size:9px;font-weight:700;color:var(--muted);letter-spacing:.5px;}
+.badges-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
+.badge-card{background:var(--surf);border:1px solid var(--border);border-radius:16px;padding:14px 10px;text-align:center;transition:.2s;}
+.badge-card.earned{border-color:var(--accent3);background:linear-gradient(135deg,rgba(245,158,11,.1),rgba(124,58,237,.1));}
+.badge-icon{font-size:30px;margin-bottom:6px;}
+.badge-card:not(.earned) .badge-icon{filter:grayscale(1);opacity:.25;}
+.badge-name{font-size:11px;font-weight:800;color:var(--muted);margin-bottom:2px;}
+.badge-card.earned .badge-name{color:var(--accent3);}
+.badge-desc{font-size:9px;color:var(--border);font-weight:600;}
+
+/* ── MODALS ── */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:500;display:flex;align-items:flex-end;justify-content:center;opacity:0;pointer-events:none;transition:opacity .3s;backdrop-filter:blur(4px);}
+.modal-overlay.open{opacity:1;pointer-events:all;}
+.modal{background:var(--surf);border-radius:24px 24px 0 0;width:100%;max-width:430px;padding:24px;padding-bottom:48px;border-top:1px solid var(--border);transform:translateY(100%);transition:transform .35s cubic-bezier(.34,1.56,.64,1);}
+.modal-overlay.open .modal{transform:translateY(0);}
+.modal-handle{width:40px;height:4px;background:var(--border);border-radius:99px;margin:0 auto 20px;}
+.modal-title{font-family:'Orbitron',monospace;font-size:17px;font-weight:700;text-align:center;margin-bottom:20px;}
+.pills{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;}
+.pill{padding:7px 14px;border-radius:99px;border:1px solid var(--border);background:var(--surf2);font-size:12px;font-weight:700;cursor:pointer;color:var(--muted);transition:.2s;}
+.pill.active{background:var(--accent);border-color:var(--accent);color:#fff;}
+.modal-tabs{display:flex;background:var(--surf2);border-radius:12px;padding:4px;margin-bottom:18px;}
+.modal-tab{flex:1;padding:9px;border-radius:8px;border:none;background:transparent;color:var(--muted);font-family:'Nunito',sans-serif;font-size:13px;font-weight:700;cursor:pointer;transition:.2s;}
+.modal-tab.active{background:var(--accent);color:#fff;}
+.code-display{text-align:center;padding:16px 0;}
+.code-val{font-family:'Orbitron',monospace;font-size:40px;font-weight:900;color:var(--accent3);letter-spacing:8px;margin:12px 0 8px;}
+.code-sub{font-size:12px;color:var(--muted);font-weight:600;margin-bottom:20px;}
+
+.google-btn{width:100%;padding:16px;border-radius:14px;border:2px solid var(--border);background:var(--surf2);color:var(--text);font-family:'Nunito',sans-serif;font-size:16px;font-weight:800;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:12px;transition:.2s;}
+.google-btn:hover{border-color:var(--accent2);background:var(--surf);}
+#toast{position:fixed;bottom:100px;left:50%;transform:translateX(-50%) translateY(20px);background:linear-gradient(135deg,var(--accent),var(--accent2));border-radius:99px;padding:12px 24px;font-size:14px;font-weight:800;z-index:9000;opacity:0;pointer-events:none;transition:all .4s cubic-bezier(.34,1.56,.64,1);white-space:nowrap;box-shadow:0 8px 32px rgba(124,58,237,.5);}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+/* ── ANIMATIONS ── */
+@keyframes float{0%,100%{transform:translateY(0);}50%{transform:translateY(-12px);}}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1);}50%{opacity:.6;transform:scale(1.3);}}
+@keyframes shimmer{0%{background-position:0%;}100%{background-position:200%;}}
+@keyframes xpFloat{0%{opacity:1;transform:translateX(-50%) translateY(0) scale(.5);}50%{opacity:1;transform:translateX(-50%) translateY(-40px) scale(1.2);}100%{opacity:0;transform:translateX(-50%) translateY(-80px) scale(1);}}
+@keyframes fall{0%{transform:translateY(-20px) rotate(0deg);opacity:1;}100%{transform:translateY(100vh) rotate(720deg);opacity:0;}}
+</style>
+</head>
+<body>
+
+<!-- ═══ LOGIN SCREEN ═══ -->
+<div id="login-screen" style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:40px 24px;position:relative;z-index:1;">
+  <div class="login-logo">
+    <span class="login-planet">🪐</span>
+    <div class="login-title">ORBITCREW</div>
+    <div class="login-sub">Level up life. Together.</div>
+  </div>
+  <div class="auth-card" style="text-align:center;">
+    <div id="auth-error"></div>
+    <p style="color:var(--muted);font-size:14px;font-weight:600;margin-bottom:24px;">Sign in to launch your missions</p>
+    <button class="google-btn" onclick="doGoogleLogin()">
+      <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="22" height="22">
+      Continue with Google
+    </button>
+    <p style="color:var(--border);font-size:11px;margin-top:20px;font-weight:600;">Free forever · No credit card needed 🪐</p>
+  </div>
+</div>
+
+<!-- ═══ PROFILE SETUP SCREEN ═══ -->
+<div id="profile-setup-screen" style="display:none;flex-direction:column;align-items:center;justify-content:flex-start;min-height:100vh;padding:40px 24px;overflow-y:auto;position:relative;z-index:1;">
+  <div class="login-logo">
+    <span class="login-planet">🎨</span>
+    <div class="login-title" style="font-size:22px;">CUSTOMISE YOUR PILOT</div>
+    <div class="login-sub">Welcome, <span id="google-display-name">Pilot</span>! Pick your look.</div>
+  </div>
+  <div class="auth-card">
+    <label class="field-label">PICK YOUR AVATAR</label>
+    <div class="av-grid" id="av-grid2"></div>
+    <label class="field-label">PICK YOUR COLOUR</label>
+    <div class="col-row" id="col-row2"></div>
+    <button class="big-btn" onclick="completeProfile()">🚀 LAUNCH INTO ORBIT</button>
+  </div>
+</div>
+
+<!-- ═══ MAIN APP ═══ -->
+<div id="app" style="display:none;flex-direction:column;max-width:430px;margin:0 auto;min-height:100vh;">
+
+  <!-- Header -->
+  <div class="header">
+    <div class="hdr-top">
+      <div class="hdr-user">
+        <div id="hdr-avatar">🚀</div>
+        <div>
+          <div id="hdr-name">Pilot</div>
+          <div id="hdr-level" style="font-size:9px;font-weight:800;color:#fff;border-radius:99px;padding:2px 8px;margin-top:3px;display:inline-block;background:#7c3aed;">⚡ LVL 1</div>
+        </div>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center;">
+        <div class="sync-badge"><div class="sync-dot"></div><span class="sync-text">LIVE</span></div>
+        <button class="logout-btn" onclick="doLogout()">↩</button>
+      </div>
+    </div>
+    <div class="xp-row">
+      <span class="xp-label">XP</span>
+      <div class="xp-bar"><div id="xp-fill" style="width:0%"></div></div>
+      <span id="xp-text">0/1000</span>
+    </div>
+  </div>
+
+  <!-- Tab panels -->
+  <div class="tab-panels">
+    <!-- TODAY -->
+    <div class="tab-panel active" id="tab-today">
+      <div class="progress-card">
+        <div class="progress-label">TODAY'S PROGRESS</div>
+        <div class="progress-big"><span id="progress-count">0</span><span id="progress-total">/0</span></div>
+        <div class="progress-sub">missions complete</div>
+        <div class="prog-bar"><div id="progress-fill" style="width:0%"></div></div>
+      </div>
+      <div class="section-head"><span class="section-title">TODAY'S MISSIONS</span><button class="add-btn" onclick="openModal('task-modal')">+</button></div>
+      <div id="tasks-list"></div>
+      <div class="section-head" style="margin-top:8px"><span class="section-title">🏠 CHORES</span><button class="add-btn" onclick="window._taskType='chore';openModal('task-modal')">+</button></div>
+      <div id="chores-list"></div>
+    </div>
+
+    <!-- HABITS -->
+    <div class="tab-panel" id="tab-habits">
+      <div class="section-head"><span class="section-title">STREAK MISSIONS</span><button class="add-btn" onclick="openModal('habit-modal')">+</button></div>
+      <div id="habits-list"></div>
+    </div>
+
+    <!-- CREW -->
+    <div class="tab-panel" id="tab-crew">
+      <div id="crew-content"></div>
+    </div>
+
+    <!-- AWARDS -->
+    <div class="tab-panel" id="tab-awards">
+      <div class="stats-row">
+        <div class="stat-card"><div class="stat-icon">🏅</div><div class="stat-val" id="stat-badges" style="color:#f59e0b">0</div><div class="stat-lbl">Badges</div></div>
+        <div class="stat-card"><div class="stat-icon">⚡</div><div class="stat-val" id="stat-xp" style="color:#06b6d4">0</div><div class="stat-lbl">Total XP</div></div>
+        <div class="stat-card"><div class="stat-icon">🔥</div><div class="stat-val" id="stat-streak" style="color:#ec4899">0</div><div class="stat-lbl">Best Streak</div></div>
+        <div class="stat-card"><div class="stat-icon">✅</div><div class="stat-val" id="stat-done" style="color:#10b981">0</div><div class="stat-lbl">Done</div></div>
+      </div>
+      <div class="section-title" style="margin-bottom:12px">YOUR BADGES</div>
+      <div class="badges-grid" id="badges-grid"></div>
+    </div>
+  </div>
+
+  <!-- Bottom Nav -->
+  <div class="bottom-nav">
+    <button class="bottom-tab active" data-tab="today" onclick="switchTab('today')"><span class="t-icon">🎯</span><span class="t-label">Today</span></button>
+    <button class="bottom-tab" data-tab="habits" onclick="switchTab('habits')"><span class="t-icon">🔥</span><span class="t-label">Habits</span></button>
+    <button class="bottom-tab" data-tab="crew" onclick="switchTab('crew')"><span class="t-icon">🪐</span><span class="t-label">Crew</span></button>
+    <button class="bottom-tab" data-tab="awards" onclick="switchTab('awards')"><span class="t-icon">🏆</span><span class="t-label">Awards</span></button>
+  </div>
+</div>
+
+<!-- ═══ MODALS ═══ -->
+<!-- Add Task -->
+<div class="modal-overlay" id="task-modal" onclick="if(event.target===this)closeModal('task-modal')">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title">🚀 NEW MISSION</div>
+    <label class="field-label">MISSION NAME</label>
+    <input id="new-task-name" class="form-input" placeholder="e.g. Take medication, Call dentist...">
+    <label class="field-label">TYPE</label>
+    <div class="pills">
+      <button class="pill active" data-group="task-type" onclick="selectPill('personal','task-type',this)">👤 Personal</button>
+      <button class="pill" data-group="task-type" onclick="selectPill('shared','task-type',this)">👫 Shared</button>
+      <button class="pill" data-group="task-type" onclick="selectPill('chore','task-type',this)">🏠 Chore</button>
+      <button class="pill" data-group="task-type" onclick="selectPill('goal','task-type',this)">⭐ Goal</button>
+    </div>
+    <label class="field-label">PRIORITY</label>
+    <div class="pills">
+      <button class="pill" data-group="task-priority" onclick="selectPill('low','task-priority',this)">🟢 Low</button>
+      <button class="pill active" data-group="task-priority" onclick="selectPill('medium','task-priority',this)">🟡 Medium</button>
+      <button class="pill" data-group="task-priority" onclick="selectPill('high','task-priority',this)">🔴 High</button>
+    </div>
+    <button class="big-btn" onclick="addTask()">⚡ LAUNCH MISSION</button>
+  </div>
+</div>
+
+<!-- Add Habit -->
+<div class="modal-overlay" id="habit-modal" onclick="if(event.target===this)closeModal('habit-modal')">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title">🔥 NEW STREAK MISSION</div>
+    <label class="field-label">HABIT NAME</label>
+    <input id="new-habit-name" class="form-input" placeholder="e.g. Morning medication, Evening walk...">
+    <label class="field-label">TIME OF DAY</label>
+    <div class="pills">
+      <button class="pill active" data-group="habit-time" onclick="selectPill('morning','habit-time',this)">🌅 Morning</button>
+      <button class="pill" data-group="habit-time" onclick="selectPill('afternoon','habit-time',this)">☀️ Afternoon</button>
+      <button class="pill" data-group="habit-time" onclick="selectPill('evening','habit-time',this)">🌙 Evening</button>
+      <button class="pill" data-group="habit-time" onclick="selectPill('anytime','habit-time',this)">⏰ Anytime</button>
+    </div>
+    <button class="big-btn" style="background:linear-gradient(135deg,#f59e0b,#f97316)" onclick="addHabit()">🔥 START STREAK</button>
+  </div>
+</div>
+
+<!-- Crew Modal -->
+<div class="modal-overlay" id="crew-modal" onclick="if(event.target===this)closeModal('crew-modal')">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title">🪐 JOIN THE ORBIT</div>
+    <div class="modal-tabs">
+      <button class="modal-tab active" id="crew-tab-create" onclick="switchCrewTab('create')">👑 Create Crew</button>
+      <button class="modal-tab" id="crew-tab-join" onclick="switchCrewTab('join')">🔗 Join Crew</button>
+    </div>
+    <div id="crew-create-section">
+      <div id="crew-create-form">
+        <label class="field-label">CREW NAME</label>
+        <input id="crew-name-input" class="form-input" placeholder="e.g. The Johnson Crew, Dream Team...">
+        <button class="big-btn" onclick="createCrew()">👑 Create Crew</button>
+      </div>
+      <div id="crew-created-box" style="display:none">
+        <div class="code-display">
+          <div style="font-size:12px;font-weight:800;color:var(--muted);letter-spacing:1px;margin-bottom:8px;">✅ CREW CREATED! SHARE THIS CODE:</div>
+          <div class="code-val" id="crew-code-display">------</div>
+          <div class="code-sub">Send this code to anyone you want in your crew. They tap "Join Crew" and enter it.</div>
+          <button class="big-btn" style="background:linear-gradient(135deg,#10b981,#059669)" onclick="closeModal('crew-modal');ge('crew-created-box').style.display='none';ge('crew-create-form').style.display='block'">✅ Got it!</button>
+        </div>
+      </div>
+    </div>
+    <div id="crew-join-section" style="display:none">
+      <label class="field-label">ENTER CREW CODE</label>
+      <input id="join-code-input" class="form-input" placeholder="AB12CD" style="font-size:28px;font-weight:900;text-align:center;letter-spacing:10px;text-transform:uppercase" maxlength="6">
+      <p style="color:var(--muted);font-size:12px;font-weight:600;margin-bottom:16px;text-align:center;">Ask your crew leader for their 6-digit code</p>
+      <button class="big-btn" style="background:linear-gradient(135deg,var(--pink),var(--accent3))" onclick="joinCrew()">🔗 Join Crew</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div id="toast"></div>
+
+<script>
+// Build avatar & color pickers for profile setup
+const AVATARS=['👨‍🚀','👩‍🚀','🧑‍🚀','🦸','🦸‍♀️','🧙','🧙‍♀️','🥷','🧝','🧝‍♀️','🐉','🦊','🐺','🦁','🐯','🦋','🌟','⚡','🔥','🌈'];
+const COLORS=['#7c3aed','#06b6d4','#ec4899','#f59e0b','#10b981','#f97316','#3b82f6','#8b5cf6','#ef4444','#14b8a6'];
+document.getElementById('av-grid2').innerHTML=AVATARS.map((a,i)=>`<button class="av-btn${i===0?' sel':''}" onclick="selectAvatar('${a}',this)">${a}</button>`).join('');
+document.getElementById('col-row2').innerHTML=COLORS.map((c,i)=>`<div class="col-dot${i===0?' sel':''}" style="background:${c}" onclick="selectColor('${c}',this)"></div>`).join('');
+
+function ge(id){return document.getElementById(id);}
+</script>
+</body>
+</html>
