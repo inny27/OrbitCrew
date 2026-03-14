@@ -1634,9 +1634,22 @@ window.finishSession = async () => {
     await saveWorkoutEntry({id:`${sessionId}_${i}_${ex.exId}`, date:new Date().toISOString(), type:'weights', sessionId, sessionName, exercise:ex.exId, exerciseName:ex.exName, muscles:ex.muscles, sets:ex.sets, feel:ex.feel, notes:ex.notes, workoutTime:timerSecs});
   }
   const xpEarned = activeSession.exercises.length*15+25;
+  const sessionExercises = [...activeSession.exercises];
+  const statsBefore = getTotalStats();
   await gainXP(xpEarned,{totalDone:activeSession.exercises.length});
   resetTimer(); activeSession=null;
-  spawnConfetti(40); toast(`🎉 Workout done! +${xpEarned} XP!`); renderFitness();
+  const statsAfter = getTotalStats();
+  const gainStr = Math.max(0, statsAfter.strength - statsBefore.strength);
+  const gainCrd = Math.max(0, statsAfter.cardio   - statsBefore.cardio);
+  const gainBal = Math.max(0, statsAfter.balance  - statsBefore.balance);
+  spawnConfetti(40);
+  switchTab('fitness');
+  renderFitness();
+  setTimeout(()=>{
+    const tamaBtn = document.getElementById('ft-tama');
+    if(tamaBtn) switchFitTab('tama', tamaBtn);
+    setTimeout(()=>showTamaPostWorkout(sessionExercises,gainStr,gainCrd,gainBal,xpEarned,statsAfter), 350);
+  }, 200);
 };
 
 window.cancelSession = () => {
@@ -2454,6 +2467,63 @@ const TAMAFIT_STAGES = [
     render:(sz)=>`<svg width="${sz}" height="${sz*1.5}" viewBox="0 0 58 88" style="image-rendering:pixelated;animation:tama-levelup 2s ease-in-out infinite"><ellipse cx="29" cy="6" rx="18" ry="5" fill="none" stroke="#ffd700" stroke-width="3" opacity="0.8"/><polygon points="29,2 20,12 12,7 16,20 42,20 46,7 38,12" fill="#ffd700" stroke="#0f380f" stroke-width="1.5"/><circle cx="5" cy="40" r="3" fill="#ffd700" opacity="0.6"/><circle cx="53" cy="40" r="3" fill="#ffd700" opacity="0.6"/><rect x="10" y="62" width="14" height="26" rx="4" fill="#9bbc0f" stroke="#0f380f" stroke-width="2.5"/><rect x="34" y="62" width="14" height="26" rx="4" fill="#9bbc0f" stroke="#0f380f" stroke-width="2.5"/><ellipse cx="17" cy="64" rx="9" ry="7" fill="#8bac0f" stroke="#0f380f" stroke-width="2"/><ellipse cx="41" cy="64" rx="9" ry="7" fill="#8bac0f" stroke="#0f380f" stroke-width="2"/><rect x="2" y="34" width="54" height="32" rx="5" fill="#9bbc0f" stroke="#0f380f" stroke-width="3"/><ellipse cx="14" cy="42" rx="9" ry="9" fill="#8bac0f" stroke="#0f380f" stroke-width="2"/><ellipse cx="44" cy="42" rx="9" ry="9" fill="#8bac0f" stroke="#0f380f" stroke-width="2"/><text x="29" y="56" text-anchor="middle" font-size="10" fill="#ffd700">✦✦</text><text x="29" y="64" text-anchor="middle" font-size="8" fill="#ffd700">✦</text><ellipse cx="2" cy="36" rx="10" ry="9" fill="#8bac0f" stroke="#0f380f" stroke-width="2.5"/><ellipse cx="56" cy="36" rx="10" ry="9" fill="#8bac0f" stroke="#0f380f" stroke-width="2.5"/><rect x="-8" y="30" width="12" height="25" rx="6" fill="#9bbc0f" stroke="#0f380f" stroke-width="2.5"/><ellipse cx="-2" cy="37" rx="7" ry="7" fill="#8bac0f" stroke="#0f380f" stroke-width="2"/><rect x="54" y="30" width="12" height="25" rx="6" fill="#9bbc0f" stroke="#0f380f" stroke-width="2.5"/><ellipse cx="60" cy="37" rx="7" ry="7" fill="#8bac0f" stroke="#0f380f" stroke-width="2"/><ellipse cx="29" cy="26" rx="16" ry="15" fill="#9bbc0f" stroke="#0f380f" stroke-width="3"/><ellipse cx="23" cy="25" rx="4.5" ry="5" fill="#0f380f"/><ellipse cx="35" cy="25" rx="4.5" ry="5" fill="#0f380f"/><ellipse cx="24.5" cy="23" rx="2" ry="2" fill="#ffd700"/><ellipse cx="36.5" cy="23" rx="2" ry="2" fill="#ffd700"/><path d="M20 31 Q29 38 38 31" stroke="#0f380f" stroke-width="3" fill="none"/></svg>`},
 ];
 
+// ── Muscle → stat mapping ──
+const MUSCLE_STAT_MAP = {
+  'Chest':3,'Back':3,'Quads':3,'Glutes':3,'Hamstrings':2,'Shoulders':2,
+  'Triceps':1,'Biceps':1,'Traps':1,'Lats':2,'Rear Delts':1,
+  'Upper Chest':2,'Side Delts':1,'Brachialis':1,'Long Head':1,
+  'Cardio':5,'Endurance':4,'Active Recovery':2,'Full Body':2,
+  'Core':3,'Balance':2,'Hip Flexors':1,'Rotator Cuff':2,'Coordination':1,
+  'Calves':1,'Soleus':1,'Power':2,
+};
+const CARDIO_EX_TYPES = new Set(['run','swim','cardio']);
+const CARDIO_MUSCLES = new Set(['Cardio','Endurance','Active Recovery','Full Body']);
+const BALANCE_MUSCLES = new Set(['Core','Balance','Hip Flexors','Rotator Cuff','Coordination']);
+
+function calcExPoints(exEntry) {
+  const exDef = EXERCISE_DB.find(e=>e.id===(exEntry.exId||exEntry.exercise));
+  const difficulty = exDef ? exDef.difficulty : 2;
+  const muscles = exEntry.muscles || exDef?.muscles || [];
+  const type = exDef?.type || 'weights';
+  const sets = exEntry.sets || [];
+  let str=0, crd=0, bal=0;
+  let totalVol = 0;
+  for(const s of sets) {
+    const isDur = s.mode==='duration'||(s.duration>0&&!s.reps);
+    const vol = isDur
+      ? (s.duration||30) * difficulty * 0.08
+      : (s.reps||8) * Math.max(0.5, s.weight||1) * difficulty * 0.04;
+    totalVol += vol;
+  }
+  totalVol = Math.max(1, totalVol);
+  // Distribute by muscle
+  for(const m of muscles) {
+    const pts = (MUSCLE_STAT_MAP[m]||1) * totalVol;
+    if(CARDIO_EX_TYPES.has(type)||CARDIO_MUSCLES.has(m)) {
+      crd += pts * 0.5;
+    } else if(BALANCE_MUSCLES.has(m)) {
+      bal += pts * 0.4; str += pts * 0.1;
+    } else {
+      str += pts * 0.35;
+    }
+  }
+  if(type==='calisthenics') bal += totalVol * 0.25;
+  return {str, crd, bal};
+}
+
+function getTotalStats() {
+  let str=0, crd=0, bal=0;
+  for(const e of workoutEntries) {
+    const pts = calcExPoints(e);
+    str+=pts.str; crd+=pts.crd; bal+=pts.bal;
+  }
+  return {
+    strength: Math.min(100, Math.round(str)),
+    cardio:   Math.min(100, Math.round(crd)),
+    balance:  Math.min(100, Math.round(bal)),
+  };
+}
+
 function getTamaState() {
   const totalWorkouts = workoutEntries.length;
   const today = new Date().toDateString();
@@ -2461,12 +2531,7 @@ function getTamaState() {
   const twoDaysAgo = new Date(Date.now()-172800000).toDateString();
   let stage = TAMAFIT_STAGES[0];
   for(const s of TAMAFIT_STAGES) { if(totalWorkouts >= s.minWorkouts) stage = s; }
-  const weightVol = workoutEntries.filter(e=>e.type==='weights').reduce((s,e)=>s+(e.sets||[]).reduce((ss,set)=>ss+(set.weight||0)*set.reps,0),0);
-  const cardioMins = workoutEntries.filter(e=>e.type!=='weights').reduce((s,e)=>s+(e.duration||0),0);
-  const calistCount = workoutEntries.filter(e=>(e.muscles||[]).some(m=>m==='Core')).length;
-  const strength = Math.min(100, Math.floor(weightVol/500));
-  const cardio = Math.min(100, Math.floor(cardioMins/10));
-  const balance = Math.min(100, Math.floor(calistCount*5));
+  const {strength, cardio, balance} = getTotalStats();
   const recentDates = workoutEntries.map(e=>new Date(e.date).toDateString());
   const hungry = !recentDates.includes(today)&&!recentDates.includes(yesterday)&&!recentDates.includes(twoDaysAgo);
   const happy = recentDates.includes(today);
@@ -2518,6 +2583,92 @@ window.renderTamaFit = function() {
   setTimeout(()=>{ if(document.getElementById('tamafit-container')?.style.display!=='none') renderTamaFit(); }, 8000);
 };
 
+
+window.showTamaPostWorkout = function(exercises, gainStr, gainCrd, gainBal, xpEarned, statsAfter) {
+  const {stage} = getTamaState();
+  const petName = localStorage.getItem('intask_pet_name') || '???';
+  const musclesHit = [...new Set(exercises.flatMap(e=>e.muscles||[]))].slice(0,6);
+  const exerciseCount = exercises.length;
+  const totalSets = exercises.reduce((s,e)=>s+(e.sets||[]).length, 0);
+  const isLeg = musclesHit.some(m=>['Quads','Glutes','Hamstrings'].includes(m));
+  const isUpper = musclesHit.some(m=>['Chest','Back','Shoulders'].includes(m));
+  const isCardio = exercises.some(e=>{const d=EXERCISE_DB.find(x=>x.id===e.exId);return d&&['run','swim','cardio'].includes(d.type);});
+  const isCalis = exercises.some(e=>{const d=EXERCISE_DB.find(x=>x.id===e.exId);return d&&d.type==='calisthenics';});
+  const msgs = [
+    ...(isLeg   ?[`${petName}: LEG DAY?! I felt every rep!`,`${petName}: My quads are SCREAMING. Worth it.`]:[]),
+    ...(isUpper ?[`${petName}: Look at these gains! SO pumped!`,`${petName}: Upper body? More like UPPER BEAST!`]:[]),
+    ...(isCardio?[`${petName}: My heart is a WEAPON now!`,`${petName}: Cardio done. Unstoppable!`]:[]),
+    ...(isCalis ?[`${petName}: Bodyweight warrior! I feel so strong!`]:[]),
+    `${petName}: ${totalSets} sets?! You absolute legend!`,
+    `${petName}: Every rep made me stronger!`,
+    `${petName}: I can feel myself EVOLVING. Keep going!`,
+    `${petName}: ${exerciseCount} exercises! We don't skip. EVER.`,
+  ];
+  const msg = msgs[Math.floor(Math.random()*msgs.length)];
+  const prevStr = Math.max(0, (statsAfter.strength||0) - gainStr);
+  const prevCrd = Math.max(0, (statsAfter.cardio  ||0) - gainCrd);
+  const prevBal = Math.max(0, (statsAfter.balance ||0) - gainBal);
+  const fmtGain = v => v>0 ? `<span style="color:var(--green);font-size:7px;font-family:var(--pixel)"> +${Math.round(v)}</span>` : '';
+  const statBar = (val, gain, label) => `
+    <div style="margin-bottom:10px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+        <span style="font-size:7px;font-family:var(--pixel);color:var(--muted)">${label}</span>
+        <span style="font-size:9px;font-family:var(--pixel);color:var(--accent3)">${Math.round(val)}${fmtGain(gain)}</span>
+      </div>
+      <div style="height:10px;background:var(--border);position:relative;overflow:hidden">
+        <div style="position:absolute;left:0;top:0;height:100%;width:${Math.min(100,val-gain)}%;background:#8bac0f;transition:width .8s"></div>
+        <div id="gain-bar-${label}" style="position:absolute;left:${Math.min(100,val-gain)}%;top:0;height:100%;width:0%;background:var(--green);transition:width 1s .3s"></div>
+      </div>
+    </div>`;
+  const el = document.createElement('div');
+  el.id='tama-post-workout';
+  el.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.95);z-index:6000;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding:20px;overflow-y:auto';
+  el.innerHTML=`
+    <div style="width:100%;max-width:380px;padding-bottom:20px">
+      <div style="text-align:center;margin-bottom:14px">
+        <div style="font-size:10px;font-family:var(--pixel);color:var(--accent);letter-spacing:2px;margin-bottom:4px">WORKOUT COMPLETE!</div>
+        <div style="font-size:8px;font-family:var(--pixel);color:var(--accent3)">+${xpEarned} XP EARNED ✨</div>
+      </div>
+      <div style="background:#9bbc0f;border:3px solid var(--accent);padding:16px;text-align:center;margin-bottom:12px;position:relative">
+        <div style="position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.06) 2px,rgba(0,0,0,.06) 4px)"></div>
+        <div style="font-size:7px;font-family:var(--pixel);color:#0f380f;margin-bottom:6px;position:relative">${petName}</div>
+        <div style="display:inline-block;animation:tama-happy 0.6s ease-in-out infinite;position:relative">${stage.render(68)}</div>
+        <div style="background:#e8f4d0;border:2px solid #0f380f;border-radius:4px;padding:8px 12px;margin-top:10px;font-size:8px;font-family:var(--pixel);color:#0f380f;line-height:1.9;position:relative">${msg}</div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:12px">
+        <div style="background:var(--surf);border:2px solid var(--border);padding:10px;text-align:center">
+          <div style="font-size:16px;font-family:var(--pixel);color:var(--text)">${exerciseCount}</div>
+          <div style="font-size:6px;color:var(--muted);font-family:var(--pixel);margin-top:4px">EXERCISES</div>
+        </div>
+        <div style="background:var(--surf);border:2px solid var(--border);padding:10px;text-align:center">
+          <div style="font-size:16px;font-family:var(--pixel);color:var(--text)">${totalSets}</div>
+          <div style="font-size:6px;color:var(--muted);font-family:var(--pixel);margin-top:4px">SETS</div>
+        </div>
+        <div style="background:var(--surf);border:2px solid var(--accent3);padding:10px;text-align:center">
+          <div style="font-size:16px;font-family:var(--pixel);color:var(--accent3)">${xpEarned}</div>
+          <div style="font-size:6px;color:var(--muted);font-family:var(--pixel);margin-top:4px">XP</div>
+        </div>
+      </div>
+      ${musclesHit.length?`<div style="background:var(--surf);border:2px solid var(--border);padding:12px;margin-bottom:12px">
+        <div style="font-size:7px;font-family:var(--pixel);color:var(--accent);margin-bottom:8px">MUSCLES TRAINED</div>
+        <div style="display:flex;flex-wrap:wrap;gap:4px">${musclesHit.map(m=>`<span style="background:rgba(255,215,0,.1);border:1px solid var(--accent);font-size:6px;font-family:var(--pixel);color:var(--accent);padding:3px 7px">${m}</span>`).join('')}</div>
+      </div>`:''}
+      <div style="background:var(--surf);border:2px solid var(--border);padding:14px;margin-bottom:16px">
+        <div style="font-size:7px;font-family:var(--pixel);color:var(--accent);margin-bottom:12px">PET STATS UPDATED</div>
+        ${statBar(statsAfter.strength, gainStr, 'STR')}
+        ${statBar(statsAfter.cardio,   gainCrd, 'CARD')}
+        ${statBar(statsAfter.balance,  gainBal, 'BAL')}
+      </div>
+      <button onclick="document.getElementById('tama-post-workout').remove()" style="width:100%;padding:14px;border-radius:0;border:2px solid var(--accent);background:var(--accent);color:#0a0a1a;font-family:var(--pixel);font-size:9px;cursor:pointer;box-shadow:3px 3px 0 rgba(0,0,0,.5)">AWESOME! LET'S GO! ✊</button>
+    </div>`;
+  document.body.appendChild(el);
+  // Animate gain bars after render
+  setTimeout(()=>{
+    if(gainStr>0){const b=document.getElementById('gain-bar-STR');  if(b) b.style.width=Math.min(gainStr,100-Math.max(0,prevStr))+'%';}
+    if(gainCrd>0){const b=document.getElementById('gain-bar-CARD'); if(b) b.style.width=Math.min(gainCrd,100-Math.max(0,prevCrd))+'%';}
+    if(gainBal>0){const b=document.getElementById('gain-bar-BAL');  if(b) b.style.width=Math.min(gainBal,100-Math.max(0,prevBal))+'%';}
+  }, 500);
+};
 
 function renderFitness() {
   const fp = fitnessProfile;
@@ -3833,7 +3984,9 @@ function deleteBodyEntry(i){window.deleteBodyEntry&&window.deleteBodyEntry(i);}
 function toggleSetMode(m){window.toggleSetMode&&window.toggleSetMode(m);}
 function switchFitTab(t,el){window.switchFitTab&&window.switchFitTab(t,el);}
 function renderTamaFit(){window.renderTamaFit&&window.renderTamaFit();}
+function showTamaPostWorkout(a,b,c,d,e,f){window.showTamaPostWorkout&&window.showTamaPostWorkout(a,b,c,d,e,f);}
 function renderTamaFit(){window.renderTamaFit&&window.renderTamaFit();}
+function showTamaPostWorkout(a,b,c,d,e,f){window.showTamaPostWorkout&&window.showTamaPostWorkout(a,b,c,d,e,f);}
 function startWorkoutSession(){window.startWorkoutSession&&window.startWorkoutSession();}
 function finishSession(){window.finishSession&&window.finishSession();}
 function cancelSession(){window.cancelSession&&window.cancelSession();}
@@ -4051,13 +4204,14 @@ window.addEventListener('appinstalled', () => {
 // Apply saved preferences on load
 if(localStorage.getItem('intask_colorblind')==='1') document.body.classList.add('colorblind');
 </script>
-</body>
-</html><!-- Settings Modal -->
+<!-- Settings Modal -->
 <div class="modal-overlay" id="settings-modal" onclick="if(event.target===this)closeModal('settings-modal')">
   <div class="modal" style="max-height:85vh;overflow-y:auto">
     <div class="modal-handle"></div>
     <div id="settings-panel"></div>
   </div>
 </div>
+</body>
+</html>
 
 
