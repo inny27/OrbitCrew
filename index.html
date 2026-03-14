@@ -354,18 +354,21 @@ body::before{
 /* Sets builder */
 .sets-head{display:flex;align-items:center;padding:0 8px;margin-bottom:8px;}
 .sets-head-lbl{font-size:10px;font-weight:800;color:var(--muted);letter-spacing:1px;text-transform:uppercase;}
-.set-row{display:flex;align-items:center;gap:8px;background:var(--surf2);border-radius:14px;padding:10px 12px;margin-bottom:8px;border:1.5px solid transparent;transition:.2s;}
+.set-row{display:grid;grid-template-columns:28px 1fr auto 1fr auto auto;align-items:center;gap:6px;background:var(--surf2);border-radius:12px;padding:8px 10px;margin-bottom:8px;border:1.5px solid transparent;transition:.2s;}
 .set-row.done-set{border-color:var(--green);background:rgba(16,185,129,.08);}
-.set-badge{width:30px;height:30px;border-radius:8px;background:var(--accent);color:#fff;font-size:11px;font-weight:900;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-family:'Orbitron',monospace;}
-.set-fg{display:flex;align-items:center;gap:4px;}
-.set-adj{width:36px;height:36px;border-radius:10px;border:1px solid var(--border);background:var(--surf);color:var(--text);font-size:22px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:.15s;user-select:none;}
+.set-badge{width:28px;height:28px;border-radius:8px;background:var(--accent);color:#fff;font-size:10px;font-weight:900;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-family:'Orbitron',monospace;}
+.set-fg{display:flex;align-items:center;gap:3px;}
+.set-adj{width:32px;height:32px;border-radius:9px;border:1px solid var(--border);background:var(--surf);color:var(--text);font-size:20px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:.15s;user-select:none;}
 .set-adj:active{background:var(--accent);border-color:var(--accent);color:#fff;transform:scale(.94);}
-.set-num-input{width:52px;background:var(--surf);border:1px solid var(--border);border-radius:10px;padding:7px 4px;color:var(--text);font-family:'Orbitron',monospace;font-size:16px;font-weight:700;text-align:center;outline:none;}
-.set-unit-lbl{font-size:10px;font-weight:800;color:var(--muted);white-space:nowrap;}
-.set-x-lbl{font-size:16px;font-weight:900;color:var(--muted);flex-shrink:0;margin:0 4px;}
-.set-check-btn{width:38px;height:38px;border-radius:10px;border:1px solid var(--border);background:var(--surf2);color:var(--green);font-size:16px;font-weight:900;cursor:pointer;flex-shrink:0;transition:.2s;}
-.set-del-btn{background:none;border:none;color:var(--red);font-size:18px;cursor:pointer;flex-shrink:0;opacity:.6;}
+.set-num-input{width:44px;background:var(--surf);border:1px solid var(--border);border-radius:8px;padding:5px 2px;color:var(--text);font-family:'Orbitron',monospace;font-size:15px;font-weight:700;text-align:center;outline:none;}
+.set-unit-lbl{display:none;}
+.set-x-lbl{font-size:14px;font-weight:900;color:var(--muted);flex-shrink:0;margin:0 2px;}
+.set-check-btn{width:32px;height:32px;border-radius:9px;border:1px solid var(--border);background:var(--surf2);color:var(--green);font-size:14px;font-weight:900;cursor:pointer;flex-shrink:0;transition:.2s;}
+.set-del-btn{background:none;border:none;color:var(--red);font-size:16px;cursor:pointer;flex-shrink:0;opacity:.6;padding:0;}
 .set-del-btn:hover{opacity:1;}
+/* Set header labels */
+.sets-grid-head{display:grid;grid-template-columns:28px 1fr auto 1fr auto auto;gap:6px;padding:0 10px;margin-bottom:4px;}
+.sgh-lbl{font-size:9px;font-weight:800;color:var(--muted);letter-spacing:1px;text-transform:uppercase;text-align:center;}
 .add-set-btn{width:100%;padding:13px;border-radius:12px;border:2px dashed rgba(6,182,212,.3);background:transparent;color:var(--accent2);font-family:'Nunito',sans-serif;font-size:14px;font-weight:800;cursor:pointer;transition:.2s;margin:6px 0 14px;}
 .add-set-btn:hover{border-color:var(--accent2);background:rgba(6,182,212,.05);}
 .feel-row{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:8px;}
@@ -588,6 +591,14 @@ body::before{
 @keyframes swim-arm2{0%,100%{transform:rotate(20deg);}50%{transform:rotate(-140deg);}}
 @keyframes swim-body{0%,100%{transform:rotate(-5deg);}50%{transform:rotate(5deg);}}
 
+
+/* Edit modal */
+.edit-modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:600;display:none;align-items:flex-end;justify-content:center;backdrop-filter:blur(6px);}
+.edit-modal-overlay.open{display:flex;}
+.edit-modal{background:var(--surf);border-radius:24px 24px 0 0;width:100%;max-width:430px;padding:24px;padding-bottom:48px;border-top:1px solid var(--border);max-height:90vh;overflow-y:auto;}
+.edit-btn{background:none;border:none;color:var(--accent2);font-size:15px;cursor:pointer;padding:2px 6px;border-radius:8px;transition:.2s;opacity:.7;}
+.edit-btn:hover{opacity:1;background:rgba(6,182,212,.15);}
+.wec-actions{display:flex;gap:4px;align-items:center;flex-shrink:0;}
 </style>
 
 <!-- Firebase -->
@@ -1152,16 +1163,38 @@ window.doEmailLogin = async () => {
 
 window.doGuestLogin = async () => {
   const username = g('guest-name').value.trim();
+  const pw = g('guest-pw').value;
+  const pw2 = g('guest-pw2').value;
   if (!username) { showAuthError('Enter a display name!'); return; }
-  const btn = g('guest-btn'); btn.disabled=true; btn.textContent='...';
+  if (pw.length < 6) { showAuthError('Password must be at least 6 characters.'); return; }
+  if (pw !== pw2) { showAuthError('Passwords do not match!'); return; }
+  const btn = g('guest-btn'); btn.disabled=true; btn.textContent='Creating account...';
+  // Use a generated guest email so they can log back in
+  const guestEmail = username.toLowerCase().replace(/[^a-z0-9]/g,'') + '_guest_' + Date.now() + '@orbitcrew.guest';
   try {
-    const result = await signInAnonymously(auth);
+    const result = await createUserWithEmailAndPassword(auth, guestEmail, pw);
     await updateProfile(result.user, { displayName: username });
     currentUser = result.user;
+    // Store guest credentials locally so they can sign back in
+    localStorage.setItem('oc_guest_email', guestEmail);
+    localStorage.setItem('oc_guest_name', username);
     toast('Welcome, ' + username + '! 🚀');
   } catch(e) {
-    showAuthError('Guest login failed. Try again.');
-    btn.disabled=false; btn.textContent='👾 Play as Guest';
+    showAuthError(friendlyErr(e.code)||'Could not create account. Try again.');
+    btn.disabled=false; btn.textContent='👾 Create Guest Account';
+  }
+};
+
+window.doGuestReturn = async () => {
+  const email = localStorage.getItem('oc_guest_email');
+  const name = localStorage.getItem('oc_guest_name');
+  const pw = g('guest-return-pw').value;
+  if (!email || !pw) { showAuthError('Enter your password.'); return; }
+  try {
+    await signInWithEmailAndPassword(auth, email, pw);
+    toast('Welcome back, ' + name + '! 🚀');
+  } catch(e) {
+    showAuthError('Incorrect password.');
   }
 };
 
@@ -1604,14 +1637,12 @@ function setRowHTML(s, i) {
       <button class="set-adj" onclick="adjSet(${i},'weight',-2.5)">−</button>
       <input class="set-num-input" type="number" inputmode="decimal" value="${s.weight||''}" placeholder="—" oninput="updSet(${i},'weight',this.value)" id="sw${i}">
       <button class="set-adj" onclick="adjSet(${i},'weight',2.5)">+</button>
-      <span class="set-unit-lbl">kg</span>
     </div>
     <span class="set-x-lbl">×</span>
     <div class="set-fg">
       <button class="set-adj" onclick="adjSet(${i},'reps',-1)">−</button>
       <input class="set-num-input" type="number" inputmode="numeric" value="${s.reps||8}" oninput="updSet(${i},'reps',this.value)" id="sr_r${i}">
       <button class="set-adj" onclick="adjSet(${i},'reps',1)">+</button>
-      <span class="set-unit-lbl">reps</span>
     </div>
     <button class="set-check-btn" id="scb${i}" onclick="doneSet(${i})">✓</button>
     <button class="set-del-btn" onclick="delSet(${i})">×</button>
@@ -2031,10 +2062,13 @@ function renderLogForm(type) {
           <div style="flex:1"><div class="sel-ex-name">${selEx.name}</div><div class="sel-ex-muscles">${selEx.muscles.join(' · ')}</div></div>
           <button class="change-btn" onclick="clearExSelection()">Change</button>
         </div>
-        <div class="sets-head">
-          <span class="sets-head-lbl" style="width:32px">SET</span>
-          <span class="sets-head-lbl" style="flex:1;text-align:center">WEIGHT</span>
-          <span class="sets-head-lbl" style="flex:1;text-align:center">REPS</span>
+        <div class="sets-grid-head">
+          <span class="sgh-lbl">SET</span>
+          <span class="sgh-lbl">kg</span>
+          <span class="sgh-lbl"></span>
+          <span class="sgh-lbl">reps</span>
+          <span class="sgh-lbl">✓</span>
+          <span class="sgh-lbl">×</span>
         </div>
         <div id="sets-builder">${currentSets.map((s,i)=>setRowHTML(s,i)).join('')}</div>
         <button class="add-set-btn" onclick="addSet()">＋ Add Set</button>
@@ -2150,7 +2184,7 @@ function renderActiveSession() {
         <div style="flex:1"><div class="sel-ex-name">${selEx.name}</div><div class="sel-ex-muscles">${selEx.muscles.join(' · ')}</div></div>
         <button class="change-btn" onclick="clearExSelection()">Change</button>
       </div>
-      <div class="sets-head"><span class="sets-head-lbl" style="width:32px">SET</span><span class="sets-head-lbl" style="flex:1;text-align:center">WEIGHT</span><span class="sets-head-lbl" style="flex:1;text-align:center">REPS</span></div>
+      <div class="sets-grid-head"><span class="sgh-lbl">SET</span><span class="sgh-lbl">kg</span><span class="sgh-lbl"></span><span class="sgh-lbl">reps</span><span class="sgh-lbl">✓</span><span class="sgh-lbl">×</span></div>
       <div id="sets-builder">${currentSets.map((s,i)=>setRowHTML(s,i)).join('')}</div>
       <button class="add-set-btn" onclick="addSet()">＋ Add Set</button>
       <div class="feel-row">
@@ -2174,37 +2208,178 @@ function renderActiveSession() {
 }
 
 function workoutEntryCardHTML(e) {
+  const actions = `<div class="wec-actions"><button class="edit-btn" onclick="editWorkoutEntry('${e.id}')">✏️</button><button class="del-btn" onclick="deleteWorkoutEntry('${e.id}')">🗑️</button></div>`;
   if (e.type==='weights') {
     const vol = (e.sets||[]).reduce((s,x)=>s+(x.weight||0)*x.reps,0);
     return `<div class="workout-entry-card">
       <div class="wec-top">
         <span class="wec-icon">🏋️</span>
-        <div style="flex:1"><div class="wec-name">${e.exerciseName||''}</div><div class="wec-meta">${(e.muscles||[]).join(', ')}${e.sessionName?` · ${e.sessionName}`:''}</div></div>
-        <span style="font-size:18px">${{easy:'😊',good:'💪',hard:'😤',max:'🔥'}[e.feel]||'💪'}</span>
-        <button class="del-btn" onclick="deleteWorkoutEntry('${e.id}')">🗑️</button>
+        <div style="flex:1;min-width:0"><div class="wec-name">${e.exerciseName||''}</div><div class="wec-meta">${(e.muscles||[]).slice(0,3).join(', ')}${e.sessionName?` · ${e.sessionName}`:''}</div></div>
+        <span style="font-size:16px;flex-shrink:0">${{easy:'😊',good:'💪',hard:'😤',max:'🔥'}[e.feel]||'💪'}</span>
+        ${actions}
       </div>
-      <div class="wec-sets-row">${(e.sets||[]).map((s,i)=>`<span class="wec-set-pill">Set ${i+1}: ${s.weight?s.weight+'kg × ':''}${s.reps} reps</span>`).join('')}</div>
-      ${vol>0?`<div class="wec-vol">Volume: ${vol.toLocaleString()}kg</div>`:''}
+      <div class="wec-sets-row">${(e.sets||[]).map((s,i)=>`<span class="wec-set-pill">S${i+1}: ${s.weight?s.weight+'kg×':''}${s.reps}</span>`).join('')}</div>
+      ${vol>0?`<div class="wec-vol">${vol.toLocaleString()}kg total</div>`:''}
       ${e.notes?`<div class="wec-notes">${e.notes}</div>`:''}
     </div>`;
   } else if (e.type==='run') {
     return `<div class="workout-entry-card">
-      <div class="wec-top"><span class="wec-icon">🏃</span><div style="flex:1"><div class="wec-name">${e.runType||'Run'} · ${e.distance}km</div><div class="wec-meta">${e.duration}min${e.pace?' · '+e.pace+'/km':''}${e.heartRate?' · '+e.heartRate+'bpm':''}</div></div><button class="del-btn" onclick="deleteWorkoutEntry('${e.id}')">🗑️</button></div>
+      <div class="wec-top"><span class="wec-icon">🏃</span><div style="flex:1;min-width:0"><div class="wec-name">${e.runType||'Run'} · ${e.distance}km</div><div class="wec-meta">${e.duration}min${e.pace?' · '+e.pace:''}</div></div>${actions}</div>
       ${e.notes?`<div class="wec-notes">${e.notes}</div>`:''}
     </div>`;
   } else if (e.type==='swim') {
     return `<div class="workout-entry-card">
-      <div class="wec-top"><span class="wec-icon">🏊</span><div style="flex:1"><div class="wec-name">${e.stroke} · ${e.distance}m</div><div class="wec-meta">${e.duration}min${e.laps?' · '+e.laps+' laps':''}</div></div><button class="del-btn" onclick="deleteWorkoutEntry('${e.id}')">🗑️</button></div>
+      <div class="wec-top"><span class="wec-icon">🏊</span><div style="flex:1;min-width:0"><div class="wec-name">${e.stroke||'Swim'} · ${e.distance}m</div><div class="wec-meta">${e.duration}min${e.laps?' · '+e.laps+' laps':''}</div></div>${actions}</div>
       ${e.notes?`<div class="wec-notes">${e.notes}</div>`:''}
     </div>`;
   } else if (e.type==='cardio') {
     return `<div class="workout-entry-card">
-      <div class="wec-top"><span class="wec-icon">❤️</span><div style="flex:1"><div class="wec-name">${e.cardioType||'Cardio'} · ${e.duration}min</div><div class="wec-meta">${e.calories?e.calories+'kcal':''}</div></div><button class="del-btn" onclick="deleteWorkoutEntry('${e.id}')">🗑️</button></div>
+      <div class="wec-top"><span class="wec-icon">❤️</span><div style="flex:1;min-width:0"><div class="wec-name">${e.cardioType||'Cardio'} · ${e.duration}min</div><div class="wec-meta">${e.calories?e.calories+'kcal':''}</div></div>${actions}</div>
       ${e.notes?`<div class="wec-notes">${e.notes}</div>`:''}
     </div>`;
   }
   return '';
 }
+
+window.editWorkoutEntry = id => {
+  const e = workoutEntries.find(x=>x.id===id); if(!e) return;
+  const overlay = g('edit-workout-overlay'); if(!overlay) return;
+  overlay.classList.add('open');
+  const panel = g('edit-workout-panel'); if(!panel) return;
+  if(e.type==='weights') {
+    panel.innerHTML = `
+      <div class="modal-handle"></div>
+      <div class="modal-title">✏️ EDIT EXERCISE</div>
+      <div style="font-size:15px;font-weight:800;margin-bottom:16px;color:var(--accent2)">${e.exerciseName}</div>
+      <div class="sec-title" style="margin-bottom:8px">SETS</div>
+      <div id="edit-sets-list">
+        ${(e.sets||[]).map((s,i)=>`<div class="set-row" id="esr${i}">
+          <div class="set-badge mono">S${i+1}</div>
+          <div class="set-fg">
+            <button class="set-adj" onclick="editAdjSet(${i},'weight',-2.5,'${id}')">−</button>
+            <input class="set-num-input" type="number" value="${s.weight||''}" placeholder="—" oninput="editUpdSet(${i},'weight',this.value,'${id}')" id="esw${i}">
+            <button class="set-adj" onclick="editAdjSet(${i},'weight',2.5,'${id}')">+</button>
+          </div>
+          <span class="set-x-lbl">×</span>
+          <div class="set-fg">
+            <button class="set-adj" onclick="editAdjSet(${i},'reps',-1,'${id}')">−</button>
+            <input class="set-num-input" type="number" value="${s.reps||8}" oninput="editUpdSet(${i},'reps',this.value,'${id}')" id="esr_r${i}">
+            <button class="set-adj" onclick="editAdjSet(${i},'reps',1,'${id}')">+</button>
+          </div>
+          <button class="set-check-btn">✓</button>
+          <button class="set-del-btn" onclick="editDelSet(${i},'${id}')">×</button>
+        </div>`).join('')}
+      </div>
+      <button class="add-set-btn" onclick="editAddSet('${id}')">＋ Add Set</button>
+      <label class="field-label" style="margin-top:12px">NOTES</label>
+      <input id="edit-notes" class="form-input" value="${e.notes||''}" placeholder="Notes...">
+      <div style="display:flex;gap:10px;margin-top:16px">
+        <button class="big-btn" style="flex:1" onclick="saveEditedEntry('${id}')">💾 Save Changes</button>
+        <button class="big-btn" style="flex:0 0 auto;background:var(--surf2);color:var(--text);box-shadow:none" onclick="g('edit-workout-overlay').classList.remove('open')">Cancel</button>
+      </div>`;
+  } else {
+    const isRun = e.type==='run', isSwim = e.type==='swim';
+    panel.innerHTML = `
+      <div class="modal-handle"></div>
+      <div class="modal-title">✏️ EDIT ${e.type.toUpperCase()}</div>
+      ${isRun?`
+        <label class="field-label">DISTANCE (km)</label><input id="edit-dist" class="form-input" type="number" step="0.1" value="${e.distance||''}">
+        <label class="field-label">DURATION (min)</label><input id="edit-dur" class="form-input" type="number" value="${e.duration||''}">
+        <label class="field-label">PACE (min/km)</label><input id="edit-pace" class="form-input" value="${e.pace||''}">
+        <label class="field-label">HEART RATE</label><input id="edit-hr" class="form-input" type="number" value="${e.heartRate||''}">
+      `:isSwim?`
+        <label class="field-label">DISTANCE (m)</label><input id="edit-dist" class="form-input" type="number" value="${e.distance||''}">
+        <label class="field-label">DURATION (min)</label><input id="edit-dur" class="form-input" type="number" value="${e.duration||''}">
+        <label class="field-label">LAPS</label><input id="edit-laps" class="form-input" type="number" value="${e.laps||''}">
+      `:`
+        <label class="field-label">DURATION (min)</label><input id="edit-dur" class="form-input" type="number" value="${e.duration||''}">
+        <label class="field-label">CALORIES</label><input id="edit-cal" class="form-input" type="number" value="${e.calories||''}">
+      `}
+      <label class="field-label">NOTES</label><input id="edit-notes" class="form-input" value="${e.notes||''}" placeholder="Notes...">
+      <div style="display:flex;gap:10px;margin-top:16px">
+        <button class="big-btn" style="flex:1" onclick="saveEditedEntry('${id}')">💾 Save</button>
+        <button class="big-btn" style="flex:0 0 auto;background:var(--surf2);color:var(--text);box-shadow:none" onclick="g('edit-workout-overlay').classList.remove('open')">Cancel</button>
+      </div>`;
+  }
+};
+
+window._editSets = {};
+window.editAdjSet = (i,f,d,id) => {
+  const e=workoutEntries.find(x=>x.id===id); if(!e||!e.sets[i]) return;
+  const v=Math.max(0,parseFloat(e.sets[i][f]||0)+d);
+  e.sets[i][f]=+(v.toFixed(1));
+  const el=document.getElementById(f==='weight'?`esw${i}`:`esr_r${i}`);
+  if(el) el.value=e.sets[i][f]||'';
+};
+window.editUpdSet = (i,f,v,id) => {
+  const e=workoutEntries.find(x=>x.id===id); if(!e||!e.sets[i]) return;
+  e.sets[i][f]=v;
+};
+window.editDelSet = (i,id) => {
+  const e=workoutEntries.find(x=>x.id===id); if(!e) return;
+  e.sets.splice(i,1);
+  const list=g('edit-sets-list'); if(!list) return;
+  list.innerHTML=e.sets.map((s,j)=>`<div class="set-row" id="esr${j}">
+    <div class="set-badge mono">S${j+1}</div>
+    <div class="set-fg">
+      <button class="set-adj" onclick="editAdjSet(${j},'weight',-2.5,'${id}')">−</button>
+      <input class="set-num-input" type="number" value="${s.weight||''}" placeholder="—" oninput="editUpdSet(${j},'weight',this.value,'${id}')" id="esw${j}">
+      <button class="set-adj" onclick="editAdjSet(${j},'weight',2.5,'${id}')">+</button>
+    </div>
+    <span class="set-x-lbl">×</span>
+    <div class="set-fg">
+      <button class="set-adj" onclick="editAdjSet(${j},'reps',-1,'${id}')">−</button>
+      <input class="set-num-input" type="number" value="${s.reps||8}" oninput="editUpdSet(${j},'reps',this.value,'${id}')" id="esr_r${j}">
+      <button class="set-adj" onclick="editAdjSet(${j},'reps',1,'${id}')">+</button>
+    </div>
+    <button class="set-check-btn">✓</button>
+    <button class="set-del-btn" onclick="editDelSet(${j},'${id}')">×</button>
+  </div>`).join('');
+};
+window.editAddSet = id => {
+  const e=workoutEntries.find(x=>x.id===id); if(!e) return;
+  const last=e.sets[e.sets.length-1]||{};
+  e.sets.push({weight:last.weight||0,reps:last.reps||8});
+  editDelSet(-1,id); // trigger re-render with -1 which won't remove anything
+  const list=g('edit-sets-list'); if(!list) return;
+  list.innerHTML=e.sets.map((s,j)=>`<div class="set-row" id="esr${j}">
+    <div class="set-badge mono">S${j+1}</div>
+    <div class="set-fg">
+      <button class="set-adj" onclick="editAdjSet(${j},'weight',-2.5,'${id}')">−</button>
+      <input class="set-num-input" type="number" value="${s.weight||''}" placeholder="—" oninput="editUpdSet(${j},'weight',this.value,'${id}')" id="esw${j}">
+      <button class="set-adj" onclick="editAdjSet(${j},'weight',2.5,'${id}')">+</button>
+    </div>
+    <span class="set-x-lbl">×</span>
+    <div class="set-fg">
+      <button class="set-adj" onclick="editAdjSet(${j},'reps',-1,'${id}')">−</button>
+      <input class="set-num-input" type="number" value="${s.reps||8}" oninput="editUpdSet(${j},'reps',this.value,'${id}')" id="esr_r${j}">
+      <button class="set-adj" onclick="editAdjSet(${j},'reps',1,'${id}')">+</button>
+    </div>
+    <button class="set-check-btn">✓</button>
+    <button class="set-del-btn" onclick="editDelSet(${j},'${id}')">×</button>
+  </div>`).join('');
+};
+window.saveEditedEntry = async id => {
+  const e=workoutEntries.find(x=>x.id===id); if(!e) return;
+  e.notes=g('edit-notes')?.value||'';
+  if(e.type==='run'){
+    e.distance=parseFloat(g('edit-dist')?.value||e.distance);
+    e.duration=parseFloat(g('edit-dur')?.value||e.duration);
+    e.pace=g('edit-pace')?.value||e.pace;
+    e.heartRate=parseFloat(g('edit-hr')?.value||e.heartRate);
+  } else if(e.type==='swim'){
+    e.distance=parseFloat(g('edit-dist')?.value||e.distance);
+    e.duration=parseFloat(g('edit-dur')?.value||e.duration);
+    e.laps=parseFloat(g('edit-laps')?.value||e.laps);
+  } else if(e.type==='cardio'){
+    e.duration=parseFloat(g('edit-dur')?.value||e.duration);
+    e.calories=parseFloat(g('edit-cal')?.value||e.calories);
+  }
+  await saveFitness();
+  g('edit-workout-overlay').classList.remove('open');
+  toast('✅ Entry updated!');
+  renderDiary();
+};
 
 function groupByDate(entries) {
   const groups={};
@@ -2443,15 +2618,34 @@ const colRow=g('col-row'); if(colRow) colRow.innerHTML=COLORS.map((c,i)=>`<div c
 
     <!-- Guest tab -->
     <div id="auth-guest-section" style="display:none">
-      <div style="text-align:center;padding:8px 0 16px">
-        <div style="font-size:40px;margin-bottom:8px">👾</div>
-        <div style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:4px">Play as Guest</div>
-        <div style="font-size:12px;color:var(--muted);font-weight:600;line-height:1.6">No account needed. Pick a name and jump in.<br>Your data saves on this device only.</div>
+      <!-- New guest -->
+      <div id="guest-new-section">
+        <div style="text-align:center;padding:8px 0 14px">
+          <div style="font-size:36px;margin-bottom:6px">👾</div>
+          <div style="font-size:14px;font-weight:700;margin-bottom:4px">Create Guest Account</div>
+          <div style="font-size:12px;color:var(--muted);font-weight:600;line-height:1.6">Pick a name and password to save your progress.</div>
+        </div>
+        <label class="field-label">DISPLAY NAME</label>
+        <input id="guest-name" class="form-input" placeholder="e.g. StarPilot, NightOwl..." maxlength="20" autocorrect="off" autocapitalize="off">
+        <label class="field-label">PASSWORD</label>
+        <input id="guest-pw" class="form-input" type="password" placeholder="Minimum 6 characters">
+        <label class="field-label">CONFIRM PASSWORD</label>
+        <input id="guest-pw2" class="form-input" type="password" placeholder="Type password again">
+        <button id="guest-btn" class="big-btn" style="background:linear-gradient(135deg,#f59e0b,#ec4899)" onclick="doGuestLogin()">👾 Create Guest Account</button>
+        <p style="color:var(--muted);font-size:11px;margin-top:10px;text-align:center;font-weight:600">Already have a guest account? <button onclick="document.getElementById('guest-new-section').style.display='none';document.getElementById('guest-return-section').style.display='block'" style="background:none;border:none;color:var(--accent2);font-size:11px;font-weight:700;cursor:pointer">Sign back in →</button></p>
       </div>
-      <label class="field-label">CHOOSE YOUR NAME</label>
-      <input id="guest-name" class="form-input" placeholder="e.g. StarPilot, NightOwl..." maxlength="20" autocorrect="off">
-      <button id="guest-btn" class="big-btn" style="background:linear-gradient(135deg,#f59e0b,#ec4899)" onclick="doGuestLogin()">👾 Play as Guest</button>
-      <p style="color:var(--muted);font-size:11px;margin-top:12px;text-align:center;font-weight:600">Create an account later to sync across devices.</p>
+      <!-- Returning guest -->
+      <div id="guest-return-section" style="display:none">
+        <div style="text-align:center;padding:8px 0 14px">
+          <div style="font-size:36px;margin-bottom:6px">👾</div>
+          <div style="font-size:14px;font-weight:700;margin-bottom:4px">Welcome Back!</div>
+          <div id="guest-return-name" style="font-size:12px;color:var(--accent2);font-weight:700;margin-bottom:4px"></div>
+        </div>
+        <label class="field-label">YOUR PASSWORD</label>
+        <input id="guest-return-pw" class="form-input" type="password" placeholder="Enter your password">
+        <button class="big-btn" style="background:linear-gradient(135deg,#f59e0b,#ec4899)" onclick="doGuestReturn()">👾 Sign Back In</button>
+        <p style="color:var(--muted);font-size:11px;margin-top:10px;text-align:center;font-weight:600">Different guest? <button onclick="document.getElementById('guest-new-section').style.display='block';document.getElementById('guest-return-section').style.display='none'" style="background:none;border:none;color:var(--accent2);font-size:11px;font-weight:700;cursor:pointer">Create new →</button></p>
+      </div>
     </div>
 
     <p style="color:var(--border);font-size:11px;margin-top:16px;font-weight:600;text-align:center">Free forever · Private · No ads 🪐</p>
@@ -2677,6 +2871,16 @@ function switchAuthTab(tab) {
   document.getElementById('auth-account-section').style.display = tab==='account'?'block':'none';
   document.getElementById('auth-guest-section').style.display = tab==='guest'?'block':'none';
   document.getElementById('auth-err').style.display = 'none';
+  if (tab==='guest') {
+    const savedEmail = localStorage.getItem('oc_guest_email');
+    const savedName = localStorage.getItem('oc_guest_name');
+    if (savedEmail && savedName) {
+      document.getElementById('guest-new-section').style.display='none';
+      document.getElementById('guest-return-section').style.display='block';
+      const nameEl = document.getElementById('guest-return-name');
+      if(nameEl) nameEl.textContent = 'Hey ' + savedName + '! Enter your password to continue.';
+    }
+  }
 }
 
 function switchCrewTab(tab) {
