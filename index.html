@@ -957,6 +957,8 @@ const EXERCISE_DB = [
   {id:'rowing_machine',name:'Rowing Machine',muscles:['Back','Legs','Core','Cardio'],type:'cardio',difficulty:2,category:'compound',demo:'',desc:'Drive with legs first, lean back, pull handle to lower chest.',tips:'80% legs, 20% arms. Most people overuse arms.',cues:'Legs. Body. Arms. Arms. Body. Legs. That is the sequence.'},
   {id:'assault_bike',name:'Assault Bike',muscles:['Full Body','Cardio'],type:'cardio',difficulty:3,category:'cardio',demo:'',desc:'Full body air bike — push and pull handles while pedalling.',tips:'One of the most brutal conditioning tools.',cues:'Push AND pull handles. Use whole body not just legs.'},
   {id:'sled_push',name:'Sled Push',muscles:['Quads','Glutes','Core','Cardio'],type:'cardio',difficulty:3,category:'compound',demo:'',desc:'Push weighted sled using short powerful strides.',tips:'No eccentric = no soreness. Can push hard with less recovery.',cues:'Low body position, drive through balls of feet, pump arms.'}];
+// Remove any falsy elements from EXERCISE_DB (safety)
+const _EXERCISE_DB_CLEAN = EXERCISE_DB.filter(Boolean);
 
 
 const WORKOUT_GUIDES = [
@@ -1036,7 +1038,7 @@ async function loadFitness(uid) {
     const d = snap.data();
     fitnessProfile = d;
     bodyEntries = d.bodyEntries || [];
-    workoutEntries = d.workoutEntries || [];
+    workoutEntries = (d.workoutEntries || []).filter(e => e && typeof e === 'object' && e.id);
   }
 }
 
@@ -2167,7 +2169,7 @@ window.renderSettings = function renderSettings() {
       </div>
       <label class="field-label">YOUR AVATAR</label>
       <select id="settings-av-select" class="form-input" onchange="settingsSelectAvatar(this.value,this)" style="font-size:20px;margin-bottom:14px">
-        ${AVATARS.map(a=>`<option value="${a}" ${(u.avatar||'👨‍🚀')===a?'selected':''}>${a} ${a}</option>`).join('')}
+        ${AVATARS.map(a=>`<option value="${a}" ${(u.avatar||'👨‍🚀')===a?'selected':''}>${a}</option>`).join('')}
       </select>
       <label class="field-label">YOUR COLOUR</label>
       <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:0" id="settings-col-row"></div>
@@ -2597,7 +2599,7 @@ const BALANCE_MUSCLES = new Set(['Core','Balance','Hip Flexors','Rotator Cuff','
 
 window.calcExPoints = function calcExPoints(exEntry) {
   if(!exEntry || typeof exEntry !== 'object') return {str:0, crd:0, bal:0};
-  const exDef = EXERCISE_DB.find(e=>e.id===(exEntry.exId||exEntry.exercise));
+  const exDef = EXERCISE_DB.find(e=>e && e.id===(exEntry.exId||exEntry.exercise));
   const difficulty = exDef ? exDef.difficulty : 2;
   const muscles = exEntry.muscles || exDef?.muscles || [];
   const type = exDef?.type || exEntry.type || 'weights';
@@ -2638,8 +2640,8 @@ window.calcExPoints = function calcExPoints(exEntry) {
 
 window.getTotalStats = function getTotalStats() {
   let str=0, crd=0, bal=0;
-  for(const e of workoutEntries) {
-    if(!e || typeof e !== 'object') continue;
+  const validEntries = (workoutEntries||[]).filter(e=>e && typeof e==='object');
+  for(const e of validEntries) {
     const pts = calcExPoints(e);
     str+=pts.str; crd+=pts.crd; bal+=pts.bal;
   }
