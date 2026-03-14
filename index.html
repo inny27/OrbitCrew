@@ -1902,6 +1902,8 @@ function renderSettings() {
   const iconCount = parseInt(localStorage.getItem('intask_icon_count')||'5');
   const cbMode = localStorage.getItem('intask_colorblind')==='1';
   const bgmDefault = localStorage.getItem('intask_bgm_default')==='1';
+  const loginSongName = localStorage.getItem('intask_login_song')||DEFAULT_LOGIN_SONG;
+  const bgmSongName = localStorage.getItem('intask_bgm_song')||DEFAULT_BGM_SONG;
   panel.innerHTML = `
     <div class="sec-title" style="margin-bottom:16px">⚙️ SETTINGS</div>
 
@@ -1983,12 +1985,24 @@ function renderSettings() {
     <!-- Music -->
     <div class="settings-section">
       <div class="settings-section-title">🎵 MUSIC</div>
-      <div class="settings-row">
+      <div class="settings-row" style="margin-bottom:14px">
         <div>
-          <div class="settings-row-label">Henesys BGM</div>
-          <div class="settings-row-sub">Play MapleStory music by default on launch</div>
+          <div class="settings-row-label">Auto-play on launch</div>
+          <div class="settings-row-sub">Play BGM when app opens</div>
         </div>
         <button class="settings-toggle${bgmDefault?' active':''}" id="bgm-default-toggle" onclick="toggleBgmDefault()">${bgmDefault?'ON':'OFF'}</button>
+      </div>
+      <label class="field-label">LOGIN SCREEN MUSIC</label>
+      <select class="form-input" style="margin-bottom:14px" onchange="setSongPref('login',this.value)">
+        ${[['Above the Treetops - Lith Harbour','Above the Treetops - Lith Harbour'],['Floral Life - Henesys','Floral Life - Henesys'],['Missing You - Ellinia','Missing You - Ellinia'],['Title - Login','Title - Login']].map(([v,l])=>`<option value="${v}"${v===(localStorage.getItem('intask_login_song')||DEFAULT_LOGIN_SONG)?' selected':''}>${l}</option>`).join('')}
+      </select>
+      <label class="field-label">IN-APP MUSIC</label>
+      <select class="form-input" style="margin-bottom:8px" onchange="setSongPref('bgm',this.value)">
+        ${[['Above the Treetops - Lith Harbour','Above the Treetops - Lith Harbour'],['Floral Life - Henesys','Floral Life - Henesys'],['Missing You - Ellinia','Missing You - Ellinia'],['Title - Login','Title - Login']].map(([v,l])=>`<option value="${v}"${v===(localStorage.getItem('intask_bgm_song')||DEFAULT_BGM_SONG)?' selected':''}>${l}</option>`).join('')}
+      </select>
+      <div style="display:flex;gap:8px">
+        <button class="big-btn" style="flex:1;font-size:8px;padding:10px" onclick="previewSong('login')">▶ Preview Login</button>
+        <button class="big-btn" style="flex:1;font-size:8px;padding:10px;background:var(--surf2);border-color:var(--border);color:var(--text)" onclick="previewSong('bgm')">▶ Preview BGM</button>
       </div>
     </div>
 
@@ -2104,6 +2118,33 @@ window.addEventListener('DOMContentLoaded', () => {
   const saved = parseInt(localStorage.getItem('intask_icon_count')||'5');
   setTimeout(() => applyIconDensity(saved), 500);
 });
+
+window.setSongPref = (type, value) => {
+  localStorage.setItem(type === 'login' ? 'intask_login_song' : 'intask_bgm_song', value);
+  // Reset audio so next play uses new song
+  if(type === 'bgm' && bgmAudio) { bgmAudio.pause(); bgmAudio = null; bgmPlaying = false;
+    const btn = document.getElementById('bgm-btn');
+    if(btn) { btn.textContent='🎵'; btn.style.borderColor='var(--accent)'; btn.style.color='var(--accent)'; }
+  }
+  if(type === 'login' && loginAudio) { loginAudio.pause(); loginAudio = null; }
+  toast('🎵 Song updated!');
+};
+
+window.previewSong = (type) => {
+  const key = type === 'login' ? 'intask_login_song' : 'intask_bgm_song';
+  const def = type === 'login' ? DEFAULT_LOGIN_SONG : DEFAULT_BGM_SONG;
+  const url = getSongUrl(localStorage.getItem(key) || def);
+  if(!url) { toast('Song file not found on server.'); return; }
+  // Stop any playing audio first
+  if(bgmAudio && bgmPlaying) { bgmAudio.pause(); bgmPlaying = false; }
+  if(loginAudio) loginAudio.pause();
+  const preview = new Audio(url);
+  preview.volume = 0.4;
+  preview.play().then(() => {
+    toast('🎵 Previewing — tap BGM button to stop');
+    setTimeout(() => preview.pause(), 15000);
+  }).catch(() => toast('❌ Could not load song. Is the file uploaded to GitHub?'));
+};
 
 window.toggleBgmDefault = () => {
   const current = localStorage.getItem('intask_bgm_default')==='1';
@@ -3460,6 +3501,8 @@ function renderSettings(){window.renderSettings&&window.renderSettings();}
 function stopLoginMusic(){window.stopLoginMusic&&window.stopLoginMusic();}
 function playLoginMusic(){window.playLoginMusic&&window.playLoginMusic();}
 function toggleBgmDefault(){window.toggleBgmDefault&&window.toggleBgmDefault();}
+function setSongPref(t,v){window.setSongPref&&window.setSongPref(t,v);}
+function previewSong(t){window.previewSong&&window.previewSong(t);}
 function confirmDeleteAccount(){window.confirmDeleteAccount&&window.confirmDeleteAccount();}
 function executeDeleteAccount(el){window.executeDeleteAccount&&window.executeDeleteAccount(el);}
 function completeProfile(){window.completeProfile&&window.completeProfile();}
@@ -3559,16 +3602,23 @@ function switchCrewTab(tab) {
 // ── MapleStory BGM ──────────────────────────────────────
 // Using community-hosted MapleStory OST audio
 // Henesys: hosted on archive.org (public domain game music mirror)
+const SONG_FILES = {
+  'Above the Treetops - Lith Harbour': 'https://inny27.github.io/OrbitCrew/12. Above the Treetops - Lith Harbour.mp3',
+  'Floral Life - Henesys': 'https://inny27.github.io/OrbitCrew/01. Floral Life - Henesys.mp3',
+  'Missing You - Ellinia': 'https://inny27.github.io/OrbitCrew/15. Missing You - Ellinia.mp3',
+  'Title - Login': 'https://inny27.github.io/OrbitCrew/123. Title - Login.mp3'
+};
+
+const DEFAULT_LOGIN_SONG = 'Title - Login';
+const DEFAULT_BGM_SONG = 'Above the Treetops - Lith Harbour';
+
+function getSongUrl(displayName) {
+  return SONG_FILES[displayName] || null;
+}
+
 const BGM_TRACKS = {
-  henesys: [
-    'https://archive.org/download/maplestory-ost/Henesys.mp3',
-    'https://archive.org/download/MapleStoryOST/Henesys.mp3',
-    'https://vgmsite.com/soundtracks/maplestory-original-soundtrack/tqrvnwltpt/1-11.%20Henesys.mp3',
-  ],
-  login: [
-    'https://archive.org/download/maplestory-ost/Title.mp3',
-    'https://archive.org/download/MapleStoryOST/Title.mp3',
-  ],
+  henesys: [getSongUrl(localStorage.getItem('intask_bgm_song') || DEFAULT_BGM_SONG)].filter(Boolean),
+  login:   [getSongUrl(localStorage.getItem('intask_login_song') || DEFAULT_LOGIN_SONG)].filter(Boolean),
 };
 
 let bgmAudio = null, bgmPlaying = false, currentTrack = 'henesys';
@@ -3592,7 +3642,13 @@ function createAudio(srcs) {
 }
 
 function toggleBGM() {
-  if (!bgmAudio) { bgmAudio = createAudio(BGM_TRACKS.henesys); bgmAudio.volume=0.4; }
+  const bgmSong = getSongUrl(localStorage.getItem('intask_bgm_song') || DEFAULT_BGM_SONG);
+  if (!bgmAudio || bgmAudio._song !== bgmSong) {
+    if(bgmAudio) { bgmAudio.pause(); bgmAudio = null; }
+    bgmAudio = createAudio([bgmSong].filter(Boolean));
+    bgmAudio._song = bgmSong;
+    bgmAudio.volume = 0.4;
+  }
   const btn = document.getElementById('bgm-btn');
   const lbl = document.getElementById('bgm-label');
   if (bgmPlaying) {
@@ -3616,7 +3672,13 @@ function showMusicPrompt() { /* removed */ }
 
 // Login music
 window.playLoginMusic = function() {
-  if(!loginAudio) { loginAudio = createAudio(BGM_TRACKS.login); loginAudio.volume=0.35; }
+  const loginSong = getSongUrl(localStorage.getItem('intask_login_song') || DEFAULT_LOGIN_SONG);
+  if(!loginAudio || loginAudio._song !== loginSong) {
+    if(loginAudio) { loginAudio.pause(); loginAudio = null; }
+    loginAudio = createAudio([loginSong].filter(Boolean));
+    loginAudio._song = loginSong;
+    loginAudio.volume = 0.35;
+  }
   loginAudio.volume = 0.35;
   loginAudio.play().catch(()=>{});
 }
