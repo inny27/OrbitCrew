@@ -615,6 +615,17 @@ body.colorblind{filter:url(#colorblind-filter);}
 .install-steps{display:flex;flex-direction:column;gap:10px;}
 .install-step{display:flex;align-items:flex-start;gap:10px;font-size:12px;color:var(--text);line-height:1.6;}
 .install-step-num{width:22px;height:22px;border-radius:0;background:var(--accent);color:#0a0a1a;font-family:'Press Start 2P',monospace;font-size:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;}
+
+/* ── MapleStory cursor (PC only) ── */
+@media (pointer: fine) {
+  * { cursor: url('https://maplestory.io/api/GMS/255/item/2000000/icon') 8 8, auto !important; }
+  button, a, [onclick], select, input[type="checkbox"], input[type="radio"], label {
+    cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32"><text y="28" font-size="28">👆</text></svg>') 8 4, pointer !important;
+  }
+  button:active, a:active, [onclick]:active {
+    cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32"><text y="26" font-size="24">👇</text></svg>') 8 4, pointer !important;
+  }
+}
 </style>
 
 <!-- Firebase -->
@@ -1649,9 +1660,11 @@ function showApp() {
   g('login').classList.remove('active'); g('profile-setup').classList.remove('active');
   document.getElementById('app').classList.add('active');
   renderHeader(); switchTab('today'); updateBg();
-  // Auto-start BGM if user has it set as default
+  // Stop login music when entering app
+  stopLoginMusic && stopLoginMusic();
+  // Auto-start Henesys BGM if enabled
   if(localStorage.getItem('intask_bgm_default')==='1') {
-    setTimeout(() => { if(typeof toggleBGM === 'function') toggleBGM(); }, 1200);
+    setTimeout(() => toggleBGM(), 800);
   }
 }
 function showScreen(id) {
@@ -1873,9 +1886,11 @@ function renderSettings() {
         <button class="icon-btn" onclick="saveNickname()">Save</button>
       </div>
       <label class="field-label">YOUR AVATAR</label>
-      <div class="av-grid" id="settings-av-grid" style="margin-bottom:14px"></div>
+      <select id="settings-av-select" class="form-input" onchange="settingsSelectAvatar(this.value,this)" style="font-size:20px;margin-bottom:14px">
+        ${AVATARS.map(a=>`<option value="${a}" ${(u.avatar||'👨‍🚀')===a?'selected':''}>${a} ${a}</option>`).join('')}
+      </select>
       <label class="field-label">YOUR COLOUR</label>
-      <div class="col-row" id="settings-col-row" style="margin-bottom:0"></div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:0" id="settings-col-row"></div>
     </div>
 
     <!-- Accessibility -->
@@ -1959,8 +1974,7 @@ function renderSettings() {
   `;
 
   // Build avatar and colour pickers for settings
-  const avGrid = g('settings-av-grid');
-  if(avGrid) avGrid.innerHTML = AVATARS.map(a=>`<button class="av-btn${(u.avatar||'👨‍🚀')===a?' sel':''}" onclick="settingsSelectAvatar('${a}',this)">${a}</button>`).join('');
+  // avatar handled by select dropdown
   const colRow = g('settings-col-row');
   if(colRow) colRow.innerHTML = COLORS.map(c=>`<div class="col-dot${(u.color||'#7c3aed')===c?' sel':''}" style="background:${c}" onclick="settingsSelectColor('${c}',this)"></div>`).join('');
 
@@ -1988,10 +2002,8 @@ window.saveNickname = async () => {
 };
 
 window.settingsSelectAvatar = async (a, el) => {
-  document.querySelectorAll('#settings-av-grid .av-btn').forEach(x=>x.classList.remove('sel'));
-  el.classList.add('sel');
   await updateDoc(doc(db,'users',currentUser.uid), {avatar:a});
-  toast('Avatar updated!');
+  toast('Avatar updated! ✅');
 };
 
 window.settingsSelectColor = async (c, el) => {
@@ -2014,8 +2026,56 @@ window.changeIconCount = (d) => {
   const nv = Math.max(0, Math.min(10, cur+d));
   localStorage.setItem('intask_icon_count', nv);
   const el = g('icon-count-val'); if(el) el.textContent = nv;
-  toast(`Icons: ${nv}`);
+  applyIconDensity(nv);
+  toast(`UI density: ${nv<=3?'Minimal':nv<=6?'Normal':'Full'}`);
 };
+
+function applyIconDensity(count) {
+  // 0-3: minimal — hide nav labels, hide tag pills, hide XP text
+  // 4-6: normal — default
+  // 7-10: full — show everything
+  const minimal = count <= 3;
+  const full = count >= 7;
+
+  // Nav labels
+  document.querySelectorAll('.bnav-label').forEach(el => {
+    el.style.display = minimal ? 'none' : '';
+  });
+
+  // Sync pill text
+  const syncText = document.querySelector('.sync-text');
+  if(syncText) syncText.style.display = minimal ? 'none' : '';
+
+  // Mult badge
+  const multBadge = g('mult-badge');
+  if(multBadge) multBadge.style.display = minimal ? 'none' : '';
+
+  // SP badge
+  const spBadge = g('sp-badge');
+  if(spBadge) spBadge.style.display = minimal ? 'none' : '';
+
+  // XP text
+  const xpText = g('xp-text');
+  if(xpText) xpText.style.display = minimal ? 'none' : '';
+
+  // Task tags (the type/priority pills on cards)
+  document.querySelectorAll('.task-tags').forEach(el => {
+    el.style.display = minimal ? 'none' : '';
+  });
+
+  // XP badges on tasks
+  document.querySelectorAll('.xp-badge').forEach(el => {
+    el.style.display = minimal ? 'none' : full ? '' : '';
+  });
+
+  // Section titles - keep always visible for navigation
+}
+
+// Apply on load
+window.addEventListener('DOMContentLoaded', () => {
+  const saved = parseInt(localStorage.getItem('intask_icon_count')||'5');
+  setTimeout(() => applyIconDensity(saved), 500);
+});
 
 window.toggleBgmDefault = () => {
   const current = localStorage.getItem('intask_bgm_default')==='1';
@@ -2819,6 +2879,9 @@ window.switchTab = tab => {
   g('panel-'+tab).classList.add('active');
   document.querySelectorAll(`[data-tab="${tab}"]`).forEach(b=>b.classList.add('active'));
   if(tab==='today') renderToday();
+  // Reapply icon density
+  const _ic = parseInt(localStorage.getItem('intask_icon_count')||'5');
+  setTimeout(()=>applyIconDensity(_ic), 100);
   if(tab==='habits') renderHabits();
   if(tab==='crew') renderCrew();
   if(tab==='awards') renderAwards();
@@ -2842,20 +2905,65 @@ function toast(msg){const t=g('toast');t.textContent=msg;t.classList.add('show')
 // Celebrate overlay close
 g('celebration').addEventListener('click',()=>g('celebration').classList.remove('show'));
 
-// ── Back button: confirm before leaving app ──────────────────
-history.pushState({page:'app'}, '', location.href);
+// ── Back button: smart in-app navigation ──────────────────
+// Track navigation history stack
+let _navStack = ['today'];
+
+function pushNav(tab) {
+  // Don't push same tab twice
+  if(_navStack[_navStack.length-1] !== tab) {
+    _navStack.push(tab);
+    history.pushState({tab}, '', location.href);
+  }
+}
+function popNav() {
+  if(_navStack.length > 1) {
+    _navStack.pop();
+    return _navStack[_navStack.length-1];
+  }
+  return null;
+}
+
+// Push initial state
+history.pushState({tab:'today'}, '', location.href);
+
 window.addEventListener('popstate', function(e) {
   const appActive = document.getElementById('app')?.classList.contains('active');
-  if(!appActive) return; // not in app, let browser handle
-  // Push state again so back button still works next time
-  history.pushState({page:'app'}, '', location.href);
-  // Show confirmation
+
+  // If settings modal is open, close it
+  const settingsModal = document.getElementById('settings-modal');
+  if(settingsModal?.classList.contains('open')) {
+    settingsModal.classList.remove('open');
+    history.pushState({tab: _navStack[_navStack.length-1]}, '', location.href);
+    return;
+  }
+
+  // If any modal is open, close it
+  const openModal = document.querySelector('.modal-overlay.open');
+  if(openModal) {
+    openModal.classList.remove('open');
+    history.pushState({tab: _navStack[_navStack.length-1]}, '', location.href);
+    return;
+  }
+
+  if(!appActive) return;
+
+  // Try to go back in nav stack
+  const prevTab = popNav();
+  if(prevTab && prevTab !== activeTab) {
+    window.switchTab(prevTab);
+    history.pushState({tab:prevTab}, '', location.href);
+    return;
+  }
+
+  // At root tab (today) — show exit confirmation
+  history.pushState({tab:'today'}, '', location.href);
   const overlay = document.createElement('div');
   overlay.id = 'exit-confirm-overlay';
   overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px';
   overlay.innerHTML = `<div style="background:var(--surf);border:3px solid var(--accent);border-radius:0;padding:24px;max-width:300px;width:100%;box-shadow:4px 4px 0 rgba(0,0,0,.6);text-align:center">
     <div style="font-size:10px;font-family:'Press Start 2P',monospace;color:var(--accent);margin-bottom:12px;line-height:2">LEAVE INTASK?</div>
-    <div style="font-size:13px;color:var(--muted);margin-bottom:20px;line-height:1.6">Your data is saved. Are you sure you want to exit?</div>
+    <div style="font-size:13px;color:var(--muted);margin-bottom:20px;line-height:1.6">Your data is saved. Sign out?</div>
     <div style="display:flex;gap:10px">
       <button onclick="document.getElementById('exit-confirm-overlay').remove()" style="flex:1;padding:12px;border-radius:0;border:2px solid var(--border);background:var(--surf2);color:var(--text);font-family:'Press Start 2P',monospace;font-size:8px;cursor:pointer">Stay</button>
       <button onclick="window.doLogout&&window.doLogout()" style="flex:1;padding:12px;border-radius:0;border:2px solid var(--accent);background:var(--accent);color:#0a0a1a;font-family:'Press Start 2P',monospace;font-size:8px;cursor:pointer">Sign Out</button>
@@ -2981,7 +3089,7 @@ const colRow=g('col-row'); if(colRow) colRow.innerHTML=COLORS.map((c,i)=>`<div c
         <div class="sync-pill"><div class="sync-dot"></div><span class="sync-text">LIVE</span></div>
         <div class="mult-pill" id="mult-badge">×1.0</div>
         <div class="sp-pill" id="sp-badge"><img src="https://maplestory.io/api/GMS/255/item/2030000/icon" alt="SP" width="16" height="16" style="image-rendering:pixelated;vertical-align:middle"> <span id="sp-text">0SP</span></div>
-        <button class="logout-btn" onclick="switchTab('settings')" style="font-size:16px">⚙️</button>
+        <button class="logout-btn" onclick="openModal('settings-modal')" title="Settings" style="font-size:16px">⚙️</button>
       </div>
     </div>
     <div class="xp-row">
@@ -3070,7 +3178,6 @@ const colRow=g('col-row'); if(colRow) colRow.innerHTML=COLORS.map((c,i)=>`<div c
     <button class="bnav-btn" data-tab="crew" onclick="switchTab('crew')"><img src="https://maplestory.io/api/GMS/255/item/2022000/icon" alt="Crew" width="28" height="28" style="image-rendering:pixelated;object-fit:contain" onerror="this.outerHTML='<span class=bnav-icon>🪐</span>'"><span class="bnav-label">Crew</span></button>
     <button class="bnav-btn" data-tab="awards" onclick="switchTab('awards')"><img src="https://maplestory.io/api/GMS/255/item/4031138/icon" alt="Awards" width="28" height="28" style="image-rendering:pixelated;object-fit:contain" onerror="this.outerHTML='<span class=bnav-icon>🏆</span>'"><span class="bnav-label">Awards</span></button>
     <button class="bnav-btn" data-tab="fitness" onclick="switchTab('fitness')"><img src="https://maplestory.io/api/GMS/255/item/1302000/icon" alt="Fitness" width="28" height="28" style="image-rendering:pixelated;object-fit:contain" onerror="this.outerHTML='<span class=bnav-icon>💪</span>'"><span class="bnav-label">Fitness</span></button>
-    <button class="bnav-btn" data-tab="settings" onclick="switchTab('settings')"><span class="bnav-icon">⚙️</span><span class="bnav-label">Settings</span></button>
   </div>
 
 </div><!-- end app -->
@@ -3224,6 +3331,8 @@ window.copyInstallLink = () => {
 
 function promptInstall(){window.promptInstall&&window.promptInstall();}
 function renderSettings(){window.renderSettings&&window.renderSettings();}
+function stopLoginMusic(){window.stopLoginMusic&&window.stopLoginMusic();}
+function playLoginMusic(){window.playLoginMusic&&window.playLoginMusic();}
 function toggleBgmDefault(){window.toggleBgmDefault&&window.toggleBgmDefault();}
 function confirmDeleteAccount(){window.confirmDeleteAccount&&window.confirmDeleteAccount();}
 function executeDeleteAccount(el){window.executeDeleteAccount&&window.executeDeleteAccount(el);}
@@ -3320,58 +3429,86 @@ function switchCrewTab(tab) {
 }
 
 // ── MapleStory BGM ──────────────────────────────────────
-let bgmPlayer = null, bgmPlaying = false, bgmReady = false;
-
-function loadYTApi() {
-  if (window.YT) { initBGMPlayer(); return; }
-  const tag = document.createElement('script');
-  tag.src = 'https://www.youtube.com/iframe_api';
-  document.head.appendChild(tag);
-}
-
-window.onYouTubeIframeAPIReady = function() {
-  initBGMPlayer();
+// Using community-hosted MapleStory OST audio
+// Henesys: hosted on archive.org (public domain game music mirror)
+const BGM_TRACKS = {
+  henesys: 'https://archive.org/download/MapleStoryOST/Henesys.mp3',
+  login:   'https://archive.org/download/MapleStoryOST/Title.mp3',
 };
 
-function initBGMPlayer() {
-  bgmPlayer = new YT.Player('yt-player', {
-    height:'1', width:'1',
-    // Henesys theme - MapleStory OST on YouTube
-    videoId: 'vlhKWXE7TRw',
-    playerVars: { autoplay:0, loop:1, playlist:'vlhKWXE7TRw', controls:0, mute:0 },
-    events: {
-      onReady: () => { bgmReady = true; },
-      onStateChange: (e) => {
-        if (e.data === YT.PlayerState.ENDED) bgmPlayer.playVideo();
-      }
-    }
-  });
+let bgmAudio = null, bgmPlaying = false, currentTrack = 'henesys';
+let loginAudio = null, loginPlaying = false;
+
+function createAudio(src) {
+  const a = new Audio(src);
+  a.loop = true;
+  a.volume = 0.4;
+  return a;
 }
 
 function toggleBGM() {
-  if (!bgmReady) {
-    loadYTApi();
-    setTimeout(toggleBGM, 1500);
-    return;
-  }
+  if (!bgmAudio) bgmAudio = createAudio(BGM_TRACKS.henesys);
   const btn = document.getElementById('bgm-btn');
   const lbl = document.getElementById('bgm-label');
   if (bgmPlaying) {
-    bgmPlayer.pauseVideo();
+    bgmAudio.pause();
     bgmPlaying = false;
-    btn.textContent = '🎵';
-    btn.style.borderColor = 'var(--accent)';
-    btn.style.color = 'var(--accent)';
+    if(btn){ btn.textContent='🎵'; btn.style.borderColor='var(--accent)'; btn.style.color='var(--accent)'; }
     if(lbl) lbl.style.display='none';
   } else {
-    bgmPlayer.playVideo();
-    bgmPlaying = true;
-    btn.textContent = '🔊';
-    btn.style.borderColor = 'var(--green)';
-    btn.style.color = 'var(--green)';
-    if(lbl) lbl.style.display='block';
+    bgmAudio.play().then(()=>{
+      bgmPlaying = true;
+      if(btn){ btn.textContent='🔊'; btn.style.borderColor='var(--green)'; btn.style.color='var(--green)'; }
+      if(lbl) lbl.style.display='block';
+    }).catch(()=>{
+      // Autoplay blocked - show tap prompt
+      showMusicPrompt();
+    });
   }
 }
+
+function showMusicPrompt() {
+  const existing = document.getElementById('music-prompt');
+  if(existing) return;
+  const el = document.createElement('div');
+  el.id = 'music-prompt';
+  el.style.cssText = 'position:fixed;bottom:85px;left:50%;transform:translateX(-50%);background:var(--surf);border:2px solid var(--accent);border-radius:0;padding:10px 20px;z-index:400;font-family:"Press Start 2P",monospace;font-size:9px;color:var(--accent);cursor:pointer;box-shadow:3px 3px 0 rgba(0,0,0,.5);white-space:nowrap';
+  el.textContent = '🎵 Tap to play BGM';
+  el.onclick = () => { el.remove(); toggleBGM(); };
+  document.body.appendChild(el);
+  setTimeout(()=>el.remove(), 8000);
+}
+
+// Login music
+window.playLoginMusic = function() {
+  if(!loginAudio) loginAudio = createAudio(BGM_TRACKS.login);
+  loginAudio.volume = 0.35;
+  loginAudio.play().catch(()=>{});
+}
+window.stopLoginMusic = function() {
+  if(loginAudio){ loginAudio.pause(); loginAudio.currentTime=0; }
+}
+
+// Auto-play on first user interaction (satisfies browser autoplay policy)
+let _firstInteraction = false;
+function handleFirstInteraction() {
+  if(_firstInteraction) return;
+  _firstInteraction = true;
+  document.removeEventListener('touchstart', handleFirstInteraction);
+  document.removeEventListener('mousedown', handleFirstInteraction);
+  document.removeEventListener('keydown', handleFirstInteraction);
+
+  // Check if we should auto-play BGM (in-app) or login music (login screen)
+  const loginVisible = document.getElementById('login')?.classList.contains('active');
+  if(loginVisible) {
+    playLoginMusic();
+  } else if(localStorage.getItem('intask_bgm_default')==='1') {
+    toggleBGM();
+  }
+}
+document.addEventListener('touchstart', handleFirstInteraction, {passive:true});
+document.addEventListener('mousedown', handleFirstInteraction);
+document.addEventListener('keydown', handleFirstInteraction);
 
 </script>
 <script>
