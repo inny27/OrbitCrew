@@ -974,6 +974,17 @@ let currentUser = null, userProfile = null;
 let tasks = [], habits = [], crew = null, crewMembers = [], crewMessages = [], boss = null;
 let bodyEntries = [], workoutEntries = [], fitnessProfile = null;
 let unsubs = [], activeTab = 'today', synced = false;
+
+// Per-user localStorage — prevents data bleeding between accounts on same device
+function lsKey(key) { return key + '_' + (currentUser ? currentUser.uid : 'anon'); }
+function lsGet(key, def) {
+  const v = localStorage.getItem(lsKey(key));
+  if (v !== null) return v;
+  const legacy = localStorage.getItem(key); // migrate old global keys
+  if (legacy !== null && currentUser) { localStorage.setItem(lsKey(key), legacy); return legacy; }
+  return def !== undefined ? def : null;
+}
+function lsSet(key, value) { localStorage.setItem(lsKey(key), String(value)); }
 let timerSecs = 0, timerRunning = false, timerInterval = null;
 let restSecs = 0, restInterval = null;
 let activeSession = null;
@@ -1123,8 +1134,10 @@ window.doGuestLogin = async () => {
     await updateProfile(result.user, { displayName: username });
     currentUser = result.user;
     // Store guest credentials locally so they can sign back in
-    localStorage.setItem('oc_guest_email', guestEmail);
-    localStorage.setItem('oc_guest_name', username);
+    const _guests = JSON.parse(localStorage.getItem('oc_guests') || '{}');
+    _guests[username.toLowerCase()] = { email: guestEmail, name: username };
+    localStorage.setItem('oc_guests', JSON.stringify(_guests));
+    localStorage.setItem('oc_last_guest', username.toLowerCase());
     toast('Welcome, ' + username + '! 🚀');
   } catch(e) {
     showAuthError(friendlyErr(e.code)||'Could not create account. Try again.');
@@ -1138,17 +1151,12 @@ window.doGuestReturn = async () => {
   if (!username) { showAuthError('Enter your username.'); return; }
   if (!pw) { showAuthError('Enter your password.'); return; }
   // Try localStorage first for this device, then reconstruct email from username
-  let email = localStorage.getItem('oc_guest_email');
-  // If stored username doesn't match what they typed, reconstruct the email
-  const storedName = localStorage.getItem('oc_guest_name');
-  if (!email || storedName?.toLowerCase() !== username.toLowerCase()) {
-    // We cannot reconstruct the exact timestamp, so search by username prefix
-    // The email format is: username_guest_timestamp@guest.intask.app
-    // Without the timestamp we cannot recover — tell them to use email login instead
-    if (!email) {
-      showAuthError('Account not found on this device. Try creating a new guest account.');
-      return;
-    }
+  const _guests = JSON.parse(localStorage.getItem('oc_guests') || '{}');
+  const _guestData = _guests[username.toLowerCase()];
+  const email = _guestData ? _guestData.email : localStorage.getItem('oc_guest_email');
+  if (!email) {
+    showAuthError('Account not found on this device. Did you create a guest account here?');
+    return;
   }
   try {
     await signInWithEmailAndPassword(auth, email, pw);
@@ -1990,11 +1998,11 @@ function showApp() {
   g('login').classList.remove('active'); g('profile-setup').classList.remove('active');
   document.getElementById('app').classList.add('active');
   renderHeader(); switchTab('today'); updateBg();
-  setTimeout(()=>applyIconDensity(parseInt(localStorage.getItem('intask_icon_count')||'5')),300);
+  setTimeout(()=>applyIconDensity(parseInt(lsGet('intask_icon_count','5'))),300);
   // Stop login music when entering app
   stopLoginMusic && stopLoginMusic();
   // Auto-start Henesys BGM if enabled
-  if(localStorage.getItem('intask_bgm_default')==='1') {
+  if(lsGet('intask_bgm_default','0')==='1') {
     setTimeout(() => toggleBGM(), 800);
   }
 }
@@ -2206,11 +2214,11 @@ function renderAwards() {
 window.renderSettings = function renderSettings() {
   const panel = g('settings-panel'); if(!panel) return;
   const u = userProfile||{};
-  const iconCount = parseInt(localStorage.getItem('intask_icon_count')||'5');
-  const cbMode = localStorage.getItem('intask_colorblind')==='1';
-  const bgmDefault = localStorage.getItem('intask_bgm_default')==='1';
-  const loginSongName = localStorage.getItem('intask_login_song')||DEFAULT_LOGIN_SONG;
-  const bgmSongName = localStorage.getItem('intask_bgm_song')||DEFAULT_BGM_SONG;
+  const iconCount = parseInt(lsGet('intask_icon_count','5'));
+  const cbMode = lsGet('intask_colorblind','0')==='1';
+  const bgmDefault = lsGet('intask_bgm_default','0')==='1';
+  const loginSongName = lsGet('intask_login_song')||DEFAULT_LOGIN_SONG;
+  const bgmSongName = lsGet('intask_bgm_song')||DEFAULT_BGM_SONG;
   panel.innerHTML = `
     <div class="sec-title" style="margin-bottom:16px">⚙️ SETTINGS</div>
 
@@ -2224,7 +2232,7 @@ window.renderSettings = function renderSettings() {
       </div>
       <label class="field-label">🥚 TAMAFIT PET NAME</label>
       <div style="display:flex;gap:8px;margin-bottom:14px">
-        <input id="settings-petname" class="form-input" style="margin-bottom:0;flex:1" value="${localStorage.getItem('intask_pet_name')||''}" placeholder="Name your pet... (e.g. Pumpy)">
+        <input id="settings-petname" class="form-input" style="margin-bottom:0;flex:1" value="${lsGet('intask_pet_name','')}" placeholder="Name your pet... (e.g. Pumpy)">
         <button class="icon-btn" onclick="savePetName()">Save</button>
       </div>
       <label class="field-label">YOUR AVATAR</label>
@@ -2306,11 +2314,11 @@ window.renderSettings = function renderSettings() {
       </div>
       <label class="field-label">LOGIN SCREEN MUSIC</label>
       <select class="form-input" style="margin-bottom:14px" onchange="setSongPref('login',this.value)">
-        ${[['Above the Treetops - Lith Harbour','Above the Treetops - Lith Harbour'],['Floral Life - Henesys','Floral Life - Henesys'],['Missing You - Ellinia','Missing You - Ellinia'],['Title - Login','Title - Login']].map(([v,l])=>`<option value="${v}"${v===(localStorage.getItem('intask_login_song')||DEFAULT_LOGIN_SONG)?' selected':''}>${l}</option>`).join('')}
+        ${[['Above the Treetops - Lith Harbour','Above the Treetops - Lith Harbour'],['Floral Life - Henesys','Floral Life - Henesys'],['Missing You - Ellinia','Missing You - Ellinia'],['Title - Login','Title - Login']].map(([v,l])=>`<option value="${v}"${v===(lsGet('intask_login_song')||DEFAULT_LOGIN_SONG)?' selected':''}>${l}</option>`).join('')}
       </select>
       <label class="field-label">IN-APP MUSIC</label>
       <select class="form-input" style="margin-bottom:8px" onchange="setSongPref('bgm',this.value)">
-        ${[['Above the Treetops - Lith Harbour','Above the Treetops - Lith Harbour'],['Floral Life - Henesys','Floral Life - Henesys'],['Missing You - Ellinia','Missing You - Ellinia'],['Title - Login','Title - Login']].map(([v,l])=>`<option value="${v}"${v===(localStorage.getItem('intask_bgm_song')||DEFAULT_BGM_SONG)?' selected':''}>${l}</option>`).join('')}
+        ${[['Above the Treetops - Lith Harbour','Above the Treetops - Lith Harbour'],['Floral Life - Henesys','Floral Life - Henesys'],['Missing You - Ellinia','Missing You - Ellinia'],['Title - Login','Title - Login']].map(([v,l])=>`<option value="${v}"${v===(lsGet('intask_bgm_song')||DEFAULT_BGM_SONG)?' selected':''}>${l}</option>`).join('')}
       </select>
       <div style="display:flex;gap:8px;margin-bottom:12px">
         <button class="big-btn" style="flex:1;font-size:8px;padding:10px" onclick="previewSong('login')">▶ Login</button>
@@ -2338,7 +2346,16 @@ window.renderSettings = function renderSettings() {
       <button class="big-btn" style="background:transparent;border-color:var(--rose);color:var(--rose);margin-bottom:10px" onclick="confirmClearData()">🧹 Clear All Data</button>
       <button class="big-btn" style="background:transparent;border-color:var(--red);color:var(--red)" onclick="confirmDeleteAccount()">🗑️ Delete Account</button>
     </div>
+    <div style="height:76px"></div>
   `;
+
+  // Inject floating Save button into the modal
+  const _saveBar = document.createElement('div');
+  _saveBar.id = 'settings-save-bar';
+  _saveBar.style.cssText = 'position:sticky;bottom:0;padding:12px 20px 20px;background:linear-gradient(0deg,var(--cream) 60%,transparent);margin-top:-76px;pointer-events:none';
+  _saveBar.innerHTML = '<button onclick="window.saveAllSettings()" style="width:100%;padding:14px;border-radius:12px;border:none;background:linear-gradient(135deg,var(--midnight),#4A3560);color:#fff;font-family:var(--pixel);font-size:13px;font-weight:700;cursor:pointer;box-shadow:0 8px 24px rgba(44,35,64,0.25);pointer-events:all">💾 Save Settings</button>';
+  const _modalEl = document.querySelector('#settings-modal .modal');
+  if(_modalEl) { const existing = document.getElementById('settings-save-bar'); if(existing) existing.remove(); _modalEl.appendChild(_saveBar); }
 
   // Build avatar and colour pickers for settings
   const avGrid = g('settings-av-grid');
@@ -2370,11 +2387,36 @@ window.renderSettings = function renderSettings() {
 window.savePetName = () => {
   const name = document.getElementById('settings-petname')?.value?.trim();
   if (!name) { toast('Enter a pet name!'); return; }
-  localStorage.setItem('intask_pet_name', name);
+  lsSet('intask_pet_name', name);
   toast(`🥚 Pet named ${name}!`);
   // Re-render TamaFit if visible
   const tamaC = document.getElementById('tamafit-container');
   if(tamaC && tamaC.style.display !== 'none') renderTamaFit();
+};
+
+window.saveAllSettings = async () => {
+  if (!currentUser) { toast('Not signed in'); return; }
+  const btn = document.querySelector('#settings-save-bar button');
+  if (btn) { btn.textContent = 'Saving...'; btn.disabled = true; }
+  try {
+    const updates = {};
+    const nick = document.getElementById('settings-nickname')?.value?.trim();
+    if (nick && nick !== (userProfile?.displayName || '')) { updates.displayName = nick; }
+    const pet = document.getElementById('settings-petname')?.value?.trim();
+    if (pet) lsSet('intask_pet_name', pet);
+    if (Object.keys(updates).length > 0) {
+      await updateDoc(doc(db, 'users', currentUser.uid), updates);
+      userProfile = { ...(userProfile || {}), ...updates };
+    }
+    renderHeader();
+    if (document.getElementById('tamafit-container')) renderTamaFit();
+    toast('Settings saved!');
+    if (btn) { btn.textContent = '💾 Save Settings'; btn.disabled = false; }
+    closeModal('settings-modal');
+  } catch(e) {
+    toast('Error saving. Try again.');
+    if (btn) { btn.textContent = '💾 Save Settings'; btn.disabled = false; }
+  }
 };
 
 window.saveNickname = async () => {
@@ -2405,17 +2447,17 @@ window.settingsSelectColor = async (c, el) => {
 };
 
 window.toggleColorBlind = () => {
-  const current = localStorage.getItem('intask_colorblind')==='1';
-  localStorage.setItem('intask_colorblind', current?'0':'1');
+  const current = lsGet('intask_colorblind','0')==='1';
+  lsSet('intask_colorblind', current?'0':'1');
   document.body.classList.toggle('colorblind', !current);
   renderSettings();
   toast(current?'Colour blind mode off':'Colour blind mode on');
 };
 
 window.changeIconCount = (d) => {
-  const cur = parseInt(localStorage.getItem('intask_icon_count')||'5');
+  const cur = parseInt(lsGet('intask_icon_count','5'));
   const nv = Math.max(0, Math.min(10, cur+d));
-  localStorage.setItem('intask_icon_count', nv);
+  lsSet('intask_icon_count', nv);
   const el = g('icon-count-val'); if(el) el.textContent = nv;
   applyIconDensity(nv);
   toast(`UI density: ${nv<=3?'Minimal':nv<=6?'Normal':'Full'}`);
@@ -2464,7 +2506,7 @@ window.applyIconDensity = function applyIconDensity(count) {
 
 // Apply on load
 window.addEventListener('DOMContentLoaded', () => {
-  const saved = parseInt(localStorage.getItem('intask_icon_count')||'5');
+  const saved = parseInt(lsGet('intask_icon_count','5'));
   setTimeout(() => applyIconDensity(saved), 500);
 });
 
@@ -2516,7 +2558,7 @@ function updateMusicUI() {
   const nowPlaying = document.getElementById('settings-now-playing');
   if(nowPlaying) {
     if(bgmPlaying) {
-      const songName = localStorage.getItem('intask_bgm_song') || DEFAULT_BGM_SONG;
+      const songName = lsGet('intask_bgm_song') || DEFAULT_BGM_SONG;
       nowPlaying.textContent = '♪ ' + songName;
       nowPlaying.style.display = 'block';
     } else if(_previewAudio && !_previewAudio.paused) {
@@ -2554,8 +2596,8 @@ window.previewSong = (type) => {
 };
 
 window.toggleBgmDefault = () => {
-  const current = localStorage.getItem('intask_bgm_default')==='1';
-  localStorage.setItem('intask_bgm_default', current?'0':'1');
+  const current = lsGet('intask_bgm_default','0')==='1';
+  lsSet('intask_bgm_default', current?'0':'1');
   const btn = g('bgm-default-toggle');
   if(btn){ btn.textContent=current?'OFF':'ON'; btn.classList.toggle('active',!current); }
   toast(current ? '🔇 Music off by default' : '🎵 Music on by default — starts next launch');
@@ -2907,7 +2949,7 @@ window.renderTamaFit = function() {
   ];
   let bgLight = '#fff8e7', bgBorder = '#c8952a';
   for(const [thresh, bg, bdr] of tierBgs) { if(totalWorkouts < thresh) { bgLight=bg; bgBorder=bdr; break; } }
-  const petName = localStorage.getItem('intask_pet_name')||'???';
+  const petName = lsGet('intask_pet_name','???' );
   container.innerHTML = `<div class="tamafit-wrap" style="border-color:${bgBorder}20">
     <div class="tamafit-screen" style="background:${bgLight};border-bottom:2px solid ${bgBorder}20">
       <div class="tamafit-scene" style="background:${bgLight}">
@@ -3912,7 +3954,7 @@ window.switchTab = tab => {
   document.querySelectorAll(`[data-tab="${tab}"]`).forEach(b=>b.classList.add('active'));
   if(tab==='today') renderToday();
   // Reapply icon density
-  const _ic = parseInt(localStorage.getItem('intask_icon_count')||'5');
+  const _ic = parseInt(lsGet('intask_icon_count','5'));
   setTimeout(()=>applyIconDensity(_ic), 100);
   if(tab==='habits') renderHabits();
   if(tab==='crew') renderCrew();
@@ -4513,6 +4555,7 @@ function toggleAuthMode(){window.toggleAuthMode&&window.toggleAuthMode();}
 function doGuestLogin(){window.doGuestLogin&&window.doGuestLogin();}
 function doGuestReturn(){window.doGuestReturn&&window.doGuestReturn();}
 function doLogout(){window.doLogout&&window.doLogout();}
+function saveAllSettings(){window.saveAllSettings&&window.saveAllSettings();}
 function saveNickname(){window.saveNickname&&window.saveNickname();}
 function savePetName(){window.savePetName&&window.savePetName();}
 function settingsSelectAvatar(a,el){window.settingsSelectAvatar&&window.settingsSelectAvatar(a,el);}
@@ -4690,8 +4733,8 @@ function getSongUrl(displayName) {
 }
 
 const BGM_TRACKS = {
-  henesys: [getSongUrl(localStorage.getItem('intask_bgm_song') || DEFAULT_BGM_SONG)].filter(Boolean),
-  login:   [getSongUrl(localStorage.getItem('intask_login_song') || DEFAULT_LOGIN_SONG)].filter(Boolean),
+  henesys: [getSongUrl(lsGet('intask_bgm_song') || DEFAULT_BGM_SONG)].filter(Boolean),
+  login:   [getSongUrl(lsGet('intask_login_song') || DEFAULT_LOGIN_SONG)].filter(Boolean),
 };
 
 let bgmAudio = null, bgmPlaying = false, currentTrack = 'henesys';
@@ -4715,7 +4758,7 @@ function createAudio(srcs) {
 }
 
 function toggleBGM() {
-  const bgmSong = getSongUrl(localStorage.getItem('intask_bgm_song') || DEFAULT_BGM_SONG);
+  const bgmSong = getSongUrl(lsGet('intask_bgm_song') || DEFAULT_BGM_SONG);
   if (!bgmAudio || bgmAudio._song !== bgmSong) {
     if(bgmAudio) { bgmAudio.pause(); bgmAudio = null; }
     bgmAudio = createAudio([bgmSong].filter(Boolean));
@@ -4745,7 +4788,7 @@ function showMusicPrompt() { /* removed */ }
 
 // Login music
 window.playLoginMusic = function() {
-  const loginSong = getSongUrl(localStorage.getItem('intask_login_song') || DEFAULT_LOGIN_SONG);
+  const loginSong = getSongUrl(lsGet('intask_login_song') || DEFAULT_LOGIN_SONG);
   if(!loginAudio || loginAudio._song !== loginSong) {
     if(loginAudio) { loginAudio.pause(); loginAudio = null; }
     loginAudio = createAudio([loginSong].filter(Boolean));
@@ -4772,7 +4815,7 @@ function handleFirstInteraction() {
   const loginVisible = document.getElementById('login')?.classList.contains('active');
   if(loginVisible) {
     playLoginMusic();
-  } else if(localStorage.getItem('intask_bgm_default')==='1') {
+  } else if(lsGet('intask_bgm_default','0')==='1') {
     toggleBGM();
   }
 }
@@ -4817,7 +4860,7 @@ window.addEventListener('appinstalled', () => {
   if(window.toast) toast('🎉 InTask installed successfully!');
 });
 // Apply saved preferences on load
-if(localStorage.getItem('intask_colorblind')==='1') document.body.classList.add('colorblind');
+if(lsGet('intask_colorblind','0')==='1') document.body.classList.add('colorblind');
 
 
 </script>
