@@ -4157,7 +4157,13 @@ window.switchTab = tab => {
   if(tab==='music') renderMusicPlayer();
 };
 
-window.openModal=id=>{const el=g(id);if(el)el.classList.add('open');if(id==='settings-modal'){if(typeof window.renderSettings==='function')window.renderSettings();else setTimeout(()=>window.renderSettings&&window.renderSettings(),100);}};
+window.openModal=function(id){
+  const el=g(id); if(!el) return;
+  el.classList.add('open');
+  if(id==='settings-modal'){if(typeof window.renderSettings==='function')window.renderSettings();else setTimeout(()=>window.renderSettings&&window.renderSettings(),100);}
+  // Push history state so back button closes the modal instead of leaving the page
+  history.pushState({modal:id, tab:activeTab}, '', location.href);
+};
 window.closeModal=id=>{const el=g(id);if(el)el.classList.remove('open');};
 
 window.setPill=(el,group)=>{document.querySelectorAll(`[data-group="${group}"]`).forEach(b=>b.classList.remove('active'));el.classList.add('active');};
@@ -4198,19 +4204,16 @@ history.pushState({tab:'today'}, '', location.href);
 window.addEventListener('popstate', function(e) {
   const appActive = document.getElementById('app')?.classList.contains('active');
 
-  // If settings modal is open, close it
-  const settingsModal = document.getElementById('settings-modal');
-  if(settingsModal?.classList.contains('open')) {
-    settingsModal.classList.remove('open');
-    history.pushState({tab: _navStack[_navStack.length-1]}, '', location.href);
+  // If back was triggered while a modal state was pushed, close that modal
+  if(e.state && e.state.modal) {
+    const modalEl = document.getElementById(e.state.modal);
+    if(modalEl) modalEl.classList.remove('open');
     return;
   }
-
-  // If any modal is open, close it
-  const openModal = document.querySelector('.modal-overlay.open');
-  if(openModal) {
-    openModal.classList.remove('open');
-    history.pushState({tab: _navStack[_navStack.length-1]}, '', location.href);
+  // If any modal is open, close it (fallback)
+  const openModalEl = document.querySelector('.modal-overlay.open');
+  if(openModalEl) {
+    openModalEl.classList.remove('open');
     return;
   }
 
