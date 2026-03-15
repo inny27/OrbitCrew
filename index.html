@@ -14,7 +14,8 @@
 <title>InTask</title>
 <link rel="icon" href="https://maplestory.io/api/GMS/255/mob/100100/render/stand" type="image/png">
   <link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
-<style>
+<style>:root{--nav-h:70px;}
+
 /* ============================================================
    RESET & VARIABLES
 ============================================================ */
@@ -140,7 +141,7 @@ body::after{display:none;}
 /* ============================================================
    BOTTOM NAV
 ============================================================ */
-.bottom-nav{position:fixed;bottom:0;left:0;right:0;width:100%;background:rgba(253,248,240,0.95);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-top:1px solid var(--border);display:flex;justify-content:space-around;align-items:center;padding:8px 0;padding-bottom:max(8px,env(safe-area-inset-bottom));z-index:200;}
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;width:100%;background:rgba(253,248,240,0.95);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-top:1px solid var(--border);display:flex;justify-content:space-around;align-items:center;padding:8px 0;padding-bottom:max(8px,env(safe-area-inset-bottom));z-index:200;min-height:var(--nav-h);}
 .bnav-btn{display:flex;flex-direction:column;align-items:center;gap:2px;cursor:pointer;color:var(--muted);padding:4px 10px;border:none;background:transparent;transition:.15s;position:relative;}
 .bnav-btn.active{color:var(--accent);}
 .bnav-btn.active::before{content:'▲';position:absolute;top:-14px;left:50%;transform:translateX(-50%);font-size:8px;color:var(--accent);}
@@ -151,8 +152,8 @@ body::after{display:none;}
    TAB PANELS
 ============================================================ */
 .panels{flex:1;}
-.panel{display:none;overflow-y:scroll;padding:16px 16px 90px;-webkit-overflow-scrolling:touch;height:calc(100vh - 150px);}
-.panel.active{display:block;}
+.panel{display:none;overflow-y:scroll;padding:16px 16px calc(var(--nav-h) + 20px);-webkit-overflow-scrolling:touch;}
+.panel.active{display:block;height:calc(100vh - var(--nav-h) - 110px);}
 
 /* ============================================================
    SHARED COMPONENTS
@@ -3818,7 +3819,10 @@ window.renderLibrary = function() {
   const lf = window._libF||'all';
   const ls = String(window._libQ||'');
   const filtered = EXERCISE_DB.filter(function(ex) {
-    return (lf==='all'||ex.type===lf) && (!ls||ex.name.toLowerCase().includes(ls.toLowerCase())||ex.muscles.some(function(m){return m.toLowerCase().includes(ls.toLowerCase());}));
+    if (!ex.muscles || !ex.difficulty) return false; // skip guide entries
+    const typeMatch = lf==='all' || ex.type===lf;
+    const searchMatch = !ls || ex.name.toLowerCase().includes(ls) || ex.muscles.some(function(m){return m.toLowerCase().includes(ls);});
+    return typeMatch && searchMatch;
   });
   const typeIcon = {weights:'Weights',calisthenics:'Cali',run:'Run',swim:'Swim',cardio:'Cardio'};
   const s = getFitSub(); if(!s) return;
@@ -3841,15 +3845,24 @@ window.renderLibrary = function() {
   if(inp) inp.addEventListener('input', function(){window._libQ=this.value;window.renderLibrary();});
   var res = document.getElementById('lib-results');
   if(res) {
-    function handleLibClick(e) {
+    // Track touch movement to distinguish tap vs scroll
+    var _touchStartY = 0;
+    res.addEventListener('touchstart', function(e) {
+      _touchStartY = e.touches[0].clientY;
+    }, {passive:true});
+    res.addEventListener('touchend', function(e) {
+      var dy = Math.abs(e.changedTouches[0].clientY - _touchStartY);
+      if (dy > 8) return; // was a scroll, ignore
       var card = e.target.closest('[data-exid]');
       if(card && card.dataset.exid) {
         e.preventDefault();
         window.showExDetail(card.dataset.exid);
       }
-    }
-    res.addEventListener('click', handleLibClick);
-    res.addEventListener('touchend', handleLibClick, {passive:false});
+    }, {passive:false});
+    res.addEventListener('click', function(e) {
+      var card = e.target.closest('[data-exid]');
+      if(card && card.dataset.exid) window.showExDetail(card.dataset.exid);
+    });
   }
 }
 
