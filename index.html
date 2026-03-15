@@ -999,8 +999,8 @@ onAuthStateChanged(auth, async user => {
   // Skip if we're handling auth manually (e.g. guest account creation)
   if (_authHandled) return;
   if (user) {
+    userProfile = null; currentUser = null; // null first so final snapshots are ignored
     unsubs.forEach(u => u()); unsubs = [];
-    userProfile = null;
     currentUser = user;
     await loadProfile(currentUser.uid);
   } else {
@@ -1032,7 +1032,11 @@ async function loadProfile(uid) {
 function subscribeAll(uid, crewId) {
   unsubs.forEach(u => u()); unsubs = [];
   unsubs.push(onSnapshot(doc(db,'users',uid), s => {
-    if (s.exists()) { userProfile = s.data(); renderHeader(); renderAwards(); updateBg(); synced = true; renderSyncDot(); }
+    // Guard: only apply if this snapshot is for the current user
+    if (s.exists() && currentUser && currentUser.uid === uid) {
+      userProfile = s.data();
+      renderHeader(); renderAwards(); updateBg(); synced = true; renderSyncDot();
+    }
   }));
   unsubs.push(onSnapshot(query(collection(db,'tasks'),where('uid','==',uid)), s => {
     tasks = s.docs.map(d => ({id:d.id,...d.data()})); renderToday();
@@ -1167,9 +1171,10 @@ window.doGuestLogin = async () => {
 
   // Take manual control — prevent onAuthStateChanged from interfering
   _authHandled = true;
-  // Kill existing session and listeners cleanly first
-  unsubs.forEach(u=>u()); unsubs=[];
+  // Null out FIRST so any final onSnapshot fires don't update the DOM
   userProfile=null; currentUser=null;
+  // NOW kill listeners — their final callbacks see null currentUser and skip
+  unsubs.forEach(u=>u()); unsubs=[];
 
   try {
     let firebaseUser;
@@ -1255,6 +1260,13 @@ window.doLogout = async () => {
     // Clear any auth error messages
     const errEl = document.getElementById('auth-error');
     if (errEl) errEl.textContent = '';
+    // Clear header DOM so old user's name never bleeds into next session
+    const hdrName = document.getElementById('hdr-name');
+    if (hdrName) hdrName.textContent = '';
+    const hdrBadge = document.getElementById('hdr-badge');
+    if (hdrBadge) hdrBadge.textContent = '';
+    const hdrAv = document.getElementById('hdr-avatar');
+    if (hdrAv) hdrAv.innerHTML = '';
     // Show login immediately
     showScreen('login');
     // Then sign out from Firebase
@@ -1266,15 +1278,24 @@ window.doLogout = async () => {
 };
 
 window.completeProfile = async () => {
-  await setDoc(doc(db,'users',currentUser.uid), {
-    uid:currentUser.uid, email:currentUser.email,
+  if(!currentUser) { toast('Not signed in'); return; }
+  const uid = currentUser.uid;
+  const profileData = {
+    uid, email:currentUser.email,
     displayName: currentUser.displayName || g('su-name')?.value || 'Pilot',
     avatar:selAvatar, color:selColor,
     level:1, xp:0, maxXp:1000, totalDone:0, maxStreak:0, currentStreak:0,
     sharedDone:0, morningDone:0, eveningDone:0, crewsCreated:0, crewCount:0,
     badges:[], crewId:null, title:getTitle(1), skills:[], skillPoints:0,
     bossesDefeated:0, skillsUnlocked:0, seasonXp:0, createdAt:serverTimestamp()
-  });
+  };
+  await setDoc(doc(db,'users',uid), profileData);
+  // Guard: make sure this is still the current user after async
+  if(!currentUser || currentUser.uid !== uid) return;
+  // Set userProfile directly — don't rely on onAuthStateChanged re-firing
+  userProfile = profileData;
+  subscribeAll(uid, null);
+  loadFitness(uid);
   toast('Welcome to InTask!');
   showApp();
 };
@@ -2080,7 +2101,7 @@ function showApp() {
   renderHeader(); switchTab('today'); updateBg();
   setTimeout(()=>applyIconDensity(parseInt(lsGet('intask_icon_count','5'))),300);
   // Stop login music when entering app
-  stopLoginMusic && stopLoginMusic();
+  if(window.stopLoginMusic) window.stopLoginMusic();
   // Auto-start Henesys BGM if enabled
   if(lsGet('intask_bgm_default','0')==='1') {
     setTimeout(() => toggleBGM(), 800);
@@ -4145,6 +4166,33 @@ const avGrid=g('av-grid'); if(avGrid) avGrid.innerHTML=AVATARS.map((a,i)=>{
 }).join('');
 const colRow=g('col-row'); if(colRow) colRow.innerHTML=COLORS.map((c,i)=>`<div class="col-dot${i===0?' sel':''}" style="background:${c}" onclick="selectColor('${c}',this)"></div>`).join('');
 
+// ── Music helpers ──────────────────────────────────────────────────────────
+window.stopLoginMusic = function() {
+  if(window._loginAudio) {
+    window._loginAudio.pause();
+    window._loginAudio.currentTime = 0;
+    window._loginAudio = null;
+  }
+};
+
+window.stopAllMusic = function() {
+  window.stopLoginMusic();
+  if(window._bgmAudio) {
+    window._bgmAudio.pause();
+    window._bgmAudio.currentTime = 0;
+  }
+};
+
+window.playLoginMusic = function() {
+  const songName = lsGet('intask_login_song') || DEFAULT_LOGIN_SONG;
+  const url = getSongUrl(songName);
+  if(!url) return;
+  if(!window._loginAudio) window._loginAudio = new Audio(url);
+  window._loginAudio.loop = true;
+  window._loginAudio.volume = 0.5;
+  window._loginAudio.play().catch(()=>{});
+};
+
 </script>
 </head>
 <body>
@@ -4708,8 +4756,6 @@ function doExecuteClearData(){window.doExecuteClearData&&window.doExecuteClearDa
 function executeDeleteAccount(el){window.executeDeleteAccount&&window.executeDeleteAccount(el);}
 function completeProfile(){window.completeProfile&&window.completeProfile();}
 function switchTab(t){window.switchTab&&window.switchTab(t);}
-function openModal(id){window.openModal&&window.openModal(id);}
-function closeModal(id){window.closeModal&&window.closeModal(id);}
 function addTask(){window.addTask&&window.addTask();}
 function addHabit(){window.addHabit&&window.addHabit();}
 function completeTask(id){window.completeTask&&window.completeTask(id);}
@@ -4732,10 +4778,6 @@ function logBodyEntry(){window.logBodyEntry&&window.logBodyEntry();}
 function deleteBodyEntry(i){window.deleteBodyEntry&&window.deleteBodyEntry(i);}
 function toggleSetMode(m){window.toggleSetMode&&window.toggleSetMode(m);}
 function switchFitTab(t,el){window.switchFitTab&&window.switchFitTab(t,el);}
-function renderTamaFit(){window.renderTamaFit&&window.renderTamaFit();}
-function renderMusicPlayer(){window.renderMusicPlayer&&window.renderMusicPlayer();}
-function showTamaPostWorkout(a,b,c,d,e,f){window.showTamaPostWorkout&&window.showTamaPostWorkout(a,b,c,d,e,f);}
-function closeTamaPostWorkout(){window.closeTamaPostWorkout&&window.closeTamaPostWorkout();}
 function renderTamaFit(){window.renderTamaFit&&window.renderTamaFit();}
 function renderMusicPlayer(){window.renderMusicPlayer&&window.renderMusicPlayer();}
 function showTamaPostWorkout(a,b,c,d,e,f){window.showTamaPostWorkout&&window.showTamaPostWorkout(a,b,c,d,e,f);}
