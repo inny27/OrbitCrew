@@ -996,19 +996,23 @@ let streakMult = 1;
 // ─── AUTH ─────────────────────────────────────────────────
 onAuthStateChanged(auth, async user => {
   if (user) {
-    // Clear stale profile immediately so old data never shows for new user
+    // Always kill old listeners first — prevents old user data bleeding into new session
+    unsubs.forEach(u => u()); unsubs = [];
     userProfile = null;
     currentUser = user;
     await loadProfile(currentUser.uid);
   } else {
-    currentUser = null; userProfile = null;
     unsubs.forEach(u => u()); unsubs = [];
+    currentUser = null; userProfile = null;
     showScreen('login');
   }
 });
 
 async function loadProfile(uid) {
+  // Guard: if auth changed mid-load, abort to prevent stale data
+  if (!currentUser || currentUser.uid !== uid) return;
   const snap = await getDoc(doc(db,'users',uid));
+  if (!currentUser || currentUser.uid !== uid) return; // re-check after async
   if (!snap.exists()) {
     g('google-name').textContent = currentUser.displayName || 'Pilot';
     // Pre-fill nickname field if it exists (for guest accounts)
@@ -1164,11 +1168,8 @@ window.doGuestLogin = async () => {
     const result = await createUserWithEmailAndPassword(auth, guestEmail, pw);
     await updateProfile(result.user, { displayName: username });
     await result.user.reload(); // ensure displayName is on the user object
-    currentUser = auth.currentUser;  // refresh currentUser with updated profile
+    // Don't manually call loadProfile — onAuthStateChanged handles it with fresh state
     toast('Welcome, ' + username + '! 🚀');
-    // Manually trigger profile load now that displayName is set
-    await loadProfile(currentUser.uid);
-    return; // onAuthStateChanged will also fire but loadProfile is idempotent
   } catch(e) {
     if (e.code === 'auth/email-already-in-use') {
       // Account exists — sign in instead
