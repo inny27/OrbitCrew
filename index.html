@@ -1357,7 +1357,7 @@ window.addTask = async () => {
   });
   closeModal('task-modal'); g('new-task-name').value = '';
   taskType='personal'; taskPriority='medium'; taskRepeat='none';
-  playSound('launch'); toast('🚀 Mission launched!');
+  playSound('launch'); toast('✅ Task added!');
 };
 
 window.completeTask = async id => {
@@ -1376,7 +1376,7 @@ window.deleteTask = async id => {
   const el = document.createElement('div');
   el.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:6000;display:flex;align-items:center;justify-content:center;padding:20px';
   el.innerHTML = '<div style="background:var(--surf);border:3px solid var(--red);padding:20px;max-width:280px;width:100%;text-align:center">'
-    + '<div style="font-size:9px;font-family:var(--pixel);color:var(--red);margin-bottom:10px">DELETE MISSION?</div>'
+    + '<div style="font-size:9px;font-family:var(--pixel);color:var(--red);margin-bottom:10px">DELETE TASK?</div>'
     + '<div style="display:flex;gap:8px;margin-top:14px">'
     + '<button onclick="this.closest(\'div[style]\').remove()" style="flex:1;padding:10px;border:2px solid var(--border);background:var(--surf2);color:var(--text);font-family:var(--pixel);font-size:7px;cursor:pointer">Cancel</button>'
     + '<button onclick="this.closest(\'div[style]\').remove();window._doDeleteTask(\''+id+'\')" style="flex:1;padding:10px;border:2px solid var(--red);background:var(--red);color:#fff;font-family:var(--pixel);font-size:7px;cursor:pointer">Delete</button>'
@@ -2155,8 +2155,8 @@ function renderToday() {
   g('prog-fill').style.width = pct+'%';
   const pctEl = document.getElementById('prog-pct');
   if(pctEl) pctEl.textContent = pct+'%';
-  g('tasks-list').innerHTML = myTasks.length ? myTasks.map(taskCard).join('') : emptyState('🎯','No missions yet!');
-  g('chores-list').innerHTML = myChores.length ? myChores.map(taskCard).join('') : emptyState('🏠','No chores listed!');
+  g('tasks-list').innerHTML = myTasks.length ? myTasks.map(taskCard).join('') : emptyState('🎯','No tasks yet!');
+  g('chores-list').innerHTML = myChores.length ? myChores.map(taskCard).join('') : emptyState('🏠','No shared tasks yet!');
 }
 
 function taskCard(t) {
@@ -2185,7 +2185,7 @@ function renderHabits() {
   const mult = Math.min(1+(streak*0.2),10);
   g('mult-val').textContent = `×${mult.toFixed(1)}`;
   g('mult-bar').style.width = `${Math.min((mult/10)*100,100)}%`;
-  g('habits-list').innerHTML = habits.length ? habits.map(habitCard).join('') : emptyState('🔥','No streak missions yet!');
+  g('habits-list').innerHTML = habits.length ? habits.map(habitCard).join('') : emptyState('🔥','No streaks yet!');
 }
 
 function habitCard(h) {
@@ -2253,7 +2253,7 @@ function renderBoss() {
   s.innerHTML = `<div class="boss-card${boss.defeated?' defeated':''}">
     <div class="boss-top">
       <span class="boss-icon${boss.defeated?'':''}">${'<img src="https://maplestory.io/api/GMS/255/mob/8800000/render/stand" alt="Boss" width="48" height="48" style="image-rendering:pixelated" onerror="this.src=\'https://maplestory.io/api/GMS/255/mob/100100/render/stand\'">'}</span>
-      <div style="flex:1"><div class="boss-name-text">${boss.name||'Boss'}</div><div class="boss-sub">${boss.defeated?'💀 DEFEATED':'⚔️ Attack by completing missions!'}</div></div>
+      <div style="flex:1"><div class="boss-name-text">${boss.name||'Boss'}</div><div class="boss-sub">${boss.defeated?'💀 DEFEATED':'⚔️ Attack by completing tasks!'}</div></div>
       <div class="boss-hp-num" style="color:${hpCol}">${boss.hp||0}<span style="font-size:11px;color:var(--muted)">/${boss.maxHp}</span></div>
     </div>
     <div class="boss-bar-wrap"><div class="boss-bar-fill" style="width:${pct}%;background:${hpCol}"></div></div>
@@ -4031,7 +4031,7 @@ function showCel(title,sub,xp,extra='') {
   g('celebration').classList.add('show'); spawnConfetti();
   setTimeout(()=>g('celebration').classList.remove('show'),3000);
 }
-function missionCel(name,xp){showCel('MISSION COMPLETE!',name,`+${xp} XP`);}
+function missionCel(name,xp){showCel('TASK COMPLETE!',name,`+${xp} XP`);}
 function levelUpCel(l){playSound('levelup');showCel('⚡ LEVEL UP! ⚡',`You are now ${getTitle(l)}`,`LEVEL ${l}`,'+2 Skill Points earned!');}
 function badgeCel(b){showCel('BADGE UNLOCKED!',`${b.icon} ${b.name}`,b.desc);}
 function bossCel(){playSound('boss');showCel('⚔️ BOSS DEFEATED!',boss?.name||'The enemy falls!','+500 XP for the crew!',boss?.reward||'');}
@@ -4362,9 +4362,9 @@ window.playLoginMusic = function() {
           <div style="font-size:11px;color:var(--muted);font-weight:500">complete</div>
         </div>
       </div>
-      <div class="sec-head"><span class="sec-title">🎯 TODAY'S MISSIONS</span><button class="add-btn" onclick="openModal('task-modal')">+</button></div>
+      <div class="sec-head"><span class="sec-title">🎯 MY TASKS</span><button class="add-btn" onclick="openModal('task-modal')">+</button></div>
       <div id="tasks-list"></div>
-      <div class="sec-head" style="margin-top:8px"><span class="sec-title">🏠 CHORES</span><button class="add-btn" onclick="taskType='chore';openModal('task-modal')">+</button></div>
+      <div class="sec-head" style="margin-top:8px"><span class="sec-title">🏠 SHARED TASKS</span><button class="add-btn" onclick="taskType='chore';openModal('task-modal')">+</button></div>
       <div id="chores-list"></div>
     </div>
 
@@ -4378,7 +4378,7 @@ window.playLoginMusic = function() {
         <div class="mult-track"><div class="mult-bar" id="mult-bar" style="width:10%"></div></div>
         <div style="font-size:10px;color:var(--muted);font-weight:600;margin-top:6px">Longer streaks = more XP per habit · Max ×10</div>
       </div>
-      <div class="sec-head"><span class="sec-title">🔥 STREAK MISSIONS</span><button class="add-btn" onclick="openModal('habit-modal')">+</button></div>
+      <div class="sec-head"><span class="sec-title">🔥 STREAKS</span><button class="add-btn" onclick="openModal('habit-modal')">+</button></div>
       <div id="habits-list"></div>
     </div>
 
@@ -4411,13 +4411,13 @@ window.playLoginMusic = function() {
 
   <!-- BOTTOM NAV -->
   <div class="bottom-nav">
-    <button class="bnav-btn active" data-tab="today" onclick="switchTab('today')"><img src="https://maplestory.io/api/GMS/255/item/2000000/icon" alt="Today" width="28" height="28" style="image-rendering:pixelated;object-fit:contain" onerror="this.style.display='none'" data-fallback="<span class=bnav-icon>🎯</span>"><span class="bnav-label">Today</span></button>
-    <button class="bnav-btn" data-tab="habits" onclick="switchTab('habits')"><img src="https://maplestory.io/api/GMS/255/item/2000006/icon" alt="Habits" width="28" height="28" style="image-rendering:pixelated;object-fit:contain" onerror="this.style.display='none'" data-fallback="<span class=bnav-icon>🔥</span>"><span class="bnav-label">Habits</span></button>
-    <button class="bnav-btn" data-tab="crew" onclick="switchTab('crew')"><img src="https://maplestory.io/api/GMS/255/item/2022000/icon" alt="Crew" width="28" height="28" style="image-rendering:pixelated;object-fit:contain" onerror="this.style.display='none'" data-fallback="<span class=bnav-icon>🪐</span>"><span class="bnav-label">Crew</span></button>
+    <button class="bnav-btn active" data-tab="today" onclick="switchTab('today')"><img src="https://maplestory.io/api/GMS/255/item/4161001/icon" alt="Today" width="28" height="28" style="image-rendering:pixelated;object-fit:contain" onerror="this.style.display='none'" data-fallback="<span class=bnav-icon>🎯</span>"><span class="bnav-label">Today</span></button>
+    <button class="bnav-btn" data-tab="habits" onclick="switchTab('habits')"><img src="https://maplestory.io/api/GMS/255/item/2430005/icon" alt="Habits" width="28" height="28" style="image-rendering:pixelated;object-fit:contain" onerror="this.style.display='none'" data-fallback="<span class=bnav-icon>🔥</span>"><span class="bnav-label">Habits</span></button>
+    <button class="bnav-btn" data-tab="crew" onclick="switchTab('crew')"><img src="https://maplestory.io/api/GMS/255/item/4001025/icon" alt="Crew" width="28" height="28" style="image-rendering:pixelated;object-fit:contain" onerror="this.style.display='none'" data-fallback="<span class=bnav-icon>🪐</span>"><span class="bnav-label">Crew</span></button>
     <button class="bnav-btn" data-tab="awards" onclick="switchTab('awards')"><img src="https://maplestory.io/api/GMS/255/item/4031138/icon" alt="Awards" width="28" height="28" style="image-rendering:pixelated;object-fit:contain" onerror="this.style.display='none'" data-fallback="<span class=bnav-icon>🏆</span>"><span class="bnav-label">Awards</span></button>
     <button class="bnav-btn" data-tab="fitness" onclick="switchTab('fitness')"><img src="https://maplestory.io/api/GMS/255/item/1302000/icon" alt="Fitness" width="28" height="28" style="image-rendering:pixelated;object-fit:contain" onerror="this.style.display='none'" data-fallback="<span class=bnav-icon>💪</span>"><span class="bnav-label">Fitness</span></button>
     <button class="bnav-btn" data-tab="music" onclick="switchTab('music')">
-      <img src="https://maplestory.io/api/GMS/255/item/4161000/icon" width="22" style="image-rendering:pixelated" onerror="this.style.display='none'">
+      <img src="https://maplestory.io/api/GMS/255/item/2430127/icon" width="22" style="image-rendering:pixelated" onerror="this.style.display='none'">
       <span class="bnav-label">Music</span>
     </button>
   </div>
@@ -4435,14 +4435,14 @@ window.playLoginMusic = function() {
 <div class="modal-overlay" id="task-modal" onclick="if(event.target===this)closeModal('task-modal')">
   <div class="modal">
     <div class="modal-handle"></div>
-    <div class="modal-title">NEW MISSION</div>
-    <label class="field-label">MISSION NAME</label>
+    <div class="modal-title">NEW TASK</div>
+    <label class="field-label">TASK NAME</label>
     <input id="new-task-name" class="form-input" placeholder="e.g. Take medication, Call dentist...">
     <label class="field-label">TYPE</label>
     <div class="pill-row">
       <button class="pill active" data-group="task-type" onclick="setTaskPill('personal','task-type',this)">👤 Personal</button>
       <button class="pill" data-group="task-type" onclick="setTaskPill('shared','task-type',this)">👫 Shared</button>
-      <button class="pill" data-group="task-type" onclick="setTaskPill('chore','task-type',this)">🏠 Chore</button>
+      <button class="pill" data-group="task-type" onclick="setTaskPill('chore','task-type',this)">🏠 Shared</button>
       <button class="pill" data-group="task-type" onclick="setTaskPill('goal','task-type',this)">⭐ Goal</button>
     </div>
     <label class="field-label">PRIORITY & XP</label>
@@ -4458,7 +4458,7 @@ window.playLoginMusic = function() {
       <button class="pill" data-group="task-repeat" onclick="setTaskPill('weekly','task-repeat',this)">📅 Weekly</button>
       <button class="pill" data-group="task-repeat" onclick="setTaskPill('monthly','task-repeat',this)">🗓️ Monthly</button>
     </div>
-    <button class="big-btn" onclick="addTask()">⚡ LAUNCH MISSION</button>
+    <button class="big-btn" onclick="addTask()">⚡ ADD TASK</button>
   </div>
 </div>
 
@@ -4466,7 +4466,7 @@ window.playLoginMusic = function() {
 <div class="modal-overlay" id="habit-modal" onclick="if(event.target===this)closeModal('habit-modal')">
   <div class="modal">
     <div class="modal-handle"></div>
-    <div class="modal-title">🔥 NEW STREAK MISSION</div>
+    <div class="modal-title">🔥 NEW STREAK</div>
     <label class="field-label">HABIT NAME</label>
     <input id="new-habit-name" class="form-input" placeholder="e.g. Morning medication, Evening walk...">
     <label class="field-label">TIME OF DAY</label>
@@ -4515,7 +4515,7 @@ window.playLoginMusic = function() {
 
 <!-- ═══ OVERLAYS ═══ -->
 <div id="celebration">
-  <div id="cel-title">MISSION COMPLETE!</div>
+  <div id="cel-title">TASK COMPLETE!</div>
   <div id="cel-sub"></div>
   <div id="cel-xp">+30 XP</div><img src="https://maplestory.io/api/GMS/255/item/4031138/icon" id="cel-meso" alt="" width="40" height="40" style="image-rendering:pixelated;display:none;margin-top:8px">
   <div id="cel-extra"></div>
