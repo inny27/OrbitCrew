@@ -1487,6 +1487,16 @@ window.unlockSkill = async skillId => {
 // ─── CREW ─────────────────────────────────────────────────
 const genCode = () => Math.random().toString(36).substring(2,8).toUpperCase();
 
+
+window.copyInstallLink = function() {
+  const url = 'https://inny27.github.io/OrbitCrew';
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(url).then(() => toast('Link copied!')).catch(() => toast(url));
+  } else {
+    toast(url);
+  }
+};
+
 window.createCrew = async () => {
   const name = g('crew-name-input').value.trim(); if (!name) { toast('Name your crew!'); return; }
   const btn = g('create-crew-btn'); btn.disabled=true; btn.textContent='Creating...';
@@ -2132,9 +2142,9 @@ function showApp() {
   setTimeout(()=>applyIconDensity(parseInt(lsGet('intask_icon_count','5'))),300);
   // Stop login music when entering app
   if(window.stopLoginMusic) window.stopLoginMusic();
-  // Auto-start Henesys BGM if enabled
+  // Auto-start BGM if enabled
   if(lsGet('intask_bgm_default','0')==='1') {
-    setTimeout(() => toggleBGM(), 800);
+    setTimeout(() => { if(window.toggleBGM) window.toggleBGM(); }, 800);
   }
 }
 function showScreen(id) {
@@ -4217,6 +4227,25 @@ window.stopAllMusic = function() {
   }
 };
 
+window.toggleBGM = function() {
+  if (window._bgmAudio && !window._bgmAudio.paused) {
+    window._bgmAudio.pause();
+    updateMusicUI();
+  } else {
+    const songName = lsGet('intask_bgm_song') || DEFAULT_BGM_SONG;
+    const url = getSongUrl(songName);
+    if (!url) return;
+    if (!window._bgmAudio || window._bgmAudio.src !== url) {
+      if (window._bgmAudio) window._bgmAudio.pause();
+      window._bgmAudio = new Audio(url);
+      window._bgmAudio.volume = parseFloat(lsGet('intask_volume','0.4'));
+      window._bgmAudio.loop = true;
+    }
+    window._bgmAudio.play().catch(() => {});
+    updateMusicUI();
+  }
+};
+
 window.playLoginMusic = function() {
   const songName = DEFAULT_LOGIN_SONG;
   const url = getSongUrl(songName);
@@ -4722,6 +4751,8 @@ window.doExecuteClearData = async function() {
 </script>
 <script>
 // Bridge: global wrappers so onclick= attrs can call ES module functions
+function confirmClearData(){if(window.confirmClearData)window.confirmClearData.apply(window,arguments);}
+function copyInstallLink(){if(window.copyInstallLink)window.copyInstallLink.apply(window,arguments);}
 function _doDeleteEntry(){if(window._doDeleteEntry)window._doDeleteEntry.apply(window,arguments);}
 function _doDeleteTask(){if(window._doDeleteTask)window._doDeleteTask.apply(window,arguments);}
 function _doExSearch(){if(window._doExSearch)window._doExSearch.apply(window,arguments);}
@@ -4833,6 +4864,7 @@ function skipRest(){if(window.skipRest)window.skipRest.apply(window,arguments);}
 function startRestTimer(){if(window.startRestTimer)window.startRestTimer.apply(window,arguments);}
 function startWorkoutSession(){if(window.startWorkoutSession)window.startWorkoutSession.apply(window,arguments);}
 function stopAllMusic(){if(window.stopAllMusic)window.stopAllMusic.apply(window,arguments);}
+function toggleBGM(){if(window.toggleBGM)window.toggleBGM.apply(window,arguments);}
 function stopLoginMusic(){if(window.stopLoginMusic)window.stopLoginMusic.apply(window,arguments);}
 function switchAuthTab(){if(window.switchAuthTab)window.switchAuthTab.apply(window,arguments);}
 function switchFitTab(){if(window.switchFitTab)window.switchFitTab.apply(window,arguments);}
