@@ -2353,20 +2353,15 @@ window.renderSettings = function renderSettings() {
         </div>
         <button class="settings-toggle${bgmDefault?' active':''}" id="bgm-default-toggle" onclick="toggleBgmDefault()">${bgmDefault?'ON':'OFF'}</button>
       </div>
-      <label class="field-label">LOGIN SCREEN MUSIC</label>
-      <select class="form-input" style="margin-bottom:14px" onchange="setSongPref('login',this.value)">
-        ${[['Above the Treetops - Lith Harbour','Above the Treetops - Lith Harbour'],['Floral Life - Henesys','Floral Life - Henesys'],['Missing You - Ellinia','Missing You - Ellinia'],['Title - Login','Title - Login']].map(([v,l])=>`<option value="${v}"${v===(lsGet('intask_login_song')||DEFAULT_LOGIN_SONG)?' selected':''}>${l}</option>`).join('')}
-      </select>
-      <label class="field-label">IN-APP MUSIC</label>
-      <select class="form-input" style="margin-bottom:8px" onchange="setSongPref('bgm',this.value)">
+      <label class="field-label">NOW PLAYING</label>
+      <select id="settings-music-select" class="form-input" style="margin-bottom:12px" onchange="setSongPref('bgm',this.value);setSongPref('login',this.value)">
         ${[['Above the Treetops - Lith Harbour','Above the Treetops - Lith Harbour'],['Floral Life - Henesys','Floral Life - Henesys'],['Missing You - Ellinia','Missing You - Ellinia'],['Title - Login','Title - Login']].map(([v,l])=>`<option value="${v}"${v===(lsGet('intask_bgm_song')||DEFAULT_BGM_SONG)?' selected':''}>${l}</option>`).join('')}
       </select>
-      <div style="display:flex;gap:8px;margin-bottom:12px">
-        <button class="big-btn" style="flex:1;font-size:8px;padding:10px" onclick="previewSong('login')">▶ Login</button>
-        <button class="big-btn" style="flex:1;font-size:8px;padding:10px;background:var(--surf2);border-color:var(--border);color:var(--text)" onclick="previewSong('bgm')">▶ BGM</button>
-        <button id="settings-stop-music" class="big-btn" style="flex:1;font-size:8px;padding:10px;background:transparent;border-color:var(--red);color:var(--red);opacity:0.4" onclick="stopAllMusic()">⏹ Stop</button>
+      <div style="display:flex;gap:10px;margin-bottom:12px">
+        <button class="big-btn" style="flex:1;padding:12px" onclick="window.settingsPlayMusic()">▶ Play</button>
+        <button class="big-btn" style="flex:1;padding:12px;background:var(--parchment);border:1.5px solid var(--border);color:var(--muted)" onclick="window.stopAllMusic()">■ Stop</button>
       </div>
-      <div id="settings-now-playing" style="display:none;font-size:8px;font-family:var(--pixel);color:var(--green);margin-bottom:12px;padding:6px 10px;background:rgba(87,217,163,.1);border:1px solid var(--green)"></div>
+      <div id="settings-now-playing" style="display:none;font-size:11px;font-weight:500;color:var(--sage);margin-bottom:12px;padding:8px 12px;background:rgba(122,158,126,0.1);border:1px solid rgba(122,158,126,0.3);border-radius:10px"></div>
       <label class="field-label">VOLUME</label>
       <div style="display:flex;align-items:center;gap:10px;margin-bottom:4px">
         <span style="font-size:14px">🔈</span>
@@ -2617,6 +2612,21 @@ function updateMusicUI() {
     }
   }
 }
+
+window.settingsPlayMusic = () => {
+  const sel = document.getElementById('settings-music-select');
+  const songName = sel ? sel.value : (lsGet('intask_bgm_song') || DEFAULT_BGM_SONG);
+  const url = getSongUrl(songName);
+  if (!url) { toast('Song file not found'); return; }
+  if (window._bgmAudio) { window._bgmAudio.pause(); window._bgmAudio.src = ''; }
+  window._bgmAudio = new Audio(url);
+  window._bgmAudio.volume = 0.6;
+  window._bgmAudio.loop = true;
+  window._bgmAudio.play().catch(e => toast('Could not play — check song files'));
+  const nowPlaying = document.getElementById('settings-now-playing');
+  if (nowPlaying) { nowPlaying.style.display = 'block'; nowPlaying.textContent = '♪ Now playing: ' + songName; }
+  toast('♪ Playing: ' + songName);
+};
 
 window.previewSong = (type) => {
   const key = type === 'login' ? 'intask_login_song' : 'intask_bgm_song';
@@ -4656,6 +4666,7 @@ function stopLoginMusic(){window.stopLoginMusic&&window.stopLoginMusic();}
 function playLoginMusic(){window.playLoginMusic&&window.playLoginMusic();}
 function toggleBgmDefault(){window.toggleBgmDefault&&window.toggleBgmDefault();}
 function setSongPref(t,v){window.setSongPref&&window.setSongPref(t,v);}
+function settingsPlayMusic(){window.settingsPlayMusic&&window.settingsPlayMusic();}
 function previewSong(t){window.previewSong&&window.previewSong(t);}
 function stopAllMusic(){window.stopAllMusic&&window.stopAllMusic();}
 function setMusicVolume(v){window.setMusicVolume&&window.setMusicVolume(v);}
