@@ -511,6 +511,7 @@ body::after{display:none;}
 ============================================================ */
 .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:5000;display:none;align-items:center;justify-content:center;padding:16px;}
 .modal-overlay.open{display:flex;}
+.modal{background:var(--surf);border-radius:20px;width:100%;max-width:480px;padding:24px;box-shadow:0 20px 60px rgba(0,0,0,.3);max-height:85vh;overflow-y:auto;position:relative;z-index:5001;}
 .modal-handle{width:40px;height:4px;background:var(--border);border-radius:99px;margin:0 auto 18px;}
 .modal-title{font-size:18px;font-weight:700;text-align:center;margin-bottom:18px;color:var(--ink);font-family:var(--pixel);}
 .modal-tabs{display:flex;background:var(--parchment);border-radius:12px;padding:3px;margin-bottom:16px;border:1px solid var(--border);}
@@ -3813,71 +3814,45 @@ function groupByDate(entries) {
   }));
 }
 
-window.renderLibrary = function(keepFocus) {
+window.renderLibrary = function() {
   const lf = window._libFilter||'all';
   const ls = window._libSearch||'';
-  const filtered=EXERCISE_DB.filter(ex=>{
-    const tm=lf==='all'||ex.type===lf;
-    const sm=!ls||ex.name.toLowerCase().includes(ls.toLowerCase())||ex.muscles.some(m=>m.toLowerCase().includes(ls.toLowerCase()));
-    return tm&&sm;
+  const filtered = EXERCISE_DB.filter(function(ex) {
+    return (lf==='all'||ex.type===lf) && (!ls||ex.name.toLowerCase().includes(ls.toLowerCase())||ex.muscles.some(function(m){return m.toLowerCase().includes(ls.toLowerCase());}));
   });
-  const typeIcon = {weights:'🏋️',calisthenics:'💪',run:'🏃',swim:'🏊',cardio:'❤️'};
-  const s=getFitSub(); if(!s) return;
-
-  // If the library scaffold already exists, only update results (preserves search input focus)
-  const existingResults = document.getElementById('lib-results');
-  if (existingResults) {
-    // Only update filters and results, leave search input alone
-    const filtersEl = document.getElementById('lib-filters');
-    if(filtersEl) filtersEl.innerHTML = [['all','All'],['weights','🏋️ Weights'],['calisthenics','💪 Calisthenics'],['run','🏃 Running'],['swim','🏊 Swimming'],['cardio','❤️ Cardio']].map(([v,l])=>`<button class="lib-filter-btn${lf===v?' active':''}" onclick="window._libFilter='${v}';window.renderLibrary(true)">${l}</button>`).join('');
-    const countEl = document.getElementById('lib-count');
-    if(countEl) countEl.textContent = filtered.length + ' exercises';
-    existingResults.innerHTML = filtered.map(ex=>`
-      <div class="ex-lib-card" data-exid="${ex.id}">
-        <span class="ex-lib-gif">${typeIcon[ex.type]||'💪'}</span>
-        <div class="ex-lib-info"><div class="ex-lib-name">${ex.name}</div><div class="ex-lib-muscles">${ex.muscles.join(', ')}</div></div>
-        <div class="ex-lib-right"><div class="ex-lib-diff">${'●'.repeat(ex.difficulty)}${'○'.repeat(5-ex.difficulty)}</div><div class="ex-lib-type">${ex.type}</div></div>
-      </div>`).join('');
-  existingResults.onclick = e => {
-    const card = e.target.closest('[data-exid]');
-    if(card) window.showExDetail(card.dataset.exid);
-  };existingResults.innerHTML = filtered.map(ex=>`
-      <div class="ex-lib-card" data-exid="${ex.id}">
-        <span class="ex-lib-gif">${typeIcon[ex.type]||'💪'}</span>
-        <div class="ex-lib-info"><div class="ex-lib-name">${ex.name}</div><div class="ex-lib-muscles">${ex.muscles.join(', ')}</div></div>
-        <div class="ex-lib-right"><div class="ex-lib-diff">${'●'.repeat(ex.difficulty)}${'○'.repeat(5-ex.difficulty)}</div><div class="ex-lib-type">${ex.type}</div></div>
-      </div>`).join('');
-    return;
+  const typeIcon = {weights:'Weights',calisthenics:'Cali',run:'Run',swim:'Swim',cardio:'Cardio'};
+  const s = getFitSub(); if(!s) return;
+  const cards = filtered.map(function(ex) {
+    return '<div class="ex-lib-card" data-exid="'+ex.id+'">'
+      +'<div class="ex-lib-info"><div class="ex-lib-name">'+ex.name+'</div>'
+      +'<div class="ex-lib-muscles">'+ex.muscles.join(', ')+'</div></div>'
+      +'<div class="ex-lib-right"><div class="ex-lib-type">'+ex.type+'</div></div>'
+      +'</div>';
+  }).join('');
+  const filterBtns = [['all','All'],['weights','Weights'],['calisthenics','Cali'],['run','Run'],['swim','Swim'],['cardio','Cardio']].map(function(pair) {
+    return '<button class="lib-filter-btn'+(lf===pair[0]?' active':'')+'" onclick="window._libFilter=\''+pair[0]+'\';window.renderLibrary()">'+pair[1]+'</button>';
+  }).join('');
+  s.innerHTML = '<div class="sec-title" style="margin-bottom:12px">EXERCISE LIBRARY</div>'
+    +'<input id="lib-s" class="form-input" placeholder="Search exercises..." style="margin-bottom:10px" value="'+ls+'">'
+    +'<div class="lib-filters">'+filterBtns+'</div>'
+    +'<div style="font-size:10px;color:var(--muted);margin:6px 0 10px">'+filtered.length+' exercises</div>'
+    +'<div id="lib-results">'+cards+'</div>';
+  var inp = document.getElementById('lib-s');
+  if(inp) inp.addEventListener('input', function(){window._libSearch=this.value;window.renderLibrary();});
+  var res = document.getElementById('lib-results');
+  if(res) {
+    function handleLibClick(e) {
+      var card = e.target.closest('[data-exid]');
+      if(card && card.dataset.exid) {
+        e.preventDefault();
+        window.showExDetail(card.dataset.exid);
+      }
+    }
+    res.addEventListener('click', handleLibClick);
+    res.addEventListener('touchend', handleLibClick, {passive:false});
   }
-
-  // First render: build full scaffold
-  s.innerHTML=`
-    <div class="sec-title" style="margin-bottom:12px"><img src="https://maplestory.io/api/GMS/255/item/1472000/icon" alt="" width="18" height="18" style="image-rendering:pixelated;vertical-align:middle;margin-right:4px"> EXERCISE LIBRARY</div>
-    <input id="lib-search-input" class="form-input" placeholder="🔍 Search exercises or muscles..." style="margin-bottom:10px" autocomplete="off">
-    <div id="lib-filters" class="lib-filters"></div>
-    <div id="lib-count" style="font-size:10px;color:var(--muted);font-weight:600;margin-bottom:10px"></div>
-    <div id="lib-results" class="ex-lib-list"></div>`;
-
-  // Wire up search input with persistent event listener
-  const inp = document.getElementById('lib-search-input');
-  if(inp) {
-    inp.value = ls;
-    inp.addEventListener('input', function() {
-      window._libSearch = this.value;
-      window.renderLibrary(true);
-    });
-  }
-  // Add event delegation for exercise cards (more reliable than inline onclick)
-  const libResults = document.getElementById('lib-results');
-  if(libResults) {
-    libResults.onclick = e => {
-      const card = e.target.closest('[data-exid]');
-      if(card && card.dataset.exid) window.showExDetail(card.dataset.exid);
-    };
-  }
-  // Now populate filters and results
-  window.renderLibrary(false);
 }
+
 
 
 window.showExDetail = id => {
