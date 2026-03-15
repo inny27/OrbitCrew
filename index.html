@@ -140,7 +140,7 @@ body::after{display:none;}
 /* ============================================================
    BOTTOM NAV
 ============================================================ */
-.bottom-nav{position:fixed;bottom:0;left:0;right:0;width:100%;background:rgba(253,248,240,0.95);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-top:1px solid var(--border);display:flex;justify-content:space-around;align-items:center;padding:8px 0 20px;z-index:200;}
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;width:100%;background:rgba(253,248,240,0.95);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-top:1px solid var(--border);display:flex;justify-content:space-around;align-items:center;padding:8px 0;padding-bottom:max(8px,env(safe-area-inset-bottom));z-index:200;}
 .bnav-btn{display:flex;flex-direction:column;align-items:center;gap:2px;cursor:pointer;color:var(--muted);padding:4px 10px;border:none;background:transparent;transition:.15s;position:relative;}
 .bnav-btn.active{color:var(--accent);}
 .bnav-btn.active::before{content:'▲';position:absolute;top:-14px;left:50%;transform:translateX(-50%);font-size:8px;color:var(--accent);}
@@ -151,7 +151,7 @@ body::after{display:none;}
    TAB PANELS
 ============================================================ */
 .panels{flex:1;}
-.panel{display:none;overflow-y:scroll;padding:16px 16px 80px;-webkit-overflow-scrolling:touch;height:calc(100vh - 160px);}
+.panel{display:none;overflow-y:scroll;padding:16px 16px 90px;-webkit-overflow-scrolling:touch;height:calc(100vh - 150px);}
 .panel.active{display:block;}
 
 /* ============================================================
@@ -3816,7 +3816,7 @@ function groupByDate(entries) {
 
 window.renderLibrary = function() {
   const lf = window._libFilter||'all';
-  const ls = window._libSearch||'';
+  const ls = String(window._libSearch||'');
   const filtered = EXERCISE_DB.filter(function(ex) {
     return (lf==='all'||ex.type===lf) && (!ls||ex.name.toLowerCase().includes(ls.toLowerCase())||ex.muscles.some(function(m){return m.toLowerCase().includes(ls.toLowerCase());}));
   });
