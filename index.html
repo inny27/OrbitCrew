@@ -140,7 +140,7 @@ body::after{display:none;}
 /* ============================================================
    BOTTOM NAV
 ============================================================ */
-.bottom-nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:430px;background:rgba(253,248,240,0.95);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-top:1px solid var(--border);display:flex;justify-content:space-around;align-items:center;padding:8px 0 20px;z-index:200;}
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;width:100%;background:rgba(253,248,240,0.95);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-top:1px solid var(--border);display:flex;justify-content:space-around;align-items:center;padding:8px 0 20px;z-index:200;}
 .bnav-btn{display:flex;flex-direction:column;align-items:center;gap:2px;cursor:pointer;color:var(--muted);padding:4px 10px;border:none;background:transparent;transition:.15s;position:relative;}
 .bnav-btn.active{color:var(--accent);}
 .bnav-btn.active::before{content:'▲';position:absolute;top:-14px;left:50%;transform:translateX(-50%);font-size:8px;color:var(--accent);}
@@ -151,7 +151,7 @@ body::after{display:none;}
    TAB PANELS
 ============================================================ */
 .panels{flex:1;}
-.panel{display:none;height:calc(100vh - 170px);overflow-y:auto;padding:16px 20px 100px;}
+.panel{display:none;overflow-y:auto;padding:16px 16px 80px;-webkit-overflow-scrolling:touch;}
 .panel.active{display:block;}
 
 /* ============================================================
@@ -511,7 +511,7 @@ body::after{display:none;}
 ============================================================ */
 .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:5000;display:flex;align-items:flex-end;justify-content:center;opacity:0;pointer-events:none;transition:opacity .2s;}
 .modal-overlay.open{opacity:1;pointer-events:all;}
-.modal-overlay.open .modal{transform:translateY(0);}
+.modal-overlay.open .modal{background:var(--surf);border-radius:24px 24px 0 0;width:100%;padding:20px 20px 40px;box-shadow:0 -8px 40px rgba(44,35,64,0.15);transform:translateY(100%);transition:transform .3s cubic-bezier(.32,.72,0,1);max-height:90vh;overflow-y:auto;position:relative;}
 .modal-overlay.open .modal{background:var(--surf);border-radius:24px 24px 0 0;width:100%;max-width:520px;padding:20px;padding-bottom:40px;box-shadow:0 -8px 40px rgba(44,35,64,0.15);transform:translateY(100%);transition:transform .3s ease;max-height:90vh;overflow-y:auto;position:relative;}
 .modal{background:var(--surf);border-radius:24px 24px 0 0;width:100%;max-width:430px;padding:20px;padding-bottom:40px;border-top:none;box-shadow:0 -8px 40px rgba(44,35,64,0.12);transform:translateY(100%);transition:transform .3s ease;max-height:90vh;overflow-y:auto;position:relative;z-index:5001;}
 .modal-overlay.open .modal{background:var(--surf);border-radius:24px 24px 0 0;width:100%;max-width:520px;padding:20px;padding-bottom:40px;box-shadow:0 -8px 40px rgba(44,35,64,0.15);transform:translateY(100%);transition:transform .3s ease;max-height:90vh;overflow-y:auto;position:relative;}
@@ -656,6 +656,14 @@ body.colorblind{filter:url(#colorblind-filter);}
 @keyframes tama-run{0%,100%{transform:translateX(0) scaleX(1);}49%{transform:translateX(20px) scaleX(1);}51%{transform:translateX(20px) scaleX(-1);}100%{transform:translateX(0) scaleX(-1);}}
 @keyframes tama-levelup{0%{transform:scale(1);}30%{transform:scale(1.3) rotate(-5deg);}60%{transform:scale(1.3) rotate(5deg);}100%{transform:scale(1);}}
 
+
+/* ── Login mob animations ── */
+@keyframes mob-bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+@keyframes mob-bounce-delay1{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+@keyframes mob-wobble{0%,100%{transform:rotate(-4deg)}50%{transform:rotate(4deg)}}
+@keyframes mob-peek{0%,100%{transform:translateY(4px) scaleX(1)}50%{transform:translateY(-4px) scaleX(1)}}
+@keyframes mob-hop{0%,100%{transform:translateY(0) scaleY(1)}40%{transform:translateY(-12px) scaleY(1.1)}60%{transform:translateY(-10px) scaleY(1.05)}}
+@keyframes mob-sway{0%,100%{transform:rotate(0deg) translateY(0)}25%{transform:rotate(-3deg) translateY(-2px)}75%{transform:rotate(3deg) translateY(-2px)}}
 </style>
 
 <!-- Firebase -->
@@ -4900,10 +4908,21 @@ function updateExSearch(){if(window.updateExSearch)window.updateExSearch.apply(w
     <img src="https://maplestory.io/api/GMS/255/item/1302000/icon" width="28" style="image-rendering:pixelated;opacity:0.8;transform:scaleX(-1)" onerror="this.style.display='none'">
   </div>
   <div class="login-sub">× Level Up Life ×</div>
-  <div style="display:flex;gap:16px;margin-top:12px;justify-content:center;align-items:flex-end">
-    <img src="https://maplestory.io/api/GMS/255/mob/130100/render/stand" alt="Snail" width="56" style="image-rendering:pixelated;filter:drop-shadow(0 4px 8px rgba(44,35,64,0.15))" onerror="this.style.display='none'">
-    <img src="https://maplestory.io/api/GMS/255/mob/130101/render/stand" alt="Blue Snail" width="64" style="image-rendering:pixelated;filter:drop-shadow(0 4px 8px rgba(44,35,64,0.15))" onerror="this.style.display='none'">
-    <img src="https://maplestory.io/api/GMS/255/mob/100100/render/stand" alt="Mushroom" width="60" style="image-rendering:pixelated" onerror="this.style.display='none'">
+  <div style="display:flex;gap:8px;margin-top:14px;justify-content:center;align-items:flex-end;padding:0 8px">
+    <img src="https://maplestory.io/api/GMS/255/mob/130102/render/stand" alt="Red Snail" width="40"
+         style="image-rendering:pixelated;animation:mob-sway 2.1s ease-in-out infinite;filter:drop-shadow(0 3px 6px rgba(44,35,64,0.15))" onerror="this.style.display='none'">
+    <img src="https://maplestory.io/api/GMS/255/mob/130100/render/stand" alt="Snail" width="48"
+         style="image-rendering:pixelated;animation:mob-bounce 1.8s ease-in-out infinite;filter:drop-shadow(0 3px 6px rgba(44,35,64,0.15))" onerror="this.style.display='none'">
+    <img src="https://maplestory.io/api/GMS/255/mob/1210101/render/stand" alt="Ribbon Pig" width="56"
+         style="image-rendering:pixelated;animation:mob-hop 1.4s ease-in-out infinite .3s;filter:drop-shadow(0 4px 8px rgba(44,35,64,0.2))" onerror="this.style.display='none'">
+    <img src="https://maplestory.io/api/GMS/255/mob/100100/render/stand" alt="Mushroom" width="64"
+         style="image-rendering:pixelated;animation:mob-bounce 1.6s ease-in-out infinite .1s;filter:drop-shadow(0 4px 10px rgba(44,35,64,0.25))" onerror="this.style.display='none'">
+    <img src="https://maplestory.io/api/GMS/255/mob/1110100/render/stand" alt="Green Mushroom" width="52"
+         style="image-rendering:pixelated;animation:mob-wobble 1.9s ease-in-out infinite .5s;filter:drop-shadow(0 3px 6px rgba(44,35,64,0.15))" onerror="this.style.display='none'">
+    <img src="https://maplestory.io/api/GMS/255/mob/130101/render/stand" alt="Blue Snail" width="44"
+         style="image-rendering:pixelated;animation:mob-sway 2.3s ease-in-out infinite .2s;filter:drop-shadow(0 3px 6px rgba(44,35,64,0.15))" onerror="this.style.display='none'">
+    <img src="https://maplestory.io/api/GMS/255/mob/1120100/render/stand" alt="Octopus" width="48"
+         style="image-rendering:pixelated;animation:mob-hop 1.7s ease-in-out infinite .4s;filter:drop-shadow(0 3px 6px rgba(44,35,64,0.15))" onerror="this.style.display='none'">
   </div>
   <div class="auth-card">
     <div id="auth-err" class="auth-error"></div>
