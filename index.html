@@ -511,10 +511,8 @@ body::after{display:none;}
 ============================================================ */
 .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:5000;display:flex;align-items:flex-end;justify-content:center;opacity:0;pointer-events:none;transition:opacity .2s;}
 .modal-overlay.open{opacity:1;pointer-events:all;}
-.modal-overlay.open .modal{transform:translateY(0);}
-.modal-overlay.open .modal{background:var(--surf);border-radius:24px 24px 0 0;width:100%;max-width:520px;padding:20px;padding-bottom:40px;box-shadow:0 -8px 40px rgba(44,35,64,0.15);transform:translateY(100%);transition:transform .3s ease;max-height:90vh;overflow-y:auto;position:relative;}
-.modal{background:var(--surf);border-radius:24px 24px 0 0;width:100%;max-width:430px;padding:20px;padding-bottom:40px;border-top:none;box-shadow:0 -8px 40px rgba(44,35,64,0.12);transform:translateY(100%);transition:transform .3s ease;max-height:90vh;overflow-y:auto;position:relative;z-index:5001;}
-.modal-overlay.open .modal{background:var(--surf);border-radius:24px 24px 0 0;width:100%;max-width:520px;padding:20px;padding-bottom:40px;box-shadow:0 -8px 40px rgba(44,35,64,0.15);transform:translateY(100%);transition:transform .3s ease;max-height:90vh;overflow-y:auto;position:relative;}
+.modal-overlay.open .modal{background:var(--surf);border-radius:24px 24px 0 0;width:100%;padding:20px 20px 48px;box-shadow:0 -8px 40px rgba(44,35,64,0.15);transform:translateY(100%);transition:transform .35s cubic-bezier(.32,.72,0,1);max-height:90vh;overflow-y:auto;position:relative;z-index:5001;}
+
 .modal-handle{width:40px;height:4px;background:var(--border);border-radius:99px;margin:0 auto 18px;}
 .modal-title{font-size:18px;font-weight:700;text-align:center;margin-bottom:18px;color:var(--ink);font-family:var(--pixel);}
 .modal-tabs{display:flex;background:var(--parchment);border-radius:12px;padding:3px;margin-bottom:16px;border:1px solid var(--border);}
@@ -4409,72 +4407,108 @@ function _mpBuildUI() {
   const root = document.getElementById('music-app-root');
   if (!root) return;
   const t = _mpGetTrack();
-  const list = _mpGetList();
   const pct = _mpDuration > 0 ? Math.min((_mpProgress/_mpDuration)*100,100) : 0;
   const isLiked = _mpLiked.has(t.id);
+  const searchVal = root._searchVal || '';
+  const list = _mpGetList().filter(tr =>
+    !searchVal || tr.title.toLowerCase().includes(searchVal.toLowerCase()) || tr.artist.toLowerCase().includes(searchVal.toLowerCase())
+  );
 
   root.innerHTML =
-    '<div style="display:flex;flex-direction:column;height:calc(100vh - 120px);overflow:hidden">' +
+    '<div style="display:flex;flex-direction:column;height:calc(100vh - 155px)">' +
 
-    // ── Now Playing ──
-    '<div style="background:linear-gradient(180deg,'+t.colour+'22,'+t.colour+'06);border-bottom:1px solid var(--border);padding:20px 20px 16px;text-align:center">' +
-      '<div style="width:120px;height:120px;border-radius:18px;background:'+t.colour+'18;border:2px solid '+t.colour+'40;margin:0 auto 14px;display:flex;align-items:center;justify-content:center;box-shadow:0 10px 32px '+t.colour+'30;position:relative;overflow:hidden">' +
-        '<div style="position:absolute;inset:0;background:radial-gradient(circle at 30% 30%,rgba(255,255,255,0.15),transparent)"></div>' +
-        '<img src="https://maplestory.io/api/GMS/255/mob/'+t.mob+'/render/stand" width="90" style="image-rendering:pixelated;filter:drop-shadow(0 4px 12px '+t.colour+'60)" onerror="this.remove()">' +
+    // ── Compact Now Playing ──
+    '<div style="background:linear-gradient(135deg,'+t.colour+'18,'+t.colour+'06);border-bottom:1px solid var(--border);padding:12px 16px 10px">' +
+      '<div style="display:flex;align-items:center;gap:12px">' +
+        '<div style="width:52px;height:52px;border-radius:12px;background:'+t.colour+'20;border:2px solid '+t.colour+'40;display:flex;align-items:center;justify-content:center;flex-shrink:0;overflow:hidden">' +
+          '<img src="https://maplestory.io/api/GMS/255/mob/'+t.mob+'/render/stand" width="44" style="image-rendering:pixelated;object-fit:contain" onerror="this.remove()">' +
+        '</div>' +
+        '<div style="flex:1;min-width:0">' +
+          '<div style="font-weight:700;font-size:14px;color:var(--ink);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+t.title+'</div>' +
+          '<div style="font-size:11px;color:var(--muted)">'+t.artist+'</div>' +
+        '</div>' +
+        '<button onclick="window._mpToggleLike()" style="background:none;border:none;font-size:20px;color:'+(isLiked?'#D4708A':'var(--muted)')+';cursor:pointer;padding:4px;flex-shrink:0">'+(isLiked?'♥':'♡')+'</button>' +
       '</div>' +
-      '<div style="font-family:var(--pixel);font-size:14px;font-weight:700;color:var(--ink);margin-bottom:3px">'+t.title+'</div>' +
-      '<div style="font-size:11px;color:var(--muted)">'+t.artist+'</div>' +
-    '</div>' +
 
-    // ── Seek bar ──
-    '<div style="padding:12px 20px 4px">' +
-      '<div onclick="window._mpSeek(event)" style="height:5px;background:var(--parchment);border-radius:99px;cursor:pointer;position:relative;overflow:hidden;border:1px solid var(--border)">' +
-        '<div style="position:absolute;left:0;top:0;height:100%;width:'+pct.toFixed(1)+'%;background:linear-gradient(90deg,'+t.colour+','+t.colour+'cc);border-radius:99px;transition:width .4s linear"></div>' +
+      // Seek bar
+      '<div onclick="window._mpSeek(event)" style="height:4px;background:var(--parchment);border-radius:99px;cursor:pointer;position:relative;overflow:hidden;margin:10px 0 4px;border:1px solid var(--border)">' +
+        '<div style="position:absolute;left:0;top:0;height:100%;width:'+pct.toFixed(1)+'%;background:'+t.colour+';border-radius:99px;transition:width .4s linear"></div>' +
       '</div>' +
-      '<div style="display:flex;justify-content:space-between;font-size:10px;color:var(--muted);margin-top:4px"><span>'+_mpFmt(_mpProgress)+'</span><span>'+_mpFmt(_mpDuration)+'</span></div>' +
-    '</div>' +
+      '<div style="display:flex;justify-content:space-between;font-size:9px;color:var(--muted);margin-bottom:8px"><span>'+_mpFmt(_mpProgress)+'</span><span>'+_mpFmt(_mpDuration)+'</span></div>' +
 
-    // ── Controls ──
-    '<div style="display:flex;align-items:center;justify-content:center;gap:12px;padding:4px 20px 8px">' +
-      '<button onclick="window._mpToggleShuffle()" style="width:36px;height:36px;border-radius:10px;border:1.5px solid '+(_mpShuffle?t.colour:'var(--border)')+';background:'+(_mpShuffle?t.colour+'18':'var(--parchment)')+';color:'+(_mpShuffle?t.colour:'var(--muted)')+';font-size:14px;cursor:pointer">⇄</button>' +
-      '<button onclick="window._mpPrev()" style="width:44px;height:44px;border-radius:12px;border:1.5px solid var(--border);background:var(--parchment);color:var(--ink);font-size:20px;cursor:pointer">⏮</button>' +
-      '<button onclick="window._mpTogglePlay()" style="width:58px;height:58px;border-radius:16px;border:none;background:linear-gradient(135deg,'+t.colour+','+t.colour+'bb);color:#fff;font-size:26px;cursor:pointer;box-shadow:0 6px 20px '+t.colour+'50">'+(_mpPlaying?'⏸':'▶')+'</button>' +
-      '<button onclick="window._mpNext()" style="width:44px;height:44px;border-radius:12px;border:1.5px solid var(--border);background:var(--parchment);color:var(--ink);font-size:20px;cursor:pointer">⏭</button>' +
-      '<button onclick="window._mpToggleLike()" style="width:36px;height:36px;border-radius:10px;border:1.5px solid '+(isLiked?'#D4708A':'var(--border)')+';background:'+(isLiked?'rgba(212,112,138,0.1)':'var(--parchment)')+';color:'+(isLiked?'#D4708A':'var(--muted)')+';font-size:16px;cursor:pointer">'+(isLiked?'♥':'♡')+'</button>' +
-    '</div>' +
-
-    // ── Volume ──
-    '<div style="display:flex;align-items:center;gap:8px;padding:0 20px 10px">' +
-      '<span style="font-size:12px">🔈</span>' +
-      '<div onclick="window._mpSetVol(event)" style="flex:1;height:4px;background:var(--parchment);border-radius:99px;cursor:pointer;position:relative;overflow:hidden;border:1px solid var(--border)">' +
-        '<div style="height:100%;width:'+Math.round(_mpVolume*100)+'%;background:linear-gradient(90deg,var(--gold),var(--gold-lt));border-radius:99px"></div>' +
+      // Controls
+      '<div style="display:flex;align-items:center;justify-content:center;gap:10px">' +
+        '<button onclick="window._mpToggleShuffle()" style="width:32px;height:32px;border-radius:8px;border:1.5px solid '+(_mpShuffle?t.colour:'var(--border)')+';background:'+(_mpShuffle?t.colour+'18':'transparent')+';color:'+(_mpShuffle?t.colour:'var(--muted)')+';font-size:14px;cursor:pointer">⇄</button>' +
+        '<button onclick="window._mpPrev()" style="width:38px;height:38px;border-radius:10px;border:1.5px solid var(--border);background:transparent;color:var(--ink);font-size:18px;cursor:pointer">⏮</button>' +
+        '<button onclick="window._mpTogglePlay()" style="width:52px;height:52px;border-radius:14px;border:none;background:'+t.colour+';color:#fff;font-size:24px;cursor:pointer;box-shadow:0 4px 16px '+t.colour+'60">'+(_mpPlaying?'⏸':'▶')+'</button>' +
+        '<button onclick="window._mpNext()" style="width:38px;height:38px;border-radius:10px;border:1.5px solid var(--border);background:transparent;color:var(--ink);font-size:18px;cursor:pointer">⏭</button>' +
+        '<button onclick="window._mpCycleRepeat()" style="width:32px;height:32px;border-radius:8px;border:1.5px solid '+(_mpRepeat!=='none'?t.colour:'var(--border)')+';background:'+(_mpRepeat!=='none'?t.colour+'18':'transparent')+';color:'+(_mpRepeat!=='none'?t.colour:'var(--muted)')+';font-size:14px;cursor:pointer">'+(_mpRepeat==='one'?'🔂':'🔁')+'</button>' +
       '</div>' +
-      '<span style="font-size:12px">🔊</span>' +
     '</div>' +
 
-    // ── Tabs ──
-    '<div style="display:flex;border-bottom:1px solid var(--border);background:var(--surf)">' +
-      _mpTabBtn('all','🎵 All') +
-      _mpTabBtn('liked','♥ Liked') +
-      _mpTabBtn('albums','💿 Albums') +
+    // ── Tabs + Search ──
+    '<div style="display:flex;align-items:center;gap:8px;padding:8px 12px 6px;border-bottom:1px solid var(--border)">' +
+      _mpTabBtn('all','All') +
+      _mpTabBtn('liked','♥') +
+      _mpTabBtn('albums','💿') +
+      '<input id="mp-search" type="search" placeholder="Search…" value="'+searchVal+'" ' +
+        'oninput="document.getElementById(\'music-app-root\')._searchVal=this.value;window._mpBuildUIDebounce()" ' +
+        'style="flex:1;border:1.5px solid var(--border);border-radius:8px;padding:6px 10px;font-size:12px;background:var(--parchment);color:var(--ink);outline:none;min-width:0">' +
     '</div>' +
 
-    // ── Tab content ──
-    '<div style="flex:1;overflow-y:auto;padding:8px 12px">' +
-      _mpTabContent(list, t) +
+    // ── Song list ──
+    '<div style="flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:6px 10px 12px">' +
+      (_mpTab === 'albums' ? _mpAlbumsView() :
+        list.length === 0 ? '<div style="text-align:center;padding:32px;color:var(--muted);font-size:13px">'+(searchVal?'No results for "'+searchVal+'"':'No songs here yet')+'</div>' :
+        list.map((tr) => {
+          const isCur = tr.id === t.id;
+          const liked = _mpLiked.has(tr.id);
+          const realIdx = MUSIC_TRACKS.indexOf(tr);
+          return '<div data-play="'+realIdx+'" style="display:flex;align-items:center;gap:10px;padding:8px 6px;border-radius:10px;cursor:pointer;background:'+(isCur?tr.colour+'14':'transparent')+';margin-bottom:2px">' +
+            '<div style="width:36px;height:36px;border-radius:8px;background:'+tr.colour+'18;display:flex;align-items:center;justify-content:center;flex-shrink:0">' +
+              '<img src="https://maplestory.io/api/GMS/255/mob/'+tr.mob+'/render/stand" width="30" style="image-rendering:pixelated;object-fit:contain" onerror="this.remove()">' +
+            '</div>' +
+            '<div style="flex:1;min-width:0">' +
+              '<div style="font-size:13px;font-weight:'+(isCur?'700':'400')+';color:'+(isCur?tr.colour:'var(--ink)')+';overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+tr.title+'</div>' +
+              '<div style="font-size:10px;color:var(--muted)">'+tr.artist+'</div>' +
+            '</div>' +
+            (isCur && _mpPlaying ? '<span style="font-size:10px;color:'+tr.colour+'">▶</span>' : '') +
+            '<button data-liketrack="'+tr.id+'" style="background:none;border:none;font-size:14px;color:'+(liked?'#D4708A':'var(--border)')+';cursor:pointer;padding:2px 4px">'+(liked?'♥':'♡')+'</button>' +
+          '</div>';
+        }).join('')
+      ) +
     '</div>' +
     '</div>';
 
-  // Event delegation for music player buttons
+  // Re-attach delegation
   root.onclick = function(e) {
-    const btn = e.target.closest('[data-mptab],[data-liketrack],[data-delalbum],[data-openalbum]');
-    if (!btn) return;
-    if (btn.dataset.mptab) { window._mpSetTab(btn.dataset.mptab); return; }
-    if (btn.dataset.liketrack) { e.stopPropagation(); window._mpLikeTrack(btn.dataset.liketrack); return; }
-    if (btn.dataset.delalbum) { e.stopPropagation(); window._mpDeleteAlbum(btn.dataset.delalbum); return; }
-    if (btn.dataset.openalbum) { window._mpOpenAlbum(btn.dataset.openalbum); return; }
+    const el = e.target.closest('[data-play],[data-mptab],[data-liketrack],[data-delalbum],[data-openalbum]');
+    if (!el) return;
+    if (el.dataset.play !== undefined) { window._mpPlay(parseInt(el.dataset.play)); return; }
+    if (el.dataset.mptab) { window._mpSetTab(el.dataset.mptab); return; }
+    if (el.dataset.liketrack) { e.stopPropagation(); window._mpLikeTrack(el.dataset.liketrack); return; }
+    if (el.dataset.delalbum) { e.stopPropagation(); window._mpDeleteAlbum(el.dataset.delalbum); return; }
+    if (el.dataset.openalbum) { window._mpOpenAlbum(el.dataset.openalbum); return; }
   };
+
+  // Restore search focus if searching
+  if (searchVal) {
+    const inp = document.getElementById('mp-search');
+    if (inp) { inp.focus(); inp.setSelectionRange(inp.value.length, inp.value.length); }
+  }
 }
+
+// Debounced rebuild for search
+let _mpSearchTimer = null;
+window._mpBuildUIDebounce = function() {
+  clearTimeout(_mpSearchTimer);
+  _mpSearchTimer = setTimeout(_mpBuildUI, 120);
+};
+
+window._mpCycleRepeat = function() {
+  _mpRepeat = _mpRepeat === 'none' ? 'all' : _mpRepeat === 'all' ? 'one' : 'none';
+  _mpBuildUI();
+};
 
 function _mpTabBtn(id, label) {
   const active = _mpTab === id;
