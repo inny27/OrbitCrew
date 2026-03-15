@@ -2375,7 +2375,14 @@ window.renderSettings = function renderSettings() {
   const avGrid = g('settings-av-grid');
   if(avGrid) {
     const curAv = u.avatar||'100100';
-      // avatar grid built below;
+    avGrid.innerHTML = AVATARS.map(id => {
+      const isSel = id===curAv;
+      const nm = (AVATAR_NAMES[id]||id).split(' ').pop();
+      return '<button onclick="settingsSelectAvatar(\''+id+'\',this)" data-avid="'+id+'" title="'+(AVATAR_NAMES[id]||id)+'" style="aspect-ratio:1;border-radius:12px;border:2px solid '+(isSel?'var(--gold)':'var(--border)')+';background:'+(isSel?'var(--gold-bg)':'var(--parchment)')+';cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:4px;transition:.2s;overflow:hidden">'
+        +'<img src="'+AVATAR_URL(id)+'" width="36" height="36" style="image-rendering:pixelated;object-fit:contain" onerror="this.style.display=\'none\'">'
+        +'<span style="font-size:7px;color:var(--muted);margin-top:2px;line-height:1;text-align:center">'+nm+'</span>'
+        +'</button>';
+    }).join('');
   }
   const colRow = g('settings-col-row');
   if(colRow) colRow.innerHTML = COLORS.map(c=>`<div class="col-dot${(u.color||'#7c3aed')===c?' sel':''}" style="background:${c}" onclick="settingsSelectColor('${c}',this)"></div>`).join('');
@@ -4061,7 +4068,13 @@ window.addEventListener('popstate', function(e) {
 });
 
 // Build pickers
-const avGrid=g('av-grid'); if(avGrid) avGrid.innerHTML=AVATARS.map((a,i)=>`<button class="av-btn${i===0?' sel':''}" onclick="selectAvatar('${a}',this)">${a}</button>`).join('');
+const avGrid=g('av-grid'); if(avGrid) avGrid.innerHTML=AVATARS.map((a,i)=>{
+  const isSel = i===0;
+  return '<button class="av-btn'+(isSel?' sel':'')+'" onclick="selectAvatar(\''+a+'\',this)" data-avid="'+a+'" title="'+(AVATAR_NAMES[a]||a)+'" style="aspect-ratio:1;border-radius:12px;border:2px solid '+(isSel?'var(--gold)':'var(--border)')+';background:'+(isSel?'var(--gold-bg)':'var(--parchment)')+';cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:4px;transition:.2s;overflow:hidden">'
+    +'<img src="'+AVATAR_URL(a)+'" width="40" height="40" style="image-rendering:pixelated;object-fit:contain" onerror="this.style.display=\'none\'">'
+    +'<span style="font-size:7px;color:var(--muted);margin-top:2px;line-height:1;text-align:center;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+(AVATAR_NAMES[a]||a).split(' ').pop()+'</span>'
+    +'</button>';
+}).join('');
 const colRow=g('col-row'); if(colRow) colRow.innerHTML=COLORS.map((c,i)=>`<div class="col-dot${i===0?' sel':''}" style="background:${c}" onclick="selectColor('${c}',this)"></div>`).join('');
 
 </script>
