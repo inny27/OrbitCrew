@@ -80,7 +80,7 @@ body::after{display:none;}
 .screen{display:none;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:32px 20px;position:relative;z-index:1;background:var(--bg);}
 .screen.active{display:flex;position:fixed;top:0;left:0;right:0;bottom:0;z-index:50;overflow-y:auto;}
 #app{display:none;flex-direction:column;max-width:430px;margin:0 auto;min-height:100vh;position:relative;z-index:1;}
-#app.active{display:flex;position:fixed;top:0;left:0;right:0;bottom:0;overflow:hidden;}
+#app.active{display:flex;position:fixed;top:0;left:0;right:0;bottom:0;overflow:hidden;z-index:100;}
 
 /* ============================================================
    LOGIN SCREEN
@@ -511,6 +511,7 @@ body::after{display:none;}
 ============================================================ */
 .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:5000;display:flex;align-items:flex-end;justify-content:center;opacity:0;pointer-events:none;transition:opacity .2s;}
 .modal-overlay.open{opacity:1;pointer-events:all;}
+.modal-overlay.open .modal{transform:translateY(0);}
 .modal{background:var(--surf);border-radius:24px 24px 0 0;width:100%;max-width:430px;padding:20px;padding-bottom:40px;border-top:none;box-shadow:0 -8px 40px rgba(44,35,64,0.12);transform:translateY(100%);transition:transform .3s ease;max-height:90vh;overflow-y:auto;position:relative;z-index:5001;}
 .modal-overlay.open .modal{transform:translateY(0);}
 .modal-handle{width:40px;height:4px;background:var(--border);border-radius:99px;margin:0 auto 18px;}
@@ -1152,6 +1153,23 @@ window.doEmailLogin = async () => {
     g('li-btn').textContent = isSignUp ? 'Create Account' : '🚀 Sign In';
   }
 };
+window.switchAuthTab = function(tab) {
+  const acct = document.getElementById('auth-account-section');
+  const guest = document.getElementById('auth-guest-section');
+  const tabAcct = document.getElementById('atab-account');
+  const tabGuest = document.getElementById('atab-guest');
+  if (!acct || !guest) return;
+  if (tab === 'guest') {
+    acct.style.display = 'none'; guest.style.display = 'block';
+    if (tabAcct) tabAcct.classList.remove('active');
+    if (tabGuest) tabGuest.classList.add('active');
+  } else {
+    acct.style.display = 'block'; guest.style.display = 'none';
+    if (tabAcct) tabAcct.classList.add('active');
+    if (tabGuest) tabGuest.classList.remove('active');
+  }
+};
+
 window.toggleAuthMode = () => {
   const btn = g('li-btn');
   const isSignUp = btn.dataset.mode === 'signup';
@@ -4579,7 +4597,7 @@ window.SONG_FILES = SONG_FILES;
 <!-- ═══ LOGIN SCREEN ═══ -->
 <div id="login" class="screen active">
   <button id="login-mute-btn" onclick="window.toggleLoginMute()" style="position:absolute;top:16px;right:16px;background:rgba(253,248,240,0.9);border:1.5px solid var(--border);border-radius:10px;width:38px;height:38px;display:flex;align-items:center;justify-content:center;font-size:18px;cursor:pointer;box-shadow:0 2px 8px var(--shadow);z-index:10" title="Toggle music">🔊</button>
-  <div class="login-logo"><img src="https://maplestory.io/api/GMS/255/item/2000000/icon" width="44" style="image-rendering:pixelated" onerror="this.style.display='none'" data-fallback="<span style=font-size:40px>🍄</span>"></div>
+  <div class="login-logo"><img src="https://maplestory.io/api/GMS/255/item/2000000/icon" width="44" style="image-rendering:pixelated" onerror="this.src='';this.outerHTML='<span style=font-size:44px>🧪</span>'" data-fallback="<span style=font-size:40px>🍄</span>"></div>
   <div style="display:flex;align-items:center;justify-content:center;gap:10px;margin-top:8px">
     <img src="https://maplestory.io/api/GMS/255/item/1302000/icon" width="28" style="image-rendering:pixelated;opacity:0.8" onerror="this.style.display='none'">
     <div class="login-title">In<span>Task</span></div>
@@ -5024,6 +5042,135 @@ window.doExecuteClearData = async function() {
 };
 
 </script>
+
+<script>
+// Bridge: global wrappers so onclick= attrs can call ES module functions
+function _doDeleteEntry(){if(window._doDeleteEntry)window._doDeleteEntry.apply(window,arguments);}
+function _doDeleteTask(){if(window._doDeleteTask)window._doDeleteTask.apply(window,arguments);}
+function _doExSearch(){if(window._doExSearch)window._doExSearch.apply(window,arguments);}
+function _libSearch(){if(window._libSearch)window._libSearch.apply(window,arguments);}
+function _mpDeleteAlbum(){if(window._mpDeleteAlbum)window._mpDeleteAlbum.apply(window,arguments);}
+function _mpLikeTrack(){if(window._mpLikeTrack)window._mpLikeTrack.apply(window,arguments);}
+function _mpNewAlbum(){if(window._mpNewAlbum)window._mpNewAlbum.apply(window,arguments);}
+function _mpNext(){if(window._mpNext)window._mpNext.apply(window,arguments);}
+function _mpOpenAlbum(){if(window._mpOpenAlbum)window._mpOpenAlbum.apply(window,arguments);}
+function _mpPlay(){if(window._mpPlay)window._mpPlay.apply(window,arguments);}
+function _mpPrev(){if(window._mpPrev)window._mpPrev.apply(window,arguments);}
+function _mpSeek(){if(window._mpSeek)window._mpSeek.apply(window,arguments);}
+function _mpSetTab(){if(window._mpSetTab)window._mpSetTab.apply(window,arguments);}
+function _mpSetVol(){if(window._mpSetVol)window._mpSetVol.apply(window,arguments);}
+function _mpToggleLike(){if(window._mpToggleLike)window._mpToggleLike.apply(window,arguments);}
+function _mpTogglePlay(){if(window._mpTogglePlay)window._mpTogglePlay.apply(window,arguments);}
+function _mpToggleShuffle(){if(window._mpToggleShuffle)window._mpToggleShuffle.apply(window,arguments);}
+function _showExSuggestions(){if(window._showExSuggestions)window._showExSuggestions.apply(window,arguments);}
+function addExToSession(){if(window.addExToSession)window.addExToSession.apply(window,arguments);}
+function addGuideToDiary(){if(window.addGuideToDiary)window.addGuideToDiary.apply(window,arguments);}
+function addHabit(){if(window.addHabit)window.addHabit.apply(window,arguments);}
+function addSet(){if(window.addSet)window.addSet.apply(window,arguments);}
+function addTask(){if(window.addTask)window.addTask.apply(window,arguments);}
+function adjGuideReps(){if(window.adjGuideReps)window.adjGuideReps.apply(window,arguments);}
+function adjSet(){if(window.adjSet)window.adjSet.apply(window,arguments);}
+function applyIconDensity(){if(window.applyIconDensity)window.applyIconDensity.apply(window,arguments);}
+function calcExPoints(){if(window.calcExPoints)window.calcExPoints.apply(window,arguments);}
+function cancelSession(){if(window.cancelSession)window.cancelSession.apply(window,arguments);}
+function changeIconCount(){if(window.changeIconCount)window.changeIconCount.apply(window,arguments);}
+function clearExSelection(){if(window.clearExSelection)window.clearExSelection.apply(window,arguments);}
+function closeModal(){if(window.closeModal)window.closeModal.apply(window,arguments);}
+function closeTamaPostWorkout(){if(window.closeTamaPostWorkout)window.closeTamaPostWorkout.apply(window,arguments);}
+function completeHabit(){if(window.completeHabit)window.completeHabit.apply(window,arguments);}
+function completeProfile(){if(window.completeProfile)window.completeProfile.apply(window,arguments);}
+function completeTask(){if(window.completeTask)window.completeTask.apply(window,arguments);}
+function confirmDeleteAccount(){if(window.confirmDeleteAccount)window.confirmDeleteAccount.apply(window,arguments);}
+function createCrew(){if(window.createCrew)window.createCrew.apply(window,arguments);}
+function delSet(){if(window.delSet)window.delSet.apply(window,arguments);}
+function deleteBodyEntry(){if(window.deleteBodyEntry)window.deleteBodyEntry.apply(window,arguments);}
+function deleteTask(){if(window.deleteTask)window.deleteTask.apply(window,arguments);}
+function deleteWorkoutEntry(){if(window.deleteWorkoutEntry)window.deleteWorkoutEntry.apply(window,arguments);}
+function doCancelSession(){if(window.doCancelSession)window.doCancelSession.apply(window,arguments);}
+function doEmailLogin(){if(window.doEmailLogin)window.doEmailLogin.apply(window,arguments);}
+function doGoogleLogin(){if(window.doGoogleLogin)window.doGoogleLogin.apply(window,arguments);}
+function doGuestLogin(){if(window.doGuestLogin)window.doGuestLogin.apply(window,arguments);}
+function doGuestReturn(){if(window.doGuestReturn)window.doGuestReturn.apply(window,arguments);}
+function doLogout(){if(window.doLogout)window.doLogout.apply(window,arguments);}
+function doneSet(){if(window.doneSet)window.doneSet.apply(window,arguments);}
+function editAddSet(){if(window.editAddSet)window.editAddSet.apply(window,arguments);}
+function editAdjSet(){if(window.editAdjSet)window.editAdjSet.apply(window,arguments);}
+function editDelSet(){if(window.editDelSet)window.editDelSet.apply(window,arguments);}
+function editUpdSet(){if(window.editUpdSet)window.editUpdSet.apply(window,arguments);}
+function editWorkoutEntry(){if(window.editWorkoutEntry)window.editWorkoutEntry.apply(window,arguments);}
+function executeDeleteAccount(){if(window.executeDeleteAccount)window.executeDeleteAccount.apply(window,arguments);}
+function exportCSV(){if(window.exportCSV)window.exportCSV.apply(window,arguments);}
+function finishSession(){if(window.finishSession)window.finishSession.apply(window,arguments);}
+function getTamaState(){if(window.getTamaState)window.getTamaState.apply(window,arguments);}
+function getTotalStats(){if(window.getTotalStats)window.getTotalStats.apply(window,arguments);}
+function joinCrew(){if(window.joinCrew)window.joinCrew.apply(window,arguments);}
+function leaveCrew(){if(window.leaveCrew)window.leaveCrew.apply(window,arguments);}
+function logBodyEntry(){if(window.logBodyEntry)window.logBodyEntry.apply(window,arguments);}
+function logCardioEntry(){if(window.logCardioEntry)window.logCardioEntry.apply(window,arguments);}
+function logRunEntry(){if(window.logRunEntry)window.logRunEntry.apply(window,arguments);}
+function logSwimEntry(){if(window.logSwimEntry)window.logSwimEntry.apply(window,arguments);}
+function logWorkoutEntry(){if(window.logWorkoutEntry)window.logWorkoutEntry.apply(window,arguments);}
+function openModal(){if(window.openModal)window.openModal.apply(window,arguments);}
+function optInFitness(){if(window.optInFitness)window.optInFitness.apply(window,arguments);}
+function playLoginMusic(){if(window.playLoginMusic)window.playLoginMusic.apply(window,arguments);}
+function previewSong(){if(window.previewSong)window.previewSong.apply(window,arguments);}
+function promptInstall(){if(window.promptInstall)window.promptInstall.apply(window,arguments);}
+function removeSessionEx(){if(window.removeSessionEx)window.removeSessionEx.apply(window,arguments);}
+function renderBodyComp(){if(window.renderBodyComp)window.renderBodyComp.apply(window,arguments);}
+function renderCoach(){if(window.renderCoach)window.renderCoach.apply(window,arguments);}
+function renderDiary(){if(window.renderDiary)window.renderDiary.apply(window,arguments);}
+function renderGuides(){if(window.renderGuides)window.renderGuides.apply(window,arguments);}
+function renderLibrary(){if(window.renderLibrary)window.renderLibrary.apply(window,arguments);}
+function renderMusicPlayer(){if(window.renderMusicPlayer)window.renderMusicPlayer.apply(window,arguments);}
+function renderSettings(){if(window.renderSettings)window.renderSettings.apply(window,arguments);}
+function renderTamaFit(){if(window.renderTamaFit)window.renderTamaFit.apply(window,arguments);}
+function resetTimer(){if(window.resetTimer)window.resetTimer.apply(window,arguments);}
+function saveAllSettings(){if(window.saveAllSettings)window.saveAllSettings.apply(window,arguments);}
+function saveEditedEntry(){if(window.saveEditedEntry)window.saveEditedEntry.apply(window,arguments);}
+function saveNickname(){if(window.saveNickname)window.saveNickname.apply(window,arguments);}
+function savePetName(){if(window.savePetName)window.savePetName.apply(window,arguments);}
+function selectAvatar(){if(window.selectAvatar)window.selectAvatar.apply(window,arguments);}
+function selectColor(){if(window.selectColor)window.selectColor.apply(window,arguments);}
+function selectExercise(){if(window.selectExercise)window.selectExercise.apply(window,arguments);}
+function sendBoost(){if(window.sendBoost)window.sendBoost.apply(window,arguments);}
+function sendCrewMsg(){if(window.sendCrewMsg)window.sendCrewMsg.apply(window,arguments);}
+function sendNudge(){if(window.sendNudge)window.sendNudge.apply(window,arguments);}
+function setBodyMode(){if(window.setBodyMode)window.setBodyMode.apply(window,arguments);}
+function setFeel(){if(window.setFeel)window.setFeel.apply(window,arguments);}
+function setFitnessGoal(){if(window.setFitnessGoal)window.setFitnessGoal.apply(window,arguments);}
+function setHabitPill(){if(window.setHabitPill)window.setHabitPill.apply(window,arguments);}
+function setLogType(){if(window.setLogType)window.setLogType.apply(window,arguments);}
+function setModeHeader(){if(window.setModeHeader)window.setModeHeader.apply(window,arguments);}
+function setMusicVolume(){if(window.setMusicVolume)window.setMusicVolume.apply(window,arguments);}
+function setPill(){if(window.setPill)window.setPill.apply(window,arguments);}
+function setSongPref(){if(window.setSongPref)window.setSongPref.apply(window,arguments);}
+function setTaskPill(){if(window.setTaskPill)window.setTaskPill.apply(window,arguments);}
+function settingsPlayMusic(){if(window.settingsPlayMusic)window.settingsPlayMusic.apply(window,arguments);}
+function settingsSelectAvatar(){if(window.settingsSelectAvatar)window.settingsSelectAvatar.apply(window,arguments);}
+function settingsSelectColor(){if(window.settingsSelectColor)window.settingsSelectColor.apply(window,arguments);}
+function showExDetail(){if(window.showExDetail)window.showExDetail.apply(window,arguments);}
+function showGuide(){if(window.showGuide)window.showGuide.apply(window,arguments);}
+function showInstallInstructions(){if(window.showInstallInstructions)window.showInstallInstructions.apply(window,arguments);}
+function showTamaPostWorkout(){if(window.showTamaPostWorkout)window.showTamaPostWorkout.apply(window,arguments);}
+function skipRest(){if(window.skipRest)window.skipRest.apply(window,arguments);}
+function startRestTimer(){if(window.startRestTimer)window.startRestTimer.apply(window,arguments);}
+function startWorkoutSession(){if(window.startWorkoutSession)window.startWorkoutSession.apply(window,arguments);}
+function stopAllMusic(){if(window.stopAllMusic)window.stopAllMusic.apply(window,arguments);}
+function stopLoginMusic(){if(window.stopLoginMusic)window.stopLoginMusic.apply(window,arguments);}
+function switchAuthTab(){if(window.switchAuthTab)window.switchAuthTab.apply(window,arguments);}
+function switchFitTab(){if(window.switchFitTab)window.switchFitTab.apply(window,arguments);}
+function switchSetMode(){if(window.switchSetMode)window.switchSetMode.apply(window,arguments);}
+function switchTab(){if(window.switchTab)window.switchTab.apply(window,arguments);}
+function toggleAuthMode(){if(window.toggleAuthMode)window.toggleAuthMode.apply(window,arguments);}
+function toggleBgmDefault(){if(window.toggleBgmDefault)window.toggleBgmDefault.apply(window,arguments);}
+function toggleColorBlind(){if(window.toggleColorBlind)window.toggleColorBlind.apply(window,arguments);}
+function toggleLoginMute(){if(window.toggleLoginMute)window.toggleLoginMute.apply(window,arguments);}
+function toggleSetMode(){if(window.toggleSetMode)window.toggleSetMode.apply(window,arguments);}
+function toggleTimer(){if(window.toggleTimer)window.toggleTimer.apply(window,arguments);}
+function unlockSkill(){if(window.unlockSkill)window.unlockSkill.apply(window,arguments);}
+function updSet(){if(window.updSet)window.updSet.apply(window,arguments);}
+function updateExSearch(){if(window.updateExSearch)window.updateExSearch.apply(window,arguments);}
+</script>
 </head>
 <body>
 <svg style="display:none">
@@ -5037,7 +5184,7 @@ window.doExecuteClearData = async function() {
 <!-- ═══ LOGIN SCREEN ═══ -->
 <div id="login" class="screen active">
   <button id="login-mute-btn" onclick="window.toggleLoginMute()" style="position:absolute;top:16px;right:16px;background:rgba(253,248,240,0.9);border:1.5px solid var(--border);border-radius:10px;width:38px;height:38px;display:flex;align-items:center;justify-content:center;font-size:18px;cursor:pointer;box-shadow:0 2px 8px var(--shadow);z-index:10" title="Toggle music">🔊</button>
-  <div class="login-logo"><img src="https://maplestory.io/api/GMS/255/item/2000000/icon" width="44" style="image-rendering:pixelated" onerror="this.style.display='none'" data-fallback="<span style=font-size:40px>🍄</span>"></div>
+  <div class="login-logo"><img src="https://maplestory.io/api/GMS/255/item/2000000/icon" width="44" style="image-rendering:pixelated" onerror="this.src='';this.outerHTML='<span style=font-size:44px>🧪</span>'" data-fallback="<span style=font-size:40px>🍄</span>"></div>
   <div style="display:flex;align-items:center;justify-content:center;gap:10px;margin-top:8px">
     <img src="https://maplestory.io/api/GMS/255/item/1302000/icon" width="28" style="image-rendering:pixelated;opacity:0.8" onerror="this.style.display='none'">
     <div class="login-title">In<span>Task</span></div>
