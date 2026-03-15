@@ -1084,45 +1084,59 @@ window.doGoogleLogin = async () => {
 };
 
 window.doEmailLogin = async () => {
-  const email = g('li-email').value.trim(), pw = g('li-pw').value.trim();
-  if (!email || !pw) { showAuthError('Enter email and password.'); return; }
+  const email = g('li-email').value.trim();
+  const pw = g('li-pw').value;
+  if (!email) { showAuthError('Please enter your email address.'); return; }
+  if (!pw) { showAuthError('Please enter your password.'); return; }
+  if (pw.length < 6) { showAuthError('Password must be at least 6 characters.'); return; }
+
   const isSignUp = g('li-btn').dataset.mode === 'signup';
-  g('li-btn').disabled = true; g('li-btn').textContent = '...';
-  const SIGNIN_ERRORS = new Set([
-    'auth/user-not-found','auth/wrong-password','auth/invalid-credential',
-    'auth/invalid-login-credentials','auth/user-disabled','auth/invalid-email'
-  ]);
+  g('li-btn').disabled = true;
+  g('li-btn').textContent = '...';
+  showAuthError('');
+
   try {
     if (isSignUp) {
-      await createUserWithEmailAndPassword(auth, email, pw);
-      toast('Account created! Welcome! 🚀');
+      // CREATE NEW ACCOUNT — only when user explicitly chose "Create Account"
+      const cred = await createUserWithEmailAndPassword(auth, email, pw);
+      toast('Account created! Welcome 🚀');
     } else {
-      // ONLY attempt sign-in — NEVER create an account here
-      await signInWithEmailAndPassword(auth, email, pw);
+      // SIGN IN ONLY — never creates account
+      const cred = await signInWithEmailAndPassword(auth, email, pw);
       toast('Welcome back! 🚀');
     }
-  } catch(e) {
-    console.log('Auth error code:', e.code); // helps debug in console
-    if (!isSignUp) {
-      // All sign-in failures show the same safe message (don't reveal if account exists)
-      showAuthError('No account found with those details. Check your email and password, or create a new account.');
-    } else if (e.code === 'auth/email-already-in-use') {
-      showAuthError('Email already registered. Switch to Sign In mode.');
-    } else if (e.code === 'auth/weak-password') {
-      showAuthError('Password must be at least 6 characters.');
-    } else if (e.code === 'auth/invalid-email') {
-      showAuthError('Please enter a valid email address.');
+  } catch (err) {
+    const code = err.code || '';
+    console.warn('[Auth]', code, err.message);
+
+    if (isSignUp) {
+      if (code === 'auth/email-already-in-use') {
+        showAuthError('An account with this email already exists. Switch to Sign In.');
+      } else if (code === 'auth/invalid-email') {
+        showAuthError('Please enter a valid email address.');
+      } else if (code === 'auth/weak-password') {
+        showAuthError('Password too weak — use at least 6 characters.');
+      } else {
+        showAuthError('Could not create account: ' + (err.message || code));
+      }
     } else {
-      showAuthError(friendlyErr(e.code));
+      // All sign-in failures → same safe message (never reveal if account exists)
+      if (['auth/user-not-found','auth/wrong-password','auth/invalid-credential',
+           'auth/invalid-login-credentials','auth/user-disabled',
+           'auth/too-many-requests'].includes(code)) {
+        showAuthError(code === 'auth/too-many-requests'
+          ? 'Too many attempts. Please wait a moment and try again.'
+          : 'Incorrect email or password. If you do not have an account yet, tap Create one.');
+      } else if (code === 'auth/invalid-email') {
+        showAuthError('Please enter a valid email address.');
+      } else {
+        showAuthError('Sign in failed. Please try again. (' + code + ')');
+      }
     }
     g('li-btn').disabled = false;
     g('li-btn').textContent = isSignUp ? 'Create Account' : '🚀 Sign In';
-    return; // stop here - don't proceed past a failed auth
   }
-  g('li-btn').disabled = false;
-  g('li-btn').textContent = isSignUp ? 'Create Account' : '🚀 Sign In';
 };
-
 window.toggleAuthMode = () => {
   const btn = g('li-btn');
   const isSignUp = btn.dataset.mode === 'signup';
@@ -1176,10 +1190,16 @@ window.doGuestReturn = async () => {
     await signInWithEmailAndPassword(auth, email, pw);
     toast('Welcome back, ' + username + '! 🚀');
   } catch(e) {
-    if (e.code === 'auth/wrong-password' || e.code === 'auth/invalid-credential') {
-      showAuthError('Incorrect password. Try again.');
+    const c = e.code || '';
+    console.warn('[Guest auth]', c);
+    if (['auth/wrong-password','auth/invalid-credential','auth/invalid-login-credentials'].includes(c)) {
+      showAuthError('Incorrect password.');
+    } else if (c === 'auth/too-many-requests') {
+      showAuthError('Too many attempts. Please wait and try again.');
+    } else if (c === 'auth/user-not-found') {
+      showAuthError('Guest account not found. Has it been deleted?');
     } else {
-      showAuthError('Could not sign in. Try creating a new guest account.');
+      showAuthError('Could not sign in. Try creating a new guest account. (' + c + ')');
     }
   }
 };
@@ -2240,19 +2260,11 @@ window.renderSettings = function renderSettings() {
     <div class="settings-section">
       <div class="settings-section-title">👤 PROFILE</div>
       <label class="field-label">DISPLAY NAME / NICKNAME</label>
-      <div style="display:flex;gap:8px;margin-bottom:14px">
-        <input id="settings-nickname" class="form-input" style="margin-bottom:0;flex:1" value="${u.displayName||''}" placeholder="Enter your nickname...">
-        <button class="icon-btn" onclick="saveNickname()">Save</button>
-      </div>
+      <input id="settings-nickname" class="form-input" value="${u.displayName||''}" placeholder="Enter your nickname...">
       <label class="field-label">🥚 TAMAFIT PET NAME</label>
-      <div style="display:flex;gap:8px;margin-bottom:14px">
-        <input id="settings-petname" class="form-input" style="margin-bottom:0;flex:1" value="${lsGet('intask_pet_name','')}" placeholder="Name your pet... (e.g. Pumpy)">
-        <button class="icon-btn" onclick="savePetName()">Save</button>
-      </div>
+      <input id="settings-petname" class="form-input" value="${lsGet('intask_pet_name','')}" placeholder="Name your pet... (e.g. Pumpy)">
       <label class="field-label">YOUR AVATAR</label>
-      <select id="settings-av-select" class="form-input" onchange="settingsSelectAvatar(this.value,this)" style="font-size:20px;margin-bottom:14px">
-        ${AVATARS.map(a=>`<option value="${a}" ${(u.avatar||'100100')===a?'selected':''}>${a}</option>`).join('')}
-      </select>
+      <div id="settings-av-grid" style="display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:14px"></div>
       <label class="field-label">YOUR COLOUR</label>
       <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:0" id="settings-col-row"></div>
     </div>
@@ -4175,6 +4187,7 @@ const colRow=g('col-row'); if(colRow) colRow.innerHTML=COLORS.map((c,i)=>`<div c
     <label class="field-label">PICK YOUR COLOUR</label>
     <div class="col-row" id="col-row"></div>
     <button class="big-btn" onclick="completeProfile()">🚀 LAUNCH INTO ORBIT</button>
+    <button onclick="window.doLogout()" style="background:none;border:none;color:var(--muted);font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;padding:14px;cursor:pointer;width:100%;text-align:center">← Back to Login</button>
   </div>
 </div>
 
