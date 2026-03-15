@@ -4577,18 +4577,13 @@ window.addEventListener('appinstalled', () => {
 });
 // Apply saved preferences on load
 if(localStorage.getItem('intask_colorblind')==='1') document.body.classList.add('colorblind');
-</script>
-<!-- Settings Modal -->
-<div class="modal-overlay" id="settings-modal" onclick="if(event.target===this)closeModal('settings-modal')">
-  <div class="modal" style="max-height:85vh;overflow-y:auto">
-    <div class="modal-handle"></div>
-    <div id="settings-panel"></div>
-  </div>
-</div>
-</body>
-</html>
 
+
+</script>
+<script>
 window.confirmClearData = function() {
+  // Close settings modal first — transform stacking context blocks z-index
+  closeModal('settings-modal');
   const el = document.createElement('div');
   el.id = 'clear-data-modal';
   el.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:9000;display:flex;align-items:center;justify-content:center;padding:20px';
@@ -4602,7 +4597,7 @@ window.confirmClearData = function() {
         style="width:100%;background:var(--parchment);border:2px solid var(--border);border-radius:10px;padding:10px 12px;font-size:13px;font-family:monospace;color:var(--ink);outline:none;margin-bottom:14px;letter-spacing:1px"
         oninput="document.getElementById('clear-data-confirm-btn').disabled=this.value!=='DELETE DATA'">
       <div style="display:flex;gap:10px">
-        <button onclick="document.getElementById('clear-data-modal').remove()"
+        <button onclick="document.getElementById('clear-data-modal').remove();window.renderSettings&&openModal('settings-modal')"
           style="flex:1;padding:12px;border-radius:10px;border:1.5px solid var(--border);background:var(--parchment);color:var(--muted);font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;cursor:pointer">
           Cancel
         </button>
@@ -4625,6 +4620,7 @@ window.confirmClearData = function() {
 };
 
 window.executeClearData = async function() {
+  closeModal('settings-modal');
   // Second confirmation
   const el2 = document.createElement('div');
   el2.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:9001;display:flex;align-items:center;justify-content:center;padding:20px';
@@ -4634,7 +4630,7 @@ window.executeClearData = async function() {
       <div style="font-size:14px;font-family:var(--pixel);font-weight:700;color:var(--red);margin-bottom:10px">ARE YOU SURE?</div>
       <div style="font-size:12px;color:var(--muted);line-height:1.7;margin-bottom:20px">Everything will be gone forever.<br>Tasks, habits, workouts — all of it.</div>
       <div style="display:flex;gap:10px">
-        <button onclick="this.closest('div[style]').remove()"
+        <button onclick="this.closest('div[style]').remove();window.renderSettings&&openModal('settings-modal')"
           style="flex:1;padding:12px;border-radius:10px;border:1.5px solid var(--border);background:var(--parchment);color:var(--muted);font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;cursor:pointer">
           No, keep it
         </button>
@@ -4681,5 +4677,19 @@ window.doExecuteClearData = async function() {
     toast('Error clearing data. Try again.');
   }
 };
-
-
+</scrip
+</script>
+<script>
+t
+</script>
+</script>
+>
+<!-- Settings Modal -->
+<div class="modal-overlay" id="settings-modal" onclick="if(event.target===this)closeModal('settings-modal')">
+  <div class="modal" style="max-height:85vh;overflow-y:auto">
+    <div class="modal-handle"></div>
+    <div id="settings-panel"></div>
+  </div>
+</div>
+</body>
+</html>
