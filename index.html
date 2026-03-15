@@ -3815,8 +3815,8 @@ function groupByDate(entries) {
 }
 
 window.renderLibrary = function() {
-  const lf = window._libFilter||'all';
-  const ls = String(window._libSearch||'');
+  const lf = window._libF||'all';
+  const ls = String(window._libQ||'');
   const filtered = EXERCISE_DB.filter(function(ex) {
     return (lf==='all'||ex.type===lf) && (!ls||ex.name.toLowerCase().includes(ls.toLowerCase())||ex.muscles.some(function(m){return m.toLowerCase().includes(ls.toLowerCase());}));
   });
@@ -3830,7 +3830,7 @@ window.renderLibrary = function() {
       +'</div>';
   }).join('');
   const filterBtns = [['all','All'],['weights','Weights'],['calisthenics','Cali'],['run','Run'],['swim','Swim'],['cardio','Cardio']].map(function(pair) {
-    return '<button class="lib-filter-btn'+(lf===pair[0]?' active':'')+'" onclick="window._libFilter=\''+pair[0]+'\';window.renderLibrary()">'+pair[1]+'</button>';
+    return '<button class="lib-filter-btn'+(lf===pair[0]?' active':'')+'" onclick="window._libF=\''+pair[0]+'\';window.renderLibrary()">'+pair[1]+'</button>';
   }).join('');
   s.innerHTML = '<div class="sec-title" style="margin-bottom:12px">EXERCISE LIBRARY</div>'
     +'<input id="lib-s" class="form-input" placeholder="Search exercises..." style="margin-bottom:10px" value="'+ls+'">'
@@ -3838,7 +3838,7 @@ window.renderLibrary = function() {
     +'<div style="font-size:10px;color:var(--muted);margin:6px 0 10px">'+filtered.length+' exercises</div>'
     +'<div id="lib-results">'+cards+'</div>';
   var inp = document.getElementById('lib-s');
-  if(inp) inp.addEventListener('input', function(){window._libSearch=this.value;window.renderLibrary();});
+  if(inp) inp.addEventListener('input', function(){window._libQ=this.value;window.renderLibrary();});
   var res = document.getElementById('lib-results');
   if(res) {
     function handleLibClick(e) {
@@ -4871,8 +4871,6 @@ function confirmClearData(){if(window.confirmClearData)window.confirmClearData.a
 function copyInstallLink(){if(window.copyInstallLink)window.copyInstallLink.apply(window,arguments);}
 function _doDeleteEntry(){if(window._doDeleteEntry)window._doDeleteEntry.apply(window,arguments);}
 function _doDeleteTask(){if(window._doDeleteTask)window._doDeleteTask.apply(window,arguments);}
-function _doExSearch(){if(window._doExSearch)window._doExSearch.apply(window,arguments);}
-function _libSearch(){if(window._libSearch)window._libSearch.apply(window,arguments);}
 function _mpDeleteAlbum(){if(window._mpDeleteAlbum)window._mpDeleteAlbum.apply(window,arguments);}
 function _mpLikeTrack(){if(window._mpLikeTrack)window._mpLikeTrack.apply(window,arguments);}
 function _mpNewAlbum(){if(window._mpNewAlbum)window._mpNewAlbum.apply(window,arguments);}
@@ -4886,7 +4884,6 @@ function _mpSetVol(){if(window._mpSetVol)window._mpSetVol.apply(window,arguments
 function _mpToggleLike(){if(window._mpToggleLike)window._mpToggleLike.apply(window,arguments);}
 function _mpTogglePlay(){if(window._mpTogglePlay)window._mpTogglePlay.apply(window,arguments);}
 function _mpToggleShuffle(){if(window._mpToggleShuffle)window._mpToggleShuffle.apply(window,arguments);}
-function _showExSuggestions(){if(window._showExSuggestions)window._showExSuggestions.apply(window,arguments);}
 function addExToSession(){if(window.addExToSession)window.addExToSession.apply(window,arguments);}
 function addGuideToDiary(){if(window.addGuideToDiary)window.addGuideToDiary.apply(window,arguments);}
 function addHabit(){if(window.addHabit)window.addHabit.apply(window,arguments);}
