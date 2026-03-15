@@ -232,7 +232,7 @@ body::after{display:none;}
 .lb-row:last-child{border-bottom:none;}
 .lb-row.me{background:rgba(124,58,237,.08);}
 .lb-rank{font-size:16px;width:26px;text-align:center;}
-.lb-av{width:36px;height:36px;border-radius:99px;border:2px solid;display:flex;align-items:center;justify-content:center;font-size:20px;}
+.lb-av{width:40px;height:40px;border-radius:12px;border:2px solid;display:flex;align-items:center;justify-content:center;font-size:20px;overflow:hidden;flex-shrink:0;background:var(--parchment);}
 .lb-name{font-size:14px;font-weight:800;}
 .lb-level{font-size:10px;color:var(--muted);font-weight:600;margin-top:2px;}
 .boost-mini{width:32px;height:32px;border-radius:99px;border:none;background:linear-gradient(135deg,var(--pink),var(--accent3));font-size:14px;cursor:pointer;transition:.2s;}
@@ -2228,7 +2228,7 @@ function renderCrew() {
     <div class="lb-wrap">${sorted.map((m,i)=>`
       <div class="lb-row${m.id===currentUser?.uid?' me':''}">
         <span class="lb-rank">${medals[i]||'#'+(i+1)}</span>
-        <div class="lb-av" style="border-color:var(--border);background:var(--surf2)">${m.avatar||'👤'}</div>
+        <div class="lb-av" style="border-color:var(--border);background:var(--surf2)">${m.avatar?`<img src="${AVATAR_URL(m.avatar)}" width="32" height="32" style="image-rendering:pixelated;object-fit:contain" onerror="this.style.display='none'">`:`<span style="font-size:20px">👤</span>`}</div>
         <div style="flex:1">
           <div class="lb-name">${m.displayName} ${(m.badges||[]).slice(0,3).map(bid=>{const b=BADGES.find(x=>x.id===bid);return b?b.icon:''}).join('')}</div>
           <div class="lb-level">LVL ${m.level} ${m.title} · ${m.xp||0}XP · 🔥${m.currentStreak||0}</div>
@@ -2269,7 +2269,7 @@ function renderMessages() {
   box.innerHTML = crewMessages.map(m=>{
     const isMe = m.from===currentUser?.uid;
     return `<div class="msg-wrap${isMe?' msg-me':''}">
-      ${!isMe?`<div class="msg-av" style="border-color:var(--border);background:var(--surf2)">${m.avatar||'👤'}</div>`:''}
+      ${!isMe?`<div class="msg-av" style="border-color:var(--border);background:var(--surf2)">${m.avatar?`<img src="${AVATAR_URL(m.avatar)}" width="32" height="32" style="image-rendering:pixelated;object-fit:contain" onerror="this.style.display='none'">`:`<span style="font-size:20px">👤</span>`}</div>`:''}
       <div class="bubble${isMe?' me':''}" style="${isMe?'background:var(--accent)':''}">
         ${!isMe?`<div class="bubble-sender">${m.displayName}</div>`:''}${m.text}
       </div>
