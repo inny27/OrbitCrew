@@ -980,8 +980,6 @@ function lsKey(key) { return key + '_' + (currentUser ? currentUser.uid : 'anon'
 function lsGet(key, def) {
   const v = localStorage.getItem(lsKey(key));
   if (v !== null) return v;
-  const legacy = localStorage.getItem(key); // migrate old global keys
-  if (legacy !== null && currentUser) { localStorage.setItem(lsKey(key), legacy); return legacy; }
   return def !== undefined ? def : null;
 }
 function lsSet(key, value) { localStorage.setItem(lsKey(key), String(value)); }
@@ -1154,23 +1152,37 @@ window.doGuestLogin = async () => {
   if (!username) { showAuthError('Enter a display name!'); return; }
   if (pw.length < 6) { showAuthError('Password must be at least 6 characters.'); return; }
   if (pw !== pw2) { showAuthError('Passwords do not match!'); return; }
-  const btn = g('guest-btn'); btn.disabled=true; btn.textContent='Creating account...';
-  // Use a generated guest email so they can log back in
-  const guestEmail = username.toLowerCase().replace(/[^a-z0-9]/g,'') + '_guest_' + Date.now() + '@guest.intask.app';
+  const btn = g('guest-btn'); btn.disabled=true; btn.textContent='Setting up...';
+  // Deterministic email — same username always maps to same account, on any device
+  const guestEmail = username.toLowerCase().replace(/[^a-z0-9]/g,'') + '_guest@intask.app';
   try {
+    // Try to create account first
     const result = await createUserWithEmailAndPassword(auth, guestEmail, pw);
     await updateProfile(result.user, { displayName: username });
-    currentUser = result.user;
-    // Store guest credentials locally so they can sign back in
-    const _guests = JSON.parse(localStorage.getItem('oc_guests') || '{}');
-    _guests[username.toLowerCase()] = { email: guestEmail, name: username };
-    localStorage.setItem('oc_guests', JSON.stringify(_guests));
-    localStorage.setItem('oc_last_guest', username.toLowerCase());
     toast('Welcome, ' + username + '! 🚀');
   } catch(e) {
-    showAuthError(friendlyErr(e.code)||'Could not create account. Try again.');
-    btn.disabled=false; btn.textContent='👾 Create Guest Account';
+    if (e.code === 'auth/email-already-in-use') {
+      // Account exists — sign in instead
+      try {
+        await signInWithEmailAndPassword(auth, guestEmail, pw);
+        toast('Welcome back, ' + username + '! 🚀');
+      } catch(e2) {
+        const c2 = e2.code || '';
+        if (['auth/wrong-password','auth/invalid-credential','auth/invalid-login-credentials'].includes(c2)) {
+          showAuthError('That username is taken with a different password.');
+        } else {
+          showAuthError(friendlyErr(c2) || 'Could not sign in. Try again.');
+        }
+        btn.disabled=false; btn.textContent='👾 Create / Sign In';
+        return;
+      }
+    } else {
+      showAuthError(friendlyErr(e.code) || 'Could not create account. Try again.');
+      btn.disabled=false; btn.textContent='👾 Create / Sign In';
+      return;
+    }
   }
+  btn.disabled=false; btn.textContent='👾 Create / Sign In';
 };
 
 window.doGuestReturn = async () => {
@@ -1178,28 +1190,19 @@ window.doGuestReturn = async () => {
   const pw = g('guest-return-pw').value;
   if (!username) { showAuthError('Enter your username.'); return; }
   if (!pw) { showAuthError('Enter your password.'); return; }
-  // Try localStorage first for this device, then reconstruct email from username
-  const _guests = JSON.parse(localStorage.getItem('oc_guests') || '{}');
-  const _guestData = _guests[username.toLowerCase()];
-  const email = _guestData ? _guestData.email : localStorage.getItem('oc_guest_email');
-  if (!email) {
-    showAuthError('Account not found on this device. Did you create a guest account here?');
-    return;
-  }
+  // Same deterministic email formula — works on any device, no localStorage needed
+  const guestEmail = username.toLowerCase().replace(/[^a-z0-9]/g,'') + '_guest@intask.app';
   try {
-    await signInWithEmailAndPassword(auth, email, pw);
+    await signInWithEmailAndPassword(auth, guestEmail, pw);
     toast('Welcome back, ' + username + '! 🚀');
   } catch(e) {
     const c = e.code || '';
-    console.warn('[Guest auth]', c);
-    if (['auth/wrong-password','auth/invalid-credential','auth/invalid-login-credentials'].includes(c)) {
-      showAuthError('Incorrect password.');
+    if (['auth/wrong-password','auth/invalid-credential','auth/invalid-login-credentials','auth/user-not-found'].includes(c)) {
+      showAuthError('No guest account found for that username and password.');
     } else if (c === 'auth/too-many-requests') {
-      showAuthError('Too many attempts. Please wait and try again.');
-    } else if (c === 'auth/user-not-found') {
-      showAuthError('Guest account not found. Has it been deleted?');
+      showAuthError('Too many attempts. Please wait a moment.');
     } else {
-      showAuthError('Could not sign in. Try creating a new guest account. (' + c + ')');
+      showAuthError('Could not sign in. (' + c + ')');
     }
   }
 };
@@ -2029,6 +2032,9 @@ window._doExSearch = window.updateExSearch;
 
 // ─── RENDER ───────────────────────────────────────────────
 function showApp() {
+  // Clear legacy global localStorage keys to prevent cross-account contamination
+  ['intask_pet_name','intask_icon_count','intask_colorblind','intask_bgm_default',
+   'intask_login_song','intask_bgm_song'].forEach(k => localStorage.removeItem(k));
   g('login').classList.remove('active'); g('profile-setup').classList.remove('active');
   document.getElementById('app').classList.add('active');
   renderHeader(); switchTab('today'); updateBg();
@@ -4153,7 +4159,7 @@ const colRow=g('col-row'); if(colRow) colRow.innerHTML=COLORS.map((c,i)=>`<div c
         <input id="guest-pw" class="form-input" type="password" placeholder="Minimum 6 characters">
         <label class="field-label">CONFIRM PASSWORD</label>
         <input id="guest-pw2" class="form-input" type="password" placeholder="Type password again">
-        <button id="guest-btn" class="big-btn" style="background:linear-gradient(135deg,#f59e0b,#ec4899)" onclick="doGuestLogin()">👾 Create Guest Account</button>
+        <button id="guest-btn" class="big-btn" style="background:linear-gradient(135deg,#f59e0b,#ec4899)" onclick="doGuestLogin()">👾 Create / Sign In</button>
         <p style="color:var(--muted);font-size:11px;margin-top:10px;text-align:center;font-weight:600">Already have a guest account? <button onclick="document.getElementById('guest-new-section').style.display='none';document.getElementById('guest-return-section').style.display='block'" style="background:none;border:none;color:var(--accent2);font-size:11px;font-weight:700;cursor:pointer">Sign back in →</button></p>
       </div>
       <!-- Returning guest -->
