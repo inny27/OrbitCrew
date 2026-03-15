@@ -14,8 +14,7 @@
 <title>InTask</title>
 <link rel="icon" href="https://maplestory.io/api/GMS/255/mob/100100/render/stand" type="image/png">
   <link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
-<style>html,body{height:100%;overflow:hidden;}
-
+<style>
 /* ============================================================
    RESET & VARIABLES
 ============================================================ */
@@ -55,8 +54,8 @@ body{
   font-family:'DM Sans',sans-serif;
   background:var(--bg);
   color:var(--text);
-  height:100vh;
-  overflow:hidden;
+  min-height:100vh;
+  overflow-x:hidden;
   -webkit-font-smoothing:antialiased;
 }
 body::before{
@@ -77,10 +76,10 @@ body::after{display:none;}
 /* ============================================================
    LAYOUT
 ============================================================ */
-.screen{display:none;flex-direction:column;align-items:center;justify-content:center;height:100vh;overflow-y:auto;padding:32px 20px;position:relative;z-index:1;background:var(--bg);}
-.screen.active{display:flex;position:fixed;inset:0;z-index:50;overflow-y:auto;}
-#app{display:none;flex-direction:column;max-width:430px;margin:0 auto;height:100vh;overflow:hidden;position:relative;z-index:1;}
-#app.active{display:flex;position:fixed;inset:0;overflow:hidden;}
+.screen{display:none;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:32px 20px;position:relative;z-index:1;background:var(--bg);}
+.screen.active{display:flex;}
+#app{display:none;flex-direction:column;max-width:430px;margin:0 auto;min-height:100vh;position:relative;z-index:1;}
+#app.active{display:flex;}
 
 /* ============================================================
    LOGIN SCREEN
@@ -116,18 +115,18 @@ body::after{display:none;}
 /* ============================================================
    APP HEADER
 ============================================================ */
-.header{padding:12px 16px 10px;background:rgba(253,248,240,0.95);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100;}
-.hdr-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;flex-wrap:nowrap;gap:8px;}
-.hdr-left{display:flex;align-items:center;gap:10px;min-width:0;flex:1;overflow:hidden;}
-.hdr-avatar{font-size:18px;width:32px;height:32px;border-radius:0;border:2px solid var(--accent);display:flex;align-items:center;justify-content:center;background:var(--surf2);box-shadow:2px 2px 0 rgba(0,0,0,.5);}
-.hdr-name{font-size:14px;font-weight:700;color:var(--ink);font-family:var(--pixel);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:120px;}
+.header{padding:48px 16px 10px;background:rgba(253,248,240,0.95);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100;}
+.hdr-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
+.hdr-left{display:flex;align-items:center;gap:10px;}
+.hdr-avatar{font-size:22px;width:36px;height:36px;border-radius:0;border:2px solid var(--accent);display:flex;align-items:center;justify-content:center;background:var(--surf2);box-shadow:2px 2px 0 rgba(0,0,0,.5);}
+.hdr-name{font-size:16px;font-weight:700;color:var(--ink);font-family:var(--pixel);}
 .hdr-badge{display:inline-flex;align-items:center;gap:3px;font-size:11px;font-weight:500;color:var(--muted);padding:1px 0;margin-top:1px;}
-.hdr-right{display:flex;align-items:center;gap:6px;flex-shrink:0;}
+.hdr-right{display:flex;align-items:center;gap:8px;}
 .sync-pill{display:flex;align-items:center;gap:4px;background:transparent;border:none;padding:0;}
 .sync-dot{width:6px;height:6px;border-radius:99px;background:var(--green);}
 .sync-text{font-size:10px;font-weight:600;color:var(--muted);}
-.sp-pill{font-size:10px;font-weight:600;color:var(--muted);border-radius:4px;padding:2px 6px;background:var(--surf2);border:1px solid var(--border);white-space:nowrap;}
-.mult-pill{font-family:'Inter',sans-serif;font-variant-numeric:tabular-nums;font-size:10px;font-weight:900;background:var(--surf);border:1px solid var(--border);border-radius:99px;padding:4px 8px;white-space:nowrap;}
+.sp-pill{font-size:11px;font-weight:600;color:var(--muted);border-radius:4px;padding:3px 8px;background:var(--surf2);border:1px solid var(--border);}
+.mult-pill{font-family:'Inter',sans-serif;font-variant-numeric:tabular-nums;font-size:11px;font-weight:900;background:var(--surf);border:1px solid var(--border);border-radius:99px;padding:5px 10px;}
 .logout-btn{background:var(--parchment);border:1px solid var(--border);border-radius:10px;width:34px;height:34px;font-size:14px;cursor:pointer;color:var(--muted);display:flex;align-items:center;justify-content:center;transition:.2s;}
 .xp-row{display:flex;align-items:center;gap:8px;}
 .xp-label{font-size:9px;font-weight:800;color:var(--muted);width:18px;}
@@ -654,8 +653,7 @@ body.colorblind{filter:url(#colorblind-filter);}
 @keyframes tama-run{0%,100%{transform:translateX(0) scaleX(1);}49%{transform:translateX(20px) scaleX(1);}51%{transform:translateX(20px) scaleX(-1);}100%{transform:translateX(0) scaleX(-1);}}
 @keyframes tama-levelup{0%{transform:scale(1);}30%{transform:scale(1.3) rotate(-5deg);}60%{transform:scale(1.3) rotate(5deg);}100%{transform:scale(1);}}
 
-
-.hdr-left > div{min-width:0;overflow:hidden;}</style>
+</style>
 
 <!-- Firebase -->
 
@@ -4569,131 +4567,322 @@ window.MUSIC_TRACKS = MUSIC_TRACKS;
 window.SONG_FILES = SONG_FILES;
 
 </script>
-<script>
-// Bridge: expose ES module functions to global onclick handlers
-function _doDeleteEntry(){if(window._doDeleteEntry)window._doDeleteEntry.apply(window,arguments);}
-function _doDeleteTask(){if(window._doDeleteTask)window._doDeleteTask.apply(window,arguments);}
-function _doExSearch(){if(window._doExSearch)window._doExSearch.apply(window,arguments);}
-function _libSearch(){if(window._libSearch)window._libSearch.apply(window,arguments);}
-function _mpDeleteAlbum(){if(window._mpDeleteAlbum)window._mpDeleteAlbum.apply(window,arguments);}
-function _mpLikeTrack(){if(window._mpLikeTrack)window._mpLikeTrack.apply(window,arguments);}
-function _mpNewAlbum(){if(window._mpNewAlbum)window._mpNewAlbum.apply(window,arguments);}
-function _mpNext(){if(window._mpNext)window._mpNext.apply(window,arguments);}
-function _mpOpenAlbum(){if(window._mpOpenAlbum)window._mpOpenAlbum.apply(window,arguments);}
-function _mpPlay(){if(window._mpPlay)window._mpPlay.apply(window,arguments);}
-function _mpPrev(){if(window._mpPrev)window._mpPrev.apply(window,arguments);}
-function _mpSeek(){if(window._mpSeek)window._mpSeek.apply(window,arguments);}
-function _mpSetTab(){if(window._mpSetTab)window._mpSetTab.apply(window,arguments);}
-function _mpSetVol(){if(window._mpSetVol)window._mpSetVol.apply(window,arguments);}
-function _mpToggleLike(){if(window._mpToggleLike)window._mpToggleLike.apply(window,arguments);}
-function _mpTogglePlay(){if(window._mpTogglePlay)window._mpTogglePlay.apply(window,arguments);}
-function _mpToggleShuffle(){if(window._mpToggleShuffle)window._mpToggleShuffle.apply(window,arguments);}
-function _showExSuggestions(){if(window._showExSuggestions)window._showExSuggestions.apply(window,arguments);}
-function addExToSession(){if(window.addExToSession)window.addExToSession.apply(window,arguments);}
-function addGuideToDiary(){if(window.addGuideToDiary)window.addGuideToDiary.apply(window,arguments);}
-function addHabit(){if(window.addHabit)window.addHabit.apply(window,arguments);}
-function addSet(){if(window.addSet)window.addSet.apply(window,arguments);}
-function addTask(){if(window.addTask)window.addTask.apply(window,arguments);}
-function adjGuideReps(){if(window.adjGuideReps)window.adjGuideReps.apply(window,arguments);}
-function adjSet(){if(window.adjSet)window.adjSet.apply(window,arguments);}
-function applyIconDensity(){if(window.applyIconDensity)window.applyIconDensity.apply(window,arguments);}
-function calcExPoints(){if(window.calcExPoints)window.calcExPoints.apply(window,arguments);}
-function cancelSession(){if(window.cancelSession)window.cancelSession.apply(window,arguments);}
-function changeIconCount(){if(window.changeIconCount)window.changeIconCount.apply(window,arguments);}
-function clearExSelection(){if(window.clearExSelection)window.clearExSelection.apply(window,arguments);}
-function closeModal(){if(window.closeModal)window.closeModal.apply(window,arguments);}
-function closeTamaPostWorkout(){if(window.closeTamaPostWorkout)window.closeTamaPostWorkout.apply(window,arguments);}
-function completeHabit(){if(window.completeHabit)window.completeHabit.apply(window,arguments);}
-function completeProfile(){if(window.completeProfile)window.completeProfile.apply(window,arguments);}
-function completeTask(){if(window.completeTask)window.completeTask.apply(window,arguments);}
-function confirmDeleteAccount(){if(window.confirmDeleteAccount)window.confirmDeleteAccount.apply(window,arguments);}
-function createCrew(){if(window.createCrew)window.createCrew.apply(window,arguments);}
-function delSet(){if(window.delSet)window.delSet.apply(window,arguments);}
-function deleteBodyEntry(){if(window.deleteBodyEntry)window.deleteBodyEntry.apply(window,arguments);}
-function deleteTask(){if(window.deleteTask)window.deleteTask.apply(window,arguments);}
-function deleteWorkoutEntry(){if(window.deleteWorkoutEntry)window.deleteWorkoutEntry.apply(window,arguments);}
-function doCancelSession(){if(window.doCancelSession)window.doCancelSession.apply(window,arguments);}
-function doEmailLogin(){if(window.doEmailLogin)window.doEmailLogin.apply(window,arguments);}
-function doGoogleLogin(){if(window.doGoogleLogin)window.doGoogleLogin.apply(window,arguments);}
-function doGuestLogin(){if(window.doGuestLogin)window.doGuestLogin.apply(window,arguments);}
-function doGuestReturn(){if(window.doGuestReturn)window.doGuestReturn.apply(window,arguments);}
-function doLogout(){if(window.doLogout)window.doLogout.apply(window,arguments);}
-function doneSet(){if(window.doneSet)window.doneSet.apply(window,arguments);}
-function editAddSet(){if(window.editAddSet)window.editAddSet.apply(window,arguments);}
-function editAdjSet(){if(window.editAdjSet)window.editAdjSet.apply(window,arguments);}
-function editDelSet(){if(window.editDelSet)window.editDelSet.apply(window,arguments);}
-function editUpdSet(){if(window.editUpdSet)window.editUpdSet.apply(window,arguments);}
-function editWorkoutEntry(){if(window.editWorkoutEntry)window.editWorkoutEntry.apply(window,arguments);}
-function executeDeleteAccount(){if(window.executeDeleteAccount)window.executeDeleteAccount.apply(window,arguments);}
-function exportCSV(){if(window.exportCSV)window.exportCSV.apply(window,arguments);}
-function finishSession(){if(window.finishSession)window.finishSession.apply(window,arguments);}
-function getTamaState(){if(window.getTamaState)window.getTamaState.apply(window,arguments);}
-function getTotalStats(){if(window.getTotalStats)window.getTotalStats.apply(window,arguments);}
-function joinCrew(){if(window.joinCrew)window.joinCrew.apply(window,arguments);}
-function leaveCrew(){if(window.leaveCrew)window.leaveCrew.apply(window,arguments);}
-function logBodyEntry(){if(window.logBodyEntry)window.logBodyEntry.apply(window,arguments);}
-function logCardioEntry(){if(window.logCardioEntry)window.logCardioEntry.apply(window,arguments);}
-function logRunEntry(){if(window.logRunEntry)window.logRunEntry.apply(window,arguments);}
-function logSwimEntry(){if(window.logSwimEntry)window.logSwimEntry.apply(window,arguments);}
-function logWorkoutEntry(){if(window.logWorkoutEntry)window.logWorkoutEntry.apply(window,arguments);}
-function openModal(){if(window.openModal)window.openModal.apply(window,arguments);}
-function optInFitness(){if(window.optInFitness)window.optInFitness.apply(window,arguments);}
-function playLoginMusic(){if(window.playLoginMusic)window.playLoginMusic.apply(window,arguments);}
-function previewSong(){if(window.previewSong)window.previewSong.apply(window,arguments);}
-function promptInstall(){if(window.promptInstall)window.promptInstall.apply(window,arguments);}
-function removeSessionEx(){if(window.removeSessionEx)window.removeSessionEx.apply(window,arguments);}
-function renderBodyComp(){if(window.renderBodyComp)window.renderBodyComp.apply(window,arguments);}
-function renderCoach(){if(window.renderCoach)window.renderCoach.apply(window,arguments);}
-function renderDiary(){if(window.renderDiary)window.renderDiary.apply(window,arguments);}
-function renderGuides(){if(window.renderGuides)window.renderGuides.apply(window,arguments);}
-function renderLibrary(){if(window.renderLibrary)window.renderLibrary.apply(window,arguments);}
-function renderMusicPlayer(){if(window.renderMusicPlayer)window.renderMusicPlayer.apply(window,arguments);}
-function renderSettings(){if(window.renderSettings)window.renderSettings.apply(window,arguments);}
-function renderTamaFit(){if(window.renderTamaFit)window.renderTamaFit.apply(window,arguments);}
-function resetTimer(){if(window.resetTimer)window.resetTimer.apply(window,arguments);}
-function saveAllSettings(){if(window.saveAllSettings)window.saveAllSettings.apply(window,arguments);}
-function saveEditedEntry(){if(window.saveEditedEntry)window.saveEditedEntry.apply(window,arguments);}
-function saveNickname(){if(window.saveNickname)window.saveNickname.apply(window,arguments);}
-function savePetName(){if(window.savePetName)window.savePetName.apply(window,arguments);}
-function selectAvatar(){if(window.selectAvatar)window.selectAvatar.apply(window,arguments);}
-function selectColor(){if(window.selectColor)window.selectColor.apply(window,arguments);}
-function selectExercise(){if(window.selectExercise)window.selectExercise.apply(window,arguments);}
-function sendBoost(){if(window.sendBoost)window.sendBoost.apply(window,arguments);}
-function sendCrewMsg(){if(window.sendCrewMsg)window.sendCrewMsg.apply(window,arguments);}
-function sendNudge(){if(window.sendNudge)window.sendNudge.apply(window,arguments);}
-function setBodyMode(){if(window.setBodyMode)window.setBodyMode.apply(window,arguments);}
-function setFeel(){if(window.setFeel)window.setFeel.apply(window,arguments);}
-function setFitnessGoal(){if(window.setFitnessGoal)window.setFitnessGoal.apply(window,arguments);}
-function setHabitPill(){if(window.setHabitPill)window.setHabitPill.apply(window,arguments);}
-function setLogType(){if(window.setLogType)window.setLogType.apply(window,arguments);}
-function setModeHeader(){if(window.setModeHeader)window.setModeHeader.apply(window,arguments);}
-function setPill(){if(window.setPill)window.setPill.apply(window,arguments);}
-function setSongPref(){if(window.setSongPref)window.setSongPref.apply(window,arguments);}
-function setTaskPill(){if(window.setTaskPill)window.setTaskPill.apply(window,arguments);}
-function settingsPlayMusic(){if(window.settingsPlayMusic)window.settingsPlayMusic.apply(window,arguments);}
-function settingsSelectAvatar(){if(window.settingsSelectAvatar)window.settingsSelectAvatar.apply(window,arguments);}
-function settingsSelectColor(){if(window.settingsSelectColor)window.settingsSelectColor.apply(window,arguments);}
-function showExDetail(){if(window.showExDetail)window.showExDetail.apply(window,arguments);}
-function showGuide(){if(window.showGuide)window.showGuide.apply(window,arguments);}
-function showInstallInstructions(){if(window.showInstallInstructions)window.showInstallInstructions.apply(window,arguments);}
-function showTamaPostWorkout(){if(window.showTamaPostWorkout)window.showTamaPostWorkout.apply(window,arguments);}
-function skipRest(){if(window.skipRest)window.skipRest.apply(window,arguments);}
-function startRestTimer(){if(window.startRestTimer)window.startRestTimer.apply(window,arguments);}
-function startWorkoutSession(){if(window.startWorkoutSession)window.startWorkoutSession.apply(window,arguments);}
-function stopAllMusic(){if(window.stopAllMusic)window.stopAllMusic.apply(window,arguments);}
-function stopLoginMusic(){if(window.stopLoginMusic)window.stopLoginMusic.apply(window,arguments);}
-function switchFitTab(){if(window.switchFitTab)window.switchFitTab.apply(window,arguments);}
-function switchSetMode(){if(window.switchSetMode)window.switchSetMode.apply(window,arguments);}
-function switchTab(){if(window.switchTab)window.switchTab.apply(window,arguments);}
-function toggleAuthMode(){if(window.toggleAuthMode)window.toggleAuthMode.apply(window,arguments);}
-function toggleBgmDefault(){if(window.toggleBgmDefault)window.toggleBgmDefault.apply(window,arguments);}
-function toggleColorBlind(){if(window.toggleColorBlind)window.toggleColorBlind.apply(window,arguments);}
-function toggleLoginMute(){if(window.toggleLoginMute)window.toggleLoginMute.apply(window,arguments);}
-function toggleSetMode(){if(window.toggleSetMode)window.toggleSetMode.apply(window,arguments);}
-function toggleTimer(){if(window.toggleTimer)window.toggleTimer.apply(window,arguments);}
-function unlockSkill(){if(window.unlockSkill)window.unlockSkill.apply(window,arguments);}
-function updSet(){if(window.updSet)window.updSet.apply(window,arguments);}
-function updateExSearch(){if(window.updateExSearch)window.updateExSearch.apply(window,arguments);}
+<svg style="display:none">
+  <defs>
+    <filter id="colorblind-filter">
+      <feColorMatrix type="matrix" values="0.567,0.433,0,0,0 0.558,0.442,0,0,0 0,0.242,0.758,0,0 0,0,0,1,0"/>
+    </filter>
+  </defs>
+</svg>
+
+<!-- ═══ LOGIN SCREEN ═══ -->
+<div id="login" class="screen active">
+  <button id="login-mute-btn" onclick="window.toggleLoginMute()" style="position:absolute;top:16px;right:16px;background:rgba(253,248,240,0.9);border:1.5px solid var(--border);border-radius:10px;width:38px;height:38px;display:flex;align-items:center;justify-content:center;font-size:18px;cursor:pointer;box-shadow:0 2px 8px var(--shadow);z-index:10" title="Toggle music">🔊</button>
+  <div class="login-logo"><img src="https://maplestory.io/api/GMS/255/item/2000000/icon" width="44" style="image-rendering:pixelated" onerror="this.style.display='none'" data-fallback="<span style=font-size:40px>🍄</span>"></div>
+  <div style="display:flex;align-items:center;justify-content:center;gap:10px;margin-top:8px">
+    <img src="https://maplestory.io/api/GMS/255/item/1302000/icon" width="28" style="image-rendering:pixelated;opacity:0.8" onerror="this.style.display='none'">
+    <div class="login-title">In<span>Task</span></div>
+    <img src="https://maplestory.io/api/GMS/255/item/1302000/icon" width="28" style="image-rendering:pixelated;opacity:0.8;transform:scaleX(-1)" onerror="this.style.display='none'">
+  </div>
+  <div class="login-sub">× Level Up Life ×</div>
+  <div style="display:flex;gap:16px;margin-top:12px;justify-content:center;align-items:flex-end">
+    <img src="https://maplestory.io/api/GMS/255/mob/130100/render/stand" alt="Snail" width="56" style="image-rendering:pixelated;filter:drop-shadow(0 4px 8px rgba(44,35,64,0.15))" onerror="this.style.display='none'">
+    <img src="https://maplestory.io/api/GMS/255/mob/130101/render/stand" alt="Blue Snail" width="64" style="image-rendering:pixelated;filter:drop-shadow(0 4px 8px rgba(44,35,64,0.15))" onerror="this.style.display='none'">
+    <img src="https://maplestory.io/api/GMS/255/mob/100100/render/stand" alt="Mushroom" width="60" style="image-rendering:pixelated" onerror="this.style.display='none'">
+  </div>
+  <div class="auth-card">
+    <div id="auth-err" class="auth-error"></div>
+
+    <!-- Auth tabs -->
+    <div class="modal-tabs" style="margin-bottom:20px">
+      <button class="modal-tab active" id="atab-account" onclick="switchAuthTab('account')">🚀 Account</button>
+      <button class="modal-tab" id="atab-guest" onclick="switchAuthTab('guest')">👾 Guest</button>
+    </div>
+
+    <!-- Account tab -->
+    <div id="auth-account-section">
+      <button class="google-btn" onclick="doGoogleLogin()">
+        <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="22" height="22"> Continue with Google
+      </button>
+      <div class="divider"><div class="divider-line"></div><span class="divider-text">OR</span><div class="divider-line"></div></div>
+      <label class="field-label">EMAIL</label>
+      <input id="li-email" class="form-input" type="email" placeholder="your@email.com" autocapitalize="none" autocomplete="email">
+      <label class="field-label">PASSWORD</label>
+      <input id="li-pw" class="form-input" type="password" placeholder="••••••••" autocomplete="current-password">
+      <button id="li-btn" class="big-btn" data-mode="signin" onclick="doEmailLogin()">🚀 Sign In</button>
+      <button id="auth-toggle-btn" onclick="toggleAuthMode()" style="background:none;border:none;color:var(--gold);font-size:12px;font-weight:600;padding:8px 0;cursor:pointer;text-align:center;width:100%">Don't have an account? Create one</button>
+      <p style="color:var(--muted);font-size:11px;margin-top:12px;text-align:center;font-weight:600">New user? Just enter email &amp; password and we'll create your account.</p>
+    </div>
+
+    <!-- Guest tab -->
+    <div id="auth-guest-section" style="display:none">
+      <!-- New guest -->
+      <div id="guest-new-section">
+        <div style="text-align:center;padding:8px 0 14px">
+          <div style="font-size:36px;margin-bottom:6px">👾</div>
+          <div style="font-size:14px;font-weight:700;margin-bottom:4px">Create Guest Account</div>
+          <div style="font-size:12px;color:var(--muted);font-weight:600;line-height:1.6">Pick a name and password to save your progress.</div>
+        </div>
+        <label class="field-label">DISPLAY NAME</label>
+        <input id="guest-name" class="form-input" placeholder="e.g. StarPilot, NightOwl..." maxlength="20" autocorrect="off" autocapitalize="off">
+        <label class="field-label">PASSWORD</label>
+        <input id="guest-pw" class="form-input" type="password" placeholder="Minimum 6 characters">
+        <label class="field-label">CONFIRM PASSWORD</label>
+        <input id="guest-pw2" class="form-input" type="password" placeholder="Type password again">
+        <button id="guest-btn" class="big-btn" style="background:linear-gradient(135deg,#f59e0b,#ec4899)" onclick="doGuestLogin()">👾 Create / Sign In</button>
+        <p style="color:var(--muted);font-size:11px;margin-top:10px;text-align:center;font-weight:600">Already have a guest account? <button onclick="document.getElementById('guest-new-section').style.display='none';document.getElementById('guest-return-section').style.display='block'" style="background:none;border:none;color:var(--accent2);font-size:11px;font-weight:700;cursor:pointer">Sign back in →</button></p>
+      </div>
+      <!-- Returning guest -->
+      <div id="guest-return-section" style="display:none">
+        <div style="text-align:center;padding:8px 0 14px">
+          <div style="font-size:36px;margin-bottom:6px">👾</div>
+          <div style="font-size:14px;font-weight:700;margin-bottom:4px">Welcome Back!</div>
+          <div style="font-size:12px;color:var(--muted);font-weight:600;line-height:1.6">Enter your guest username and password to continue.</div>
+        </div>
+        <label class="field-label">YOUR USERNAME</label>
+        <input id="guest-return-name" class="form-input" placeholder="e.g. StarPilot" autocorrect="off" autocapitalize="off">
+        <label class="field-label">YOUR PASSWORD</label>
+        <input id="guest-return-pw" class="form-input" type="password" placeholder="Enter your password">
+        <button class="big-btn" style="background:linear-gradient(135deg,#f59e0b,#ec4899)" onclick="doGuestReturn()">👾 Sign Back In</button>
+        <p style="color:var(--muted);font-size:11px;margin-top:10px;text-align:center;font-weight:600">New guest? <button onclick="document.getElementById('guest-new-section').style.display='block';document.getElementById('guest-return-section').style.display='none'" style="background:none;border:none;color:var(--accent2);font-size:11px;font-weight:700;cursor:pointer">Create account →</button></p>
+      </div>
+    </div>
+
+    <p style="color:var(--border);font-size:11px;margin-top:16px;font-weight:600;text-align:center">Free forever · Private · No ads 🪐</p>
+  </div>
+</div>
+
+<!-- ═══ PROFILE SETUP ═══ -->
+<div id="profile-setup" class="screen">
+  <span style="font-size:60px;animation:float 3s ease-in-out infinite;display:block">🎨</span>
+  <div class="login-title" style="font-size:22px;margin-top:12px">CUSTOMISE YOUR PILOT</div>
+  <div class="login-sub">Welcome, <span id="google-name">Pilot</span>! Pick your look.</div>
+  <div class="auth-card" style="margin-top:24px;overflow-y:auto;max-height:70vh">
+    <label class="field-label">PICK YOUR AVATAR</label>
+    <div class="av-grid" id="av-grid"></div>
+    <label class="field-label">PICK YOUR COLOUR</label>
+    <div class="col-row" id="col-row"></div>
+    <button class="big-btn" onclick="completeProfile()">🚀 LAUNCH INTO ORBIT</button>
+    <button onclick="window.doLogout()" style="background:none;border:none;color:var(--muted);font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;padding:14px;cursor:pointer;width:100%;text-align:center">← Back to Login</button>
+  </div>
+</div>
+
+<!-- ═══ MAIN APP ═══ -->
+<div id="app">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="hdr-row">
+      <div class="hdr-left">
+        <div class="hdr-avatar" id="hdr-avatar">🚀</div>
+        <div>
+          <div class="hdr-name" id="hdr-name">Pilot</div>
+          <div class="hdr-badge" id="hdr-badge">⚡ LVL 1</div>
+        </div>
+      </div>
+      <div class="hdr-right">
+        <div class="sync-pill"><div class="sync-dot"></div><span class="sync-text">LIVE</span></div>
+        <div class="mult-pill" id="mult-badge">×1.0</div>
+        <div class="sp-pill" id="sp-badge"><img src="https://maplestory.io/api/GMS/255/item/2030000/icon" alt="SP" width="16" height="16" style="image-rendering:pixelated;vertical-align:middle"> <span id="sp-text">0SP</span></div>
+        <button class="logout-btn" onclick="openModal('settings-modal')" title="Settings" style="font-size:16px">⚙️</button>
+      </div>
+    </div>
+    <div class="xp-row">
+      <img src="https://maplestory.io/api/GMS/255/item/2000001/icon" alt="XP" width="18" height="18" style="image-rendering:pixelated;vertical-align:middle;flex-shrink:0">
+      <div class="xp-bar"><div class="xp-fill" id="xp-fill" style="width:0%"></div></div>
+      <span class="xp-text" id="xp-text">0/1000</span>
+    </div>
+  </div>
+
+  <!-- PANELS -->
+  <div class="panels">
+
+    <!-- TODAY -->
+    <div class="panel active" id="panel-today">
+      <div class="progress-card">
+        <div style="flex:1">
+          <div class="prog-label" style="display:flex;align-items:center;gap:6px"><img src="https://maplestory.io/api/GMS/255/item/2000000/icon" alt="" width="20" height="20" style="image-rendering:pixelated">TODAY'S PROGRESS</div>
+          <div style="display:flex;align-items:baseline;gap:2px;margin:4px 0 8px">
+            <span class="prog-count" id="prog-count">0</span>
+            <span class="prog-total" id="prog-total"> / 0</span>
+            <span style="font-size:12px;color:var(--muted);margin-left:4px">tasks done</span>
+          </div>
+          <div class="prog-bar"><div class="prog-fill" id="prog-fill" style="width:0%"></div></div>
+        </div>
+        <div style="text-align:right;flex-shrink:0">
+          <div style="font-size:28px;font-weight:800;color:var(--accent)" id="prog-pct">0%</div>
+          <div style="font-size:11px;color:var(--muted);font-weight:500">complete</div>
+        </div>
+      </div>
+      <div class="sec-head"><span class="sec-title">🎯 MY TASKS</span><button class="add-btn" onclick="openModal('task-modal')">+</button></div>
+      <div id="tasks-list"></div>
+      <div class="sec-head" style="margin-top:8px"><span class="sec-title">🏠 SHARED TASKS</span><button class="add-btn" onclick="taskType='chore';openModal('task-modal')">+</button></div>
+      <div id="chores-list"></div>
+    </div>
+
+    <!-- HABITS -->
+    <div class="panel" id="panel-habits">
+      <div class="mult-card">
+        <div class="mult-header">
+          <span class="mult-label" style="display:flex;align-items:center;gap:6px"><img src="https://maplestory.io/api/GMS/255/item/2000006/icon" alt="" width="18" height="18" style="image-rendering:pixelated"> STREAK MULTIPLIER</span>
+          <span class="mult-val" id="mult-val">×1.0</span>
+        </div>
+        <div class="mult-track"><div class="mult-bar" id="mult-bar" style="width:10%"></div></div>
+        <div style="font-size:10px;color:var(--muted);font-weight:600;margin-top:6px">Longer streaks = more XP per habit · Max ×10</div>
+      </div>
+      <div class="sec-head"><span class="sec-title">🔥 STREAKS</span><button class="add-btn" onclick="openModal('habit-modal')">+</button></div>
+      <div id="habits-list"></div>
+    </div>
+
+    <!-- CREW -->
+    <div class="panel" id="panel-crew">
+      <div id="crew-panel"></div>
+    </div>
+
+    <!-- AWARDS -->
+    <div class="panel" id="panel-awards">
+      <div class="stats-row">
+        <div class="stat-card"><div class="stat-icon"><img src="https://maplestory.io/api/GMS/255/item/4031138/icon" alt="Badges" width="24" height="24" style="image-rendering:pixelated"></div><div class="stat-val" id="stat-badges" style="color:var(--accent3)">0</div><div class="stat-lbl">Badges</div></div>
+        <div class="stat-card"><div class="stat-icon"><img src="https://maplestory.io/api/GMS/255/item/2000001/icon" alt="XP" width="24" height="24" style="image-rendering:pixelated"></div><div class="stat-val" id="stat-xp" style="color:var(--accent2)">0</div><div class="stat-lbl">Total XP</div></div>
+        <div class="stat-card"><div class="stat-icon"><img src="https://maplestory.io/api/GMS/255/item/2000006/icon" alt="Streak" width="24" height="24" style="image-rendering:pixelated"></div><div class="stat-val" id="stat-streak" style="color:var(--pink)">0</div><div class="stat-lbl">Best Streak</div></div>
+        <div class="stat-card"><div class="stat-icon"><img src="https://maplestory.io/api/GMS/255/item/4031019/icon" alt="Done" width="24" height="24" style="image-rendering:pixelated"></div><div class="stat-val" id="stat-done" style="color:var(--green)">0</div><div class="stat-lbl">Done</div></div>
+      </div>
+      <div class="sp-info" id="sp-info-text">🧠 Earn Skill Points by levelling up</div>
+      <div class="sec-title" style="margin-bottom:12px">🧠 SKILL TREE</div>
+      <div id="skill-trees-wrap"></div>
+      <div class="sec-title" style="margin:20px 0 12px">🏅 BADGES</div>
+      <div class="badges-grid" id="badges-grid"></div>
+    </div>
+
+    <!-- FITNESS -->
+    <div class="panel" id="panel-fitness">
+      <div id="fitness-panel"></div>
+    </div>
+
+  </div>
+
+  <!-- BOTTOM NAV -->
+  <div class="bottom-nav">
+    <button class="bnav-btn active" data-tab="today" onclick="switchTab('today')"><img src="https://maplestory.io/api/GMS/255/item/4161001/icon" alt="Today" width="28" height="28" style="image-rendering:pixelated;object-fit:contain" onerror="this.style.display='none'" data-fallback="<span class=bnav-icon>🎯</span>"><span class="bnav-label">Today</span></button>
+    <button class="bnav-btn" data-tab="habits" onclick="switchTab('habits')"><img src="https://maplestory.io/api/GMS/255/item/2430005/icon" alt="Habits" width="28" height="28" style="image-rendering:pixelated;object-fit:contain" onerror="this.style.display='none'" data-fallback="<span class=bnav-icon>🔥</span>"><span class="bnav-label">Habits</span></button>
+    <button class="bnav-btn" data-tab="crew" onclick="switchTab('crew')"><img src="https://maplestory.io/api/GMS/255/item/4001025/icon" alt="Crew" width="28" height="28" style="image-rendering:pixelated;object-fit:contain" onerror="this.style.display='none'" data-fallback="<span class=bnav-icon>🪐</span>"><span class="bnav-label">Crew</span></button>
+    <button class="bnav-btn" data-tab="awards" onclick="switchTab('awards')"><img src="https://maplestory.io/api/GMS/255/item/4031138/icon" alt="Awards" width="28" height="28" style="image-rendering:pixelated;object-fit:contain" onerror="this.style.display='none'" data-fallback="<span class=bnav-icon>🏆</span>"><span class="bnav-label">Awards</span></button>
+    <button class="bnav-btn" data-tab="fitness" onclick="switchTab('fitness')"><img src="https://maplestory.io/api/GMS/255/item/1302000/icon" alt="Fitness" width="28" height="28" style="image-rendering:pixelated;object-fit:contain" onerror="this.style.display='none'" data-fallback="<span class=bnav-icon>💪</span>"><span class="bnav-label">Fitness</span></button>
+    <button class="bnav-btn" data-tab="music" onclick="switchTab('music')">
+      <img src="https://maplestory.io/api/GMS/255/item/1092075/icon" width="22" style="image-rendering:pixelated" onerror="this.style.display='none'">
+      <span class="bnav-label">Music</span>
+    </button>
+  </div>
+
+  <!-- ══ MUSIC PANEL ══ -->
+  <div class="panel" id="panel-music">
+    <div id="music-app-root"></div>
+  </div>
+
+</div><!-- end app -->
+
+<!-- ═══ MODALS ═══ -->
+
+<!-- Add Task Modal -->
+<div class="modal-overlay" id="task-modal" onclick="if(event.target===this)closeModal('task-modal')">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title">NEW TASK</div>
+    <label class="field-label">TASK NAME</label>
+    <input id="new-task-name" class="form-input" placeholder="e.g. Take medication, Call dentist...">
+    <label class="field-label">TYPE</label>
+    <div class="pill-row">
+      <button class="pill active" data-group="task-type" onclick="setTaskPill('personal','task-type',this)">👤 Personal</button>
+      <button class="pill" data-group="task-type" onclick="setTaskPill('shared','task-type',this)">👫 Shared</button>
+      <button class="pill" data-group="task-type" onclick="setTaskPill('chore','task-type',this)">🏠 Shared</button>
+      <button class="pill" data-group="task-type" onclick="setTaskPill('goal','task-type',this)">⭐ Goal</button>
+    </div>
+    <label class="field-label">PRIORITY & XP</label>
+    <div class="pill-row">
+      <button class="pill" data-group="task-priority" onclick="setTaskPill('low','task-priority',this)">🟢 Low · 20XP</button>
+      <button class="pill active" data-group="task-priority" onclick="setTaskPill('medium','task-priority',this)">🟡 Medium · 30XP</button>
+      <button class="pill" data-group="task-priority" onclick="setTaskPill('high','task-priority',this)">🔴 High · 50XP</button>
+    </div>
+    <label class="field-label">REPEAT</label>
+    <div class="pill-row">
+      <button class="pill active" data-group="task-repeat" onclick="setTaskPill('none','task-repeat',this)">⭕ Once</button>
+      <button class="pill" data-group="task-repeat" onclick="setTaskPill('daily','task-repeat',this)">🔁 Daily</button>
+      <button class="pill" data-group="task-repeat" onclick="setTaskPill('weekly','task-repeat',this)">📅 Weekly</button>
+      <button class="pill" data-group="task-repeat" onclick="setTaskPill('monthly','task-repeat',this)">🗓️ Monthly</button>
+    </div>
+    <button class="big-btn" onclick="addTask()">⚡ ADD TASK</button>
+  </div>
+</div>
+
+<!-- Add Habit Modal -->
+<div class="modal-overlay" id="habit-modal" onclick="if(event.target===this)closeModal('habit-modal')">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title">🔥 NEW STREAK</div>
+    <label class="field-label">HABIT NAME</label>
+    <input id="new-habit-name" class="form-input" placeholder="e.g. Morning medication, Evening walk...">
+    <label class="field-label">TIME OF DAY</label>
+    <div class="pill-row">
+      <button class="pill active" data-group="habit-time" onclick="setHabitPill('morning',this)">🌅 Morning</button>
+      <button class="pill" data-group="habit-time" onclick="setHabitPill('afternoon',this)">☀️ Afternoon</button>
+      <button class="pill" data-group="habit-time" onclick="setHabitPill('evening',this)">🌙 Evening</button>
+      <button class="pill" data-group="habit-time" onclick="setHabitPill('anytime',this)">⏰ Anytime</button>
+    </div>
+    <button class="big-btn" style="background:linear-gradient(135deg,#f59e0b,#f97316)" onclick="addHabit()">🔥 START STREAK</button>
+  </div>
+</div>
+
+<!-- Crew Modal -->
+<div class="modal-overlay" id="crew-modal" onclick="if(event.target===this)closeModal('crew-modal')">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title">🪐 JOIN THE ORBIT</div>
+    <div class="modal-tabs">
+      <button class="modal-tab active" id="ctab-create" onclick="switchCrewTab('create')">👑 Create Crew</button>
+      <button class="modal-tab" id="ctab-join" onclick="switchCrewTab('join')">🔗 Join Crew</button>
+    </div>
+    <div id="crew-create-section">
+      <div id="crew-create-form">
+        <label class="field-label">CREW NAME</label>
+        <input id="crew-name-input" class="form-input" placeholder="e.g. The Johnson Crew, Dream Team...">
+        <button id="create-crew-btn" class="big-btn" onclick="createCrew()">👑 Create Crew</button>
+      </div>
+      <div id="crew-created-box" style="display:none">
+        <div class="code-display">
+          <div style="font-size:11px;font-weight:800;color:var(--muted);letter-spacing:1px;margin-bottom:8px">✅ CREW CREATED! SHARE THIS CODE:</div>
+          <div class="code-val" id="crew-code-val">------</div>
+          <div class="code-sub">Send this 6-digit code to anyone you want in your crew. They tap "Join Crew" and enter it.</div>
+          <button class="big-btn" style="background:linear-gradient(135deg,#10b981,#059669)" onclick="closeModal('crew-modal');document.getElementById('crew-created-box').style.display='none';document.getElementById('crew-create-form').style.display='block'">✅ Got it!</button>
+        </div>
+      </div>
+    </div>
+    <div id="crew-join-section" style="display:none">
+      <label class="field-label">ENTER CREW CODE</label>
+      <input id="join-input" class="join-input" placeholder="AB12CD" maxlength="6">
+      <p style="color:var(--muted);font-size:12px;font-weight:600;margin-bottom:14px;text-align:center">Ask your crew leader for their 6-digit code</p>
+      <button class="big-btn" style="background:linear-gradient(135deg,var(--pink),var(--accent3))" onclick="joinCrew()">🔗 Join Crew</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ OVERLAYS ═══ -->
+<div id="celebration">
+  <div id="cel-title">TASK COMPLETE!</div>
+  <div id="cel-sub"></div>
+  <div id="cel-xp">+30 XP</div><img src="https://maplestory.io/api/GMS/255/item/4031138/icon" id="cel-meso" alt="" width="40" height="40" style="image-rendering:pixelated;display:none;margin-top:8px">
+  <div id="cel-extra"></div>
+  <div id="cel-hint" style="font-size:12px;color:var(--muted);margin-top:24px;font-weight:600">Tap anywhere to continue</div>
+</div>
+
+<div id="rest-overlay">
+  <div class="rest-title-text">⏸ REST PERIOD</div>
+  <div id="rest-display">01:00</div>
+  <div class="rest-sub-text">Recover. Breathe. Next set incoming.</div>
+  <button class="skip-rest-btn" onclick="skipRest()">Skip Rest →</button>
+</div>
+
+<div id="toast"></div>
+
 </script>
 <script>
 // Inline service worker
@@ -4733,6 +4922,105 @@ window.addEventListener('appinstalled', () => {
 // Apply saved preferences on load
 if(lsGet('intask_colorblind','0')==='1') document.body.classList.add('colorblind');
 
+
+</script>
+<script>
+window.confirmClearData = function() {
+  // Close settings modal first — transform stacking context blocks z-index
+  closeModal('settings-modal');
+  const el = document.createElement('div');
+  el.id = 'clear-data-modal';
+  el.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:9000;display:flex;align-items:center;justify-content:center;padding:20px';
+  el.innerHTML = `
+    <div style="background:var(--surf);border:3px solid var(--rose);border-radius:20px;padding:24px;max-width:320px;width:100%;box-shadow:0 24px 60px rgba(0,0,0,.4)">
+      <div style="font-size:14px;font-family:var(--pixel);font-weight:700;color:var(--rose);margin-bottom:8px;text-align:center">🧹 CLEAR ALL DATA</div>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:6px;line-height:1.6;text-align:center">This will permanently erase all your tasks, habits, fitness logs and progress.</div>
+      <div style="font-size:11px;color:var(--red);font-weight:700;text-align:center;margin-bottom:16px">This cannot be undone.</div>
+      <div style="font-size:11px;color:var(--muted);margin-bottom:6px;font-weight:600">Type <strong style="color:var(--red);font-family:monospace">DELETE DATA</strong> to confirm:</div>
+      <input id="clear-data-input" type="text" placeholder="DELETE DATA"
+        style="width:100%;background:var(--parchment);border:2px solid var(--border);border-radius:10px;padding:10px 12px;font-size:13px;font-family:monospace;color:var(--ink);outline:none;margin-bottom:14px;letter-spacing:1px"
+        oninput="document.getElementById('clear-data-confirm-btn').disabled=this.value!=='DELETE DATA'">
+      <div style="display:flex;gap:10px">
+        <button onclick="document.getElementById('clear-data-modal').remove();window.renderSettings&&openModal('settings-modal')"
+          style="flex:1;padding:12px;border-radius:10px;border:1.5px solid var(--border);background:var(--parchment);color:var(--muted);font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;cursor:pointer">
+          Cancel
+        </button>
+        <button id="clear-data-confirm-btn" disabled onclick="window.executeClearData()"
+          style="flex:1;padding:12px;border-radius:10px;border:none;background:var(--rose);color:#fff;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:700;cursor:pointer;opacity:0.4;transition:.2s"
+          onmouseenter="if(!this.disabled)this.style.opacity='1'" onmouseleave="if(!this.disabled)this.style.opacity='0.9'">
+          Clear Data
+        </button>
+      </div>
+    </div>`;
+  // Enable button style when not disabled
+  const inp = el.querySelector('#clear-data-input');
+  inp.addEventListener('input', () => {
+    const btn = document.getElementById('clear-data-confirm-btn');
+    btn.style.opacity = inp.value === 'DELETE DATA' ? '1' : '0.4';
+    btn.style.cursor = inp.value === 'DELETE DATA' ? 'pointer' : 'not-allowed';
+  });
+  document.body.appendChild(el);
+  setTimeout(() => el.querySelector('#clear-data-input').focus(), 100);
+};
+
+window.executeClearData = async function() {
+  closeModal('settings-modal');
+  // Second confirmation
+  const el2 = document.createElement('div');
+  el2.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:9001;display:flex;align-items:center;justify-content:center;padding:20px';
+  el2.innerHTML = `
+    <div style="background:var(--surf);border:3px solid var(--red);border-radius:20px;padding:24px;max-width:300px;width:100%;text-align:center">
+      <div style="font-size:28px;margin-bottom:10px">⚠️</div>
+      <div style="font-size:14px;font-family:var(--pixel);font-weight:700;color:var(--red);margin-bottom:10px">ARE YOU SURE?</div>
+      <div style="font-size:12px;color:var(--muted);line-height:1.7;margin-bottom:20px">Everything will be gone forever.<br>Tasks, habits, workouts — all of it.</div>
+      <div style="display:flex;gap:10px">
+        <button onclick="this.closest('div[style]').remove();window.renderSettings&&openModal('settings-modal')"
+          style="flex:1;padding:12px;border-radius:10px;border:1.5px solid var(--border);background:var(--parchment);color:var(--muted);font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;cursor:pointer">
+          No, keep it
+        </button>
+        <button onclick="window.doExecuteClearData()"
+          style="flex:1;padding:12px;border-radius:10px;border:none;background:var(--red);color:#fff;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:700;cursor:pointer">
+          Yes, clear it
+        </button>
+      </div>
+    </div>`;
+  document.getElementById('clear-data-modal')?.remove();
+  document.body.appendChild(el2);
+};
+
+window.doExecuteClearData = async function() {
+  document.querySelectorAll('div[style*="z-index:900"]').forEach(el => el.remove());
+  try {
+    if(!currentUser) { toast('Not signed in'); return; }
+    toast('Clearing data...');
+    const uid = currentUser.uid;
+    const db2 = db;
+    // Delete all tasks
+    const tasks = await getDocs(query(collection(db2,'tasks'), where('uid','==',uid)));
+    for(const d of tasks.docs) await deleteDoc(d.ref);
+    // Delete all habits
+    const habits = await getDocs(query(collection(db2,'habits'), where('uid','==',uid)));
+    for(const d of habits.docs) await deleteDoc(d.ref);
+    // Clear fitness data (reset to opted out)
+    const fitRef = doc(db2,'fitness',uid);
+    const fitSnap = await getDoc(fitRef);
+    if(fitSnap.exists()) await updateDoc(fitRef, {workoutEntries:[], bodyEntries:[], optedIn:false});
+    // Reset user profile stats but keep account
+    await updateDoc(doc(db2,'users',uid), {
+      xp:0, level:1, totalDone:0, currentStreak:0, maxStreak:0,
+      badges:[], seasonXp:0, skillPoints:0
+    });
+    // Clear local state
+    workoutEntries=[]; bodyEntries=[]; fitnessProfile=null;
+    toast('✅ All data cleared!');
+    closeModal('settings-modal');
+    renderHeader();
+    switchTab('today');
+  } catch(e) {
+    console.error('Clear data error:', e);
+    toast('Error clearing data. Try again.');
+  }
+};
 
 </script>
 </head>
