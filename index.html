@@ -1088,22 +1088,36 @@ window.doEmailLogin = async () => {
   if (!email || !pw) { showAuthError('Enter email and password.'); return; }
   const isSignUp = g('li-btn').dataset.mode === 'signup';
   g('li-btn').disabled = true; g('li-btn').textContent = '...';
+  const SIGNIN_ERRORS = new Set([
+    'auth/user-not-found','auth/wrong-password','auth/invalid-credential',
+    'auth/invalid-login-credentials','auth/user-disabled','auth/invalid-email'
+  ]);
   try {
     if (isSignUp) {
       await createUserWithEmailAndPassword(auth, email, pw);
       toast('Account created! Welcome! 🚀');
     } else {
+      // ONLY attempt sign-in — NEVER create an account here
       await signInWithEmailAndPassword(auth, email, pw);
       toast('Welcome back! 🚀');
     }
   } catch(e) {
-    if (!isSignUp && (e.code === 'auth/user-not-found' || e.code === 'auth/invalid-credential' || e.code === 'auth/wrong-password')) {
-      showAuthError('Wrong email or password. New here? Tap "Create Account".');
-    } else if (isSignUp && e.code === 'auth/email-already-in-use') {
-      showAuthError('Email already registered. Tap "Sign In".');
+    console.log('Auth error code:', e.code); // helps debug in console
+    if (!isSignUp) {
+      // All sign-in failures show the same safe message (don't reveal if account exists)
+      showAuthError('No account found with those details. Check your email and password, or create a new account.');
+    } else if (e.code === 'auth/email-already-in-use') {
+      showAuthError('Email already registered. Switch to Sign In mode.');
+    } else if (e.code === 'auth/weak-password') {
+      showAuthError('Password must be at least 6 characters.');
+    } else if (e.code === 'auth/invalid-email') {
+      showAuthError('Please enter a valid email address.');
     } else {
       showAuthError(friendlyErr(e.code));
     }
+    g('li-btn').disabled = false;
+    g('li-btn').textContent = isSignUp ? 'Create Account' : '🚀 Sign In';
+    return; // stop here - don't proceed past a failed auth
   }
   g('li-btn').disabled = false;
   g('li-btn').textContent = isSignUp ? 'Create Account' : '🚀 Sign In';
