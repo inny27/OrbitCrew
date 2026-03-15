@@ -12,7 +12,8 @@
 <link rel="manifest" href="data:application/manifest+json;base64,eyJuYW1lIjoiSW5UYXNrIiwic2hvcnRfbmFtZSI6IkluVGFzayIsImRlc2NyaXB0aW9uIjoiTGV2ZWwgdXAgbGlmZS4gVG9nZXRoZXIuIiwic3RhcnRfdXJsIjoiLi8iLCJzY29wZSI6Ii4vIiwiZGlzcGxheSI6InN0YW5kYWxvbmUiLCJvcmllbnRhdGlvbiI6InBvcnRyYWl0IiwiYmFja2dyb3VuZF9jb2xvciI6IiMwYTBhMWEiLCJ0aGVtZV9jb2xvciI6IiNmZmQ3MDAiLCJpY29ucyI6W3sic3JjIjoiaHR0cHM6Ly9tYXBsZXN0b3J5LmlvL2FwaS9HTVMvMjU1L21vYi8xMDAxMDAvcmVuZGVyL3N0YW5kIiwic2l6ZXMiOiIxOTJ4MTkyIiwidHlwZSI6ImltYWdlL3BuZyJ9LHsic3JjIjoiaHR0cHM6Ly9tYXBsZXN0b3J5LmlvL2FwaS9HTVMvMjU1L21vYi8xMDAxMDAvcmVuZGVyL3N0YW5kIiwic2l6ZXMiOiI1MTJ4NTEyIiwidHlwZSI6ImltYWdlL3BuZyJ9XSwiY2F0ZWdvcmllcyI6WyJwcm9kdWN0aXZpdHkiLCJsaWZlc3R5bGUiXX0=">
 <link rel="apple-touch-icon" href="icon-192.png">
 <title>InTask</title>
-<link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<link rel="icon" href="https://maplestory.io/api/GMS/255/mob/100100/render/stand" type="image/png">
+  <link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
 <style>
 /* ============================================================
    RESET & VARIABLES
@@ -1999,7 +2000,7 @@ function renderHeader() {
   const _avEl = g('hdr-avatar');
   if(_avEl) {
     const _avId = u.avatar||'100100';
-    _avEl.innerHTML = `<img src="${AVATAR_URL(_avId)}" width="28" height="28" style="image-rendering:pixelated;object-fit:contain" onerror="this.outerHTML='🍄'" alt="avatar">`;
+    _avEl.innerHTML = `<img src="${AVATAR_URL(_avId)}" width="28" height="28" style="image-rendering:pixelated;object-fit:contain" onerror="this.style.display='none'" data-fallback="🍄" alt="avatar">`;
   }
   // no color border in JIRA theme
   g('hdr-name').textContent = u.displayName||'Pilot';
@@ -3971,7 +3972,7 @@ const colRow=g('col-row'); if(colRow) colRow.innerHTML=COLORS.map((c,i)=>`<div c
 
 <!-- ═══ LOGIN SCREEN ═══ -->
 <div id="login" class="screen active">
-  <div class="login-logo"><img src="https://maplestory.io/api/GMS/255/item/2000000/icon" width="44" style="image-rendering:pixelated" onerror="this.outerHTML='<span style=font-size:40px>🍄</span>'"></div>
+  <div class="login-logo"><img src="https://maplestory.io/api/GMS/255/item/2000000/icon" width="44" style="image-rendering:pixelated" onerror="this.style.display='none'" data-fallback="<span style=font-size:40px>🍄</span>"></div>
   <div style="display:flex;align-items:center;justify-content:center;gap:10px;margin-top:8px">
     <img src="https://maplestory.io/api/GMS/255/item/1302000/icon" width="28" style="image-rendering:pixelated;opacity:0.8" onerror="this.style.display='none'">
     <div class="login-title">In<span>Task</span></div>
@@ -4154,11 +4155,11 @@ const colRow=g('col-row'); if(colRow) colRow.innerHTML=COLORS.map((c,i)=>`<div c
 
   <!-- BOTTOM NAV -->
   <div class="bottom-nav">
-    <button class="bnav-btn active" data-tab="today" onclick="switchTab('today')"><img src="https://maplestory.io/api/GMS/255/item/2000000/icon" alt="Today" width="28" height="28" style="image-rendering:pixelated;object-fit:contain" onerror="this.outerHTML='<span class=bnav-icon>🎯</span>'"><span class="bnav-label">Today</span></button>
-    <button class="bnav-btn" data-tab="habits" onclick="switchTab('habits')"><img src="https://maplestory.io/api/GMS/255/item/2000006/icon" alt="Habits" width="28" height="28" style="image-rendering:pixelated;object-fit:contain" onerror="this.outerHTML='<span class=bnav-icon>🔥</span>'"><span class="bnav-label">Habits</span></button>
-    <button class="bnav-btn" data-tab="crew" onclick="switchTab('crew')"><img src="https://maplestory.io/api/GMS/255/item/2022000/icon" alt="Crew" width="28" height="28" style="image-rendering:pixelated;object-fit:contain" onerror="this.outerHTML='<span class=bnav-icon>🪐</span>'"><span class="bnav-label">Crew</span></button>
-    <button class="bnav-btn" data-tab="awards" onclick="switchTab('awards')"><img src="https://maplestory.io/api/GMS/255/item/4031138/icon" alt="Awards" width="28" height="28" style="image-rendering:pixelated;object-fit:contain" onerror="this.outerHTML='<span class=bnav-icon>🏆</span>'"><span class="bnav-label">Awards</span></button>
-    <button class="bnav-btn" data-tab="fitness" onclick="switchTab('fitness')"><img src="https://maplestory.io/api/GMS/255/item/1302000/icon" alt="Fitness" width="28" height="28" style="image-rendering:pixelated;object-fit:contain" onerror="this.outerHTML='<span class=bnav-icon>💪</span>'"><span class="bnav-label">Fitness</span></button>
+    <button class="bnav-btn active" data-tab="today" onclick="switchTab('today')"><img src="https://maplestory.io/api/GMS/255/item/2000000/icon" alt="Today" width="28" height="28" style="image-rendering:pixelated;object-fit:contain" onerror="this.style.display='none'" data-fallback="<span class=bnav-icon>🎯</span>"><span class="bnav-label">Today</span></button>
+    <button class="bnav-btn" data-tab="habits" onclick="switchTab('habits')"><img src="https://maplestory.io/api/GMS/255/item/2000006/icon" alt="Habits" width="28" height="28" style="image-rendering:pixelated;object-fit:contain" onerror="this.style.display='none'" data-fallback="<span class=bnav-icon>🔥</span>"><span class="bnav-label">Habits</span></button>
+    <button class="bnav-btn" data-tab="crew" onclick="switchTab('crew')"><img src="https://maplestory.io/api/GMS/255/item/2022000/icon" alt="Crew" width="28" height="28" style="image-rendering:pixelated;object-fit:contain" onerror="this.style.display='none'" data-fallback="<span class=bnav-icon>🪐</span>"><span class="bnav-label">Crew</span></button>
+    <button class="bnav-btn" data-tab="awards" onclick="switchTab('awards')"><img src="https://maplestory.io/api/GMS/255/item/4031138/icon" alt="Awards" width="28" height="28" style="image-rendering:pixelated;object-fit:contain" onerror="this.style.display='none'" data-fallback="<span class=bnav-icon>🏆</span>"><span class="bnav-label">Awards</span></button>
+    <button class="bnav-btn" data-tab="fitness" onclick="switchTab('fitness')"><img src="https://maplestory.io/api/GMS/255/item/1302000/icon" alt="Fitness" width="28" height="28" style="image-rendering:pixelated;object-fit:contain" onerror="this.style.display='none'" data-fallback="<span class=bnav-icon>💪</span>"><span class="bnav-label">Fitness</span></button>
   </div>
 
 </div><!-- end app -->
@@ -4677,13 +4678,7 @@ window.doExecuteClearData = async function() {
     toast('Error clearing data. Try again.');
   }
 };
-</scrip
 </script>
-<script>
-t
-</script>
-</script>
->
 <!-- Settings Modal -->
 <div class="modal-overlay" id="settings-modal" onclick="if(event.target===this)closeModal('settings-modal')">
   <div class="modal" style="max-height:85vh;overflow-y:auto">
