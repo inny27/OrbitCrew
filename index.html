@@ -996,8 +996,9 @@ let streakMult = 1;
 // ─── AUTH ─────────────────────────────────────────────────
 onAuthStateChanged(auth, async user => {
   if (user) {
+    // Clear stale profile immediately so old data never shows for new user
+    userProfile = null;
     currentUser = user;
-    // popup auth - no redirect result needed
     await loadProfile(currentUser.uid);
   } else {
     currentUser = null; userProfile = null;
@@ -1010,6 +1011,9 @@ async function loadProfile(uid) {
   const snap = await getDoc(doc(db,'users',uid));
   if (!snap.exists()) {
     g('google-name').textContent = currentUser.displayName || 'Pilot';
+    // Pre-fill nickname field if it exists (for guest accounts)
+    const suNameEl = g('su-name');
+    if (suNameEl && currentUser.displayName) suNameEl.value = currentUser.displayName;
     showScreen('profile-setup');
   } else {
     userProfile = snap.data();
@@ -1159,7 +1163,12 @@ window.doGuestLogin = async () => {
     // Try to create account first
     const result = await createUserWithEmailAndPassword(auth, guestEmail, pw);
     await updateProfile(result.user, { displayName: username });
+    await result.user.reload(); // ensure displayName is on the user object
+    currentUser = auth.currentUser;  // refresh currentUser with updated profile
     toast('Welcome, ' + username + '! 🚀');
+    // Manually trigger profile load now that displayName is set
+    await loadProfile(currentUser.uid);
+    return; // onAuthStateChanged will also fire but loadProfile is idempotent
   } catch(e) {
     if (e.code === 'auth/email-already-in-use') {
       // Account exists — sign in instead
