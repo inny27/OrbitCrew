@@ -722,21 +722,31 @@ const BADGES = [
 ];
 const SKILL_TREES = {
   focus:{name:'Focus',icon:'🎯',color:'#06b6d4',skills:[
-    {id:'focus_1',name:'Sharp Mind',desc:'Tasks worth +5 bonus XP',cost:50,requires:null},
-    {id:'focus_2',name:'Deep Work',desc:'High priority tasks = 2x XP',cost:150,requires:'focus_1'},
-    {id:'focus_3',name:'Flow State',desc:'Habit streak multiplier +20%',cost:300,requires:'focus_2'},
+    {id:'focus_1',name:'Sharp Mind',desc:'Tasks worth +5 bonus XP',cost:50,requires:null,tamaMin:0},
+    {id:'focus_2',name:'Deep Work',desc:'High priority tasks = 2× XP',cost:150,requires:'focus_1',tamaMin:5},
+    {id:'focus_3',name:'Flow State',desc:'Habit streak multiplier +20%',cost:300,requires:'focus_2',tamaMin:15},
+    {id:'focus_4',name:'Laser Focus',desc:'Complete 5 tasks in a day for +100 bonus XP',cost:500,requires:'focus_3',tamaMin:30},
   ]},
   resilience:{name:'Resilience',icon:'🛡️',color:'#10b981',skills:[
-    {id:'res_1',name:'Iron Will',desc:'Streak buffer — miss 2 days, not 1',cost:75,requires:null},
-    {id:'res_2',name:'Bounce Back',desc:'Completing habit restores 50% streak',cost:200,requires:'res_1'},
-    {id:'res_3',name:'Unbreakable',desc:'Weekly streak shield',cost:400,requires:'res_2'},
+    {id:'res_1',name:'Iron Will',desc:'Streak buffer — miss 2 days, not 1',cost:75,requires:null,tamaMin:0},
+    {id:'res_2',name:'Bounce Back',desc:'Completing habit restores 50% streak',cost:200,requires:'res_1',tamaMin:10},
+    {id:'res_3',name:'Unbreakable',desc:'Weekly streak shield — 1 free miss per week',cost:400,requires:'res_2',tamaMin:24},
+    {id:'res_4',name:'Phoenix',desc:'Penalty XP loss reduced by 50%',cost:600,requires:'res_3',tamaMin:50},
   ]},
-  crew:{name:'Crew Power',icon:'🌐',color:'#ec4899',skills:[
-    {id:'crew_1',name:'Motivator',desc:'Boosts give +15 XP instead of +10',cost:100,requires:null},
-    {id:'crew_2',name:'Synergy',desc:'Shared tasks give +50% XP',cost:250,requires:'crew_1'},
-    {id:'crew_3',name:'Crew Commander',desc:'Boss battles deal 2x damage',cost:500,requires:'crew_2'},
+  crew:{name:'Party Buffs',icon:'🌐',color:'#ec4899',skills:[
+    {id:'crew_1',name:'Motivator',desc:'Boosts give +15 XP instead of +10',cost:100,requires:null,tamaMin:0},
+    {id:'crew_2',name:'Synergy',desc:'Shared tasks give +50% XP',cost:250,requires:'crew_1',tamaMin:8},
+    {id:'crew_3',name:'Party Leader',desc:'Boss battles deal 2× damage',cost:500,requires:'crew_2',tamaMin:20},
+    {id:'crew_4',name:'Raid Ready',desc:'All crew members +10% XP for 24h after crew boss win',cost:800,requires:'crew_3',tamaMin:75},
+  ]},
+  body:{name:'Body Mastery',icon:'💪',color:'#f59e0b',skills:[
+    {id:'body_1',name:'Warm Up',desc:'Fitness sessions give +10 bonus XP',cost:60,requires:null,tamaMin:0},
+    {id:'body_2',name:'Gains Mode',desc:'STR workouts give +25% stat points',cost:180,requires:'body_1',tamaMin:15},
+    {id:'body_3',name:'Cardio King',desc:'Cardio sessions count double toward TamaFit',cost:350,requires:'body_2',tamaMin:30},
+    {id:'body_4',name:'Peak Performance',desc:'All workout XP +30% — you earned this 🏆',cost:700,requires:'body_3',tamaMin:50},
   ]},
 };
+
 const XP = {high:50,medium:30,low:20,habit:25,boost:10};
 
 const EXERCISE_DB = [
@@ -2338,20 +2348,28 @@ function renderAwards() {
     </div>`).join('');
   const pts = u.skillPoints||0;
   const skills = u.skills||[];
-  g('sp-info-text').innerHTML = `🧠 <strong>${pts}</strong> Skill Points · Earn 2SP per level up`;
+  const {stage, totalWorkouts} = getTamaState();
+  const tamaLevel = totalWorkouts;
+
+  g('sp-info-text').innerHTML = `🧠 <strong>${pts}</strong> Skill Points available · Earn 2 SP per level · TamaFit level gates some skills`;
+
   g('skill-trees-wrap').innerHTML = Object.entries(SKILL_TREES).map(([,tree])=>`
     <div class="skill-tree-wrap">
       <div class="skill-tree-header" style="color:${tree.color}">${tree.icon} ${tree.name}</div>
       ${tree.skills.map((s,i)=>{
         const owned = skills.includes(s.id);
-        const canUnlock = !owned && pts>=s.cost && (!s.requires||skills.includes(s.requires));
-        const locked = !owned && s.requires && !skills.includes(s.requires);
+        const tamaLocked = !owned && tamaLevel < (s.tamaMin||0);
+        const prevLocked = !owned && s.requires && !skills.includes(s.requires);
+        const canUnlock = !owned && !tamaLocked && !prevLocked && pts >= s.cost;
         return `<div class="skill-item">
           ${i>0?'<div class="skill-conn">↓</div>':''}
-          <div class="skill-box${owned?' owned':canUnlock?' available':locked?' locked':''}">
+          <div class="skill-box${owned?' owned':canUnlock?' available':tamaLocked||prevLocked?' locked':''}">
             <div class="skill-box-name">${s.name}${owned?' ✓':''}</div>
             <div class="skill-box-desc">${s.desc}</div>
-            <div class="skill-box-cost" style="color:${owned?tree.color:canUnlock?'#f59e0b':'var(--muted)'}">${owned?'UNLOCKED':locked?'🔒 Unlock previous first':`${s.cost} SP`}</div>
+            ${tamaLocked?`<div class="skill-box-cost" style="color:var(--muted)">🥚 TamaFit level ${s.tamaMin} required (you: ${tamaLevel})</div>`
+            :prevLocked?`<div class="skill-box-cost" style="color:var(--muted)">🔒 Unlock previous skill first</div>`
+            :owned?'<div class="skill-box-cost" style="color:'+tree.color+'">UNLOCKED</div>'
+            :'<div class="skill-box-cost" style="color:'+(pts>=s.cost?'#f59e0b':'var(--muted)')+'">'+s.cost+' SP'+(pts<s.cost?' (need '+(s.cost-pts)+' more)':'')+'</div>'}
             ${canUnlock?`<button class="skill-unlock-btn" style="background:${tree.color}" onclick="unlockSkill('${s.id}')">UNLOCK</button>`:''}
           </div>
         </div>`;
@@ -3986,21 +4004,53 @@ window.renderCoach = function() {
   const allGroups=['Chest','Back','Shoulders','Biceps','Triceps','Quads','Hamstrings','Glutes','Core'];
   const neglected=allGroups.filter(g2=>{if(!recentDates[g2]) return true; return (Date.now()-new Date(recentDates[g2]))/(1000*60*60*24)>14;});
   const overworked=Object.entries(muscleFreq).filter(([,v])=>v>5).map(([k])=>k);
-  const tips=['Progressive overload is the #1 driver of muscle growth. Add a small amount of weight or an extra rep each week.','The best workout is the one you actually do. Consistency over perfection, every single time.','Breathe out on exertion — exhale when lifting, inhale on the way down.','Sleep is where the gains happen. 7-9 hours is non-negotiable for elite performance.','Mind-muscle connection is real. Thinking about the muscle you\'re working can increase activation by up to 22%.','Dehydration of just 2% reduces performance by up to 10%. Drink water before you feel thirsty.','For weight loss: you cannot out-train a bad diet. But training reshapes your body in ways dieting alone cannot.'];
+  const {totalWorkouts} = getTamaState();
+
+  // Happy Meal trigger: every 10 workouts milestone
+  const happyMealMilestones = [10,20,30,50,75,100];
+  const showHappyMeal = happyMealMilestones.some(m => totalWorkouts === m);
+
+  const happyMealSuggestions = [
+    {cuisine:'🍜',name:'Ramen',desc:'A warm bowl of ramen — you\'ve earned every noodle.'},
+    {cuisine:'🍕',name:'Pizza',desc:'Go get that pizza. Thin crust, thick crust — your call, champion.'},
+    {cuisine:'🌮',name:'Tacos',desc:'Street tacos. As many as you want. No questions asked.'},
+    {cuisine:'🍔',name:'Burger',desc:'A proper burger with the lot. You worked for this bite.'},
+    {cuisine:'🍣',name:'Sushi',desc:'Treat yourself to a sushi spread. Protein and joy in one.'},
+    {cuisine:'🥗',name:'Your Favourite',desc:'Whatever YOU love most. This meal is your reward.'},
+  ];
+  const meal = happyMealSuggestions[totalWorkouts % happyMealSuggestions.length];
+
+  const tips=['Progressive overload is the #1 driver of muscle growth. Add a small amount of weight or an extra rep each week.','The best workout is the one you actually do. Consistency over perfection, every single time.','Breathe out on exertion — exhale when lifting, inhale on the way down.','Sleep is where the gains happen. 7–9 hours is non-negotiable for elite performance.','Mind-muscle connection is real. Thinking about the muscle you\'re working can increase activation by up to 22%.','Dehydration of just 2% reduces performance by up to 10%. Drink water before you feel thirsty.','Fitness is about balance — not restriction. Eat the food you love. Move your body. Enjoy your life.'];
+
   s.innerHTML=`
-    <div class="sec-title" style="margin-bottom:16px"><img src="https://maplestory.io/api/GMS/255/item/2022000/icon" alt="" width="18" height="18" style="image-rendering:pixelated;vertical-align:middle;margin-right:4px"> YOUR AI COACH</div>
+    <div class="sec-title" style="margin-bottom:16px"><img src="https://maplestory.io/api/GMS/255/mob/100100/render/stand" alt="" width="24" height="24" style="image-rendering:pixelated;vertical-align:middle;margin-right:6px"> InnyTheCoach</div>
+
+    ${showHappyMeal?`
+    <div style="background:linear-gradient(135deg,#fff8e0,#fff0cc);border:2px solid #f59e0b;border-radius:16px;padding:18px;margin-bottom:16px;position:relative;overflow:hidden">
+      <div style="position:absolute;top:-10px;right:-10px;font-size:48px;opacity:0.15">🎉</div>
+      <div style="font-size:10px;font-weight:700;color:#b45309;letter-spacing:1.5px;margin-bottom:6px">🎊 ${totalWorkouts} WORKOUTS MILESTONE!</div>
+      <div style="font-size:16px;font-weight:700;color:#92400e;margin-bottom:6px">${meal.cuisine} Time for a Happy Meal!</div>
+      <div style="font-size:13px;color:#78350f;line-height:1.6;margin-bottom:10px">${meal.desc}</div>
+      <div style="font-size:12px;color:#92400e;font-style:italic;line-height:1.6">Remember — this isn't a cheat meal. It's a <strong>happy meal</strong>. 🍽️ Fitness is about balance, not punishment. You showed up, you earned this. Now go enjoy it!</div>
+    </div>`:``}
+
     ${neglected.length?`<div class="coach-alert-card">
       <div class="coach-card-title">⚠️ Muscles Needing Attention</div>
-      <div class="coach-card-body">You have not trained <strong>${neglected.join(', ')}</strong> recently. Balance prevents injury.</div>
-      <div class="coach-rec-list">${neglected.slice(0,2).flatMap(m=>EXERCISE_DB.filter(ex=>ex.muscles.includes(m)).slice(0,2).map(ex=>`<div class="coach-rec-item" onclick="const _ov=document.getElementById('ex-detail-overlay');if(_ov)_ov.remove();selectExercise('${ex.id}');if(!activeSession){switchFitTab('diary',document.getElementById('ft-diary'));}else{updateExFormSection();}"><span style="font-size:22px">${{weights:"🏋️",calisthenics:"💪",run:"🏃",swim:"🏊",cardio:"❤️"}[ex.type]||"💪"}</span><div><div style="font-weight:700;font-size:13px">${ex.name}</div><div style="font-size:11px;color:var(--muted)">${ex.muscles.join(', ')}</div></div><span style="font-size:11px;color:var(--accent2)">Add →</span></div>`)).join('')}
+      <div class="coach-card-body">You haven't trained <strong>${neglected.join(', ')}</strong> recently. Balance prevents injury.</div>
+      <div class="coach-rec-list">${neglected.slice(0,2).flatMap(m=>EXERCISE_DB.filter(ex=>ex.muscles.includes(m)).slice(0,2).map(ex=>`<div class="coach-rec-item" onclick="selectExercise('${ex.id}')"><span style="font-size:22px">${{weights:'🏋️',calisthenics:'💪',run:'🏃',swim:'🏊',cardio:'❤️'}[ex.type]||'💪'}</span><div><div style="font-weight:700;font-size:13px">${ex.name}</div><div style="font-size:11px;color:var(--muted)">${ex.muscles.join(', ')}</div></div><span style="font-size:11px;color:var(--accent2)">Add →</span></div>`)).join('')}
       </div>
-    </div>`:'' }
-    ${overworked.length?`<div class='coach-warn-card'><div class='coach-card-title'>🔥 High Frequency Alert</div><div class='coach-card-body'><strong>${overworked.join(', ')}</strong> trained very frequently. Consider a deload week.</div></div>`:''}\n    <div class='coach-tip-card'>
-      <div class="coach-tip-title">💡 Coach's Tip of the Day</div>
+    </div>`:``}
+
+    ${overworked.length?`<div class="coach-warn-card"><div class="coach-card-title">🔥 High Frequency Alert</div><div class="coach-card-body"><strong>${overworked.join(', ')}</strong> trained very frequently. Consider a deload week — your muscles grow during rest.</div></div>`:''}
+
+    <div class="coach-tip-card">
+      <div class="coach-tip-title">💡 InnyTheCoach's Tip</div>
       <div class="coach-tip-body">${tips[new Date().getDay()%tips.length]}</div>
     </div>
-    ${workoutEntries.length===0?'<div class="empty-state" style="margin-top:20px"><div class="empty-icon">🤖</div><div class="empty-text">Log some workouts and I\'ll give you personalised recommendations!</div></div>':''}`;
+
+    ${workoutEntries.length===0?'<div class="empty-state" style="margin-top:20px"><div class="empty-icon">🍄</div><div class="empty-text">Log some workouts and InnyTheCoach will give you personalised advice!</div></div>':''}`;
 }
+
 
 window.renderGuides = function() {
   const s=getFitSub(); if(!s) return;
