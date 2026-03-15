@@ -512,8 +512,9 @@ body::after{display:none;}
 .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:5000;display:flex;align-items:flex-end;justify-content:center;opacity:0;pointer-events:none;transition:opacity .2s;}
 .modal-overlay.open{opacity:1;pointer-events:all;}
 .modal-overlay.open .modal{transform:translateY(0);}
+.modal-overlay.open .modal{background:var(--surf);border-radius:24px 24px 0 0;width:100%;max-width:520px;padding:20px;padding-bottom:40px;box-shadow:0 -8px 40px rgba(44,35,64,0.15);transform:translateY(100%);transition:transform .3s ease;max-height:90vh;overflow-y:auto;position:relative;}
 .modal{background:var(--surf);border-radius:24px 24px 0 0;width:100%;max-width:430px;padding:20px;padding-bottom:40px;border-top:none;box-shadow:0 -8px 40px rgba(44,35,64,0.12);transform:translateY(100%);transition:transform .3s ease;max-height:90vh;overflow-y:auto;position:relative;z-index:5001;}
-.modal-overlay.open .modal{transform:translateY(0);}
+.modal-overlay.open .modal{background:var(--surf);border-radius:24px 24px 0 0;width:100%;max-width:520px;padding:20px;padding-bottom:40px;box-shadow:0 -8px 40px rgba(44,35,64,0.15);transform:translateY(100%);transition:transform .3s ease;max-height:90vh;overflow-y:auto;position:relative;}
 .modal-handle{width:40px;height:4px;background:var(--border);border-radius:99px;margin:0 auto 18px;}
 .modal-title{font-size:18px;font-weight:700;text-align:center;margin-bottom:18px;color:var(--ink);font-family:var(--pixel);}
 .modal-tabs{display:flex;background:var(--parchment);border-radius:12px;padding:3px;margin-bottom:16px;border:1px solid var(--border);}
@@ -2441,11 +2442,11 @@ window.renderSettings = function renderSettings() {
       <div style="display:flex;align-items:center;gap:10px;margin-bottom:4px">
         <span style="font-size:14px">🔈</span>
         <input type="range" id="settings-volume" min="0" max="1" step="0.05"
-          value="${parseFloat(localStorage.getItem('intask_volume')||'0.4').toFixed(2)}"
+          value="${parseFloat(lsGet('intask_volume','0.4')||'0.4').toFixed(2)}"
           oninput="setMusicVolume(this.value)"
           style="flex:1;accent-color:var(--accent);height:6px;cursor:pointer">
         <span style="font-size:14px">🔊</span>
-        <span id="vol-pct" style="font-size:8px;font-family:var(--pixel);color:var(--accent);min-width:36px">${Math.round(parseFloat(localStorage.getItem('intask_volume')||'0.4')*100)}%</span>
+        <span id="vol-pct" style="font-size:8px;font-family:var(--pixel);color:var(--accent);min-width:36px">${Math.round(parseFloat(lsGet('intask_volume','0.4')||'0.4')*100)}%</span>
       </div>
     </div>
 
@@ -2630,52 +2631,36 @@ window.addEventListener('DOMContentLoaded', () => {
 
 window.setMusicVolume = (val) => {
   const v = parseFloat(val);
-  localStorage.setItem('intask_volume', v.toFixed(2));
+  lsSet('intask_volume', v.toFixed(2));
   // Apply to all active audio
-  if(bgmAudio) bgmAudio.volume = v;
-  if(loginAudio) loginAudio.volume = v;
+  if(window._bgmAudio) window._bgmAudio.volume = v;
+  if(window._loginAudio) window._loginAudio.volume = v;
   if(_previewAudio) _previewAudio.volume = v;
   const pct = document.getElementById('vol-pct');
   if(pct) pct.textContent = Math.round(v*100) + '%';
 };
 
 window.setSongPref = (type, value) => {
-  localStorage.setItem(type === 'login' ? 'intask_login_song' : 'intask_bgm_song', value);
-  // Reset audio so next play uses new song
-  if(type === 'bgm' && bgmAudio) { bgmAudio.pause(); bgmAudio = null; bgmPlaying = false;
-    const btn = document.getElementById('bgm-btn');
-    if(btn) { btn.textContent='🎵'; btn.style.borderColor='var(--accent)'; btn.style.color='var(--accent)'; }
+  lsSet(type === 'login' ? 'intask_login_song' : 'intask_bgm_song', value);
+  if (type === 'bgm' && window._bgmAudio) {
+    window._bgmAudio.pause(); window._bgmAudio = null;
   }
-  if(type === 'login' && loginAudio) { loginAudio.pause(); loginAudio = null; }
+  if (type === 'login' && window._loginAudio) {
+    window._loginAudio.pause(); window._loginAudio = null;
+  }
   toast('🎵 Song updated!');
 };
 
 let _previewAudio = null; // track current preview
 
-window.stopAllMusic = () => {
-  // Stop preview
-  if(_previewAudio) { _previewAudio.pause(); _previewAudio.currentTime=0; _previewAudio=null; }
-  // Stop BGM
-  if(bgmAudio && bgmPlaying) {
-    bgmAudio.pause(); bgmPlaying=false;
-    const btn=document.getElementById('bgm-btn');
-    if(btn){btn.textContent='🎵';btn.style.borderColor='var(--accent)';btn.style.color='var(--accent)';}
-    const lbl=document.getElementById('bgm-label');
-    if(lbl) lbl.style.display='none';
-  }
-  // Stop login audio
-  if(loginAudio){loginAudio.pause();loginAudio.currentTime=0;}
-  updateMusicUI();
-  toast('⏹ Music stopped');
-};
 
 function updateMusicUI() {
-  const isPlaying = (bgmPlaying) || (_previewAudio && !_previewAudio.paused);
+  const isPlaying = (window._bgmAudio && !window._bgmAudio.paused) || (_previewAudio && !_previewAudio.paused);
   const stopBtn = document.getElementById('settings-stop-music');
   if(stopBtn) stopBtn.style.opacity = isPlaying ? '1' : '0.4';
   const nowPlaying = document.getElementById('settings-now-playing');
   if(nowPlaying) {
-    if(bgmPlaying) {
+    if(window._bgmAudio && !window._bgmAudio.paused) {
       const songName = lsGet('intask_bgm_song') || DEFAULT_BGM_SONG;
       nowPlaying.textContent = '♪ ' + songName;
       nowPlaying.style.display = 'block';
@@ -2711,7 +2696,7 @@ window.previewSong = (type) => {
   // Stop ALL currently playing audio first (one at a time)
   window.stopAllMusic();
   const preview = new Audio(url);
-  const vol = parseFloat(localStorage.getItem('intask_volume') || '0.4');
+  const vol = parseFloat(lsGet('intask_volume','0.4') || '0.4');
   preview.volume = vol;
   preview.play().then(() => {
     _previewAudio = preview;
@@ -3136,7 +3121,7 @@ window.closeTamaPostWorkout = function() {
 
 window.showTamaPostWorkout = function(exercises, gainStr, gainCrd, gainBal, xpEarned, statsAfter) {
   const {stage} = getTamaState();
-  const petName = localStorage.getItem('intask_pet_name') || '???';
+  const petName = lsGet('intask_pet_name','???');
   const musclesHit = [...new Set(exercises.flatMap(e=>e.muscles||[]))].slice(0,6);
   const exerciseCount = exercises.length;
   const totalSets = exercises.reduce((s,e)=>s+(e.sets||[]).length, 0);
