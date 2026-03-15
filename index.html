@@ -974,6 +974,7 @@ let currentUser = null, userProfile = null;
 let tasks = [], habits = [], crew = null, crewMembers = [], crewMessages = [], boss = null;
 let bodyEntries = [], workoutEntries = [], fitnessProfile = null;
 let unsubs = [], activeTab = 'today', synced = false;
+let _authHandled = false; // prevents onAuthStateChanged double-handling
 
 // Per-user localStorage — prevents data bleeding between accounts on same device
 function lsKey(key) { return key + '_' + (currentUser ? currentUser.uid : 'anon'); }
@@ -995,8 +996,9 @@ let streakMult = 1;
 
 // ─── AUTH ─────────────────────────────────────────────────
 onAuthStateChanged(auth, async user => {
+  // Skip if we're handling auth manually (e.g. guest account creation)
+  if (_authHandled) return;
   if (user) {
-    // Always kill old listeners first — prevents old user data bleeding into new session
     unsubs.forEach(u => u()); unsubs = [];
     userProfile = null;
     currentUser = user;
@@ -1161,38 +1163,52 @@ window.doGuestLogin = async () => {
   if (pw.length < 6) { showAuthError('Password must be at least 6 characters.'); return; }
   if (pw !== pw2) { showAuthError('Passwords do not match!'); return; }
   const btn = g('guest-btn'); btn.disabled=true; btn.textContent='Setting up...';
-  // Deterministic email — same username always maps to same account, on any device
   const guestEmail = username.toLowerCase().replace(/[^a-z0-9]/g,'') + '_guest@intask.app';
+
+  // Take manual control — prevent onAuthStateChanged from interfering
+  _authHandled = true;
+  // Kill existing session and listeners cleanly first
+  unsubs.forEach(u=>u()); unsubs=[];
+  userProfile=null; currentUser=null;
+
   try {
-    // Try to create account first
-    const result = await createUserWithEmailAndPassword(auth, guestEmail, pw);
-    await updateProfile(result.user, { displayName: username });
-    await result.user.reload(); // ensure displayName is on the user object
-    // Don't manually call loadProfile — onAuthStateChanged handles it with fresh state
-    toast('Welcome, ' + username + '! 🚀');
-  } catch(e) {
-    if (e.code === 'auth/email-already-in-use') {
-      // Account exists — sign in instead
-      try {
+    let firebaseUser;
+    try {
+      // Try creating new account
+      const result = await createUserWithEmailAndPassword(auth, guestEmail, pw);
+      await updateProfile(result.user, { displayName: username });
+      await result.user.reload();
+      firebaseUser = auth.currentUser;
+    } catch(e) {
+      if (e.code === 'auth/email-already-in-use') {
+        // Account exists — sign in
         await signInWithEmailAndPassword(auth, guestEmail, pw);
-        toast('Welcome back, ' + username + '! 🚀');
-      } catch(e2) {
-        const c2 = e2.code || '';
-        if (['auth/wrong-password','auth/invalid-credential','auth/invalid-login-credentials'].includes(c2)) {
-          showAuthError('That username is taken with a different password.');
-        } else {
-          showAuthError(friendlyErr(c2) || 'Could not sign in. Try again.');
-        }
+        firebaseUser = auth.currentUser;
+      } else if (['auth/wrong-password','auth/invalid-credential','auth/invalid-login-credentials'].includes(e.code)) {
+        showAuthError('That username is taken with a different password.');
+        _authHandled = false;
+        btn.disabled=false; btn.textContent='👾 Create / Sign In';
+        return;
+      } else {
+        showAuthError(friendlyErr(e.code) || 'Could not create account. Try again.');
+        _authHandled = false;
         btn.disabled=false; btn.textContent='👾 Create / Sign In';
         return;
       }
-    } else {
-      showAuthError(friendlyErr(e.code) || 'Could not create account. Try again.');
-      btn.disabled=false; btn.textContent='👾 Create / Sign In';
-      return;
     }
+
+    // Now we have a clean firebaseUser — load their profile
+    currentUser = firebaseUser;
+    toast((firebaseUser.metadata.creationTime === firebaseUser.metadata.lastSignInTime
+      ? 'Welcome, ' : 'Welcome back, ') + username + '! 🚀');
+    await loadProfile(currentUser.uid);
+
+  } catch(e) {
+    showAuthError(friendlyErr(e.code) || 'Something went wrong. Try again.');
+  } finally {
+    _authHandled = false;
+    btn.disabled=false; btn.textContent='👾 Create / Sign In';
   }
-  btn.disabled=false; btn.textContent='👾 Create / Sign In';
 };
 
 window.doGuestReturn = async () => {
@@ -1200,11 +1216,11 @@ window.doGuestReturn = async () => {
   const pw = g('guest-return-pw').value;
   if (!username) { showAuthError('Enter your username.'); return; }
   if (!pw) { showAuthError('Enter your password.'); return; }
-  // Same deterministic email formula — works on any device, no localStorage needed
   const guestEmail = username.toLowerCase().replace(/[^a-z0-9]/g,'') + '_guest@intask.app';
+  // Let onAuthStateChanged handle this one — it's a simple sign-in
   try {
     await signInWithEmailAndPassword(auth, guestEmail, pw);
-    toast('Welcome back, ' + username + '! 🚀');
+    // onAuthStateChanged will fire and call loadProfile
   } catch(e) {
     const c = e.code || '';
     if (['auth/wrong-password','auth/invalid-credential','auth/invalid-login-credentials','auth/user-not-found'].includes(c)) {
