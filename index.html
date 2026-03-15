@@ -1483,7 +1483,7 @@ async function damageBoss(dmg) {
 }
 
 // ─── SKILLS ───────────────────────────────────────────────
-window.unlockSkill = async skillId => {
+window.unlockSkill = async function(skillId) {
   const u = userProfile; if (!u) return;
   let skill = null;
   for (const tree of Object.values(SKILL_TREES)) {
@@ -1491,13 +1491,28 @@ window.unlockSkill = async skillId => {
     if (s) { skill = s; break; }
   }
   if (!skill) return;
-  if ((u.skillPoints||0) < skill.cost) { toast(`Need ${skill.cost} SP! You have ${u.skillPoints||0}.`); return; }
+  const pts = u.skillPoints||0;
+  if (pts < 1) { toast('Need 1 SP to unlock! You have ' + pts + '.'); return; }
   if ((u.skills||[]).includes(skillId)) { toast('Already unlocked!'); return; }
-  if (skill.requires && !(u.skills||[]).includes(skill.requires)) { toast('Unlock previous skill first!'); return; }
+  if (skill.requires && !(u.skills||[]).includes(skill.requires)) { toast('Unlock the skill above it first!'); return; }
+  const {totalWorkouts} = getTamaState();
+  if (totalWorkouts < (skill.tamaMin||0)) { toast('Need ' + skill.tamaMin + ' TamaFit workouts. You have ' + totalWorkouts + '.'); return; }
   await updateDoc(doc(db,'users',currentUser.uid), {
-    skills:[...(u.skills||[]),skillId], skillPoints:(u.skillPoints||0)-skill.cost, skillsUnlocked:(u.skillsUnlocked||0)+1
+    skills:[...(u.skills||[]),skillId], skillPoints:pts-1, skillsUnlocked:(u.skillsUnlocked||0)+1
   });
-  playSound('unlock'); toast(`🧠 ${skill.name} unlocked!`); renderAwards();
+  playSound('unlock'); toast('🧠 ' + skill.name + ' unlocked!'); renderAwards();
+};
+
+window.resetSkills = async function() {
+  const u = userProfile; if (!u) return;
+  const owned = u.skills||[];
+  if (owned.length === 0) { toast('No skills to reset.'); return; }
+  const pts = u.skillPoints||0;
+  if (pts < 1) { toast('Need at least 1 SP to reset (reset fee).'); return; }
+  const refund = owned.length - 1;
+  await updateDoc(doc(db,'users',currentUser.uid), { skills:[], skillPoints:pts + refund });
+  toast('Skills reset! Got ' + refund + ' SP back (1 SP reset fee).');
+  renderAwards();
 };
 
 // ─── CREW ─────────────────────────────────────────────────
@@ -2348,33 +2363,63 @@ function renderAwards() {
     </div>`).join('');
   const pts = u.skillPoints||0;
   const skills = u.skills||[];
-  const {stage, totalWorkouts} = getTamaState();
-  const tamaLevel = totalWorkouts;
+  const {totalWorkouts} = getTamaState();
 
-  g('sp-info-text').innerHTML = `🧠 <strong>${pts}</strong> Skill Points available · Earn 2 SP per level · TamaFit level gates some skills`;
+  g('sp-info-text').innerHTML =
+    '<div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">' +
+    '<span>🧠 <strong>' + pts + '</strong> SP · Earn 1 SP per level up</span>' +
+    (skills.length > 0 && pts >= 1 ? '<button onclick="resetSkills()" style="font-size:11px;font-weight:700;padding:5px 14px;border-radius:8px;border:1.5px solid #D4708A;background:transparent;color:#D4708A;cursor:pointer">🔄 Reset (1 SP)</button>' : '') +
+    '</div>';
 
-  g('skill-trees-wrap').innerHTML = Object.entries(SKILL_TREES).map(([,tree])=>`
-    <div class="skill-tree-wrap">
-      <div class="skill-tree-header" style="color:${tree.color}">${tree.icon} ${tree.name}</div>
-      ${tree.skills.map((s,i)=>{
-        const owned = skills.includes(s.id);
-        const tamaLocked = !owned && tamaLevel < (s.tamaMin||0);
-        const prevLocked = !owned && s.requires && !skills.includes(s.requires);
-        const canUnlock = !owned && !tamaLocked && !prevLocked && pts >= s.cost;
-        return `<div class="skill-item">
-          ${i>0?'<div class="skill-conn">↓</div>':''}
-          <div class="skill-box${owned?' owned':canUnlock?' available':tamaLocked||prevLocked?' locked':''}">
-            <div class="skill-box-name">${s.name}${owned?' ✓':''}</div>
-            <div class="skill-box-desc">${s.desc}</div>
-            ${tamaLocked?`<div class="skill-box-cost" style="color:var(--muted)">🥚 TamaFit level ${s.tamaMin} required (you: ${tamaLevel})</div>`
-            :prevLocked?`<div class="skill-box-cost" style="color:var(--muted)">🔒 Unlock previous skill first</div>`
-            :owned?'<div class="skill-box-cost" style="color:'+tree.color+'">UNLOCKED</div>'
-            :'<div class="skill-box-cost" style="color:'+(pts>=s.cost?'#f59e0b':'var(--muted)')+'">'+s.cost+' SP'+(pts<s.cost?' (need '+(s.cost-pts)+' more)':'')+'</div>'}
-            ${canUnlock?`<button class="skill-unlock-btn" style="background:${tree.color}" onclick="unlockSkill('${s.id}')">UNLOCK</button>`:''}
-          </div>
-        </div>`;
-      }).join('')}
-    </div>`).join('');
+  g('skill-trees-wrap').innerHTML = Object.entries(SKILL_TREES).map(function(entry) {
+    var treeKey = entry[0], tree = entry[1];
+    var rows = tree.skills.map(function(s, i) {
+      var owned = skills.includes(s.id);
+      var tamaLocked = totalWorkouts < (s.tamaMin||0);
+      var prevLocked = s.requires && !skills.includes(s.requires);
+      var canUnlock = !owned && !tamaLocked && !prevLocked && pts >= 1;
+      var locked = !owned && (tamaLocked || prevLocked);
+
+      var borderCol = owned ? tree.color : canUnlock ? '#f59e0b' : '#e5e0d8';
+      var bgCol = owned ? tree.color + '18' : canUnlock ? '#fffbeb' : 'var(--parchment)';
+      var nameCol = owned ? tree.color : canUnlock ? '#92400e' : 'var(--muted)';
+      var prefix = owned ? '✦ ' : locked ? '○ ' : '◈ ';
+
+      var statusBadge = owned
+        ? '<span style="font-size:9px;font-weight:700;color:' + tree.color + ';background:' + tree.color + '20;padding:2px 7px;border-radius:99px">OWNED</span>'
+        : tamaLocked
+        ? '<span style="font-size:9px;color:var(--muted)">🥚 ' + s.tamaMin + ' workouts</span>'
+        : prevLocked
+        ? '<span style="font-size:9px;color:var(--muted)">🔒 locked</span>'
+        : '<span style="font-size:9px;font-weight:700;color:#92400e;background:#fef3c7;padding:2px 7px;border-radius:99px">1 SP</span>';
+
+      var btn = canUnlock
+        ? '<button onclick="unlockSkill(\'' + s.id + '\')" style="margin-top:6px;font-size:11px;font-weight:700;padding:6px 16px;border-radius:8px;border:none;background:' + tree.color + ';color:#fff;cursor:pointer;width:100%">Unlock ❆</button>'
+        : '';
+
+      var connector = i > 0
+        ? '<div style="display:flex;justify-content:center;height:20px"><div style="width:2px;background:' + (skills.includes(tree.skills[i-1].id) ? tree.color : '#e5e0d8') + '"></div></div>'
+        : '';
+
+      return connector +
+        '<div style="border:2px solid ' + borderCol + ';border-radius:12px;padding:10px 12px;background:' + bgCol + ';transition:.2s">' +
+        '<div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px">' +
+        '<div>' +
+        '<div style="font-size:13px;font-weight:700;color:' + nameCol + '">' + prefix + s.name + '</div>' +
+        '<div style="font-size:11px;color:var(--muted);margin-top:2px;line-height:1.4">' + s.desc + '</div>' +
+        '</div>' +
+        statusBadge +
+        '</div>' +
+        btn +
+        '</div>';
+    }).join('');
+
+    return '<div style="margin-bottom:24px">' +
+      '<div style="font-weight:700;font-size:14px;color:' + tree.color + ';margin-bottom:2px">' + tree.icon + ' ' + tree.name + '</div>' +
+      '<div style="font-size:11px;color:var(--muted);margin-bottom:10px">' + tree.desc + '</div>' +
+      '<div style="display:flex;flex-direction:column">' + rows + '</div>' +
+      '</div>';
+  }).join('')
 }
 
 window.renderSettings = function renderSettings() {
@@ -4975,6 +5020,7 @@ function toggleLoginMute(){if(window.toggleLoginMute)window.toggleLoginMute.appl
 function toggleSetMode(){if(window.toggleSetMode)window.toggleSetMode.apply(window,arguments);}
 function toggleTimer(){if(window.toggleTimer)window.toggleTimer.apply(window,arguments);}
 function unlockSkill(){if(window.unlockSkill)window.unlockSkill.apply(window,arguments);}
+function resetSkills(){if(window.resetSkills)window.resetSkills.apply(window,arguments);}
 function updSet(){if(window.updSet)window.updSet.apply(window,arguments);}
 function updateExSearch(){if(window.updateExSearch)window.updateExSearch.apply(window,arguments);}
 </script>
