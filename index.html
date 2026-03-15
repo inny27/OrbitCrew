@@ -50,12 +50,13 @@
   --parchment:#F5EDD8;
   --shadow:rgba(44,35,64,0.07);
 }
+html{height:100%;overflow:hidden;}
 body{
   font-family:'DM Sans',sans-serif;
   background:var(--bg);
   color:var(--text);
-  min-height:100vh;
-  overflow-x:hidden;
+  height:100%;
+  overflow:hidden;
   -webkit-font-smoothing:antialiased;
 }
 body::before{
@@ -77,9 +78,9 @@ body::after{display:none;}
    LAYOUT
 ============================================================ */
 .screen{display:none;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:32px 20px;position:relative;z-index:1;background:var(--bg);}
-.screen.active{display:flex;}
+.screen.active{display:flex;position:fixed;top:0;left:0;right:0;bottom:0;z-index:50;overflow-y:auto;}
 #app{display:none;flex-direction:column;max-width:430px;margin:0 auto;min-height:100vh;position:relative;z-index:1;}
-#app.active{display:flex;}
+#app.active{display:flex;position:fixed;top:0;left:0;right:0;bottom:0;overflow:hidden;}
 
 /* ============================================================
    LOGIN SCREEN
