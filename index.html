@@ -14,7 +14,8 @@
 <title>InTask</title>
 <link rel="icon" href="https://maplestory.io/api/GMS/255/mob/100100/render/stand" type="image/png">
   <link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
-<style>
+<style>:root{--nav-h:70px;}
+
 /* ============================================================
    RESET & VARIABLES
 ============================================================ */
@@ -140,7 +141,7 @@ body::after{display:none;}
 /* ============================================================
    BOTTOM NAV
 ============================================================ */
-.bottom-nav{position:fixed;bottom:0;left:0;right:0;width:100%;background:rgba(253,248,240,0.95);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-top:1px solid var(--border);display:flex;justify-content:space-around;align-items:center;padding:8px 0 20px;z-index:200;}
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;width:100%;background:rgba(253,248,240,0.95);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-top:1px solid var(--border);display:flex;justify-content:space-around;align-items:center;padding:8px 0;padding-bottom:max(8px,env(safe-area-inset-bottom));z-index:200;min-height:var(--nav-h);}
 .bnav-btn{display:flex;flex-direction:column;align-items:center;gap:2px;cursor:pointer;color:var(--muted);padding:4px 10px;border:none;background:transparent;transition:.15s;position:relative;}
 .bnav-btn.active{color:var(--accent);}
 .bnav-btn.active::before{content:'▲';position:absolute;top:-14px;left:50%;transform:translateX(-50%);font-size:8px;color:var(--accent);}
@@ -151,8 +152,8 @@ body::after{display:none;}
    TAB PANELS
 ============================================================ */
 .panels{flex:1;}
-.panel{display:none;overflow-y:auto;padding:16px 16px 16px;-webkit-overflow-scrolling:touch;}
-.panel.active{display:block;height:calc(100vh - 160px);overflow-y:auto;}
+.panel{display:none;overflow-y:scroll;padding:16px 16px calc(var(--nav-h) + 20px);-webkit-overflow-scrolling:touch;}
+.panel.active{display:block;height:calc(100vh - var(--nav-h) - 110px);}
 
 /* ============================================================
    SHARED COMPONENTS
@@ -509,12 +510,9 @@ body::after{display:none;}
 /* ============================================================
    MODALS
 ============================================================ */
-.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:5000;display:flex;align-items:flex-end;justify-content:center;opacity:0;pointer-events:none;transition:opacity .2s;}
-.modal-overlay.open{opacity:1;pointer-events:all;}
-.modal-overlay.open .modal{transform:translateY(0);}
-.modal-overlay.open .modal{background:var(--surf);border-radius:24px 24px 0 0;width:100%;max-width:520px;padding:20px;padding-bottom:40px;box-shadow:0 -8px 40px rgba(44,35,64,0.15);transform:translateY(100%);transition:transform .3s ease;max-height:90vh;overflow-y:auto;position:relative;}
-.modal{background:var(--surf);border-radius:24px 24px 0 0;width:100%;max-width:430px;padding:20px;padding-bottom:40px;border-top:none;box-shadow:0 -8px 40px rgba(44,35,64,0.12);transform:translateY(100%);transition:transform .3s ease;max-height:90vh;overflow-y:auto;position:relative;z-index:5001;}
-.modal-overlay.open .modal{background:var(--surf);border-radius:24px 24px 0 0;width:100%;max-width:520px;padding:20px;padding-bottom:40px;box-shadow:0 -8px 40px rgba(44,35,64,0.15);transform:translateY(100%);transition:transform .3s ease;max-height:90vh;overflow-y:auto;position:relative;}
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:5000;display:none;align-items:center;justify-content:center;padding:16px;}
+.modal-overlay.open{display:flex;}
+.modal{background:var(--surf);border-radius:20px;width:100%;max-width:480px;padding:24px;box-shadow:0 20px 60px rgba(0,0,0,.3);max-height:85vh;overflow-y:auto;position:relative;z-index:5001;}
 .modal-handle{width:40px;height:4px;background:var(--border);border-radius:99px;margin:0 auto 18px;}
 .modal-title{font-size:18px;font-weight:700;text-align:center;margin-bottom:18px;color:var(--ink);font-family:var(--pixel);}
 .modal-tabs{display:flex;background:var(--parchment);border-radius:12px;padding:3px;margin-bottom:16px;border:1px solid var(--border);}
@@ -724,21 +722,31 @@ const BADGES = [
 ];
 const SKILL_TREES = {
   focus:{name:'Focus',icon:'🎯',color:'#06b6d4',skills:[
-    {id:'focus_1',name:'Sharp Mind',desc:'Tasks worth +5 bonus XP',cost:50,requires:null},
-    {id:'focus_2',name:'Deep Work',desc:'High priority tasks = 2x XP',cost:150,requires:'focus_1'},
-    {id:'focus_3',name:'Flow State',desc:'Habit streak multiplier +20%',cost:300,requires:'focus_2'},
+    {id:'focus_1',name:'Sharp Mind',desc:'Tasks worth +5 bonus XP',cost:50,requires:null,tamaMin:0},
+    {id:'focus_2',name:'Deep Work',desc:'High priority tasks = 2× XP',cost:150,requires:'focus_1',tamaMin:5},
+    {id:'focus_3',name:'Flow State',desc:'Habit streak multiplier +20%',cost:300,requires:'focus_2',tamaMin:15},
+    {id:'focus_4',name:'Laser Focus',desc:'Complete 5 tasks in a day for +100 bonus XP',cost:500,requires:'focus_3',tamaMin:30},
   ]},
   resilience:{name:'Resilience',icon:'🛡️',color:'#10b981',skills:[
-    {id:'res_1',name:'Iron Will',desc:'Streak buffer — miss 2 days, not 1',cost:75,requires:null},
-    {id:'res_2',name:'Bounce Back',desc:'Completing habit restores 50% streak',cost:200,requires:'res_1'},
-    {id:'res_3',name:'Unbreakable',desc:'Weekly streak shield',cost:400,requires:'res_2'},
+    {id:'res_1',name:'Iron Will',desc:'Streak buffer — miss 2 days, not 1',cost:75,requires:null,tamaMin:0},
+    {id:'res_2',name:'Bounce Back',desc:'Completing habit restores 50% streak',cost:200,requires:'res_1',tamaMin:10},
+    {id:'res_3',name:'Unbreakable',desc:'Weekly streak shield — 1 free miss per week',cost:400,requires:'res_2',tamaMin:24},
+    {id:'res_4',name:'Phoenix',desc:'Penalty XP loss reduced by 50%',cost:600,requires:'res_3',tamaMin:50},
   ]},
-  crew:{name:'Crew Power',icon:'🌐',color:'#ec4899',skills:[
-    {id:'crew_1',name:'Motivator',desc:'Boosts give +15 XP instead of +10',cost:100,requires:null},
-    {id:'crew_2',name:'Synergy',desc:'Shared tasks give +50% XP',cost:250,requires:'crew_1'},
-    {id:'crew_3',name:'Crew Commander',desc:'Boss battles deal 2x damage',cost:500,requires:'crew_2'},
+  crew:{name:'Party Buffs',icon:'🌐',color:'#ec4899',skills:[
+    {id:'crew_1',name:'Motivator',desc:'Boosts give +15 XP instead of +10',cost:100,requires:null,tamaMin:0},
+    {id:'crew_2',name:'Synergy',desc:'Shared tasks give +50% XP',cost:250,requires:'crew_1',tamaMin:8},
+    {id:'crew_3',name:'Party Leader',desc:'Boss battles deal 2× damage',cost:500,requires:'crew_2',tamaMin:20},
+    {id:'crew_4',name:'Raid Ready',desc:'All crew members +10% XP for 24h after crew boss win',cost:800,requires:'crew_3',tamaMin:75},
+  ]},
+  body:{name:'Body Mastery',icon:'💪',color:'#f59e0b',skills:[
+    {id:'body_1',name:'Warm Up',desc:'Fitness sessions give +10 bonus XP',cost:60,requires:null,tamaMin:0},
+    {id:'body_2',name:'Gains Mode',desc:'STR workouts give +25% stat points',cost:180,requires:'body_1',tamaMin:15},
+    {id:'body_3',name:'Cardio King',desc:'Cardio sessions count double toward TamaFit',cost:350,requires:'body_2',tamaMin:30},
+    {id:'body_4',name:'Peak Performance',desc:'All workout XP +30% — you earned this 🏆',cost:700,requires:'body_3',tamaMin:50},
   ]},
 };
+
 const XP = {high:50,medium:30,low:20,habit:25,boost:10};
 
 const EXERCISE_DB = [
@@ -1475,7 +1483,7 @@ async function damageBoss(dmg) {
 }
 
 // ─── SKILLS ───────────────────────────────────────────────
-window.unlockSkill = async skillId => {
+window.unlockSkill = async function(skillId) {
   const u = userProfile; if (!u) return;
   let skill = null;
   for (const tree of Object.values(SKILL_TREES)) {
@@ -1483,13 +1491,28 @@ window.unlockSkill = async skillId => {
     if (s) { skill = s; break; }
   }
   if (!skill) return;
-  if ((u.skillPoints||0) < skill.cost) { toast(`Need ${skill.cost} SP! You have ${u.skillPoints||0}.`); return; }
+  const pts = u.skillPoints||0;
+  if (pts < 1) { toast('Need 1 SP to unlock! You have ' + pts + '.'); return; }
   if ((u.skills||[]).includes(skillId)) { toast('Already unlocked!'); return; }
-  if (skill.requires && !(u.skills||[]).includes(skill.requires)) { toast('Unlock previous skill first!'); return; }
+  if (skill.requires && !(u.skills||[]).includes(skill.requires)) { toast('Unlock the skill above it first!'); return; }
+  const {totalWorkouts} = getTamaState();
+  if (totalWorkouts < (skill.tamaMin||0)) { toast('Need ' + skill.tamaMin + ' TamaFit workouts. You have ' + totalWorkouts + '.'); return; }
   await updateDoc(doc(db,'users',currentUser.uid), {
-    skills:[...(u.skills||[]),skillId], skillPoints:(u.skillPoints||0)-skill.cost, skillsUnlocked:(u.skillsUnlocked||0)+1
+    skills:[...(u.skills||[]),skillId], skillPoints:pts-1, skillsUnlocked:(u.skillsUnlocked||0)+1
   });
-  playSound('unlock'); toast(`🧠 ${skill.name} unlocked!`); renderAwards();
+  playSound('unlock'); toast('🧠 ' + skill.name + ' unlocked!'); renderAwards();
+};
+
+window.resetSkills = async function() {
+  const u = userProfile; if (!u) return;
+  const owned = u.skills||[];
+  if (owned.length === 0) { toast('No skills to reset.'); return; }
+  const pts = u.skillPoints||0;
+  if (pts < 1) { toast('Need at least 1 SP to reset (reset fee).'); return; }
+  const refund = owned.length - 1;
+  await updateDoc(doc(db,'users',currentUser.uid), { skills:[], skillPoints:pts + refund });
+  toast('Skills reset! Got ' + refund + ' SP back (1 SP reset fee).');
+  renderAwards();
 };
 
 // ─── CREW ─────────────────────────────────────────────────
@@ -2340,25 +2363,63 @@ function renderAwards() {
     </div>`).join('');
   const pts = u.skillPoints||0;
   const skills = u.skills||[];
-  g('sp-info-text').innerHTML = `🧠 <strong>${pts}</strong> Skill Points · Earn 2SP per level up`;
-  g('skill-trees-wrap').innerHTML = Object.entries(SKILL_TREES).map(([,tree])=>`
-    <div class="skill-tree-wrap">
-      <div class="skill-tree-header" style="color:${tree.color}">${tree.icon} ${tree.name}</div>
-      ${tree.skills.map((s,i)=>{
-        const owned = skills.includes(s.id);
-        const canUnlock = !owned && pts>=s.cost && (!s.requires||skills.includes(s.requires));
-        const locked = !owned && s.requires && !skills.includes(s.requires);
-        return `<div class="skill-item">
-          ${i>0?'<div class="skill-conn">↓</div>':''}
-          <div class="skill-box${owned?' owned':canUnlock?' available':locked?' locked':''}">
-            <div class="skill-box-name">${s.name}${owned?' ✓':''}</div>
-            <div class="skill-box-desc">${s.desc}</div>
-            <div class="skill-box-cost" style="color:${owned?tree.color:canUnlock?'#f59e0b':'var(--muted)'}">${owned?'UNLOCKED':locked?'🔒 Unlock previous first':`${s.cost} SP`}</div>
-            ${canUnlock?`<button class="skill-unlock-btn" style="background:${tree.color}" onclick="unlockSkill('${s.id}')">UNLOCK</button>`:''}
-          </div>
-        </div>`;
-      }).join('')}
-    </div>`).join('');
+  const {totalWorkouts} = getTamaState();
+
+  g('sp-info-text').innerHTML =
+    '<div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">' +
+    '<span>🧠 <strong>' + pts + '</strong> SP · Earn 1 SP per level up</span>' +
+    (skills.length > 0 && pts >= 1 ? '<button onclick="resetSkills()" style="font-size:11px;font-weight:700;padding:5px 14px;border-radius:8px;border:1.5px solid #D4708A;background:transparent;color:#D4708A;cursor:pointer">🔄 Reset (1 SP)</button>' : '') +
+    '</div>';
+
+  g('skill-trees-wrap').innerHTML = Object.entries(SKILL_TREES).map(function(entry) {
+    var treeKey = entry[0], tree = entry[1];
+    var rows = tree.skills.map(function(s, i) {
+      var owned = skills.includes(s.id);
+      var tamaLocked = totalWorkouts < (s.tamaMin||0);
+      var prevLocked = s.requires && !skills.includes(s.requires);
+      var canUnlock = !owned && !tamaLocked && !prevLocked && pts >= 1;
+      var locked = !owned && (tamaLocked || prevLocked);
+
+      var borderCol = owned ? tree.color : canUnlock ? '#f59e0b' : '#e5e0d8';
+      var bgCol = owned ? tree.color + '18' : canUnlock ? '#fffbeb' : 'var(--parchment)';
+      var nameCol = owned ? tree.color : canUnlock ? '#92400e' : 'var(--muted)';
+      var prefix = owned ? '✦ ' : locked ? '○ ' : '◈ ';
+
+      var statusBadge = owned
+        ? '<span style="font-size:9px;font-weight:700;color:' + tree.color + ';background:' + tree.color + '20;padding:2px 7px;border-radius:99px">OWNED</span>'
+        : tamaLocked
+        ? '<span style="font-size:9px;color:var(--muted)">🥚 ' + s.tamaMin + ' workouts</span>'
+        : prevLocked
+        ? '<span style="font-size:9px;color:var(--muted)">🔒 locked</span>'
+        : '<span style="font-size:9px;font-weight:700;color:#92400e;background:#fef3c7;padding:2px 7px;border-radius:99px">1 SP</span>';
+
+      var btn = canUnlock
+        ? '<button onclick="unlockSkill(\'' + s.id + '\')" style="margin-top:6px;font-size:11px;font-weight:700;padding:6px 16px;border-radius:8px;border:none;background:' + tree.color + ';color:#fff;cursor:pointer;width:100%">Unlock ❆</button>'
+        : '';
+
+      var connector = i > 0
+        ? '<div style="display:flex;justify-content:center;height:20px"><div style="width:2px;background:' + (skills.includes(tree.skills[i-1].id) ? tree.color : '#e5e0d8') + '"></div></div>'
+        : '';
+
+      return connector +
+        '<div style="border:2px solid ' + borderCol + ';border-radius:12px;padding:10px 12px;background:' + bgCol + ';transition:.2s">' +
+        '<div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px">' +
+        '<div>' +
+        '<div style="font-size:13px;font-weight:700;color:' + nameCol + '">' + prefix + s.name + '</div>' +
+        '<div style="font-size:11px;color:var(--muted);margin-top:2px;line-height:1.4">' + s.desc + '</div>' +
+        '</div>' +
+        statusBadge +
+        '</div>' +
+        btn +
+        '</div>';
+    }).join('');
+
+    return '<div style="margin-bottom:24px">' +
+      '<div style="font-weight:700;font-size:14px;color:' + tree.color + ';margin-bottom:2px">' + tree.icon + ' ' + tree.name + '</div>' +
+      '<div style="font-size:11px;color:var(--muted);margin-bottom:10px">' + tree.desc + '</div>' +
+      '<div style="display:flex;flex-direction:column">' + rows + '</div>' +
+      '</div>';
+  }).join('')
 }
 
 window.renderSettings = function renderSettings() {
@@ -3109,7 +3170,10 @@ window.renderTamaFit = function() {
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
         <div>
           <div style="font-size:13px;font-family:var(--pixel);font-weight:700;color:var(--ink);margin-bottom:4px">${petName}</div>
-          <div style="display:inline-block;font-size:9px;font-weight:700;background:${bgLight};color:${bgBorder};border:1.5px solid ${bgBorder}40;border-radius:99px;padding:3px 10px">${stage.name}</div>
+          <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-top:2px">
+            <div style="display:inline-block;font-size:9px;font-weight:700;background:${bgLight};color:${bgBorder};border:1.5px solid ${bgBorder}40;border-radius:99px;padding:3px 10px">${stage.name}</div>
+            <div style="display:inline-block;font-size:9px;font-weight:700;background:var(--midnight);color:#fff;border-radius:99px;padding:3px 10px">⚡ Lv.${userProfile ? (userProfile.level||1) : 1}</div>
+          </div>
         </div>
         <div style="text-align:right">
           <div style="font-size:22px;font-family:var(--pixel);font-weight:700;color:${bgBorder};line-height:1">${totalWorkouts}</div>
@@ -3751,71 +3815,57 @@ function groupByDate(entries) {
   }));
 }
 
-window.renderLibrary = function(keepFocus) {
-  const lf = window._libFilter||'all';
-  const ls = window._libSearch||'';
-  const filtered=EXERCISE_DB.filter(ex=>{
-    const tm=lf==='all'||ex.type===lf;
-    const sm=!ls||ex.name.toLowerCase().includes(ls.toLowerCase())||ex.muscles.some(m=>m.toLowerCase().includes(ls.toLowerCase()));
-    return tm&&sm;
+window.renderLibrary = function() {
+  const lf = window._libF||'all';
+  const ls = String(window._libQ||'');
+  const filtered = EXERCISE_DB.filter(function(ex) {
+    if (!ex.muscles || !ex.difficulty) return false; // skip guide entries
+    const typeMatch = lf==='all' || ex.type===lf;
+    const searchMatch = !ls || ex.name.toLowerCase().includes(ls) || ex.muscles.some(function(m){return m.toLowerCase().includes(ls);});
+    return typeMatch && searchMatch;
   });
-  const typeIcon = {weights:'🏋️',calisthenics:'💪',run:'🏃',swim:'🏊',cardio:'❤️'};
-  const s=getFitSub(); if(!s) return;
-
-  // If the library scaffold already exists, only update results (preserves search input focus)
-  const existingResults = document.getElementById('lib-results');
-  if (existingResults) {
-    // Only update filters and results, leave search input alone
-    const filtersEl = document.getElementById('lib-filters');
-    if(filtersEl) filtersEl.innerHTML = [['all','All'],['weights','🏋️ Weights'],['calisthenics','💪 Calisthenics'],['run','🏃 Running'],['swim','🏊 Swimming'],['cardio','❤️ Cardio']].map(([v,l])=>`<button class="lib-filter-btn${lf===v?' active':''}" onclick="window._libFilter='${v}';window.renderLibrary(true)">${l}</button>`).join('');
-    const countEl = document.getElementById('lib-count');
-    if(countEl) countEl.textContent = filtered.length + ' exercises';
-    existingResults.innerHTML = filtered.map(ex=>`
-      <div class="ex-lib-card" data-exid="${ex.id}">
-        <span class="ex-lib-gif">${typeIcon[ex.type]||'💪'}</span>
-        <div class="ex-lib-info"><div class="ex-lib-name">${ex.name}</div><div class="ex-lib-muscles">${ex.muscles.join(', ')}</div></div>
-        <div class="ex-lib-right"><div class="ex-lib-diff">${'●'.repeat(ex.difficulty)}${'○'.repeat(5-ex.difficulty)}</div><div class="ex-lib-type">${ex.type}</div></div>
-      </div>`).join('');
-  existingResults.onclick = e => {
-    const card = e.target.closest('[data-exid]');
-    if(card) window.showExDetail(card.dataset.exid);
-  };existingResults.innerHTML = filtered.map(ex=>`
-      <div class="ex-lib-card" data-exid="${ex.id}">
-        <span class="ex-lib-gif">${typeIcon[ex.type]||'💪'}</span>
-        <div class="ex-lib-info"><div class="ex-lib-name">${ex.name}</div><div class="ex-lib-muscles">${ex.muscles.join(', ')}</div></div>
-        <div class="ex-lib-right"><div class="ex-lib-diff">${'●'.repeat(ex.difficulty)}${'○'.repeat(5-ex.difficulty)}</div><div class="ex-lib-type">${ex.type}</div></div>
-      </div>`).join('');
-    return;
-  }
-
-  // First render: build full scaffold
-  s.innerHTML=`
-    <div class="sec-title" style="margin-bottom:12px"><img src="https://maplestory.io/api/GMS/255/item/1472000/icon" alt="" width="18" height="18" style="image-rendering:pixelated;vertical-align:middle;margin-right:4px"> EXERCISE LIBRARY</div>
-    <input id="lib-search-input" class="form-input" placeholder="🔍 Search exercises or muscles..." style="margin-bottom:10px" autocomplete="off">
-    <div id="lib-filters" class="lib-filters"></div>
-    <div id="lib-count" style="font-size:10px;color:var(--muted);font-weight:600;margin-bottom:10px"></div>
-    <div id="lib-results" class="ex-lib-list"></div>`;
-
-  // Wire up search input with persistent event listener
-  const inp = document.getElementById('lib-search-input');
-  if(inp) {
-    inp.value = ls;
-    inp.addEventListener('input', function() {
-      window._libSearch = this.value;
-      window.renderLibrary(true);
+  const typeIcon = {weights:'Weights',calisthenics:'Cali',run:'Run',swim:'Swim',cardio:'Cardio'};
+  const s = getFitSub(); if(!s) return;
+  const cards = filtered.map(function(ex) {
+    return '<div class="ex-lib-card" data-exid="'+ex.id+'">'
+      +'<div class="ex-lib-info"><div class="ex-lib-name">'+ex.name+'</div>'
+      +'<div class="ex-lib-muscles">'+ex.muscles.join(', ')+'</div></div>'
+      +'<div class="ex-lib-right"><div class="ex-lib-type">'+ex.type+'</div></div>'
+      +'</div>';
+  }).join('');
+  const filterBtns = [['all','All'],['weights','Weights'],['calisthenics','Cali'],['run','Run'],['swim','Swim'],['cardio','Cardio']].map(function(pair) {
+    return '<button class="lib-filter-btn'+(lf===pair[0]?' active':'')+'" onclick="window._libF=\''+pair[0]+'\';window.renderLibrary()">'+pair[1]+'</button>';
+  }).join('');
+  s.innerHTML = '<div class="sec-title" style="margin-bottom:12px">EXERCISE LIBRARY</div>'
+    +'<input id="lib-s" class="form-input" placeholder="Search exercises..." style="margin-bottom:10px" value="'+ls+'">'
+    +'<div class="lib-filters">'+filterBtns+'</div>'
+    +'<div style="font-size:10px;color:var(--muted);margin:6px 0 10px">'+filtered.length+' exercises</div>'
+    +'<div id="lib-results">'+cards+'</div>';
+  var inp = document.getElementById('lib-s');
+  if(inp) inp.addEventListener('input', function(){window._libQ=this.value;window.renderLibrary();});
+  var res = document.getElementById('lib-results');
+  if(res) {
+    // Track touch movement to distinguish tap vs scroll
+    var _touchStartY = 0;
+    res.addEventListener('touchstart', function(e) {
+      _touchStartY = e.touches[0].clientY;
+    }, {passive:true});
+    res.addEventListener('touchend', function(e) {
+      var dy = Math.abs(e.changedTouches[0].clientY - _touchStartY);
+      if (dy > 8) return; // was a scroll, ignore
+      var card = e.target.closest('[data-exid]');
+      if(card && card.dataset.exid) {
+        e.preventDefault();
+        window.showExDetail(card.dataset.exid);
+      }
+    }, {passive:false});
+    res.addEventListener('click', function(e) {
+      var card = e.target.closest('[data-exid]');
+      if(card && card.dataset.exid) window.showExDetail(card.dataset.exid);
     });
   }
-  // Add event delegation for exercise cards (more reliable than inline onclick)
-  const libResults = document.getElementById('lib-results');
-  if(libResults) {
-    libResults.onclick = e => {
-      const card = e.target.closest('[data-exid]');
-      if(card && card.dataset.exid) window.showExDetail(card.dataset.exid);
-    };
-  }
-  // Now populate filters and results
-  window.renderLibrary(false);
 }
+
 
 
 window.showExDetail = id => {
@@ -3988,21 +4038,53 @@ window.renderCoach = function() {
   const allGroups=['Chest','Back','Shoulders','Biceps','Triceps','Quads','Hamstrings','Glutes','Core'];
   const neglected=allGroups.filter(g2=>{if(!recentDates[g2]) return true; return (Date.now()-new Date(recentDates[g2]))/(1000*60*60*24)>14;});
   const overworked=Object.entries(muscleFreq).filter(([,v])=>v>5).map(([k])=>k);
-  const tips=['Progressive overload is the #1 driver of muscle growth. Add a small amount of weight or an extra rep each week.','The best workout is the one you actually do. Consistency over perfection, every single time.','Breathe out on exertion — exhale when lifting, inhale on the way down.','Sleep is where the gains happen. 7-9 hours is non-negotiable for elite performance.','Mind-muscle connection is real. Thinking about the muscle you\'re working can increase activation by up to 22%.','Dehydration of just 2% reduces performance by up to 10%. Drink water before you feel thirsty.','For weight loss: you cannot out-train a bad diet. But training reshapes your body in ways dieting alone cannot.'];
+  const {totalWorkouts} = getTamaState();
+
+  // Happy Meal trigger: every 10 workouts milestone
+  const happyMealMilestones = [10,20,30,50,75,100];
+  const showHappyMeal = happyMealMilestones.some(m => totalWorkouts === m);
+
+  const happyMealSuggestions = [
+    {cuisine:'🍜',name:'Ramen',desc:'A warm bowl of ramen — you\'ve earned every noodle.'},
+    {cuisine:'🍕',name:'Pizza',desc:'Go get that pizza. Thin crust, thick crust — your call, champion.'},
+    {cuisine:'🌮',name:'Tacos',desc:'Street tacos. As many as you want. No questions asked.'},
+    {cuisine:'🍔',name:'Burger',desc:'A proper burger with the lot. You worked for this bite.'},
+    {cuisine:'🍣',name:'Sushi',desc:'Treat yourself to a sushi spread. Protein and joy in one.'},
+    {cuisine:'🥗',name:'Your Favourite',desc:'Whatever YOU love most. This meal is your reward.'},
+  ];
+  const meal = happyMealSuggestions[totalWorkouts % happyMealSuggestions.length];
+
+  const tips=['Progressive overload is the #1 driver of muscle growth. Add a small amount of weight or an extra rep each week.','The best workout is the one you actually do. Consistency over perfection, every single time.','Breathe out on exertion — exhale when lifting, inhale on the way down.','Sleep is where the gains happen. 7–9 hours is non-negotiable for elite performance.','Mind-muscle connection is real. Thinking about the muscle you\'re working can increase activation by up to 22%.','Dehydration of just 2% reduces performance by up to 10%. Drink water before you feel thirsty.','Fitness is about balance — not restriction. Eat the food you love. Move your body. Enjoy your life.'];
+
   s.innerHTML=`
-    <div class="sec-title" style="margin-bottom:16px"><img src="https://maplestory.io/api/GMS/255/item/2022000/icon" alt="" width="18" height="18" style="image-rendering:pixelated;vertical-align:middle;margin-right:4px"> YOUR AI COACH</div>
+    <div class="sec-title" style="margin-bottom:16px"><img src="https://maplestory.io/api/GMS/255/mob/100100/render/stand" alt="" width="24" height="24" style="image-rendering:pixelated;vertical-align:middle;margin-right:6px"> InnyTheCoach</div>
+
+    ${showHappyMeal?`
+    <div style="background:linear-gradient(135deg,#fff8e0,#fff0cc);border:2px solid #f59e0b;border-radius:16px;padding:18px;margin-bottom:16px;position:relative;overflow:hidden">
+      <div style="position:absolute;top:-10px;right:-10px;font-size:48px;opacity:0.15">🎉</div>
+      <div style="font-size:10px;font-weight:700;color:#b45309;letter-spacing:1.5px;margin-bottom:6px">🎊 ${totalWorkouts} WORKOUTS MILESTONE!</div>
+      <div style="font-size:16px;font-weight:700;color:#92400e;margin-bottom:6px">${meal.cuisine} Time for a Happy Meal!</div>
+      <div style="font-size:13px;color:#78350f;line-height:1.6;margin-bottom:10px">${meal.desc}</div>
+      <div style="font-size:12px;color:#92400e;font-style:italic;line-height:1.6">Remember — this isn't a cheat meal. It's a <strong>happy meal</strong>. 🍽️ Fitness is about balance, not punishment. You showed up, you earned this. Now go enjoy it!</div>
+    </div>`:``}
+
     ${neglected.length?`<div class="coach-alert-card">
       <div class="coach-card-title">⚠️ Muscles Needing Attention</div>
-      <div class="coach-card-body">You have not trained <strong>${neglected.join(', ')}</strong> recently. Balance prevents injury.</div>
-      <div class="coach-rec-list">${neglected.slice(0,2).flatMap(m=>EXERCISE_DB.filter(ex=>ex.muscles.includes(m)).slice(0,2).map(ex=>`<div class="coach-rec-item" onclick="const _ov=document.getElementById('ex-detail-overlay');if(_ov)_ov.remove();selectExercise('${ex.id}');if(!activeSession){switchFitTab('diary',document.getElementById('ft-diary'));}else{updateExFormSection();}"><span style="font-size:22px">${{weights:"🏋️",calisthenics:"💪",run:"🏃",swim:"🏊",cardio:"❤️"}[ex.type]||"💪"}</span><div><div style="font-weight:700;font-size:13px">${ex.name}</div><div style="font-size:11px;color:var(--muted)">${ex.muscles.join(', ')}</div></div><span style="font-size:11px;color:var(--accent2)">Add →</span></div>`)).join('')}
+      <div class="coach-card-body">You haven't trained <strong>${neglected.join(', ')}</strong> recently. Balance prevents injury.</div>
+      <div class="coach-rec-list">${neglected.slice(0,2).flatMap(m=>EXERCISE_DB.filter(ex=>ex.muscles.includes(m)).slice(0,2).map(ex=>`<div class="coach-rec-item" onclick="selectExercise('${ex.id}')"><span style="font-size:22px">${{weights:'🏋️',calisthenics:'💪',run:'🏃',swim:'🏊',cardio:'❤️'}[ex.type]||'💪'}</span><div><div style="font-weight:700;font-size:13px">${ex.name}</div><div style="font-size:11px;color:var(--muted)">${ex.muscles.join(', ')}</div></div><span style="font-size:11px;color:var(--accent2)">Add →</span></div>`)).join('')}
       </div>
-    </div>`:'' }
-    ${overworked.length?`<div class='coach-warn-card'><div class='coach-card-title'>🔥 High Frequency Alert</div><div class='coach-card-body'><strong>${overworked.join(', ')}</strong> trained very frequently. Consider a deload week.</div></div>`:''}\n    <div class='coach-tip-card'>
-      <div class="coach-tip-title">💡 Coach's Tip of the Day</div>
+    </div>`:``}
+
+    ${overworked.length?`<div class="coach-warn-card"><div class="coach-card-title">🔥 High Frequency Alert</div><div class="coach-card-body"><strong>${overworked.join(', ')}</strong> trained very frequently. Consider a deload week — your muscles grow during rest.</div></div>`:''}
+
+    <div class="coach-tip-card">
+      <div class="coach-tip-title">💡 InnyTheCoach's Tip</div>
       <div class="coach-tip-body">${tips[new Date().getDay()%tips.length]}</div>
     </div>
-    ${workoutEntries.length===0?'<div class="empty-state" style="margin-top:20px"><div class="empty-icon">🤖</div><div class="empty-text">Log some workouts and I\'ll give you personalised recommendations!</div></div>':''}`;
+
+    ${workoutEntries.length===0?'<div class="empty-state" style="margin-top:20px"><div class="empty-icon">🍄</div><div class="empty-text">Log some workouts and InnyTheCoach will give you personalised advice!</div></div>':''}`;
 }
+
 
 window.renderGuides = function() {
   const s=getFitSub(); if(!s) return;
@@ -4106,7 +4188,13 @@ window.switchTab = tab => {
   if(tab==='music') renderMusicPlayer();
 };
 
-window.openModal=id=>{const el=g(id);if(el)el.classList.add('open');if(id==='settings-modal'){if(typeof window.renderSettings==='function')window.renderSettings();else setTimeout(()=>window.renderSettings&&window.renderSettings(),100);}};
+window.openModal=function(id){
+  const el=g(id); if(!el) return;
+  el.classList.add('open');
+  if(id==='settings-modal'){if(typeof window.renderSettings==='function')window.renderSettings();else setTimeout(()=>window.renderSettings&&window.renderSettings(),100);}
+  // Push history state so back button closes the modal instead of leaving the page
+  history.pushState({modal:id, tab:activeTab}, '', location.href);
+};
 window.closeModal=id=>{const el=g(id);if(el)el.classList.remove('open');};
 
 window.setPill=(el,group)=>{document.querySelectorAll(`[data-group="${group}"]`).forEach(b=>b.classList.remove('active'));el.classList.add('active');};
@@ -4147,19 +4235,16 @@ history.pushState({tab:'today'}, '', location.href);
 window.addEventListener('popstate', function(e) {
   const appActive = document.getElementById('app')?.classList.contains('active');
 
-  // If settings modal is open, close it
-  const settingsModal = document.getElementById('settings-modal');
-  if(settingsModal?.classList.contains('open')) {
-    settingsModal.classList.remove('open');
-    history.pushState({tab: _navStack[_navStack.length-1]}, '', location.href);
+  // If back was triggered while a modal state was pushed, close that modal
+  if(e.state && e.state.modal) {
+    const modalEl = document.getElementById(e.state.modal);
+    if(modalEl) modalEl.classList.remove('open');
     return;
   }
-
-  // If any modal is open, close it
-  const openModal = document.querySelector('.modal-overlay.open');
-  if(openModal) {
-    openModal.classList.remove('open');
-    history.pushState({tab: _navStack[_navStack.length-1]}, '', location.href);
+  // If any modal is open, close it (fallback)
+  const openModalEl = document.querySelector('.modal-overlay.open');
+  if(openModalEl) {
+    openModalEl.classList.remove('open');
     return;
   }
 
@@ -4409,72 +4494,108 @@ function _mpBuildUI() {
   const root = document.getElementById('music-app-root');
   if (!root) return;
   const t = _mpGetTrack();
-  const list = _mpGetList();
   const pct = _mpDuration > 0 ? Math.min((_mpProgress/_mpDuration)*100,100) : 0;
   const isLiked = _mpLiked.has(t.id);
+  const searchVal = root._searchVal || '';
+  const list = _mpGetList().filter(tr =>
+    !searchVal || tr.title.toLowerCase().includes(searchVal.toLowerCase()) || tr.artist.toLowerCase().includes(searchVal.toLowerCase())
+  );
 
   root.innerHTML =
-    '<div style="display:flex;flex-direction:column;height:calc(100vh - 120px);overflow:hidden">' +
+    '<div style="display:flex;flex-direction:column;height:calc(100vh - 155px)">' +
 
-    // ── Now Playing ──
-    '<div style="background:linear-gradient(180deg,'+t.colour+'22,'+t.colour+'06);border-bottom:1px solid var(--border);padding:20px 20px 16px;text-align:center">' +
-      '<div style="width:120px;height:120px;border-radius:18px;background:'+t.colour+'18;border:2px solid '+t.colour+'40;margin:0 auto 14px;display:flex;align-items:center;justify-content:center;box-shadow:0 10px 32px '+t.colour+'30;position:relative;overflow:hidden">' +
-        '<div style="position:absolute;inset:0;background:radial-gradient(circle at 30% 30%,rgba(255,255,255,0.15),transparent)"></div>' +
-        '<img src="https://maplestory.io/api/GMS/255/mob/'+t.mob+'/render/stand" width="90" style="image-rendering:pixelated;filter:drop-shadow(0 4px 12px '+t.colour+'60)" onerror="this.remove()">' +
+    // ── Compact Now Playing ──
+    '<div style="background:linear-gradient(135deg,'+t.colour+'18,'+t.colour+'06);border-bottom:1px solid var(--border);padding:12px 16px 10px">' +
+      '<div style="display:flex;align-items:center;gap:12px">' +
+        '<div style="width:52px;height:52px;border-radius:12px;background:'+t.colour+'20;border:2px solid '+t.colour+'40;display:flex;align-items:center;justify-content:center;flex-shrink:0;overflow:hidden">' +
+          '<img src="https://maplestory.io/api/GMS/255/mob/'+t.mob+'/render/stand" width="44" style="image-rendering:pixelated;object-fit:contain" onerror="this.remove()">' +
+        '</div>' +
+        '<div style="flex:1;min-width:0">' +
+          '<div style="font-weight:700;font-size:14px;color:var(--ink);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+t.title+'</div>' +
+          '<div style="font-size:11px;color:var(--muted)">'+t.artist+'</div>' +
+        '</div>' +
+        '<button onclick="window._mpToggleLike()" style="background:none;border:none;font-size:20px;color:'+(isLiked?'#D4708A':'var(--muted)')+';cursor:pointer;padding:4px;flex-shrink:0">'+(isLiked?'♥':'♡')+'</button>' +
       '</div>' +
-      '<div style="font-family:var(--pixel);font-size:14px;font-weight:700;color:var(--ink);margin-bottom:3px">'+t.title+'</div>' +
-      '<div style="font-size:11px;color:var(--muted)">'+t.artist+'</div>' +
-    '</div>' +
 
-    // ── Seek bar ──
-    '<div style="padding:12px 20px 4px">' +
-      '<div onclick="window._mpSeek(event)" style="height:5px;background:var(--parchment);border-radius:99px;cursor:pointer;position:relative;overflow:hidden;border:1px solid var(--border)">' +
-        '<div style="position:absolute;left:0;top:0;height:100%;width:'+pct.toFixed(1)+'%;background:linear-gradient(90deg,'+t.colour+','+t.colour+'cc);border-radius:99px;transition:width .4s linear"></div>' +
+      // Seek bar
+      '<div onclick="window._mpSeek(event)" style="height:4px;background:var(--parchment);border-radius:99px;cursor:pointer;position:relative;overflow:hidden;margin:10px 0 4px;border:1px solid var(--border)">' +
+        '<div style="position:absolute;left:0;top:0;height:100%;width:'+pct.toFixed(1)+'%;background:'+t.colour+';border-radius:99px;transition:width .4s linear"></div>' +
       '</div>' +
-      '<div style="display:flex;justify-content:space-between;font-size:10px;color:var(--muted);margin-top:4px"><span>'+_mpFmt(_mpProgress)+'</span><span>'+_mpFmt(_mpDuration)+'</span></div>' +
-    '</div>' +
+      '<div style="display:flex;justify-content:space-between;font-size:9px;color:var(--muted);margin-bottom:8px"><span>'+_mpFmt(_mpProgress)+'</span><span>'+_mpFmt(_mpDuration)+'</span></div>' +
 
-    // ── Controls ──
-    '<div style="display:flex;align-items:center;justify-content:center;gap:12px;padding:4px 20px 8px">' +
-      '<button onclick="window._mpToggleShuffle()" style="width:36px;height:36px;border-radius:10px;border:1.5px solid '+(_mpShuffle?t.colour:'var(--border)')+';background:'+(_mpShuffle?t.colour+'18':'var(--parchment)')+';color:'+(_mpShuffle?t.colour:'var(--muted)')+';font-size:14px;cursor:pointer">⇄</button>' +
-      '<button onclick="window._mpPrev()" style="width:44px;height:44px;border-radius:12px;border:1.5px solid var(--border);background:var(--parchment);color:var(--ink);font-size:20px;cursor:pointer">⏮</button>' +
-      '<button onclick="window._mpTogglePlay()" style="width:58px;height:58px;border-radius:16px;border:none;background:linear-gradient(135deg,'+t.colour+','+t.colour+'bb);color:#fff;font-size:26px;cursor:pointer;box-shadow:0 6px 20px '+t.colour+'50">'+(_mpPlaying?'⏸':'▶')+'</button>' +
-      '<button onclick="window._mpNext()" style="width:44px;height:44px;border-radius:12px;border:1.5px solid var(--border);background:var(--parchment);color:var(--ink);font-size:20px;cursor:pointer">⏭</button>' +
-      '<button onclick="window._mpToggleLike()" style="width:36px;height:36px;border-radius:10px;border:1.5px solid '+(isLiked?'#D4708A':'var(--border)')+';background:'+(isLiked?'rgba(212,112,138,0.1)':'var(--parchment)')+';color:'+(isLiked?'#D4708A':'var(--muted)')+';font-size:16px;cursor:pointer">'+(isLiked?'♥':'♡')+'</button>' +
-    '</div>' +
-
-    // ── Volume ──
-    '<div style="display:flex;align-items:center;gap:8px;padding:0 20px 10px">' +
-      '<span style="font-size:12px">🔈</span>' +
-      '<div onclick="window._mpSetVol(event)" style="flex:1;height:4px;background:var(--parchment);border-radius:99px;cursor:pointer;position:relative;overflow:hidden;border:1px solid var(--border)">' +
-        '<div style="height:100%;width:'+Math.round(_mpVolume*100)+'%;background:linear-gradient(90deg,var(--gold),var(--gold-lt));border-radius:99px"></div>' +
+      // Controls
+      '<div style="display:flex;align-items:center;justify-content:center;gap:10px">' +
+        '<button onclick="window._mpToggleShuffle()" style="width:32px;height:32px;border-radius:8px;border:1.5px solid '+(_mpShuffle?t.colour:'var(--border)')+';background:'+(_mpShuffle?t.colour+'18':'transparent')+';color:'+(_mpShuffle?t.colour:'var(--muted)')+';font-size:14px;cursor:pointer">⇄</button>' +
+        '<button onclick="window._mpPrev()" style="width:38px;height:38px;border-radius:10px;border:1.5px solid var(--border);background:transparent;color:var(--ink);font-size:18px;cursor:pointer">⏮</button>' +
+        '<button onclick="window._mpTogglePlay()" style="width:52px;height:52px;border-radius:14px;border:none;background:'+t.colour+';color:#fff;font-size:24px;cursor:pointer;box-shadow:0 4px 16px '+t.colour+'60">'+(_mpPlaying?'⏸':'▶')+'</button>' +
+        '<button onclick="window._mpNext()" style="width:38px;height:38px;border-radius:10px;border:1.5px solid var(--border);background:transparent;color:var(--ink);font-size:18px;cursor:pointer">⏭</button>' +
+        '<button onclick="window._mpCycleRepeat()" style="width:32px;height:32px;border-radius:8px;border:1.5px solid '+(_mpRepeat!=='none'?t.colour:'var(--border)')+';background:'+(_mpRepeat!=='none'?t.colour+'18':'transparent')+';color:'+(_mpRepeat!=='none'?t.colour:'var(--muted)')+';font-size:14px;cursor:pointer">'+(_mpRepeat==='one'?'🔂':'🔁')+'</button>' +
       '</div>' +
-      '<span style="font-size:12px">🔊</span>' +
     '</div>' +
 
-    // ── Tabs ──
-    '<div style="display:flex;border-bottom:1px solid var(--border);background:var(--surf)">' +
-      _mpTabBtn('all','🎵 All') +
-      _mpTabBtn('liked','♥ Liked') +
-      _mpTabBtn('albums','💿 Albums') +
+    // ── Tabs + Search ──
+    '<div style="display:flex;align-items:center;gap:8px;padding:8px 12px 6px;border-bottom:1px solid var(--border)">' +
+      _mpTabBtn('all','All') +
+      _mpTabBtn('liked','♥') +
+      _mpTabBtn('albums','💿') +
+      '<input id="mp-search" type="search" placeholder="Search…" value="'+searchVal+'" ' +
+        'oninput="document.getElementById(\'music-app-root\')._searchVal=this.value;window._mpBuildUIDebounce()" ' +
+        'style="flex:1;border:1.5px solid var(--border);border-radius:8px;padding:6px 10px;font-size:12px;background:var(--parchment);color:var(--ink);outline:none;min-width:0">' +
     '</div>' +
 
-    // ── Tab content ──
-    '<div style="flex:1;overflow-y:auto;padding:8px 12px">' +
-      _mpTabContent(list, t) +
+    // ── Song list ──
+    '<div style="flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:6px 10px 12px">' +
+      (_mpTab === 'albums' ? _mpAlbumsView() :
+        list.length === 0 ? '<div style="text-align:center;padding:32px;color:var(--muted);font-size:13px">'+(searchVal?'No results for "'+searchVal+'"':'No songs here yet')+'</div>' :
+        list.map((tr) => {
+          const isCur = tr.id === t.id;
+          const liked = _mpLiked.has(tr.id);
+          const realIdx = MUSIC_TRACKS.indexOf(tr);
+          return '<div data-play="'+realIdx+'" style="display:flex;align-items:center;gap:10px;padding:8px 6px;border-radius:10px;cursor:pointer;background:'+(isCur?tr.colour+'14':'transparent')+';margin-bottom:2px">' +
+            '<div style="width:36px;height:36px;border-radius:8px;background:'+tr.colour+'18;display:flex;align-items:center;justify-content:center;flex-shrink:0">' +
+              '<img src="https://maplestory.io/api/GMS/255/mob/'+tr.mob+'/render/stand" width="30" style="image-rendering:pixelated;object-fit:contain" onerror="this.remove()">' +
+            '</div>' +
+            '<div style="flex:1;min-width:0">' +
+              '<div style="font-size:13px;font-weight:'+(isCur?'700':'400')+';color:'+(isCur?tr.colour:'var(--ink)')+';overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+tr.title+'</div>' +
+              '<div style="font-size:10px;color:var(--muted)">'+tr.artist+'</div>' +
+            '</div>' +
+            (isCur && _mpPlaying ? '<span style="font-size:10px;color:'+tr.colour+'">▶</span>' : '') +
+            '<button data-liketrack="'+tr.id+'" style="background:none;border:none;font-size:14px;color:'+(liked?'#D4708A':'var(--border)')+';cursor:pointer;padding:2px 4px">'+(liked?'♥':'♡')+'</button>' +
+          '</div>';
+        }).join('')
+      ) +
     '</div>' +
     '</div>';
 
-  // Event delegation for music player buttons
+  // Re-attach delegation
   root.onclick = function(e) {
-    const btn = e.target.closest('[data-mptab],[data-liketrack],[data-delalbum],[data-openalbum]');
-    if (!btn) return;
-    if (btn.dataset.mptab) { window._mpSetTab(btn.dataset.mptab); return; }
-    if (btn.dataset.liketrack) { e.stopPropagation(); window._mpLikeTrack(btn.dataset.liketrack); return; }
-    if (btn.dataset.delalbum) { e.stopPropagation(); window._mpDeleteAlbum(btn.dataset.delalbum); return; }
-    if (btn.dataset.openalbum) { window._mpOpenAlbum(btn.dataset.openalbum); return; }
+    const el = e.target.closest('[data-play],[data-mptab],[data-liketrack],[data-delalbum],[data-openalbum]');
+    if (!el) return;
+    if (el.dataset.play !== undefined) { window._mpPlay(parseInt(el.dataset.play)); return; }
+    if (el.dataset.mptab) { window._mpSetTab(el.dataset.mptab); return; }
+    if (el.dataset.liketrack) { e.stopPropagation(); window._mpLikeTrack(el.dataset.liketrack); return; }
+    if (el.dataset.delalbum) { e.stopPropagation(); window._mpDeleteAlbum(el.dataset.delalbum); return; }
+    if (el.dataset.openalbum) { window._mpOpenAlbum(el.dataset.openalbum); return; }
   };
+
+  // Restore search focus if searching
+  if (searchVal) {
+    const inp = document.getElementById('mp-search');
+    if (inp) { inp.focus(); inp.setSelectionRange(inp.value.length, inp.value.length); }
+  }
 }
+
+// Debounced rebuild for search
+let _mpSearchTimer = null;
+window._mpBuildUIDebounce = function() {
+  clearTimeout(_mpSearchTimer);
+  _mpSearchTimer = setTimeout(_mpBuildUI, 120);
+};
+
+window._mpCycleRepeat = function() {
+  _mpRepeat = _mpRepeat === 'none' ? 'all' : _mpRepeat === 'all' ? 'one' : 'none';
+  _mpBuildUI();
+};
 
 function _mpTabBtn(id, label) {
   const active = _mpTab === id;
@@ -4763,8 +4884,6 @@ function confirmClearData(){if(window.confirmClearData)window.confirmClearData.a
 function copyInstallLink(){if(window.copyInstallLink)window.copyInstallLink.apply(window,arguments);}
 function _doDeleteEntry(){if(window._doDeleteEntry)window._doDeleteEntry.apply(window,arguments);}
 function _doDeleteTask(){if(window._doDeleteTask)window._doDeleteTask.apply(window,arguments);}
-function _doExSearch(){if(window._doExSearch)window._doExSearch.apply(window,arguments);}
-function _libSearch(){if(window._libSearch)window._libSearch.apply(window,arguments);}
 function _mpDeleteAlbum(){if(window._mpDeleteAlbum)window._mpDeleteAlbum.apply(window,arguments);}
 function _mpLikeTrack(){if(window._mpLikeTrack)window._mpLikeTrack.apply(window,arguments);}
 function _mpNewAlbum(){if(window._mpNewAlbum)window._mpNewAlbum.apply(window,arguments);}
@@ -4778,7 +4897,6 @@ function _mpSetVol(){if(window._mpSetVol)window._mpSetVol.apply(window,arguments
 function _mpToggleLike(){if(window._mpToggleLike)window._mpToggleLike.apply(window,arguments);}
 function _mpTogglePlay(){if(window._mpTogglePlay)window._mpTogglePlay.apply(window,arguments);}
 function _mpToggleShuffle(){if(window._mpToggleShuffle)window._mpToggleShuffle.apply(window,arguments);}
-function _showExSuggestions(){if(window._showExSuggestions)window._showExSuggestions.apply(window,arguments);}
 function addExToSession(){if(window.addExToSession)window.addExToSession.apply(window,arguments);}
 function addGuideToDiary(){if(window.addGuideToDiary)window.addGuideToDiary.apply(window,arguments);}
 function addHabit(){if(window.addHabit)window.addHabit.apply(window,arguments);}
@@ -4885,6 +5003,7 @@ function toggleLoginMute(){if(window.toggleLoginMute)window.toggleLoginMute.appl
 function toggleSetMode(){if(window.toggleSetMode)window.toggleSetMode.apply(window,arguments);}
 function toggleTimer(){if(window.toggleTimer)window.toggleTimer.apply(window,arguments);}
 function unlockSkill(){if(window.unlockSkill)window.unlockSkill.apply(window,arguments);}
+function resetSkills(){if(window.resetSkills)window.resetSkills.apply(window,arguments);}
 function updSet(){if(window.updSet)window.updSet.apply(window,arguments);}
 function updateExSearch(){if(window.updateExSearch)window.updateExSearch.apply(window,arguments);}
 </script>
@@ -5118,6 +5237,8 @@ function updateExSearch(){if(window.updateExSearch)window.updateExSearch.apply(w
 <!-- ═══ MODALS ═══ -->
 
 <!-- Add Task Modal -->
+
+</body>
 <div class="modal-overlay" id="task-modal" onclick="if(event.target===this)closeModal('task-modal')">
   <div class="modal">
     <div class="modal-handle"></div>
@@ -5225,6 +5346,4 @@ function updateExSearch(){if(window.updateExSearch)window.updateExSearch.apply(w
     <div id="settings-panel"></div>
   </div>
 </div>
-
-</body>
 </html>
