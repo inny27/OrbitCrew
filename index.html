@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -14,8 +14,7 @@
 <title>InTask</title>
 <link rel="icon" href="https://maplestory.io/api/GMS/255/mob/100100/render/stand" type="image/png">
   <link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
-<style>:root{--nav-h:70px;}
-
+<style>
 /* ============================================================
    RESET & VARIABLES
 ============================================================ */
@@ -69,11 +68,13 @@ body::before{
 }
 body::after{display:none;}
 
+
 /* ============================================================
    TYPOGRAPHY HELPERS
 ============================================================ */
 .mono{font-family:'Inter',sans-serif;font-variant-numeric:tabular-nums;}
 .muted{color:var(--muted);}
+
 
 /* ============================================================
    LAYOUT
@@ -82,6 +83,7 @@ body::after{display:none;}
 .screen.active{display:flex;}
 #app{display:none;flex-direction:column;width:100%;min-height:100vh;position:relative;z-index:1;}
 #app.active{display:flex;}
+
 
 /* ============================================================
    LOGIN SCREEN
@@ -106,6 +108,7 @@ body::after{display:none;}
 .big-btn:disabled{opacity:.5;cursor:not-allowed;}
 .auth-error{display:none;background:rgba(239,68,68,.15);border:1px solid var(--red);border-radius:10px;padding:12px;color:var(--red);font-size:13px;font-weight:600;margin-bottom:14px;}
 
+
 /* Profile setup */
 .av-grid{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px;}
 .av-btn{width:44px;height:44px;border-radius:12px;border:2px solid var(--border);background:var(--surf2);font-size:22px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.2s;}
@@ -113,6 +116,7 @@ body::after{display:none;}
 .col-row{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px;}
 .col-dot{width:28px;height:28px;border-radius:99px;cursor:pointer;transition:.2s;border:2px solid transparent;}
 .col-dot.sel{outline:3px solid #fff;transform:scale(1.2);}
+
 
 /* ============================================================
    APP HEADER
@@ -138,22 +142,25 @@ body::after{display:none;}
 @keyframes shimmer{0%{transform:translateX(-100%);}100%{transform:translateX(200%);}}
 .xp-text{font-size:9px;font-weight:800;color:var(--muted);width:60px;text-align:right;font-family:'Inter',sans-serif;font-variant-numeric:tabular-nums;}
 
+
 /* ============================================================
    BOTTOM NAV
 ============================================================ */
-.bottom-nav{position:fixed;bottom:0;left:0;right:0;width:100%;background:rgba(253,248,240,0.95);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-top:1px solid var(--border);display:flex;justify-content:space-around;align-items:center;padding:8px 0;padding-bottom:max(8px,env(safe-area-inset-bottom));z-index:200;min-height:var(--nav-h);}
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;width:100%;background:rgba(253,248,240,0.95);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-top:1px solid var(--border);display:flex;justify-content:space-around;align-items:center;padding:8px 0 20px;z-index:200;}
 .bnav-btn{display:flex;flex-direction:column;align-items:center;gap:2px;cursor:pointer;color:var(--muted);padding:4px 10px;border:none;background:transparent;transition:.15s;position:relative;}
 .bnav-btn.active{color:var(--accent);}
 .bnav-btn.active::before{content:'▲';position:absolute;top:-14px;left:50%;transform:translateX(-50%);font-size:8px;color:var(--accent);}
 .bnav-icon{font-size:18px;} .bnav-btn img{width:28px;height:28px;image-rendering:pixelated;object-fit:contain;}
 .bnav-label{font-size:8px;font-weight:700;font-family:var(--pixel);}
 
+
 /* ============================================================
    TAB PANELS
 ============================================================ */
 .panels{flex:1;}
-.panel{display:none;overflow-y:scroll;padding:16px 16px calc(var(--nav-h) + 20px);-webkit-overflow-scrolling:touch;}
-.panel.active{display:block;height:calc(100vh - var(--nav-h) - 110px);}
+.panel{display:none;overflow-y:auto;padding:16px 16px 16px;-webkit-overflow-scrolling:touch;}
+.panel.active{display:block;height:calc(100vh - 160px);overflow-y:auto;}
+
 
 /* ============================================================
    SHARED COMPONENTS
@@ -172,6 +179,7 @@ body::after{display:none;}
 .empty-text{font-size:14px;font-weight:600;}
 .icon-btn{background:transparent;border:1px solid var(--border);border-radius:6px;padding:6px 12px;font-size:12px;font-weight:600;cursor:pointer;color:var(--muted);transition:.15s;}
 .icon-btn:hover{border-color:var(--accent);color:var(--accent);}
+
 
 /* ============================================================
    TODAY TAB
@@ -195,6 +203,7 @@ body::after{display:none;}
 .xp-badge{font-size:11px;font-weight:800;color:var(--accent3);font-family:'Inter',sans-serif;font-variant-numeric:tabular-nums;flex-shrink:0;}
 .repeat-badge{font-size:10px;font-weight:700;color:#a855f7;border:1px solid rgba(168,85,247,.4);border-radius:99px;padding:2px 7px;}
 
+
 /* ============================================================
    HABITS TAB
 ============================================================ */
@@ -216,6 +225,7 @@ body::after{display:none;}
 .done-btn{width:100%;padding:10px;border-radius:10px;border:none;background:linear-gradient(135deg,var(--gold),var(--gold-lt));color:#fff;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:.2s;box-shadow:0 4px 12px rgba(200,149,42,0.25);}
 .done-btn:hover{transform:translateY(-1px);}
 .done-btn.done-btn-done{background:var(--sage-bg);border:1.5px solid var(--sage);color:var(--sage);cursor:default;transform:none;box-shadow:none;}
+
 
 /* ============================================================
    CREW TAB
@@ -267,6 +277,7 @@ body::after{display:none;}
 .boss-bar-fill{height:100%;border-radius:99px;transition:width .5s;}
 .boss-reward{font-size:12px;font-weight:800;color:var(--accent3);margin-top:10px;text-align:center;}
 
+
 /* ============================================================
    AWARDS TAB
 ============================================================ */
@@ -297,6 +308,7 @@ body::after{display:none;}
 .skill-box-cost{font-size:11px;font-weight:800;font-family:'Inter',sans-serif;font-variant-numeric:tabular-nums;}
 .skill-unlock-btn{margin-top:10px;padding:8px 20px;border-radius:99px;border:none;color:#fff;font-family:'Nunito',sans-serif;font-size:12px;font-weight:800;cursor:pointer;transition:.2s;}
 .sp-info{background:rgba(168,85,247,.1);border:1px solid rgba(168,85,247,.3);border-radius:12px;padding:12px;font-size:13px;font-weight:600;text-align:center;margin-bottom:16px;}
+
 
 /* ============================================================
    FITNESS TAB
@@ -507,17 +519,22 @@ body::after{display:none;}
 .date-group-label{font-size:11px;font-weight:800;color:var(--accent2);letter-spacing:1px;margin-bottom:8px;text-transform:uppercase;}
 .date-group{margin-bottom:20px;}
 
+
 /* ============================================================
    MODALS
 ============================================================ */
-.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:5000;display:none;align-items:center;justify-content:center;padding:16px;}
-.modal-overlay.open{display:flex;}
-.modal{background:var(--surf);border-radius:20px;width:100%;max-width:480px;padding:24px;box-shadow:0 20px 60px rgba(0,0,0,.3);max-height:85vh;overflow-y:auto;position:relative;z-index:5001;}
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:5000;display:flex;align-items:flex-end;justify-content:center;opacity:0;pointer-events:none;transition:opacity .2s;}
+.modal-overlay.open{opacity:1;pointer-events:all;}
+.modal-overlay.open .modal{transform:translateY(0);}
+.modal-overlay.open .modal{background:var(--surf);border-radius:24px 24px 0 0;width:100%;max-width:520px;padding:20px;padding-bottom:40px;box-shadow:0 -8px 40px rgba(44,35,64,0.15);transform:translateY(100%);transition:transform .3s ease;max-height:90vh;overflow-y:auto;position:relative;}
+.modal{background:var(--surf);border-radius:24px 24px 0 0;width:100%;max-width:430px;padding:20px;padding-bottom:40px;border-top:none;box-shadow:0 -8px 40px rgba(44,35,64,0.12);transform:translateY(100%);transition:transform .3s ease;max-height:90vh;overflow-y:auto;position:relative;z-index:5001;}
+.modal-overlay.open .modal{background:var(--surf);border-radius:24px 24px 0 0;width:100%;max-width:520px;padding:20px;padding-bottom:40px;box-shadow:0 -8px 40px rgba(44,35,64,0.15);transform:translateY(100%);transition:transform .3s ease;max-height:90vh;overflow-y:auto;position:relative;}
 .modal-handle{width:40px;height:4px;background:var(--border);border-radius:99px;margin:0 auto 18px;}
 .modal-title{font-size:18px;font-weight:700;text-align:center;margin-bottom:18px;color:var(--ink);font-family:var(--pixel);}
 .modal-tabs{display:flex;background:var(--parchment);border-radius:12px;padding:3px;margin-bottom:16px;border:1px solid var(--border);}
 .modal-tab{flex:1;padding:9px;border-radius:10px;border:none;background:transparent;color:var(--muted);font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;cursor:pointer;transition:.2s;}
 .modal-tab.active{background:var(--surf);color:var(--ink);font-weight:600;box-shadow:0 2px 8px var(--shadow);}
+
 
 /* ============================================================
    CELEBRATION OVERLAY
@@ -531,6 +548,7 @@ body::after{display:none;}
 #cel-hint{font-size:11px;color:var(--muted);margin-top:20px;font-weight:500;}
 @keyframes celPop{from{transform:scale(.7);opacity:0;}to{transform:scale(1);opacity:1;}}
 
+
 /* ============================================================
    REST TIMER OVERLAY
 ============================================================ */
@@ -541,11 +559,13 @@ body::after{display:none;}
 .rest-sub-text{font-size:14px;color:var(--muted);font-weight:600;margin-top:8px;margin-bottom:24px;}
 .skip-rest-btn{background:var(--surf);border:1px solid var(--border);border-radius:99px;padding:14px 32px;color:var(--text);font-family:'Nunito',sans-serif;font-size:15px;font-weight:800;cursor:pointer;}
 
+
 /* ============================================================
    TOAST
 ============================================================ */
 #toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%) translateY(12px);background:var(--surf2);border:1px solid var(--border);border-radius:6px;padding:10px 20px;font-size:13px;font-weight:600;z-index:8000;opacity:0;pointer-events:none;transition:all .25s ease;white-space:nowrap;box-shadow:0 4px 16px rgba(0,0,0,.4);}
 #toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
 
 /* ============================================================
    CODE DISPLAY (crew)
@@ -554,6 +574,7 @@ body::after{display:none;}
 .code-val{font-family:'Inter',sans-serif;font-variant-numeric:tabular-nums;font-size:42px;font-weight:900;color:var(--accent3);letter-spacing:8px;margin:12px 0;text-shadow:0 0 30px rgba(245,158,11,.4);}
 .code-sub{font-size:12px;color:var(--muted);font-weight:600;line-height:1.7;margin-bottom:20px;}
 .join-input{width:100%;background:var(--surf2);border:1px solid var(--border);border-radius:12px;padding:16px;color:var(--text);font-family:'Inter',sans-serif;font-variant-numeric:tabular-nums;font-size:24px;font-weight:700;text-align:center;letter-spacing:10px;outline:none;text-transform:uppercase;margin-bottom:8px;}
+
 
 /* exercise animations removed */50%{transform:rotate(88deg) translateX(0);}}
 /* Run animation */
@@ -568,6 +589,8 @@ body::after{display:none;}
 @keyframes swim-body{0%,100%{transform:rotate(-5deg);}50%{transform:rotate(5deg);}}
 
 
+
+
 /* Edit modal */
 .edit-modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:600;display:none;align-items:flex-end;justify-content:center;backdrop-filter:blur(6px);}
 .edit-modal-overlay.open{display:flex;}
@@ -578,20 +601,25 @@ body::after{display:none;}
 .login-logo{margin-bottom:0;animation:float 3s ease-in-out infinite;}
 @keyframes float{0%,100%{transform:translateY(0);}50%{transform:translateY(-6px);}}
 
+
 /* ── Exercise Demo ── */
 .ex-demo-card{display:none;}
 .ex-detail-banner{display:flex;align-items:center;justify-content:center;}
 
+
 .set-mode-row{display:flex;align-items:center;gap:8px;margin-bottom:10px;}
 .set-mode-btn{padding:5px 14px;border-radius:4px;border:1px solid var(--border);background:var(--surf2);color:var(--muted);font-family:'Nunito',sans-serif;font-size:12px;font-weight:600;cursor:pointer;transition:.15s;}
 .set-mode-btn.active{background:rgba(38,132,255,.15);border-color:var(--accent);color:var(--accent);}
+
 
 /* ── Set mode toggle ── */
 .set-mode-row{display:flex;gap:6px;margin-bottom:10px;}
 .set-mode-btn{flex:1;padding:7px;border-radius:6px;border:1px solid var(--border);background:transparent;color:var(--muted);font-family:'Nunito',sans-serif;font-size:12px;font-weight:700;cursor:pointer;transition:.15s;}
 .set-mode-btn.active{background:rgba(38,132,255,.15);border-color:var(--accent);color:var(--accent);}
 
+
 .set-col-lbl{font-size:8px;font-weight:700;color:var(--muted);flex-shrink:0;}
+
 
 /* ── YouTube thumbnail link ── */
 .ex-yt-thumb{display:block;position:relative;width:100%;border-radius:0;border:2px solid var(--accent);margin-bottom:14px;overflow:hidden;text-decoration:none;background:#000;}
@@ -599,6 +627,7 @@ body::after{display:none;}
 .ex-yt-play{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:56px;height:56px;background:rgba(255,0,0,.9);border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:22px;color:#fff;box-shadow:0 4px 20px rgba(0,0,0,.5);}
 .ex-yt-label{position:absolute;bottom:0;left:0;right:0;background:rgba(0,0,0,.7);color:#fff;font-size:10px;font-family:var(--pixel);padding:8px;text-align:center;letter-spacing:1px;}
 .ex-detail-banner{background:var(--surf2);border:2px solid var(--border);margin-bottom:14px;}
+
 
 /* ── Settings ── */
 .settings-section{background:var(--surf);border:1px solid var(--border);border-radius:16px;padding:16px;margin-bottom:12px;box-shadow:0 2px 10px var(--shadow);}
@@ -611,16 +640,20 @@ body::after{display:none;}
 /* Colorblind mode */
 body.colorblind{filter:url(#colorblind-filter);}
 
+
 /* ── PWA Install ── */
 .install-steps{display:flex;flex-direction:column;gap:10px;}
 .install-step{display:flex;align-items:flex-start;gap:10px;font-size:12px;color:var(--text);line-height:1.6;}
 .install-step-num{width:22px;height:22px;border-radius:0;background:var(--accent);color:#0a0a1a;font-family:var(--pixel);font-size:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;}
 
+
   button, a, [onclick], select, input[type="checkbox"], input[type="radio"], label {
     cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32"><text y="28" font-size="28">👆</text></svg>') 8 4, pointer !important;
   }
 
+
 }
+
 
 /* ════════════════════════════════════════════
    TAMAFIT
@@ -655,6 +688,8 @@ body.colorblind{filter:url(#colorblind-filter);}
 @keyframes tama-levelup{0%{transform:scale(1);}30%{transform:scale(1.3) rotate(-5deg);}60%{transform:scale(1.3) rotate(5deg);}100%{transform:scale(1);}}
 
 
+
+
 /* ── Login mob animations ── */
 @keyframes mob-bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
 @keyframes mob-bounce-delay1{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
@@ -664,10 +699,13 @@ body.colorblind{filter:url(#colorblind-filter);}
 @keyframes mob-sway{0%,100%{transform:rotate(0deg) translateY(0)}25%{transform:rotate(-3deg) translateY(-2px)}75%{transform:rotate(3deg) translateY(-2px)}}
 </style>
 
+
 <!-- Firebase -->
+
 
 <script type="module">const DEFAULT_LOGIN_SONG = 'Floral Life';
 const DEFAULT_BGM_SONG = 'Above the Treetops';
+
 
 function getSongUrl(name) {
   return SONG_FILES[name] || null;
@@ -675,9 +713,13 @@ function getSongUrl(name) {
 
 
 
+
+
+
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js';
 import { getFirestore,collection,doc,setDoc,onSnapshot,addDoc,updateDoc,serverTimestamp,getDoc,query,orderBy,where,getDocs,deleteDoc } from 'https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js';
 import { getAuth,signOut,onAuthStateChanged,GoogleAuthProvider,signInWithPopup,createUserWithEmailAndPassword,signInWithEmailAndPassword,signInAnonymously,updateProfile } from 'https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js';
+
 
 // ─── CONFIG ───────────────────────────────────────────────
 const fb = initializeApp({
@@ -691,6 +733,7 @@ const fb = initializeApp({
 const db = getFirestore(fb);
 const auth = getAuth(fb);
 const googleProvider = new GoogleAuthProvider();
+
 
 // ─── CONSTANTS ────────────────────────────────────────────
 const AVATARS = ['130100','130101','130102','100100','100102','1210100','1210101','1210102','2230102','2230100','2230101','8130100','1120100','1110100','5220003','3230200','8820007','5120000','2220000','4230100','9300217','9300218','3000000','4000000'];
@@ -722,32 +765,23 @@ const BADGES = [
 ];
 const SKILL_TREES = {
   focus:{name:'Focus',icon:'🎯',color:'#06b6d4',skills:[
-    {id:'focus_1',name:'Sharp Mind',desc:'Tasks worth +5 bonus XP',cost:50,requires:null,tamaMin:0},
-    {id:'focus_2',name:'Deep Work',desc:'High priority tasks = 2× XP',cost:150,requires:'focus_1',tamaMin:5},
-    {id:'focus_3',name:'Flow State',desc:'Habit streak multiplier +20%',cost:300,requires:'focus_2',tamaMin:15},
-    {id:'focus_4',name:'Laser Focus',desc:'Complete 5 tasks in a day for +100 bonus XP',cost:500,requires:'focus_3',tamaMin:30},
+    {id:'focus_1',name:'Sharp Mind',desc:'Tasks worth +5 bonus XP',cost:50,requires:null},
+    {id:'focus_2',name:'Deep Work',desc:'High priority tasks = 2x XP',cost:150,requires:'focus_1'},
+    {id:'focus_3',name:'Flow State',desc:'Habit streak multiplier +20%',cost:300,requires:'focus_2'},
   ]},
   resilience:{name:'Resilience',icon:'🛡️',color:'#10b981',skills:[
-    {id:'res_1',name:'Iron Will',desc:'Streak buffer — miss 2 days, not 1',cost:75,requires:null,tamaMin:0},
-    {id:'res_2',name:'Bounce Back',desc:'Completing habit restores 50% streak',cost:200,requires:'res_1',tamaMin:10},
-    {id:'res_3',name:'Unbreakable',desc:'Weekly streak shield — 1 free miss per week',cost:400,requires:'res_2',tamaMin:24},
-    {id:'res_4',name:'Phoenix',desc:'Penalty XP loss reduced by 50%',cost:600,requires:'res_3',tamaMin:50},
+    {id:'res_1',name:'Iron Will',desc:'Streak buffer — miss 2 days, not 1',cost:75,requires:null},
+    {id:'res_2',name:'Bounce Back',desc:'Completing habit restores 50% streak',cost:200,requires:'res_1'},
+    {id:'res_3',name:'Unbreakable',desc:'Weekly streak shield',cost:400,requires:'res_2'},
   ]},
-  crew:{name:'Party Buffs',icon:'🌐',color:'#ec4899',skills:[
-    {id:'crew_1',name:'Motivator',desc:'Boosts give +15 XP instead of +10',cost:100,requires:null,tamaMin:0},
-    {id:'crew_2',name:'Synergy',desc:'Shared tasks give +50% XP',cost:250,requires:'crew_1',tamaMin:8},
-    {id:'crew_3',name:'Party Leader',desc:'Boss battles deal 2× damage',cost:500,requires:'crew_2',tamaMin:20},
-    {id:'crew_4',name:'Raid Ready',desc:'All crew members +10% XP for 24h after crew boss win',cost:800,requires:'crew_3',tamaMin:75},
-  ]},
-  body:{name:'Body Mastery',icon:'💪',color:'#f59e0b',skills:[
-    {id:'body_1',name:'Warm Up',desc:'Fitness sessions give +10 bonus XP',cost:60,requires:null,tamaMin:0},
-    {id:'body_2',name:'Gains Mode',desc:'STR workouts give +25% stat points',cost:180,requires:'body_1',tamaMin:15},
-    {id:'body_3',name:'Cardio King',desc:'Cardio sessions count double toward TamaFit',cost:350,requires:'body_2',tamaMin:30},
-    {id:'body_4',name:'Peak Performance',desc:'All workout XP +30% — you earned this 🏆',cost:700,requires:'body_3',tamaMin:50},
+  crew:{name:'Crew Power',icon:'🌐',color:'#ec4899',skills:[
+    {id:'crew_1',name:'Motivator',desc:'Boosts give +15 XP instead of +10',cost:100,requires:null},
+    {id:'crew_2',name:'Synergy',desc:'Shared tasks give +50% XP',cost:250,requires:'crew_1'},
+    {id:'crew_3',name:'Crew Commander',desc:'Boss battles deal 2x damage',cost:500,requires:'crew_2'},
   ]},
 };
-
 const XP = {high:50,medium:30,low:20,habit:25,boost:10};
+
 
 const EXERCISE_DB = [
   // ── CHEST ──
@@ -755,182 +789,225 @@ const EXERCISE_DB = [
    demo:"",
    desc:'Lie flat on bench, grip bar slightly wider than shoulders, lower to chest, press up explosively.',tips:'Keep shoulder blades retracted, feet flat. Slight arch for stability.',cues:'Squeeze the bar like bending it. Push the floor away with your feet.'},
 
+
   {id:'pushup',name:'Push Up',muscles:['Chest','Triceps','Shoulders','Core'],type:'calisthenics',difficulty:1,category:'compound',
    demo:"",
    desc:'Hands shoulder-width apart, body straight, lower chest to floor and push up.',tips:'Keep core tight. Don\'t let hips sag or pike.',cues:'Full body tension. Screw hands into floor to activate chest.'},
 
+
   {id:'dips',name:'Chest Dips',muscles:['Chest','Triceps','Shoulders'],type:'calisthenics',difficulty:2,category:'compound',
    demo:"",
    desc:'Lean forward on parallel bars, lower until elbows at 90°, push up powerfully.',tips:'Lean forward for chest emphasis, stay upright for triceps.',cues:'Let elbows flare slightly outward as you descend.'},
+
 
   // ── BACK ──
   {id:'pullup',name:'Pull Up',muscles:['Back','Biceps','Core'],type:'calisthenics',difficulty:3,category:'compound',
    demo:"",
    desc:'Hang from bar with overhand grip, pull chest to bar, lower with full control.',tips:'Full dead hang at bottom. Think elbows to back pockets.',cues:'Initiate by depressing shoulder blades first — don\'t just pull with arms.'},
 
+
   {id:'bent_row',name:'Bent Over Row',muscles:['Back','Biceps','Rear Delts'],type:'weights',difficulty:3,category:'compound',
    demo:"",
    desc:'Hinge at hips, back parallel to floor, row bar to lower chest/upper abdomen.',tips:'Keep lower back neutral. Pull elbows past torso for full contraction.',cues:'Imagine cracking a walnut between your shoulder blades.'},
+
 
   {id:'deadlift',name:'Deadlift',muscles:['Back','Glutes','Hamstrings','Core'],type:'weights',difficulty:3,category:'compound',
    demo:"",
    desc:'Hip-width stance, hinge to grip bar, drive through floor keeping back flat.',tips:'Brace core like absorbing a punch. Bar stays close to legs.',cues:'Push the floor away — don\'t think of pulling the bar up.'},
 
+
   {id:'lat_pulldown',name:'Lat Pulldown',muscles:['Back','Biceps'],type:'weights',difficulty:1,category:'compound',
    demo:"",
    desc:'Wide grip, pull bar down to upper chest, control the return slowly.',tips:'Slight lean back. Never pull behind neck.',cues:'Think of pulling your elbows to your hips — not your hands.'},
+
 
   // ── SHOULDERS ──
   {id:'ohp',name:'Overhead Press',muscles:['Shoulders','Triceps','Core'],type:'weights',difficulty:3,category:'compound',
    demo:"",
    desc:'Press barbell from shoulders to overhead, full lockout at top.',tips:'Squeeze glutes and core. Bar path slightly back at top.',cues:'Push your head through the window at the top. Full lockout.'},
 
+
   {id:'lateral_raise',name:'Lateral Raise',muscles:['Side Delts'],type:'weights',difficulty:1,category:'isolation',
    demo:"",
    desc:'Raise dumbbells to sides to shoulder height, slight lean forward.',tips:'Lead with elbows. Go lighter than you think.',cues:'Imagine pouring water from a jug at the top.'},
+
 
   // ── BICEPS ──
   {id:'bicep_curl',name:'Bicep Curl',muscles:['Biceps','Forearms'],type:'weights',difficulty:1,category:'isolation',
    demo:"",
    desc:'Curl up supinating wrist, squeeze at top, lower slowly with control.',tips:'Full range — full extension at bottom, full squeeze at top.',cues:'Elbow pinned to side. Wrist supinates as you curl up.'},
 
+
   {id:'hammer_curl',name:'Hammer Curl',muscles:['Biceps','Brachialis','Forearms'],type:'weights',difficulty:1,category:'isolation',
    demo:"",
    desc:'Neutral grip (thumbs up), curl without rotating wrist.',tips:'Great for arm thickness and brachialis development.',cues:'Keep neutral grip throughout. Same motion as a hammer.'},
+
 
   // ── TRICEPS ──
   {id:'skull_crusher',name:'Skull Crusher',muscles:['Triceps'],type:'weights',difficulty:2,category:'isolation',
    demo:"",
    desc:'Lie on bench, lower bar to forehead bending only at elbows.',tips:'Keep elbows pointing to ceiling throughout.',cues:'Only the forearm moves — upper arm stays stationary.'},
 
+
   {id:'tricep_pushdown',name:'Tricep Pushdown',muscles:['Triceps'],type:'weights',difficulty:1,category:'isolation',
    demo:"",
    desc:'Push rope or bar down extending arms fully at cable machine.',tips:'Keep elbows pinned to sides.',cues:'Separate rope at bottom for full contraction.'},
+
 
   // ── LEGS ──
   {id:'squat',name:'Back Squat',muscles:['Quads','Glutes','Hamstrings','Core'],type:'weights',difficulty:3,category:'compound',
    demo:"",
    desc:'Bar on traps, squat to parallel or below, knees track over toes, drive up.',tips:'Chest stays up. Weight in mid-foot throughout.',cues:'Break at hips and knees simultaneously. Spread the floor with your feet.'},
 
+
   {id:'rdl',name:'Romanian Deadlift',muscles:['Hamstrings','Glutes','Back'],type:'weights',difficulty:2,category:'compound',
    demo:"",
    desc:'Slight knee bend, hinge at hips lowering bar down legs, feel the hamstring stretch.',tips:'Bar stays close to legs throughout.',cues:'Push your hips back to a wall behind you. Feel the hamstring load.'},
+
 
   {id:'leg_press',name:'Leg Press',muscles:['Quads','Glutes','Hamstrings'],type:'weights',difficulty:1,category:'compound',
    demo:"",
    desc:'Feet shoulder-width on platform, lower sled, press back without locking knees.',tips:'Don\'t let lower back peel off the pad at the bottom.',cues:'Press through full foot. Don\'t just push with toes.'},
 
+
   {id:'lunge',name:'Walking Lunge',muscles:['Quads','Glutes','Hamstrings'],type:'calisthenics',difficulty:2,category:'compound',
    demo:"",
    desc:'Step forward, lower back knee toward floor, push off front foot, repeat.',tips:'Keep torso upright. Front knee tracks over toes.',cues:'Step out, drop down — don\'t lean forward.'},
 
+
   {id:'glute_bridge',name:'Glute Bridge',muscles:['Glutes','Hamstrings','Core'],type:'calisthenics',difficulty:1,category:'isolation',
    demo:"",
    desc:'Lie on back, feet flat, drive hips up squeezing glutes hard at top.',tips:'Tuck pelvis under at top for full glute activation.',cues:'Push through heels. Posterior pelvic tilt at the top.'},
+
 
   // ── CORE ──
   {id:'plank',name:'Plank',muscles:['Core','Shoulders','Glutes'],type:'calisthenics',difficulty:1,category:'isolation',
    demo:"",
    desc:'Forearms on floor, body straight, hold position. No sagging or piking.',tips:'Breathe steadily. Full body tension throughout.',cues:'Squeeze everything — glutes, abs, quads. Push floor away with forearms.'},
 
+
   {id:'dead_bug',name:'Dead Bug',muscles:['Core','Hip Flexors'],type:'calisthenics',difficulty:2,category:'isolation',
    demo:"",
    desc:'Lie on back, extend opposite arm and leg keeping lower back flat on floor.',tips:'Lower back must stay glued to floor throughout.',cues:'Press lower back into floor before you move anything.'},
 
+
   {id:'hanging_leg_raise',name:'Hanging Leg Raise',muscles:['Core','Hip Flexors'],type:'calisthenics',difficulty:3,category:'isolation',
    demo:"",
    desc:'Hang from bar, raise legs to parallel or above with posterior pelvic tilt.',tips:'Don\'t swing. Hollow body position throughout.',cues:'Think about tilting your pelvis back at the top to fully engage the abs.'},
+
 
   // ── ADVANCED CALISTHENICS ──
   {id:'muscle_up',name:'Muscle Up',muscles:['Back','Chest','Triceps','Core'],type:'calisthenics',difficulty:3,category:'compound',
    demo:"",
    desc:'Explosive pull up transitioning over the bar into a dip — the king of calisthenics.',tips:'Master strict pull ups and dips first. False grip helps the transition.',cues:'Explosive pull, lean slightly forward, drive elbows back and over the bar.'},
 
+
   {id:'pistol_squat',name:'Pistol Squat',muscles:['Quads','Glutes','Balance'],type:'calisthenics',difficulty:3,category:'compound',
    demo:"",
    desc:'Single leg squat to full depth while extending other leg forward.',tips:'Use TRX or a pole for assistance while building strength.',cues:'Sit back into your heel. Counter-balance with arms outstretched.'},
+
 
   {id:'planche_lean',name:'Planche Lean',muscles:['Chest','Shoulders','Core','Wrists'],type:'calisthenics',difficulty:3,category:'compound',
    demo:"",
    desc:'Lean forward on straight arms beyond your hands until body is parallel to ground. Start with a lean and progress to tuck, advanced tuck, straddle, full.',tips:'Wrist conditioning is critical before training planche. Protracted scapula is essential.',cues:'Depress and protract shoulder blades hard. Push the ground away.'},
 
+
   {id:'tuck_planche',name:'Tuck Planche',muscles:['Chest','Shoulders','Core','Triceps'],type:'calisthenics',difficulty:3,category:'compound',
    demo:"",
    desc:'Both legs tucked to chest while holding straight arms parallel to ground. First step to full planche.',tips:'Build planche leans for 3+ months before attempting tuck planche holds.',cues:'Squeeze everything. Protract scapula maximally. Aim for 5-10 second holds.'},
+
 
   {id:'straddle_planche',name:'Straddle Planche',muscles:['Chest','Shoulders','Core','Triceps'],type:'calisthenics',difficulty:3,category:'compound',
    demo:"",
    desc:'Body parallel to ground, legs straddled wide, arms straight. Advanced progression from tuck planche.',tips:'Straddle reduces difficulty versus full planche. Build 10s+ tuck planche first.',cues:'Wide straddle reduces lever length. Push the ground. Protract scapula.'},
 
+
   {id:'full_planche',name:'Full Planche',muscles:['Chest','Shoulders','Core','Triceps','Full Body'],type:'calisthenics',difficulty:3,category:'compound',
    demo:"",
    desc:'Entire body horizontal, legs together, arms straight. The ultimate calisthenics strength skill. Takes 1-3+ years of dedicated training.',tips:'Requires exceptional shoulder, chest, and core strength. Progressive overload through lean → tuck → adv tuck → straddle → full.',cues:'Every muscle engaged. Think of a rigid plank floating in the air. Protract and depress scapula hard.'},
+
 
   {id:'front_lever',name:'Front Lever',muscles:['Back','Core','Biceps','Shoulders'],type:'calisthenics',difficulty:3,category:'compound',
    demo:"",
    desc:'Hang from bar, body horizontal facing up, arms straight. Requires exceptional back and core strength.',tips:'Progress: tuck → advanced tuck → one leg → straddle → full. Each stage takes months.',cues:'Depress shoulder blades. Pull the bar toward your hips. Keep body rigid like a plank.'},
 
+
   {id:'tuck_front_lever',name:'Tuck Front Lever',muscles:['Back','Core','Biceps'],type:'calisthenics',difficulty:3,category:'compound',
    demo:"",
    desc:'Front lever with knees tucked to chest. The entry point for front lever training.',tips:'Aim for 3 sets of 10 second holds before progressing to advanced tuck.',cues:'Pull the bar towards your waist. Depress scapula. Core braced hard.'},
+
 
   {id:'back_lever',name:'Back Lever',muscles:['Chest','Shoulders','Biceps','Core'],type:'calisthenics',difficulty:3,category:'compound',
    demo:"",
    desc:'Hang from bar, body horizontal facing down, arms straight. Often learned before front lever.',tips:'Start with skin the cat to condition the shoulder joints.',cues:'Supinated grip typically easier. Keep body rigid and horizontal.'},
 
+
   {id:'dragon_flag',name:'Dragon Flag',muscles:['Core','Lower Back','Shoulders'],type:'calisthenics',difficulty:3,category:'isolation',
    demo:"",
    desc:'Lie on bench gripping behind head, raise entire body except shoulders to horizontal, lower with control. Made famous by Bruce Lee.',tips:'Learn tucked dragon flag first. Requires tremendous core strength.',cues:'The body moves as one rigid unit. No hinging at the hips.'},
+
 
   {id:'human_flag',name:'Human Flag',muscles:['Core','Shoulders','Back','Full Body'],type:'calisthenics',difficulty:3,category:'compound',
    demo:"",
    desc:'Body held horizontally perpendicular to a vertical pole using only arm strength. One of the rarest calisthenics skills.',tips:'Years of dedicated lateral strength work required. Train lever exercises first.',cues:'Bottom arm pushes, top arm pulls. Body forms one rigid line.'},
 
+
   {id:'handstand_pushup',name:'Handstand Push Up',muscles:['Shoulders','Triceps','Core'],type:'calisthenics',difficulty:3,category:'compound',
    demo:"",
    desc:'Inverted against wall, bend arms lowering head to floor, press back up. Upper body squat.',tips:'Master handstand hold first. Pike push ups as regression.',cues:'Wide hand placement. Push through entire palm. Full lockout at top.'},
+
 
   {id:'l_sit',name:'L-Sit',muscles:['Core','Hip Flexors','Triceps','Shoulders'],type:'calisthenics',difficulty:3,category:'isolation',
    demo:"",
    desc:'Support on hands/parallettes, hold legs parallel to floor with straight knees.',tips:'Build tuck L-sit first. Requires both core and pressing strength.',cues:'Push down hard into the ground. Protract shoulders. Point toes.'},
 
+
   {id:'v_sit',name:'V-Sit',muscles:['Core','Hip Flexors','Shoulders'],type:'calisthenics',difficulty:3,category:'isolation',
    demo:"",
    desc:'Like an L-sit but legs angled upward, body forming a V shape. Extreme core compression strength.',tips:'Master L-sit for 30+ seconds before attempting V-sit.',cues:'Compress hip flexors maximally. Push down into ground. Point toes to ceiling.'},
+
 
   {id:'skin_cat',name:'Skin the Cat',muscles:['Shoulders','Back','Core'],type:'calisthenics',difficulty:3,category:'compound',
    demo:"",
    desc:'Hang from bar, pull legs through arms rotating body into German hang, then reverse. Excellent shoulder prep.',tips:'Essential prerequisite for back lever and iron cross work.',cues:'Control the movement throughout. Don\'t just drop into German hang.'},
 
+
   {id:'archer_pushup',name:'Archer Push Up',muscles:['Chest','Triceps','Shoulders'],type:'calisthenics',difficulty:3,category:'compound',
    demo:"",
    desc:'Wide stance push up shifting weight to one arm at a time. Progression toward one-arm push up.',tips:'One arm nearly straight, other arm does the work.',cues:'Keep hips square. Full range of motion on working arm.'},
+
 
   {id:'one_arm_pushup',name:'One Arm Push Up',muscles:['Chest','Triceps','Core'],type:'calisthenics',difficulty:3,category:'compound',
    demo:"",
    desc:'Full push up on one arm. Requires exceptional unilateral pushing strength and core stability.',tips:'Widen feet stance. Build archer push ups first.',cues:'Keep body from rotating. Core braced. Push explosively.'},
 
+
   {id:'typewriter_pullup',name:'Typewriter Pull Up',muscles:['Back','Biceps','Core'],type:'calisthenics',difficulty:3,category:'compound',
    demo:"",
    desc:'Pull up then travel laterally across the bar, shifting weight from arm to arm at the top. Like a typewriter.',tips:'Master strict pull ups first. Requires strong lateral pulling.',cues:'Keep chin above bar throughout the lateral movement.'},
+
 
   // ── RUNNING ──
   {id:'easy_run',name:'Easy Run',muscles:['Full Body','Cardio'],type:'run',difficulty:1,category:'cardio',
    demo:"",
    desc:'Comfortable conversational pace. You should be able to hold a full conversation.',tips:'60-70% of training should be at this pace. Builds aerobic base.',cues:'Nose breathing comfortable. Land midfoot, not heel. Relax shoulders.'},
 
+
   {id:'interval_run',name:'Interval Run',muscles:['Full Body','Cardio'],type:'run',difficulty:3,category:'cardio',
    demo:"",
    desc:'Alternate hard efforts with recovery. e.g. 400m hard, 200m easy jog.',tips:'Full recovery between hard efforts. Quality over quantity.',cues:'Hard efforts feel like 8/10. Recovery is genuinely slow.'},
+
 
   {id:'tempo_run',name:'Tempo Run',muscles:['Full Body','Cardio'],type:'run',difficulty:3,category:'cardio',
    demo:"",
    desc:'Comfortably hard pace sustained for 20-40 minutes. Lactate threshold training.',tips:'Should be able to say a few words but not hold a conversation.',cues:'Find a pace that feels hard but sustainable. Breathe rhythmically.'},
 
+
   // ── SWIMMING ──
   {id:'freestyle',name:'Freestyle',muscles:['Shoulders','Back','Core','Legs'],type:'swim',difficulty:2,category:'cardio',
    demo:"",
    desc:'Alternating arm stroke with flutter kick. Most efficient swimming stroke.',tips:'Rotate body with each stroke. Breathe every 2-3 strokes.',cues:'High elbow catch. Pull water past hip before recovering arm.'},
+
 
   {id:'breaststroke',name:'Breaststroke',muscles:['Chest','Back','Legs'],type:'swim',difficulty:2,category:'cardio',
    demo:"",
@@ -988,6 +1065,8 @@ const EXERCISE_DB = [
   {id:'sled_push',name:'Sled Push',muscles:['Quads','Glutes','Core','Cardio'],type:'cardio',difficulty:3,category:'compound',demo:'',desc:'Push weighted sled using short powerful strides.',tips:'No eccentric = no soreness. Can push hard with less recovery.',cues:'Low body position, drive through balls of feet, pump arms.'}];
 
 
+
+
 const WORKOUT_GUIDES = [
   {id:'ppl',name:'Push Pull Legs',icon:'🏋️',type:'weights',level:'Intermediate',days:6,desc:'The gold standard split for muscle building.',exercises:['Bench Press','Overhead Press','Tricep Pushdown','Pull Up','Bent Over Row','Bicep Curl','Back Squat','Romanian Deadlift']},
   {id:'full_body',name:'Full Body 3x Week',icon:'💪',type:'weights',level:'Beginner',days:3,desc:'Hit every muscle 3x per week with compound movements.',exercises:['Back Squat','Bench Press','Bent Over Row','Overhead Press','Deadlift','Pull Up']},
@@ -996,6 +1075,7 @@ const WORKOUT_GUIDES = [
   {id:'swim_end',name:'Swim Endurance',icon:'🏊',type:'swim',level:'Intermediate',days:3,desc:'Build swimming endurance with structured distance work.',exercises:['Freestyle','Breaststroke']},
 ];
 
+
 // ─── STATE ────────────────────────────────────────────────
 const BASE_URL = 'https://maplestory.io/api/GMS/255/item';
 let currentUser = null, userProfile = null;
@@ -1003,6 +1083,7 @@ let tasks = [], habits = [], crew = null, crewMembers = [], crewMessages = [], b
 let bodyEntries = [], workoutEntries = [], fitnessProfile = null;
 let unsubs = [], activeTab = 'today', synced = false;
 let _authHandled = false; // prevents onAuthStateChanged double-handling
+
 
 // Per-user localStorage — prevents data bleeding between accounts on same device
 function lsKey(key) { return key + '_' + (currentUser ? currentUser.uid : 'anon'); }
@@ -1022,6 +1103,7 @@ let selEx = null, exQuery = '', currentSets = [{reps:8,weight:'',dur:''}], curre
 let libFilter = 'all', libSearch = '';
 let streakMult = 1;
 
+
 // ─── AUTH ─────────────────────────────────────────────────
 onAuthStateChanged(auth, async user => {
   // Skip if we're handling auth manually (e.g. guest account creation)
@@ -1037,6 +1119,7 @@ onAuthStateChanged(auth, async user => {
     showScreen('login');
   }
 });
+
 
 async function loadProfile(uid) {
   // Guard: if auth changed mid-load, abort to prevent stale data
@@ -1057,6 +1140,7 @@ async function loadProfile(uid) {
   }
 }
 
+
 function subscribeAll(uid, crewId) {
   unsubs.forEach(u => u()); unsubs = [];
   unsubs.push(onSnapshot(doc(db,'users',uid), s => {
@@ -1075,12 +1159,14 @@ function subscribeAll(uid, crewId) {
   if (crewId) subscribeCrew(crewId);
 }
 
+
 function subscribeCrew(crewId) {
   unsubs.push(onSnapshot(doc(db,'crews',crewId), s => { if(s.exists()){crew={id:s.id,...s.data()};renderCrew();} }));
   unsubs.push(onSnapshot(query(collection(db,'users'),where('crewId','==',crewId)), s => { crewMembers=s.docs.map(d=>({id:d.id,...d.data()}));renderCrew(); }));
   unsubs.push(onSnapshot(query(collection(db,'crews',crewId,'messages'),orderBy('createdAt','asc')), s => { crewMessages=s.docs.map(d=>({id:d.id,...d.data()}));renderMessages(); }));
   unsubs.push(onSnapshot(doc(db,'crews',crewId,'boss','current'), s => { if(s.exists()){boss=s.data();renderBoss();} }));
 }
+
 
 async function loadFitness(uid) {
   const snap = await getDoc(doc(db,'fitness',uid));
@@ -1091,6 +1177,7 @@ async function loadFitness(uid) {
     workoutEntries = (d.workoutEntries || []).filter(e => e && typeof e === 'object' && e.id);
   }
 }
+
 
 async function saveFitness() {
   if (!currentUser) return;
@@ -1105,6 +1192,7 @@ async function saveFitness() {
   const data = { optedIn:true, ...(fitnessProfile||{}), bodyEntries, workoutEntries, updatedAt:serverTimestamp() };
   await setDoc(doc(db,'fitness',currentUser.uid), data, {merge:true});
 }
+
 
 window.doGoogleLogin = async () => {
   try {
@@ -1123,6 +1211,7 @@ window.doGoogleLogin = async () => {
   }
 };
 
+
 window.doEmailLogin = async () => {
   const email = g('li-email').value.trim();
   const pw = g('li-pw').value;
@@ -1130,10 +1219,12 @@ window.doEmailLogin = async () => {
   if (!pw) { showAuthError('Please enter your password.'); return; }
   if (pw.length < 6) { showAuthError('Password must be at least 6 characters.'); return; }
 
+
   const isSignUp = g('li-btn').dataset.mode === 'signup';
   g('li-btn').disabled = true;
   g('li-btn').textContent = '...';
   showAuthError('');
+
 
   try {
     if (isSignUp) {
@@ -1148,6 +1239,7 @@ window.doEmailLogin = async () => {
   } catch (err) {
     const code = err.code || '';
     console.warn('[Auth]', code, err.message);
+
 
     if (isSignUp) {
       if (code === 'auth/email-already-in-use') {
@@ -1194,6 +1286,7 @@ window.switchAuthTab = function(tab) {
   }
 };
 
+
 window.toggleAuthMode = () => {
   const btn = g('li-btn');
   const isSignUp = btn.dataset.mode === 'signup';
@@ -1203,6 +1296,7 @@ window.toggleAuthMode = () => {
   if(toggle) toggle.textContent = isSignUp ? "Don't have an account? Create one" : 'Already have an account? Sign in';
   showAuthError('');
 };
+
 
 window.doGuestLogin = async () => {
   const username = g('guest-name').value.trim();
@@ -1214,12 +1308,14 @@ window.doGuestLogin = async () => {
   const btn = g('guest-btn'); btn.disabled=true; btn.textContent='Setting up...';
   const guestEmail = username.toLowerCase().replace(/[^a-z0-9]/g,'') + '_guest@intask.app';
 
+
   // Take manual control — prevent onAuthStateChanged from interfering
   _authHandled = true;
   // Null out FIRST so any final onSnapshot fires don't update the DOM
   userProfile=null; currentUser=null;
   // NOW kill listeners — their final callbacks see null currentUser and skip
   unsubs.forEach(u=>u()); unsubs=[];
+
 
   try {
     let firebaseUser;
@@ -1247,11 +1343,13 @@ window.doGuestLogin = async () => {
       }
     }
 
+
     // Now we have a clean firebaseUser — load their profile
     currentUser = firebaseUser;
     toast((firebaseUser.metadata.creationTime === firebaseUser.metadata.lastSignInTime
       ? 'Welcome, ' : 'Welcome back, ') + username + '! 🚀');
     await loadProfile(currentUser.uid);
+
 
   } catch(e) {
     showAuthError(friendlyErr(e.code) || 'Something went wrong. Try again.');
@@ -1260,6 +1358,7 @@ window.doGuestLogin = async () => {
     btn.disabled=false; btn.textContent='👾 Create / Sign In';
   }
 };
+
 
 window.doGuestReturn = async () => {
   const username = g('guest-return-name')?.value?.trim();
@@ -1282,6 +1381,7 @@ window.doGuestReturn = async () => {
     }
   }
 };
+
 
 window.doLogout = async () => {
   try {
@@ -1322,6 +1422,7 @@ window.doLogout = async () => {
   }
 };
 
+
 window.completeProfile = async () => {
   if(!currentUser) { toast('Not signed in'); return; }
   const uid = currentUser.uid;
@@ -1345,6 +1446,7 @@ window.completeProfile = async () => {
   showApp();
 };
 
+
 function friendlyErr(code) {
   const map = {
     'auth/email-already-in-use':'Email already registered.',
@@ -1356,6 +1458,7 @@ function friendlyErr(code) {
   };
   return map[code] || 'Something went wrong.';
 }
+
 
 // ─── XP & LEVELLING ──────────────────────────────────────
 async function gainXP(amount, stats = {}) {
@@ -1392,6 +1495,7 @@ async function gainXP(amount, stats = {}) {
   if (nb.length) { const b = BADGES.find(x=>x.id===nb[0]); setTimeout(()=>badgeCel(b),1800); }
 }
 
+
 // ─── TASKS ────────────────────────────────────────────────
 window.addTask = async () => {
   const name = g('new-task-name').value.trim(); if (!name) { toast('Name your mission!'); return; }
@@ -1405,6 +1509,7 @@ window.addTask = async () => {
   playSound('launch'); toast('✅ Task added!');
 };
 
+
 window.completeTask = async id => {
   const t = tasks.find(x => x.id === id); if (!t || t.done) return;
   await updateDoc(doc(db,'tasks',id), {done:true, doneAt:serverTimestamp()});
@@ -1416,6 +1521,7 @@ window.completeTask = async id => {
     setTimeout(async () => { await updateDoc(doc(db,'tasks',id),{done:false,doneAt:null}); }, 600);
   }
 };
+
 
 window.deleteTask = async id => {
   const el = document.createElement('div');
@@ -1430,6 +1536,7 @@ window.deleteTask = async id => {
 };
 window._doDeleteTask = async id => { await deleteDoc(doc(db,'tasks',id)); };
 
+
 // ─── HABITS ───────────────────────────────────────────────
 window.addHabit = async () => {
   const name = g('new-habit-name').value.trim(); if (!name) { toast('Name your habit!'); return; }
@@ -1439,6 +1546,7 @@ window.addHabit = async () => {
   });
   closeModal('habit-modal'); g('new-habit-name').value = ''; toast('🔥 Streak started!');
 };
+
 
 window.completeHabit = async id => {
   const h = habits.find(x => x.id === id); if (!h) return;
@@ -1458,6 +1566,7 @@ window.completeHabit = async id => {
   renderHabits();
 };
 
+
 // ─── BOSS ─────────────────────────────────────────────────
 async function initBoss() {
   if (!userProfile?.crewId) return;
@@ -1467,6 +1576,7 @@ async function initBoss() {
     await setDoc(bRef, {name:'The Procrastination Titan',icon:'👾',reward:'💎 Diamond Starter Badge',maxHp:1000,hp:1000,defeated:false,createdAt:serverTimestamp()});
   }
 }
+
 
 async function damageBoss(dmg) {
   if (!boss || boss.defeated || !userProfile?.crewId) return;
@@ -1482,8 +1592,9 @@ async function damageBoss(dmg) {
   }
 }
 
+
 // ─── SKILLS ───────────────────────────────────────────────
-window.unlockSkill = async function(skillId) {
+window.unlockSkill = async skillId => {
   const u = userProfile; if (!u) return;
   let skill = null;
   for (const tree of Object.values(SKILL_TREES)) {
@@ -1491,32 +1602,20 @@ window.unlockSkill = async function(skillId) {
     if (s) { skill = s; break; }
   }
   if (!skill) return;
-  const pts = u.skillPoints||0;
-  if (pts < 1) { toast('Need 1 SP to unlock! You have ' + pts + '.'); return; }
+  if ((u.skillPoints||0) < skill.cost) { toast(`Need ${skill.cost} SP! You have ${u.skillPoints||0}.`); return; }
   if ((u.skills||[]).includes(skillId)) { toast('Already unlocked!'); return; }
-  if (skill.requires && !(u.skills||[]).includes(skill.requires)) { toast('Unlock the skill above it first!'); return; }
-  const {totalWorkouts} = getTamaState();
-  if (totalWorkouts < (skill.tamaMin||0)) { toast('Need ' + skill.tamaMin + ' TamaFit workouts. You have ' + totalWorkouts + '.'); return; }
+  if (skill.requires && !(u.skills||[]).includes(skill.requires)) { toast('Unlock previous skill first!'); return; }
   await updateDoc(doc(db,'users',currentUser.uid), {
-    skills:[...(u.skills||[]),skillId], skillPoints:pts-1, skillsUnlocked:(u.skillsUnlocked||0)+1
+    skills:[...(u.skills||[]),skillId], skillPoints:(u.skillPoints||0)-skill.cost, skillsUnlocked:(u.skillsUnlocked||0)+1
   });
-  playSound('unlock'); toast('🧠 ' + skill.name + ' unlocked!'); renderAwards();
+  playSound('unlock'); toast(`🧠 ${skill.name} unlocked!`); renderAwards();
 };
 
-window.resetSkills = async function() {
-  const u = userProfile; if (!u) return;
-  const owned = u.skills||[];
-  if (owned.length === 0) { toast('No skills to reset.'); return; }
-  const pts = u.skillPoints||0;
-  if (pts < 1) { toast('Need at least 1 SP to reset (reset fee).'); return; }
-  const refund = owned.length - 1;
-  await updateDoc(doc(db,'users',currentUser.uid), { skills:[], skillPoints:pts + refund });
-  toast('Skills reset! Got ' + refund + ' SP back (1 SP reset fee).');
-  renderAwards();
-};
 
 // ─── CREW ─────────────────────────────────────────────────
 const genCode = () => Math.random().toString(36).substring(2,8).toUpperCase();
+
+
 
 
 window.copyInstallLink = function() {
@@ -1527,6 +1626,7 @@ window.copyInstallLink = function() {
     toast(url);
   }
 };
+
 
 window.createCrew = async () => {
   const name = g('crew-name-input').value.trim(); if (!name) { toast('Name your crew!'); return; }
@@ -1544,6 +1644,7 @@ window.createCrew = async () => {
   setTimeout(()=>toast(`🎉 Crew "${name}" created! Code: ${code}`),300);
 };
 
+
 window.joinCrew = async () => {
   const code = g('join-input').value.trim().toUpperCase(); if (!code) { toast('Enter a code!'); return; }
   const snap = await getDocs(query(collection(db,'crews'),where('code','==',code)));
@@ -1556,11 +1657,13 @@ window.joinCrew = async () => {
   closeModal('crew-modal'); playSound('unlock'); toast(`🎉 Joined "${cd.data().name}"!`);
 };
 
+
 window.leaveCrew = async () => {
   // confirmed
   await updateDoc(doc(db,'users',currentUser.uid),{crewId:null});
   crew=null; crewMembers=[]; crewMessages=[]; boss=null; renderCrew(); toast('Left the crew.');
 };
+
 
 async function sendMsg(text) {
   if (!userProfile?.crewId || !text.trim()) return;
@@ -1577,21 +1680,25 @@ window.sendBoost = async targetName => {
   await gainXP(XP.boost); playSound('boost'); toast(`⚡ Boost sent!`); spawnConfetti();
 };
 
+
 // ─── FITNESS ──────────────────────────────────────────────
 window.optInFitness = async () => {
   fitnessProfile = {optedIn:true, goal:'weight_loss', mode:'basic'};
   await saveFitness(); renderFitness();
 };
 
+
 window.setFitnessGoal = async goal => {
   fitnessProfile = {...(fitnessProfile||{}), goal};
   await saveFitness();
 };
 
+
 window.setBodyMode = async mode => {
   fitnessProfile = {...(fitnessProfile||{}), mode};
   await saveFitness(); renderBodyComp();
 };
+
 
 window.logBodyEntry = async () => {
   const w = g('bc-weight')?.value; if (!w) { toast('Enter your weight!'); return; }
@@ -1606,14 +1713,17 @@ window.logBodyEntry = async () => {
   await gainXP(10); toast('📊 Stats logged! +10 XP'); renderBodyComp();
 };
 
+
 window.deleteBodyEntry = async idx => {
   // confirmed
   bodyEntries.splice(idx,1); await saveFitness(); toast('Deleted.'); renderBodyComp();
 };
 
+
 async function saveWorkoutEntry(entry) {
   workoutEntries.push(entry); await saveFitness();
 }
+
 
 window.deleteWorkoutEntry = async id => {
   const el = document.createElement('div');
@@ -1628,9 +1738,11 @@ window.deleteWorkoutEntry = async id => {
   document.body.appendChild(el);
 };
 
+
 window._doDeleteEntry = async id => {
   workoutEntries = workoutEntries.filter(e=>e.id!==id); await saveFitness(); toast('Deleted.'); renderDiary();
 };
+
 
 // Session flow
 window.startWorkoutSession = () => {
@@ -1639,6 +1751,7 @@ window.startWorkoutSession = () => {
   if (!timerRunning) toggleTimer();
   renderFitness();
 };
+
 
 window.selectExercise = id => {
   // Auto-save current exercise if it has data and we're switching
@@ -1663,12 +1776,15 @@ window.selectExercise = id => {
   if(resEl) resEl.innerHTML='';
 };
 
+
 window.clearExSelection = () => {
   selEx=null; exQuery=''; currentSets=[{reps:8,weight:''}];
   updateExFormSection();
   const src = g('ex-results-container'); if(src) src.innerHTML='';
   const inp = g('ex-search'); if(inp){inp.value='';inp.focus();}
 };
+
+
 
 
 // ── Exercise Recommendation Engine ──────────────────────────
@@ -1719,6 +1835,7 @@ const WORKOUT_PAIRS = {
   'breaststroke':   ['freestyle','bent_row','ohp','glute_bridge','plank'],
 };
 
+
 // Also use historical co-occurrence from user's own workout data
 function getPersonalisedRecs(firstExId) {
   // Look at past sessions where this exercise appeared
@@ -1745,6 +1862,7 @@ function getPersonalisedRecs(firstExId) {
     .map(([id])=>id);
 }
 
+
 function getRecommendations(firstExId) {
   // 1. Start with personalised recs from history
   const personal = getPersonalisedRecs(firstExId);
@@ -1766,6 +1884,7 @@ function getRecommendations(firstExId) {
   const merged = [...new Set([...personal, ...curated, ...fallback])].slice(0,6);
   return merged.map(id=>EXERCISE_DB.find(e=>e.id===id)).filter(Boolean);
 }
+
 
 function updateExFormSection() {
   const section = g('ex-form-section');
@@ -1851,6 +1970,7 @@ function updateExFormSection() {
   }
 }
 
+
 window.addExToSession = () => {
   if (!selEx) { toast('Select an exercise!'); return; }
   const sets = currentSets.map(s=>({weight:parseFloat(s.weight)||0,reps:parseInt(s.reps)||0,duration:parseInt(s.duration)||0,mode:s.mode||setMode}));
@@ -1861,7 +1981,9 @@ window.addExToSession = () => {
   playSound('complete'); toast(`✅ ${exName} added!`); renderActiveSession();
 };
 
+
 window.removeSessionEx = i => { activeSession.exercises.splice(i,1); renderActiveSession(); };
+
 
 window.finishSession = async () => {
   if (!activeSession?.exercises.length) { toast('Add at least one exercise!'); return; }
@@ -1891,6 +2013,7 @@ window.finishSession = async () => {
   }, 200);
 };
 
+
 window.cancelSession = () => {
   const el = document.createElement('div');
   el.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:6000;display:flex;align-items:center;justify-content:center;padding:20px';
@@ -1905,9 +2028,11 @@ window.cancelSession = () => {
   document.body.appendChild(el);
 };
 
+
 window.doCancelSession = () => {
   activeSession=null; resetTimer(); renderFitness();
 };
+
 
 window.logWorkoutEntry = async () => {
   if (!selEx) { toast('Select an exercise!'); return; }
@@ -1927,11 +2052,13 @@ window.logWorkoutEntry = async () => {
   updateExFormSection();
 };
 
+
 window.logRunEntry = async () => {
   const dist = g('run-dist')?.value; if (!dist) { toast('Enter distance!'); return; }
   await saveWorkoutEntry({id:Date.now().toString(), date:new Date().toISOString(), type:'run', distance:parseFloat(dist), duration:parseFloat(g('run-dur')?.value||0), pace:g('run-pace')?.value||'', heartRate:parseFloat(g('run-hr')?.value||0), elevation:parseFloat(g('run-elev')?.value||0), calories:parseFloat(g('run-cal')?.value||0), runType:document.querySelector('[data-group="run-type"].active')?.textContent||'Easy', notes:g('run-notes')?.value||''});
   await gainXP(20); toast('🏃 Run logged! +20 XP'); renderDiary(); // Stay on diary tab after run log
 };
+
 
 window.logSwimEntry = async () => {
   const dist = g('sw-dist')?.value; if (!dist) { toast('Enter distance!'); return; }
@@ -1939,11 +2066,13 @@ window.logSwimEntry = async () => {
   await gainXP(20); toast('🏊 Swim logged! +20 XP'); renderDiary(); // Stay on diary tab after swim log
 };
 
+
 window.logCardioEntry = async () => {
   const dur = g('cardio-dur')?.value; if (!dur) { toast('Enter duration!'); return; }
   await saveWorkoutEntry({id:Date.now().toString(), date:new Date().toISOString(), type:'cardio', duration:parseFloat(dur), calories:parseFloat(g('cardio-cal')?.value||0), cardioType:document.querySelector('[data-group="cardio-type"].active')?.textContent||'Cardio', notes:g('cardio-notes')?.value||''});
   await gainXP(15); toast('❤️ Cardio logged! +15 XP'); renderDiary(); // Stay on diary tab after cardio log
 };
+
 
 window.exportCSV = () => {
   if (!workoutEntries.length) { toast('No data to export!'); return; }
@@ -1959,6 +2088,7 @@ window.exportCSV = () => {
   const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([csv],{type:'text/csv'})); a.download='InTask_Workouts.csv'; a.click();
   toast('📥 CSV downloaded!');
 };
+
 
 // ─── TIMER ────────────────────────────────────────────────
 function toggleTimer() {
@@ -1977,6 +2107,7 @@ function toggleTimer() {
 }
 window.toggleTimer = toggleTimer;
 
+
 function updateTimerBtns() {
   document.querySelectorAll('.timer-start-btn').forEach(btn => {
     btn.textContent = timerRunning ? '⏸ Pause' : (timerSecs > 0 ? '▶ Resume' : '▶ Start');
@@ -1984,12 +2115,14 @@ function updateTimerBtns() {
   });
 }
 
+
 function resetTimer() {
   clearInterval(timerInterval); timerRunning=false; timerSecs=0;
   document.querySelectorAll('#timer-display').forEach(el => el.textContent='00:00');
   updateTimerBtns();
 }
 window.resetTimer = resetTimer;
+
 
 window.startRestTimer = secs => {
   clearInterval(restInterval); restSecs=secs;
@@ -2004,7 +2137,9 @@ window.startRestTimer = secs => {
   }, 1000);
 };
 
+
 window.skipRest = () => { clearInterval(restInterval); g('rest-overlay').classList.remove('show'); };
+
 
 function updateRestDisplay() {
   const el = g('rest-display'); if (!el) return;
@@ -2012,7 +2147,9 @@ function updateRestDisplay() {
   el.style.color = restSecs<=10 ? '#ef4444' : '#f59e0b';
 }
 
+
 function fmtTime(s) { return Math.floor(s/60).toString().padStart(2,'0') + ':' + (s%60).toString().padStart(2,'0'); }
+
 
 function timerCardHTML() {
   if(!activeSession) return ''; // Only show timer during active session
@@ -2034,6 +2171,7 @@ function timerCardHTML() {
     </div>
   </div>`;
 }
+
 
 // ─── SET BUILDER ──────────────────────────────────────────
 function setRowHTML(s, i) {
@@ -2057,6 +2195,7 @@ function setRowHTML(s, i) {
     <button class="set-del-btn" onclick="delSet(${i})">✕</button>
   </div>`;
 }
+
 
 window.adjSet = (i,f,d) => {
   if (!currentSets[i]) return;
@@ -2084,6 +2223,7 @@ window.setModeHeader = function setModeHeader() {
   return `<span class="sgh-lbl">SET</span><span class="sgh-lbl">kg</span><span class="sgh-lbl"></span><span class="sgh-lbl">${label}</span><span class="sgh-lbl">✓</span><span class="sgh-lbl">×</span>`;
 }
 
+
 window.switchSetMode = mode => {
   setMode = mode;
   // Update all current sets to new mode
@@ -2091,6 +2231,7 @@ window.switchSetMode = mode => {
   // Rebuild the form section
   updateExFormSection();
 };
+
 
 window.addSet = () => {
   const last = currentSets[currentSets.length-1]||{};
@@ -2102,6 +2243,7 @@ window.setFeel = (feel, el) => {
   document.querySelectorAll('.feel-btn').forEach(b=>b.classList.remove('sel'));
   el.classList.add('sel');
 };
+
 
 window.toggleSetMode = (mode) => {
   setMode = mode;
@@ -2119,6 +2261,9 @@ window.toggleSetMode = (mode) => {
 
 
 
+
+
+
 // ─── SMART SEARCH ─────────────────────────────────────────
 function smartSearch(q) {
   q = q.toLowerCase();
@@ -2126,6 +2271,7 @@ function smartSearch(q) {
   const relMuscles = Object.entries(related).filter(([k])=>q.includes(k)).flatMap(([,v])=>v);
   return EXERCISE_DB.filter(ex => ex.name.toLowerCase().includes(q) || ex.muscles.some(m=>m.toLowerCase().includes(q)) || ex.type.toLowerCase().includes(q) || relMuscles.some(m=>ex.muscles.includes(m))).slice(0,6);
 }
+
 
 window._showExSuggestions = () => {
   const srch = document.getElementById('ex-search');
@@ -2148,6 +2294,7 @@ window._showExSuggestions = () => {
     + '<div style="font-size:8px;font-family:var(--pixel);color:var(--muted);padding:8px 0 4px">OR TYPE TO SEARCH ALL →</div>';
 };
 
+
 window.updateExSearch = q => {
   exQuery = q;
   const c = document.getElementById('ex-results-container'); if (!c) return;
@@ -2160,6 +2307,7 @@ window.updateExSearch = q => {
 };
 // Expose as direct global so search input can call without bridge delay
 window._doExSearch = window.updateExSearch;
+
 
 // ─── RENDER ───────────────────────────────────────────────
 function showApp() {
@@ -2185,14 +2333,17 @@ function showScreen(id) {
   g(id).classList.add('active');
 }
 
+
 function updateBg() {
   const l = userProfile?.level||1;
   document.body.className = l>=15?'bg-cosmic':l>=10?'bg-nebula':l>=5?'bg-deep':'';
 }
 
+
 function renderSyncDot() {
   document.querySelectorAll('.sync-dot').forEach(d => d.style.background = synced?'var(--green)':'var(--accent3)');
 }
+
 
 function renderHeader() {
   if (!userProfile) return;
@@ -2217,6 +2368,7 @@ function renderHeader() {
   const spEl=g('sp-badge'); if(spEl) spEl.innerHTML = `<img src='${AVATAR_URL(u.avatar||'100100')}' alt='' width='20' height='20' style='image-rendering:pixelated;vertical-align:middle;object-fit:contain'> ${u.skillPoints||0}SP`;
 }
 
+
 function renderToday() {
   const myTasks = tasks.filter(t=>t.type!=='chore');
   const myChores = tasks.filter(t=>t.type==='chore');
@@ -2230,6 +2382,7 @@ function renderToday() {
   g('tasks-list').innerHTML = myTasks.length ? myTasks.map(taskCard).join('') : emptyState('🎯','No tasks yet!');
   g('chores-list').innerHTML = myChores.length ? myChores.map(taskCard).join('') : emptyState('🏠','No shared tasks yet!');
 }
+
 
 function taskCard(t) {
   const pc = {high:'#ef4444',medium:'#f59e0b',low:'#10b981'};
@@ -2252,6 +2405,7 @@ function taskCard(t) {
   </div>`;
 }
 
+
 function renderHabits() {
   const streak = userProfile?.currentStreak||0;
   const mult = Math.min(1+(streak*0.2),10);
@@ -2259,6 +2413,7 @@ function renderHabits() {
   g('mult-bar').style.width = `${Math.min((mult/10)*100,100)}%`;
   g('habits-list').innerHTML = habits.length ? habits.map(habitCard).join('') : emptyState('🔥','No streaks yet!');
 }
+
 
 function habitCard(h) {
   const today = new Date().toDateString();
@@ -2278,6 +2433,7 @@ function habitCard(h) {
     <button class="done-btn${doneToday?' done-btn-done':''}" onclick="${doneToday?'':'completeHabit(\''+h.id+'\')'}">${doneToday?'✅ Done! Come back tomorrow':'✓ Mark Done  +XP × multiplier'}</button>
   </div>`;
 }
+
 
 function renderCrew() {
   const panel = g('crew-panel'); if (!panel) return;
@@ -2318,6 +2474,7 @@ function renderCrew() {
   renderMessages();
 }
 
+
 function renderBoss() {
   const s = g('boss-section'); if (!s||!boss) return;
   const pct = Math.max(0,Math.round(((boss.hp||0)/(boss.maxHp||1000))*100));
@@ -2332,6 +2489,7 @@ function renderBoss() {
     ${boss.defeated?`<div class="boss-reward">🏆 Reward: ${boss.reward||'Glory!'}</div>`:''}
   </div>`;
 }
+
 
 function renderMessages() {
   const box = g('chat-box'); if (!box) return;
@@ -2348,6 +2506,7 @@ function renderMessages() {
   box.scrollTop = box.scrollHeight;
 }
 
+
 function renderAwards() {
   if (!userProfile) return;
   const u = userProfile, earned = u.badges||[];
@@ -2363,64 +2522,27 @@ function renderAwards() {
     </div>`).join('');
   const pts = u.skillPoints||0;
   const skills = u.skills||[];
-  const {totalWorkouts} = getTamaState();
-
-  g('sp-info-text').innerHTML =
-    '<div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">' +
-    '<span>🧠 <strong>' + pts + '</strong> SP · Earn 1 SP per level up</span>' +
-    (skills.length > 0 && pts >= 1 ? '<button onclick="resetSkills()" style="font-size:11px;font-weight:700;padding:5px 14px;border-radius:8px;border:1.5px solid #D4708A;background:transparent;color:#D4708A;cursor:pointer">🔄 Reset (1 SP)</button>' : '') +
-    '</div>';
-
-  g('skill-trees-wrap').innerHTML = Object.entries(SKILL_TREES).map(function(entry) {
-    var treeKey = entry[0], tree = entry[1];
-    var rows = tree.skills.map(function(s, i) {
-      var owned = skills.includes(s.id);
-      var tamaLocked = totalWorkouts < (s.tamaMin||0);
-      var prevLocked = s.requires && !skills.includes(s.requires);
-      var canUnlock = !owned && !tamaLocked && !prevLocked && pts >= 1;
-      var locked = !owned && (tamaLocked || prevLocked);
-
-      var borderCol = owned ? tree.color : canUnlock ? '#f59e0b' : '#e5e0d8';
-      var bgCol = owned ? tree.color + '18' : canUnlock ? '#fffbeb' : 'var(--parchment)';
-      var nameCol = owned ? tree.color : canUnlock ? '#92400e' : 'var(--muted)';
-      var prefix = owned ? '✦ ' : locked ? '○ ' : '◈ ';
-
-      var statusBadge = owned
-        ? '<span style="font-size:9px;font-weight:700;color:' + tree.color + ';background:' + tree.color + '20;padding:2px 7px;border-radius:99px">OWNED</span>'
-        : tamaLocked
-        ? '<span style="font-size:9px;color:var(--muted)">🥚 ' + s.tamaMin + ' workouts</span>'
-        : prevLocked
-        ? '<span style="font-size:9px;color:var(--muted)">🔒 locked</span>'
-        : '<span style="font-size:9px;font-weight:700;color:#92400e;background:#fef3c7;padding:2px 7px;border-radius:99px">1 SP</span>';
-
-      var btn = canUnlock
-        ? '<button onclick="unlockSkill(\'' + s.id + '\')" style="margin-top:6px;font-size:11px;font-weight:700;padding:6px 16px;border-radius:8px;border:none;background:' + tree.color + ';color:#fff;cursor:pointer;width:100%">Unlock ❆</button>'
-        : '';
-
-      var connector = i > 0
-        ? '<div style="display:flex;justify-content:center;height:20px"><div style="width:2px;background:' + (skills.includes(tree.skills[i-1].id) ? tree.color : '#e5e0d8') + '"></div></div>'
-        : '';
-
-      return connector +
-        '<div style="border:2px solid ' + borderCol + ';border-radius:12px;padding:10px 12px;background:' + bgCol + ';transition:.2s">' +
-        '<div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px">' +
-        '<div>' +
-        '<div style="font-size:13px;font-weight:700;color:' + nameCol + '">' + prefix + s.name + '</div>' +
-        '<div style="font-size:11px;color:var(--muted);margin-top:2px;line-height:1.4">' + s.desc + '</div>' +
-        '</div>' +
-        statusBadge +
-        '</div>' +
-        btn +
-        '</div>';
-    }).join('');
-
-    return '<div style="margin-bottom:24px">' +
-      '<div style="font-weight:700;font-size:14px;color:' + tree.color + ';margin-bottom:2px">' + tree.icon + ' ' + tree.name + '</div>' +
-      '<div style="font-size:11px;color:var(--muted);margin-bottom:10px">' + tree.desc + '</div>' +
-      '<div style="display:flex;flex-direction:column">' + rows + '</div>' +
-      '</div>';
-  }).join('')
+  g('sp-info-text').innerHTML = `🧠 <strong>${pts}</strong> Skill Points · Earn 2SP per level up`;
+  g('skill-trees-wrap').innerHTML = Object.entries(SKILL_TREES).map(([,tree])=>`
+    <div class="skill-tree-wrap">
+      <div class="skill-tree-header" style="color:${tree.color}">${tree.icon} ${tree.name}</div>
+      ${tree.skills.map((s,i)=>{
+        const owned = skills.includes(s.id);
+        const canUnlock = !owned && pts>=s.cost && (!s.requires||skills.includes(s.requires));
+        const locked = !owned && s.requires && !skills.includes(s.requires);
+        return `<div class="skill-item">
+          ${i>0?'<div class="skill-conn">↓</div>':''}
+          <div class="skill-box${owned?' owned':canUnlock?' available':locked?' locked':''}">
+            <div class="skill-box-name">${s.name}${owned?' ✓':''}</div>
+            <div class="skill-box-desc">${s.desc}</div>
+            <div class="skill-box-cost" style="color:${owned?tree.color:canUnlock?'#f59e0b':'var(--muted)'}">${owned?'UNLOCKED':locked?'🔒 Unlock previous first':`${s.cost} SP`}</div>
+            ${canUnlock?`<button class="skill-unlock-btn" style="background:${tree.color}" onclick="unlockSkill('${s.id}')">UNLOCK</button>`:''}
+          </div>
+        </div>`;
+      }).join('')}
+    </div>`).join('');
 }
+
 
 window.renderSettings = function renderSettings() {
   const panel = g('settings-panel'); if(!panel) return;
@@ -2432,6 +2554,7 @@ window.renderSettings = function renderSettings() {
   const bgmSongName = lsGet('intask_bgm_song')||DEFAULT_BGM_SONG;
   panel.innerHTML = `
     <div class="sec-title" style="margin-bottom:16px">⚙️ SETTINGS</div>
+
 
     <!-- Profile -->
     <div class="settings-section">
@@ -2445,6 +2568,7 @@ window.renderSettings = function renderSettings() {
       <label class="field-label">YOUR COLOUR</label>
       <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:0" id="settings-col-row"></div>
     </div>
+
 
     <!-- Accessibility -->
     <div class="settings-section">
@@ -2469,9 +2593,11 @@ window.renderSettings = function renderSettings() {
       </div>
     </div>
 
+
     <!-- App / Install -->
     <div class="settings-section" id="install-section">
       <div class="settings-section-title">📱 INSTALL APP</div>
+
 
       <!-- Android / Chrome install prompt (shown when available) -->
       <div id="install-prompt-row" style="display:none">
@@ -2482,6 +2608,7 @@ window.renderSettings = function renderSettings() {
           ⬇️ Install InTask App
         </button>
       </div>
+
 
       <!-- iOS instructions (always shown on iOS, since iOS cannot do programmatic prompt) -->
       <div id="ios-install-row">
@@ -2495,6 +2622,7 @@ window.renderSettings = function renderSettings() {
         </div>
       </div>
 
+
       <div style="margin-top:14px;padding:10px;background:rgba(255,215,0,.08);border:1px solid rgba(255,215,0,.2);border-radius:0">
         <div style="font-size:9px;font-family:var(--pixel);color:var(--accent);margin-bottom:6px">SHARE WITH FRIENDS</div>
         <div style="font-size:12px;color:var(--muted);margin-bottom:8px">Share InTask with your crew:</div>
@@ -2504,6 +2632,7 @@ window.renderSettings = function renderSettings() {
         </div>
       </div>
     </div>
+
 
     <!-- Music -->
     <div class="settings-section">
@@ -2536,6 +2665,7 @@ window.renderSettings = function renderSettings() {
       </div>
     </div>
 
+
     <!-- Account -->
     <div class="settings-section">
       <div class="settings-section-title">🔐 ACCOUNT</div>
@@ -2547,6 +2677,7 @@ window.renderSettings = function renderSettings() {
     <div style="height:76px"></div>
   `;
 
+
   // Inject floating Save button into the modal
   const _saveBar = document.createElement('div');
   _saveBar.id = 'settings-save-bar';
@@ -2554,6 +2685,7 @@ window.renderSettings = function renderSettings() {
   _saveBar.innerHTML = '<button onclick="window.saveAllSettings()" style="width:100%;padding:14px;border-radius:12px;border:none;background:linear-gradient(135deg,var(--midnight),#4A3560);color:#fff;font-family:var(--pixel);font-size:13px;font-weight:700;cursor:pointer;box-shadow:0 8px 24px rgba(44,35,64,0.25);pointer-events:all">💾 Save Settings</button>';
   const _modalEl = document.querySelector('#settings-modal .modal');
   if(_modalEl) { const existing = document.getElementById('settings-save-bar'); if(existing) existing.remove(); _modalEl.appendChild(_saveBar); }
+
 
   // Build avatar and colour pickers for settings
   const avGrid = g('settings-av-grid');
@@ -2570,6 +2702,7 @@ window.renderSettings = function renderSettings() {
   }
   const colRow = g('settings-col-row');
   if(colRow) colRow.innerHTML = COLORS.map(c=>`<div class="col-dot${(u.color||'#7c3aed')===c?' sel':''}" style="background:${c}" onclick="settingsSelectColor('${c}',this)"></div>`).join('');
+
 
   // Update music UI state
   setTimeout(() => { if(typeof updateMusicUI==='function') updateMusicUI(); }, 50);
@@ -2589,6 +2722,7 @@ window.renderSettings = function renderSettings() {
   }, 50);
 };
 
+
 window.savePetName = () => {
   const name = document.getElementById('settings-petname')?.value?.trim();
   if (!name) { toast('Enter a pet name!'); return; }
@@ -2598,6 +2732,7 @@ window.savePetName = () => {
   const tamaC = document.getElementById('tamafit-container');
   if(tamaC && tamaC.style.display !== 'none') renderTamaFit();
 };
+
 
 window.saveAllSettings = async () => {
   if (!currentUser) { toast('Not signed in'); return; }
@@ -2624,12 +2759,14 @@ window.saveAllSettings = async () => {
   }
 };
 
+
 window.saveNickname = async () => {
   const name = g('settings-nickname')?.value?.trim();
   if (!name) { toast('Enter a nickname!'); return; }
   await updateDoc(doc(db,'users',currentUser.uid), {displayName:name});
   toast('✅ Nickname saved!');
 };
+
 
 window.settingsSelectAvatar = async (a, el) => {
   // Highlight selection
@@ -2644,12 +2781,14 @@ window.settingsSelectAvatar = async (a, el) => {
   toast('Avatar updated! ✅');
 };
 
+
 window.settingsSelectColor = async (c, el) => {
   document.querySelectorAll('#settings-col-row .col-dot').forEach(x=>x.classList.remove('sel'));
   el.classList.add('sel');
   await updateDoc(doc(db,'users',currentUser.uid), {color:c});
   toast('Colour updated!');
 };
+
 
 window.toggleColorBlind = () => {
   const current = lsGet('intask_colorblind','0')==='1';
@@ -2658,6 +2797,7 @@ window.toggleColorBlind = () => {
   renderSettings();
   toast(current?'Colour blind mode off':'Colour blind mode on');
 };
+
 
 window.changeIconCount = (d) => {
   const cur = parseInt(lsGet('intask_icon_count','5'));
@@ -2668,6 +2808,7 @@ window.changeIconCount = (d) => {
   toast(`UI density: ${nv<=3?'Minimal':nv<=6?'Normal':'Full'}`);
 };
 
+
 window.applyIconDensity = function applyIconDensity(count) {
   // 0-3: minimal — hide nav labels, hide tag pills, hide XP text
   // 4-6: normal — default
@@ -2675,45 +2816,55 @@ window.applyIconDensity = function applyIconDensity(count) {
   const minimal = count <= 3;
   const full = count >= 7;
 
+
   // Nav labels
   document.querySelectorAll('.bnav-label').forEach(el => {
     el.style.display = minimal ? 'none' : '';
   });
 
+
   // Sync pill text
   const syncText = document.querySelector('.sync-text');
   if(syncText) syncText.style.display = minimal ? 'none' : '';
+
 
   // Mult badge
   const multBadge = g('mult-badge');
   if(multBadge) multBadge.style.display = minimal ? 'none' : '';
 
+
   // SP badge
   const spBadge = g('sp-badge');
   if(spBadge) spBadge.style.display = minimal ? 'none' : '';
 
+
   // XP text
   const xpText = g('xp-text');
   if(xpText) xpText.style.display = minimal ? 'none' : '';
+
 
   // Task tags (the type/priority pills on cards)
   document.querySelectorAll('.task-tags').forEach(el => {
     el.style.display = minimal ? 'none' : '';
   });
 
+
   // XP badges on tasks
   document.querySelectorAll('.xp-badge').forEach(el => {
     el.style.display = minimal ? 'none' : full ? '' : '';
   });
 
+
   // Section titles - keep always visible for navigation
 };
+
 
 // Apply on load
 window.addEventListener('DOMContentLoaded', () => {
   const saved = parseInt(lsGet('intask_icon_count','5'));
   setTimeout(() => applyIconDensity(saved), 500);
 });
+
 
 window.setMusicVolume = (val) => {
   const v = parseFloat(val);
@@ -2726,6 +2877,7 @@ window.setMusicVolume = (val) => {
   if(pct) pct.textContent = Math.round(v*100) + '%';
 };
 
+
 window.setSongPref = (type, value) => {
   lsSet(type === 'login' ? 'intask_login_song' : 'intask_bgm_song', value);
   if (type === 'bgm' && window._bgmAudio) {
@@ -2737,7 +2889,10 @@ window.setSongPref = (type, value) => {
   toast('🎵 Song updated!');
 };
 
+
 let _previewAudio = null; // track current preview
+
+
 
 
 function updateMusicUI() {
@@ -2759,6 +2914,7 @@ function updateMusicUI() {
   }
 }
 
+
 window.settingsPlayMusic = () => {
   const sel = document.getElementById('settings-music-select');
   const songName = sel ? sel.value : (lsGet('intask_bgm_song') || DEFAULT_BGM_SONG);
@@ -2773,6 +2929,7 @@ window.settingsPlayMusic = () => {
   if (nowPlaying) { nowPlaying.style.display = 'block'; nowPlaying.textContent = '♪ Now playing: ' + songName; }
   toast('♪ Playing: ' + songName);
 };
+
 
 window.previewSong = (type) => {
   const key = type === 'login' ? 'intask_login_song' : 'intask_bgm_song';
@@ -2799,6 +2956,7 @@ window.previewSong = (type) => {
   }).catch(() => toast('❌ Could not load — is the file uploaded to GitHub?'));
 };
 
+
 window.toggleBgmDefault = () => {
   const current = lsGet('intask_bgm_default','0')==='1';
   lsSet('intask_bgm_default', current?'0':'1');
@@ -2806,6 +2964,7 @@ window.toggleBgmDefault = () => {
   if(btn){ btn.textContent=current?'OFF':'ON'; btn.classList.toggle('active',!current); }
   toast(current ? '🔇 Music off by default' : '🎵 Music on by default — starts next launch');
 };
+
 
 window.confirmDeleteAccount = () => {
   const overlay = document.createElement('div');
@@ -2822,6 +2981,7 @@ window.confirmDeleteAccount = () => {
   </div>`;
   document.body.appendChild(overlay);
 };
+
 
 window.executeDeleteAccount = async (overlay) => {
   const input = document.getElementById('delete-confirm-input');
@@ -2859,6 +3019,8 @@ window.executeDeleteAccount = async (overlay) => {
 };
 
 
+
+
 window.showInstallInstructions = () => {
   const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
   const isAndroid = /android/i.test(navigator.userAgent);
@@ -2873,6 +3035,7 @@ window.showInstallInstructions = () => {
   alert(msg);
 };
 
+
 window.promptInstall = async () => {
   if(!window._deferredInstallPrompt) { showInstallInstructions(); return; }
   window._deferredInstallPrompt.prompt();
@@ -2880,9 +3043,11 @@ window.promptInstall = async () => {
   if(outcome==='accepted') { window._deferredInstallPrompt=null; toast("🎉 InTask installed!"); }
 };
 
+
 // ════════════════════════════════════════════
 // TAMAFIT
 // ════════════════════════════════════════════
+
 
 const TAMAFIT_STAGES = [
   { id:'egg', name:'EGG', minWorkouts:0, desc:'Waiting to hatch...',
@@ -3043,6 +3208,7 @@ const TAMAFIT_STAGES = [
     render:(sz)=>`<svg width="${sz*1.25}" height="${sz*1.55}" viewBox="0 0 66 80" style="image-rendering:pixelated;animation:flex 0.45s ease-in-out infinite"><ellipse cx="31" cy="38" rx="30" ry="22" fill="#6a0dad" opacity="0.12"/><ellipse cx="33" cy="38" rx="32" ry="24" fill="none" stroke="#6a0dad" stroke-width="1.5" opacity="0.25"/><ellipse cx="33" cy="11" rx="13" ry="4" fill="none" stroke="#6a0dad" stroke-width="3" opacity="0.9"/><path d="M31 42 Q15 28 19 18 Q25 30 31 36 Z" fill="#6a0dad" stroke="#111111" stroke-width="1.5" opacity="0.92"/><path d="M35 42 Q51 28 47 18 Q41 30 35 36 Z" fill="#6a0dad" stroke="#111111" stroke-width="1.5" opacity="0.92"/><rect x="54" y="4" width="9" height="66" rx="3" fill="#6a0dad" stroke="#440088" stroke-width="3"/><rect x="46" y="12" width="25" height="9" rx="4" fill="#440088" stroke="#6a0dad" stroke-width="2"/><ellipse cx="58.5" cy="4" rx="8" ry="7" fill="#aa00ff" stroke="#6a0dad" stroke-width="2"/><polygon points="33,2 25,10 17,7 21,20 45,20 49,7 41,10" fill="#ffd700" stroke="#c8952a" stroke-width="1.5"/><rect x="22" y="62" width="9" height="18" rx="2" fill="#111111" stroke="#6a0dad" stroke-width="2"/><rect x="35" y="62" width="9" height="18" rx="2" fill="#111111" stroke="#6a0dad" stroke-width="2"/><rect x="21" y="75" width="12" height="5" rx="3" fill="#000000"/><rect x="33" y="75" width="12" height="5" rx="3" fill="#000000"/><rect x="14" y="40" width="38" height="24" rx="6" fill="#111111" stroke="#6a0dad" stroke-width="3"/><rect x="15" y="40" width="36" height="12" rx="5" fill="#6a0dad" opacity="0.4" stroke="#6a0dad" stroke-width="2"/><rect x="4" y="41" width="11" height="22" rx="5.5" fill="#111111" stroke="#6a0dad" stroke-width="2.5"/><ellipse cx="9.5" cy="50" rx="9" ry="9" fill="#6a0dad" opacity="0.4"/><rect x="51" y="41" width="11" height="22" rx="5.5" fill="#111111" stroke="#6a0dad" stroke-width="2.5"/><ellipse cx="56.5" cy="50" rx="9" ry="9" fill="#6a0dad" opacity="0.4"/><ellipse cx="33" cy="29" rx="17" ry="16" fill="#ffcc99"/><rect x="15" y="13" width="36" height="18" rx="8" fill="#111111" stroke="#6a0dad" stroke-width="2.5"/><ellipse cx="29" cy="29" rx="4.5" ry="5" fill="#6a0dad"/><ellipse cx="37" cy="29" rx="4.5" ry="5" fill="#6a0dad"/><circle cx="29.8" cy="27.5" r="1.5" fill="#fff"/><circle cx="37.8" cy="27.5" r="1.5" fill="#fff"/><path d="M28 36 Q33 42 38 36" stroke="#993300" stroke-width="3" fill="none" stroke-linecap="round"/></svg>`},
 ];
 
+
 // ── Muscle → stat mapping ──
 const MUSCLE_STAT_MAP = {
   'Chest':3,'Back':3,'Quads':3,'Glutes':3,'Hamstrings':2,'Shoulders':2,
@@ -3056,6 +3222,7 @@ const CARDIO_EX_TYPES = new Set(['run','swim','cardio']);
 const CARDIO_MUSCLES = new Set(['Cardio','Endurance','Active Recovery','Full Body']);
 const BALANCE_MUSCLES = new Set(['Core','Balance','Hip Flexors','Rotator Cuff','Coordination']);
 
+
 window.calcExPoints = function calcExPoints(exEntry) {
   if(!exEntry || typeof exEntry !== 'object') return {str:0, crd:0, bal:0};
   const exDef = EXERCISE_DB.find(e=>e && e.id===(exEntry.exId||exEntry.exercise));
@@ -3064,6 +3231,7 @@ window.calcExPoints = function calcExPoints(exEntry) {
   const type = exDef?.type || exEntry.type || 'weights';
   const sets = exEntry.sets || [];
   let str=0, crd=0, bal=0, totalVol=0;
+
 
   if(sets.length > 0) {
     for(const s of sets) {
@@ -3079,6 +3247,7 @@ window.calcExPoints = function calcExPoints(exEntry) {
     totalVol = (mins*0.5)+(dist*2) || 10;
   }
   totalVol = Math.max(1, totalVol);
+
 
   if(muscles.length > 0) {
     for(const m of muscles) {
@@ -3097,6 +3266,7 @@ window.calcExPoints = function calcExPoints(exEntry) {
   return {str, crd, bal};
 };
 
+
 window.getTotalStats = function getTotalStats() {
   let str=0, crd=0, bal=0;
   const validEntries = (workoutEntries||[]).filter(e=>e && typeof e==='object');
@@ -3110,6 +3280,7 @@ window.getTotalStats = function getTotalStats() {
     balance:  Math.min(100, Math.round(bal)),
   };
 };
+
 
 window.getTamaState = function getTamaState() {
   const totalWorkouts = workoutEntries.length;
@@ -3132,6 +3303,7 @@ window.getTamaState = function getTamaState() {
     : 100;
   return {stage, stageIdx, nextStage, totalWorkouts, strength, cardio, balance, hungry, happy, msg, progressToNext};
 };
+
 
 window.renderTamaFit = function() {
   const container = document.getElementById('tamafit-container');
@@ -3170,10 +3342,7 @@ window.renderTamaFit = function() {
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
         <div>
           <div style="font-size:13px;font-family:var(--pixel);font-weight:700;color:var(--ink);margin-bottom:4px">${petName}</div>
-          <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-top:2px">
-            <div style="display:inline-block;font-size:9px;font-weight:700;background:${bgLight};color:${bgBorder};border:1.5px solid ${bgBorder}40;border-radius:99px;padding:3px 10px">${stage.name}</div>
-            <div style="display:inline-block;font-size:9px;font-weight:700;background:var(--midnight);color:#fff;border-radius:99px;padding:3px 10px">⚡ Lv.${userProfile ? (userProfile.level||1) : 1}</div>
-          </div>
+          <div style="display:inline-block;font-size:9px;font-weight:700;background:${bgLight};color:${bgBorder};border:1.5px solid ${bgBorder}40;border-radius:99px;padding:3px 10px">${stage.name}</div>
         </div>
         <div style="text-align:right">
           <div style="font-size:22px;font-family:var(--pixel);font-weight:700;color:${bgBorder};line-height:1">${totalWorkouts}</div>
@@ -3203,10 +3372,13 @@ window.renderTamaFit = function() {
 ;
 
 
+
+
 window.closeTamaPostWorkout = function() {
   const el = document.getElementById('tama-post-workout');
   if(el) el.remove();
 };
+
 
 window.showTamaPostWorkout = function(exercises, gainStr, gainCrd, gainBal, xpEarned, statsAfter) {
   const {stage} = getTamaState();
@@ -3230,11 +3402,13 @@ window.showTamaPostWorkout = function(exercises, gainStr, gainCrd, gainBal, xpEa
   ];
   const msg = msgs[Math.floor(Math.random()*msgs.length)];
 
+
   // Tier colour based on stage
   const tierBgs = [[5,'#fff0f5','#D4708A'],[15,'#fff8e7','#C8952A'],[30,'#f0f4ff','#6688cc'],[50,'#fff0e8','#cc6600'],[75,'#e8e8ff','#4444aa'],[100,'#fffbe0','#c8952a'],[999,'#f5e8ff','#6a0dad']];
   const totalW = (window.workoutEntries||[]).length;
   let stageBg='#fff8e7', stageAccent='#C8952A';
   for(const [thresh,bg,acc] of tierBgs){if(totalW<thresh){stageBg=bg;stageAccent=acc;break;}}
+
 
   const statBar = (val, gain, label, col) =>
     '<div style="margin-bottom:14px">' +
@@ -3247,6 +3421,7 @@ window.showTamaPostWorkout = function(exercises, gainStr, gainCrd, gainBal, xpEa
     '<div id="gain-bar-' + label + '" style="height:100%;width:' + Math.min(100,val-gain) + '%;background:' + col + ';border-radius:99px;transition:width 1s .3s ease-out"></div>' +
     '</div></div>';
 
+
   const muscleHTML = musclesHit.length
     ? '<div style="background:#fff;border:1.5px solid var(--border);border-radius:16px;padding:14px 16px;margin-bottom:14px">' +
       '<div style="font-size:10px;font-weight:700;color:var(--muted);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:10px">MUSCLES TRAINED</div>' +
@@ -3254,12 +3429,15 @@ window.showTamaPostWorkout = function(exercises, gainStr, gainCrd, gainBal, xpEa
       musclesHit.map(m=>'<span style="background:'+stageBg+';border:1.5px solid '+stageAccent+'40;font-size:11px;font-weight:600;color:'+stageAccent+';padding:4px 10px;border-radius:99px">'+m+'</span>').join('') +
       '</div></div>' : '';
 
+
   const el = document.createElement('div');
   el.id = 'tama-post-workout';
   el.style.cssText = 'position:fixed;inset:0;background:rgba(253,248,240,0.97);z-index:6000;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding:20px;overflow-y:auto';
 
+
   el.innerHTML =
     '<div style="width:100%;max-width:400px;padding-bottom:32px">' +
+
 
     // Header
     '<div style="text-align:center;padding:24px 0 20px">' +
@@ -3269,6 +3447,7 @@ window.showTamaPostWorkout = function(exercises, gainStr, gainCrd, gainBal, xpEa
     '<span style="font-size:13px">✨</span>' +
     '</div></div>' +
 
+
     // Pet card
     '<div style="background:'+stageBg+';border:2px solid '+stageAccent+'30;border-radius:20px;padding:20px;text-align:center;margin-bottom:16px;position:relative;overflow:hidden">' +
     '<div style="position:absolute;inset:0;background:radial-gradient(ellipse at 30% 20%,rgba(255,255,255,0.4),transparent 60%)"></div>' +
@@ -3277,6 +3456,7 @@ window.showTamaPostWorkout = function(exercises, gainStr, gainCrd, gainBal, xpEa
     '<div style="display:inline-block;animation:tama-happy 0.6s ease-in-out infinite;filter:drop-shadow(0 6px 16px '+stageAccent+'40)">'+stage.render(72)+'</div>' +
     '<div style="background:#fff;border:1.5px solid '+stageAccent+'30;border-radius:12px;padding:10px 14px;margin-top:14px;font-size:12px;font-weight:500;color:var(--ink);line-height:1.6">'+msg+'</div>' +
     '</div></div>' +
+
 
     // Stats grid
     '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:16px">' +
@@ -3291,7 +3471,9 @@ window.showTamaPostWorkout = function(exercises, gainStr, gainCrd, gainBal, xpEa
     '<div style="font-size:9px;font-weight:600;color:'+stageAccent+';margin-top:4px;letter-spacing:1px">XP</div></div>' +
     '</div>' +
 
+
     muscleHTML +
+
 
     // Pet stats
     '<div style="background:#fff;border:1.5px solid var(--border);border-radius:16px;padding:16px 18px;margin-bottom:16px;box-shadow:0 2px 8px var(--shadow)">' +
@@ -3301,10 +3483,13 @@ window.showTamaPostWorkout = function(exercises, gainStr, gainCrd, gainBal, xpEa
     statBar(statsAfter.balance,  gainBal, 'BAL',  'var(--sage)') +
     '</div>' +
 
+
     // CTA button
     '<button onclick="window.closeTamaPostWorkout()" style="width:100%;padding:16px;border-radius:14px;border:none;background:linear-gradient(135deg,var(--midnight),#4A3560);color:#fff;font-family:var(--pixel);font-size:13px;font-weight:700;cursor:pointer;box-shadow:0 8px 24px rgba(44,35,64,0.25)">AWESOME! LETS GO! ✊</button>' +
 
+
     '</div>';
+
 
   document.body.appendChild(el);
   setTimeout(()=>{
@@ -3313,6 +3498,7 @@ window.showTamaPostWorkout = function(exercises, gainStr, gainCrd, gainBal, xpEa
     if(gainBal>0){const b=document.getElementById('gain-bar-BAL');  if(b)b.style.width=Math.min(gainBal+Math.max(0,statsAfter.balance-gainBal),100)+'%';}
   }, 400);
 };
+
 
 function renderFitness() {
   const fp = fitnessProfile;
@@ -3352,6 +3538,7 @@ function renderFitness() {
   }, 0);
 }
 
+
 window.switchFitTab = (tab, el) => {
   window._lastFitTab = tab;
   document.querySelectorAll('.fit-tab').forEach(b=>b.classList.remove('active'));
@@ -3374,6 +3561,7 @@ window.switchFitTab = (tab, el) => {
   if(tab==='guides') renderGuides();
 };
 
+
 function getFitSub() {
   const sub = g('fit-sub-panel');
   if(sub) return sub;
@@ -3388,6 +3576,7 @@ function getFitSub() {
   }
   return overlay;
 }
+
 
 window.renderBodyComp = function() {
   const fp = fitnessProfile||{}, mode=fp.mode||'basic';
@@ -3449,6 +3638,7 @@ window.renderBodyComp = function() {
     }).join('')}`:'<div class="empty-state"><div class="empty-icon">📊</div><div class="empty-text">No entries yet. Log your first stats!</div></div>'}`;
 }
 
+
 function weightChartSVG(entries) {
   const last10=entries.slice(-10), weights=last10.map(e=>parseFloat(e.weight||0));
   const min=Math.min(...weights)*.98, max=Math.max(...weights)*1.02||min+1;
@@ -3456,6 +3646,7 @@ function weightChartSVG(entries) {
   const pts=weights.map((w,i)=>`${(i/(weights.length-1))*W},${H-((w-min)/(max-min))*H}`).join(' ');
   return `<svg viewBox="0 0 ${W} ${H}" style="width:100%;height:70px"><polyline points="${pts}" fill="none" stroke="#06b6d4" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>${weights.map((w,i)=>{const x=(i/(weights.length-1))*W,y=H-((w-min)/(max-min))*H;return `<circle cx="${x}" cy="${y}" r="4" fill="#06b6d4"/><text x="${x}" y="${y-8}" text-anchor="middle" font-size="9" fill="#94a3b8">${w}</text>`;}).join('')}</svg>`;
 }
+
 
 window.renderDiary = function() {
   const s = getFitSub(); if(!s) return;
@@ -3486,11 +3677,13 @@ window.renderDiary = function() {
   renderLogForm('weights');
 }
 
+
 window.setLogType = (type,el) => {
   document.querySelectorAll('.log-type-btn').forEach(b=>b.classList.remove('active'));
   if(el) el.classList.add('active');
   renderLogForm(type);
 };
+
 
 function renderLogForm(type) {
   const c=g('log-form-container'); if(!c) return;
@@ -3589,6 +3782,7 @@ function renderLogForm(type) {
   }
 }
 
+
 function renderActiveSession() {
   const s = g('fitness-panel'); if(!s) return;
   const sess = activeSession;
@@ -3628,6 +3822,7 @@ function renderActiveSession() {
   }
 }
 
+
 function workoutEntryCardHTML(e) {
   const actions = `<div class="wec-actions"><button class="edit-btn" onclick="editWorkoutEntry('${e.id}')">✏️</button><button class="del-btn" onclick="deleteWorkoutEntry('${e.id}')">🗑️</button></div>`;
   if (e.type==='weights') {
@@ -3661,6 +3856,7 @@ function workoutEntryCardHTML(e) {
   }
   return '';
 }
+
 
 window.editWorkoutEntry = id => {
   const e = workoutEntries.find(x=>x.id===id); if(!e) return;
@@ -3723,6 +3919,7 @@ window.editWorkoutEntry = id => {
       </div>`;
   }
 };
+
 
 window._editSets = {};
 window.editAdjSet = (i,f,d,id) => {
@@ -3802,6 +3999,7 @@ window.saveEditedEntry = async id => {
   renderDiary();
 };
 
+
 function groupByDate(entries) {
   const groups={};
   [...entries].reverse().forEach(e=>{
@@ -3815,56 +4013,76 @@ function groupByDate(entries) {
   }));
 }
 
-window.renderLibrary = function() {
-  const lf = window._libF||'all';
-  const ls = String(window._libQ||'');
-  const filtered = EXERCISE_DB.filter(function(ex) {
-    if (!ex.muscles || !ex.difficulty) return false; // skip guide entries
-    const typeMatch = lf==='all' || ex.type===lf;
-    const searchMatch = !ls || ex.name.toLowerCase().includes(ls) || ex.muscles.some(function(m){return m.toLowerCase().includes(ls);});
-    return typeMatch && searchMatch;
+
+window.renderLibrary = function(keepFocus) {
+  const lf = window._libFilter||'all';
+  const ls = window._libSearch||'';
+  const filtered=EXERCISE_DB.filter(ex=>{
+    const tm=lf==='all'||ex.type===lf;
+    const sm=!ls||ex.name.toLowerCase().includes(ls.toLowerCase())||ex.muscles.some(m=>m.toLowerCase().includes(ls.toLowerCase()));
+    return tm&&sm;
   });
-  const typeIcon = {weights:'Weights',calisthenics:'Cali',run:'Run',swim:'Swim',cardio:'Cardio'};
-  const s = getFitSub(); if(!s) return;
-  const cards = filtered.map(function(ex) {
-    return '<div class="ex-lib-card" data-exid="'+ex.id+'">'
-      +'<div class="ex-lib-info"><div class="ex-lib-name">'+ex.name+'</div>'
-      +'<div class="ex-lib-muscles">'+ex.muscles.join(', ')+'</div></div>'
-      +'<div class="ex-lib-right"><div class="ex-lib-type">'+ex.type+'</div></div>'
-      +'</div>';
-  }).join('');
-  const filterBtns = [['all','All'],['weights','Weights'],['calisthenics','Cali'],['run','Run'],['swim','Swim'],['cardio','Cardio']].map(function(pair) {
-    return '<button class="lib-filter-btn'+(lf===pair[0]?' active':'')+'" onclick="window._libF=\''+pair[0]+'\';window.renderLibrary()">'+pair[1]+'</button>';
-  }).join('');
-  s.innerHTML = '<div class="sec-title" style="margin-bottom:12px">EXERCISE LIBRARY</div>'
-    +'<input id="lib-s" class="form-input" placeholder="Search exercises..." style="margin-bottom:10px" value="'+ls+'">'
-    +'<div class="lib-filters">'+filterBtns+'</div>'
-    +'<div style="font-size:10px;color:var(--muted);margin:6px 0 10px">'+filtered.length+' exercises</div>'
-    +'<div id="lib-results">'+cards+'</div>';
-  var inp = document.getElementById('lib-s');
-  if(inp) inp.addEventListener('input', function(){window._libQ=this.value;window.renderLibrary();});
-  var res = document.getElementById('lib-results');
-  if(res) {
-    // Track touch movement to distinguish tap vs scroll
-    var _touchStartY = 0;
-    res.addEventListener('touchstart', function(e) {
-      _touchStartY = e.touches[0].clientY;
-    }, {passive:true});
-    res.addEventListener('touchend', function(e) {
-      var dy = Math.abs(e.changedTouches[0].clientY - _touchStartY);
-      if (dy > 8) return; // was a scroll, ignore
-      var card = e.target.closest('[data-exid]');
-      if(card && card.dataset.exid) {
-        e.preventDefault();
-        window.showExDetail(card.dataset.exid);
-      }
-    }, {passive:false});
-    res.addEventListener('click', function(e) {
-      var card = e.target.closest('[data-exid]');
-      if(card && card.dataset.exid) window.showExDetail(card.dataset.exid);
+  const typeIcon = {weights:'🏋️',calisthenics:'💪',run:'🏃',swim:'🏊',cardio:'❤️'};
+  const s=getFitSub(); if(!s) return;
+
+
+  // If the library scaffold already exists, only update results (preserves search input focus)
+  const existingResults = document.getElementById('lib-results');
+  if (existingResults) {
+    // Only update filters and results, leave search input alone
+    const filtersEl = document.getElementById('lib-filters');
+    if(filtersEl) filtersEl.innerHTML = [['all','All'],['weights','🏋️ Weights'],['calisthenics','💪 Calisthenics'],['run','🏃 Running'],['swim','🏊 Swimming'],['cardio','❤️ Cardio']].map(([v,l])=>`<button class="lib-filter-btn${lf===v?' active':''}" onclick="window._libFilter='${v}';window.renderLibrary(true)">${l}</button>`).join('');
+    const countEl = document.getElementById('lib-count');
+    if(countEl) countEl.textContent = filtered.length + ' exercises';
+    existingResults.innerHTML = filtered.map(ex=>`
+      <div class="ex-lib-card" data-exid="${ex.id}">
+        <span class="ex-lib-gif">${typeIcon[ex.type]||'💪'}</span>
+        <div class="ex-lib-info"><div class="ex-lib-name">${ex.name}</div><div class="ex-lib-muscles">${ex.muscles.join(', ')}</div></div>
+        <div class="ex-lib-right"><div class="ex-lib-diff">${'●'.repeat(ex.difficulty)}${'○'.repeat(5-ex.difficulty)}</div><div class="ex-lib-type">${ex.type}</div></div>
+      </div>`).join('');
+  existingResults.onclick = e => {
+    const card = e.target.closest('[data-exid]');
+    if(card) window.showExDetail(card.dataset.exid);
+  };existingResults.innerHTML = filtered.map(ex=>`
+      <div class="ex-lib-card" data-exid="${ex.id}">
+        <span class="ex-lib-gif">${typeIcon[ex.type]||'💪'}</span>
+        <div class="ex-lib-info"><div class="ex-lib-name">${ex.name}</div><div class="ex-lib-muscles">${ex.muscles.join(', ')}</div></div>
+        <div class="ex-lib-right"><div class="ex-lib-diff">${'●'.repeat(ex.difficulty)}${'○'.repeat(5-ex.difficulty)}</div><div class="ex-lib-type">${ex.type}</div></div>
+      </div>`).join('');
+    return;
+  }
+
+
+  // First render: build full scaffold
+  s.innerHTML=`
+    <div class="sec-title" style="margin-bottom:12px"><img src="https://maplestory.io/api/GMS/255/item/1472000/icon" alt="" width="18" height="18" style="image-rendering:pixelated;vertical-align:middle;margin-right:4px"> EXERCISE LIBRARY</div>
+    <input id="lib-search-input" class="form-input" placeholder="🔍 Search exercises or muscles..." style="margin-bottom:10px" autocomplete="off">
+    <div id="lib-filters" class="lib-filters"></div>
+    <div id="lib-count" style="font-size:10px;color:var(--muted);font-weight:600;margin-bottom:10px"></div>
+    <div id="lib-results" class="ex-lib-list"></div>`;
+
+
+  // Wire up search input with persistent event listener
+  const inp = document.getElementById('lib-search-input');
+  if(inp) {
+    inp.value = ls;
+    inp.addEventListener('input', function() {
+      window._libSearch = this.value;
+      window.renderLibrary(true);
     });
   }
+  // Add event delegation for exercise cards (more reliable than inline onclick)
+  const libResults = document.getElementById('lib-results');
+  if(libResults) {
+    libResults.onclick = e => {
+      const card = e.target.closest('[data-exid]');
+      if(card && card.dataset.exid) window.showExDetail(card.dataset.exid);
+    };
+  }
+  // Now populate filters and results
+  window.renderLibrary(false);
 }
+
 
 
 
@@ -4029,6 +4247,7 @@ window.showExDetail = id => {
     </div>`;
 };
 
+
 window.renderCoach = function() {
   const s=getFitSub(); if(!s) return;
   const muscleFreq={}, recentDates={};
@@ -4038,51 +4257,20 @@ window.renderCoach = function() {
   const allGroups=['Chest','Back','Shoulders','Biceps','Triceps','Quads','Hamstrings','Glutes','Core'];
   const neglected=allGroups.filter(g2=>{if(!recentDates[g2]) return true; return (Date.now()-new Date(recentDates[g2]))/(1000*60*60*24)>14;});
   const overworked=Object.entries(muscleFreq).filter(([,v])=>v>5).map(([k])=>k);
-  const {totalWorkouts} = getTamaState();
-
-  // Happy Meal trigger: every 10 workouts milestone
-  const happyMealMilestones = [10,20,30,50,75,100];
-  const showHappyMeal = happyMealMilestones.some(m => totalWorkouts === m);
-
-  const happyMealSuggestions = [
-    {cuisine:'🍜',name:'Ramen',desc:'A warm bowl of ramen — you\'ve earned every noodle.'},
-    {cuisine:'🍕',name:'Pizza',desc:'Go get that pizza. Thin crust, thick crust — your call, champion.'},
-    {cuisine:'🌮',name:'Tacos',desc:'Street tacos. As many as you want. No questions asked.'},
-    {cuisine:'🍔',name:'Burger',desc:'A proper burger with the lot. You worked for this bite.'},
-    {cuisine:'🍣',name:'Sushi',desc:'Treat yourself to a sushi spread. Protein and joy in one.'},
-    {cuisine:'🥗',name:'Your Favourite',desc:'Whatever YOU love most. This meal is your reward.'},
-  ];
-  const meal = happyMealSuggestions[totalWorkouts % happyMealSuggestions.length];
-
-  const tips=['Progressive overload is the #1 driver of muscle growth. Add a small amount of weight or an extra rep each week.','The best workout is the one you actually do. Consistency over perfection, every single time.','Breathe out on exertion — exhale when lifting, inhale on the way down.','Sleep is where the gains happen. 7–9 hours is non-negotiable for elite performance.','Mind-muscle connection is real. Thinking about the muscle you\'re working can increase activation by up to 22%.','Dehydration of just 2% reduces performance by up to 10%. Drink water before you feel thirsty.','Fitness is about balance — not restriction. Eat the food you love. Move your body. Enjoy your life.'];
-
+  const tips=['Progressive overload is the #1 driver of muscle growth. Add a small amount of weight or an extra rep each week.','The best workout is the one you actually do. Consistency over perfection, every single time.','Breathe out on exertion — exhale when lifting, inhale on the way down.','Sleep is where the gains happen. 7-9 hours is non-negotiable for elite performance.','Mind-muscle connection is real. Thinking about the muscle you\'re working can increase activation by up to 22%.','Dehydration of just 2% reduces performance by up to 10%. Drink water before you feel thirsty.','For weight loss: you cannot out-train a bad diet. But training reshapes your body in ways dieting alone cannot.'];
   s.innerHTML=`
-    <div class="sec-title" style="margin-bottom:16px"><img src="https://maplestory.io/api/GMS/255/mob/100100/render/stand" alt="" width="24" height="24" style="image-rendering:pixelated;vertical-align:middle;margin-right:6px"> InnyTheCoach</div>
-
-    ${showHappyMeal?`
-    <div style="background:linear-gradient(135deg,#fff8e0,#fff0cc);border:2px solid #f59e0b;border-radius:16px;padding:18px;margin-bottom:16px;position:relative;overflow:hidden">
-      <div style="position:absolute;top:-10px;right:-10px;font-size:48px;opacity:0.15">🎉</div>
-      <div style="font-size:10px;font-weight:700;color:#b45309;letter-spacing:1.5px;margin-bottom:6px">🎊 ${totalWorkouts} WORKOUTS MILESTONE!</div>
-      <div style="font-size:16px;font-weight:700;color:#92400e;margin-bottom:6px">${meal.cuisine} Time for a Happy Meal!</div>
-      <div style="font-size:13px;color:#78350f;line-height:1.6;margin-bottom:10px">${meal.desc}</div>
-      <div style="font-size:12px;color:#92400e;font-style:italic;line-height:1.6">Remember — this isn't a cheat meal. It's a <strong>happy meal</strong>. 🍽️ Fitness is about balance, not punishment. You showed up, you earned this. Now go enjoy it!</div>
-    </div>`:``}
-
+    <div class="sec-title" style="margin-bottom:16px"><img src="https://maplestory.io/api/GMS/255/item/2022000/icon" alt="" width="18" height="18" style="image-rendering:pixelated;vertical-align:middle;margin-right:4px"> YOUR AI COACH</div>
     ${neglected.length?`<div class="coach-alert-card">
       <div class="coach-card-title">⚠️ Muscles Needing Attention</div>
-      <div class="coach-card-body">You haven't trained <strong>${neglected.join(', ')}</strong> recently. Balance prevents injury.</div>
-      <div class="coach-rec-list">${neglected.slice(0,2).flatMap(m=>EXERCISE_DB.filter(ex=>ex.muscles.includes(m)).slice(0,2).map(ex=>`<div class="coach-rec-item" onclick="selectExercise('${ex.id}')"><span style="font-size:22px">${{weights:'🏋️',calisthenics:'💪',run:'🏃',swim:'🏊',cardio:'❤️'}[ex.type]||'💪'}</span><div><div style="font-weight:700;font-size:13px">${ex.name}</div><div style="font-size:11px;color:var(--muted)">${ex.muscles.join(', ')}</div></div><span style="font-size:11px;color:var(--accent2)">Add →</span></div>`)).join('')}
+      <div class="coach-card-body">You have not trained <strong>${neglected.join(', ')}</strong> recently. Balance prevents injury.</div>
+      <div class="coach-rec-list">${neglected.slice(0,2).flatMap(m=>EXERCISE_DB.filter(ex=>ex.muscles.includes(m)).slice(0,2).map(ex=>`<div class="coach-rec-item" onclick="const _ov=document.getElementById('ex-detail-overlay');if(_ov)_ov.remove();selectExercise('${ex.id}');if(!activeSession){switchFitTab('diary',document.getElementById('ft-diary'));}else{updateExFormSection();}"><span style="font-size:22px">${{weights:"🏋️",calisthenics:"💪",run:"🏃",swim:"🏊",cardio:"❤️"}[ex.type]||"💪"}</span><div><div style="font-weight:700;font-size:13px">${ex.name}</div><div style="font-size:11px;color:var(--muted)">${ex.muscles.join(', ')}</div></div><span style="font-size:11px;color:var(--accent2)">Add →</span></div>`)).join('')}
       </div>
-    </div>`:``}
-
-    ${overworked.length?`<div class="coach-warn-card"><div class="coach-card-title">🔥 High Frequency Alert</div><div class="coach-card-body"><strong>${overworked.join(', ')}</strong> trained very frequently. Consider a deload week — your muscles grow during rest.</div></div>`:''}
-
-    <div class="coach-tip-card">
-      <div class="coach-tip-title">💡 InnyTheCoach's Tip</div>
+    </div>`:'' }
+    ${overworked.length?`<div class='coach-warn-card'><div class='coach-card-title'>🔥 High Frequency Alert</div><div class='coach-card-body'><strong>${overworked.join(', ')}</strong> trained very frequently. Consider a deload week.</div></div>`:''}\n    <div class='coach-tip-card'>
+      <div class="coach-tip-title">💡 Coach's Tip of the Day</div>
       <div class="coach-tip-body">${tips[new Date().getDay()%tips.length]}</div>
     </div>
-
-    ${workoutEntries.length===0?'<div class="empty-state" style="margin-top:20px"><div class="empty-icon">🍄</div><div class="empty-text">Log some workouts and InnyTheCoach will give you personalised advice!</div></div>':''}`;
+    ${workoutEntries.length===0?'<div class="empty-state" style="margin-top:20px"><div class="empty-icon">🤖</div><div class="empty-text">Log some workouts and I\'ll give you personalised recommendations!</div></div>':''}`;
 }
 
 
@@ -4097,6 +4285,7 @@ window.renderGuides = function() {
       </div>`).join('')}
     </div>`;
 }
+
 
 window.showGuide = id => {
   const guide=WORKOUT_GUIDES.find(g2=>g2.id===id); if(!guide) return;
@@ -4123,7 +4312,9 @@ window.showGuide = id => {
     </div>`;
 };
 
+
 window.adjGuideReps = (id,d) => { const el=document.getElementById('gr'+id); if(el) el.textContent=Math.max(1,parseInt(el.textContent)+d); };
+
 
 window.addGuideToDiary = async id => {
   const guide=WORKOUT_GUIDES.find(g2=>g2.id===id); if(!guide) return;
@@ -4139,6 +4330,7 @@ window.addGuideToDiary = async id => {
   switchFitTab('diary', document.getElementById('ft-diary'));
 };
 
+
 // ─── CELEBRATIONS ─────────────────────────────────────────
 function showCel(title,sub,xp,extra='') {
   g('cel-title').textContent=title; g('cel-sub').textContent=sub;
@@ -4151,6 +4343,7 @@ function levelUpCel(l){playSound('levelup');showCel('⚡ LEVEL UP! ⚡',`You are
 function badgeCel(b){showCel('BADGE UNLOCKED!',`${b.icon} ${b.name}`,b.desc);}
 function bossCel(){playSound('boss');showCel('⚔️ BOSS DEFEATED!',boss?.name||'The enemy falls!','+500 XP for the crew!',boss?.reward||'');}
 
+
 function spawnConfetti(count=40) {
   const cols=['#7c3aed','#06b6d4','#f59e0b','#ec4899','#10b981','#fff','#f97316'];
   for(let i=0;i<count;i++){
@@ -4161,15 +4354,18 @@ function spawnConfetti(count=40) {
   }
 }
 
+
 // ─── SOUND ────────────────────────────────────────────────
 let audioCtx=null;
 function tone(freq,dur,type='sine',vol=.3){
   try{if(!audioCtx)audioCtx=new(window.AudioContext||window.webkitAudioContext)();const o=audioCtx.createOscillator(),g2=audioCtx.createGain();o.connect(g2);g2.connect(audioCtx.destination);o.frequency.setValueAtTime(freq,audioCtx.currentTime);o.type=type;g2.gain.setValueAtTime(vol,audioCtx.currentTime);g2.gain.exponentialRampToValueAtTime(.001,audioCtx.currentTime+dur);o.start();o.stop(audioCtx.currentTime+dur);}catch(e){}}
 function playSound(t){const m={complete:()=>{tone(523,.1);setTimeout(()=>tone(659,.1),100);setTimeout(()=>tone(784,.2),200);},launch:()=>{tone(400,.05,'sawtooth',.1);setTimeout(()=>tone(600,.1),50);},streak:()=>{tone(440,.1);setTimeout(()=>tone(554,.1),120);setTimeout(()=>tone(659,.15),240);},levelup:()=>{[523,587,659,698,784,880,988,1047].forEach((f,i)=>setTimeout(()=>tone(f,.15),i*80));},unlock:()=>{tone(800,.05);setTimeout(()=>tone(1000,.1),80);},boost:()=>{tone(300,.05,'square',.1);setTimeout(()=>tone(600,.05,'square',.1),60);setTimeout(()=>tone(900,.1,'square',.1),120);},boss:()=>{[100,150,200,120,80].forEach((f,i)=>setTimeout(()=>tone(f,.2,'sawtooth',.4),i*100));}};if(m[t])m[t]();}
 
+
 // ─── UI HELPERS ───────────────────────────────────────────
 function g(id){return document.getElementById(id);}
 function emptyState(icon,text){return `<div class="empty-state"><div class="empty-icon">${icon}</div><div class="empty-text">${text}</div></div>`;}
+
 
 window.switchTab = tab => {
   activeTab=tab;
@@ -4188,31 +4384,32 @@ window.switchTab = tab => {
   if(tab==='music') renderMusicPlayer();
 };
 
-window.openModal=function(id){
-  const el=g(id); if(!el) return;
-  el.classList.add('open');
-  if(id==='settings-modal'){if(typeof window.renderSettings==='function')window.renderSettings();else setTimeout(()=>window.renderSettings&&window.renderSettings(),100);}
-  // Push history state so back button closes the modal instead of leaving the page
-  history.pushState({modal:id, tab:activeTab}, '', location.href);
-};
+
+window.openModal=id=>{const el=g(id);if(el)el.classList.add('open');if(id==='settings-modal'){if(typeof window.renderSettings==='function')window.renderSettings();else setTimeout(()=>window.renderSettings&&window.renderSettings(),100);}};
 window.closeModal=id=>{const el=g(id);if(el)el.classList.remove('open');};
+
 
 window.setPill=(el,group)=>{document.querySelectorAll(`[data-group="${group}"]`).forEach(b=>b.classList.remove('active'));el.classList.add('active');};
 window.setTaskPill=(val,group,el)=>{setPill(el,group);if(group==='task-type')taskType=val;if(group==='task-priority')taskPriority=val;if(group==='task-repeat')taskRepeat=val;};
 window.setHabitPill=(val,el)=>{setPill(el,'habit-time');habitTime=val;};
 
+
 window.selectAvatar=(a,el)=>{selAvatar=a;document.querySelectorAll('.av-btn').forEach(x=>x.classList.remove('sel'));el.classList.add('sel');};
 window.selectColor=(c,el)=>{selColor=c;document.querySelectorAll('.col-dot').forEach(x=>{x.classList.remove('sel');x.style.outline='';});el.classList.add('sel');el.style.outline='3px solid white';};
+
 
 function showAuthError(msg){g('auth-err').textContent=msg;g('auth-err').style.display='block';}
 function toast(msg){const t=g('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2800);}
 
+
 // Celebrate overlay close
 g('celebration').addEventListener('click',()=>g('celebration').classList.remove('show'));
+
 
 // ── Back button: smart in-app navigation ──────────────────
 // Track navigation history stack
 let _navStack = ['today'];
+
 
 function pushNav(tab) {
   // Do not push same tab twice
@@ -4229,26 +4426,35 @@ function popNav() {
   return null;
 }
 
+
 // Push initial state
 history.pushState({tab:'today'}, '', location.href);
+
 
 window.addEventListener('popstate', function(e) {
   const appActive = document.getElementById('app')?.classList.contains('active');
 
-  // If back was triggered while a modal state was pushed, close that modal
-  if(e.state && e.state.modal) {
-    const modalEl = document.getElementById(e.state.modal);
-    if(modalEl) modalEl.classList.remove('open');
-    return;
-  }
-  // If any modal is open, close it (fallback)
-  const openModalEl = document.querySelector('.modal-overlay.open');
-  if(openModalEl) {
-    openModalEl.classList.remove('open');
+
+  // If settings modal is open, close it
+  const settingsModal = document.getElementById('settings-modal');
+  if(settingsModal?.classList.contains('open')) {
+    settingsModal.classList.remove('open');
+    history.pushState({tab: _navStack[_navStack.length-1]}, '', location.href);
     return;
   }
 
+
+  // If any modal is open, close it
+  const openModal = document.querySelector('.modal-overlay.open');
+  if(openModal) {
+    openModal.classList.remove('open');
+    history.pushState({tab: _navStack[_navStack.length-1]}, '', location.href);
+    return;
+  }
+
+
   if(!appActive) return;
+
 
   // Try to go back in nav stack
   const prevTab = popNav();
@@ -4257,6 +4463,7 @@ window.addEventListener('popstate', function(e) {
     history.pushState({tab:prevTab}, '', location.href);
     return;
   }
+
 
   // At root tab (today) — show exit confirmation
   history.pushState({tab:'today'}, '', location.href);
@@ -4274,6 +4481,7 @@ window.addEventListener('popstate', function(e) {
   document.body.appendChild(overlay);
 });
 
+
 // Build pickers
 const avGrid=g('av-grid'); if(avGrid) avGrid.innerHTML=AVATARS.map((a,i)=>{
   const isSel = i===0;
@@ -4283,6 +4491,7 @@ const avGrid=g('av-grid'); if(avGrid) avGrid.innerHTML=AVATARS.map((a,i)=>{
     +'</button>';
 }).join('');
 const colRow=g('col-row'); if(colRow) colRow.innerHTML=COLORS.map((c,i)=>`<div class="col-dot${i===0?' sel':''}" style="background:${c}" onclick="selectColor('${c}',this)"></div>`).join('');
+
 
 // ── Music helpers ──────────────────────────────────────────────────────────
 window.toggleLoginMute = function() {
@@ -4304,6 +4513,7 @@ window.toggleLoginMute = function() {
   }
 };
 
+
 window.stopLoginMusic = function() {
   if(window._loginAudio) {
     window._loginAudio.pause();
@@ -4312,6 +4522,7 @@ window.stopLoginMusic = function() {
   }
 };
 
+
 window.stopAllMusic = function() {
   window.stopLoginMusic();
   if(window._bgmAudio) {
@@ -4319,6 +4530,7 @@ window.stopAllMusic = function() {
     window._bgmAudio.currentTime = 0;
   }
 };
+
 
 window.toggleBGM = function() {
   if (window._bgmAudio && !window._bgmAudio.paused) {
@@ -4339,6 +4551,7 @@ window.toggleBGM = function() {
   }
 };
 
+
 window.playLoginMusic = function() {
   const songName = DEFAULT_LOGIN_SONG;
   const url = getSongUrl(songName);
@@ -4348,6 +4561,8 @@ window.playLoginMusic = function() {
   window._loginAudio.volume = 0.5;
   window._loginAudio.play().catch(()=>{});
 };
+
+
 
 
 // ─── MUSIC PLAYER STATE ──────────────────────────────────────────────────────
@@ -4405,6 +4620,7 @@ const SONG_FILES = {
   'Sea Shanty 2': 'https://inny27.github.io/OrbitCrew/sea%20shanty%202.mp3'
 };
 
+
 const MUSIC_TRACKS = [
   {id:'floral_life',title:'Floral Life',artist:'In-Built Songs',album:'In-Built Songs',url:'https://inny27.github.io/OrbitCrew/01.%20Floral%20Life%20-%20Henesys.mp3',mob:'130100',colour:'#9bbc0f'},
   {id:'above_the_treetops',title:'Above the Treetops',artist:'In-Built Songs',album:'In-Built Songs',url:'https://inny27.github.io/OrbitCrew/12.%20Above%20the%20Treetops%20-%20Lith%20Harbour.mp3',mob:'130101',colour:'#7EB8D4'},
@@ -4459,6 +4675,7 @@ const MUSIC_TRACKS = [
   {id:'sea_shanty_2',title:'Sea Shanty 2',artist:'In-Built Songs',album:'In-Built Songs',url:'https://inny27.github.io/OrbitCrew/sea%20shanty%202.mp3',mob:'1120100',colour:'#0055aa'}
 ];
 
+
 // Player state - persisted in localStorage per user
 let _mpTrackIdx = 0;
 let _mpAudio = null;
@@ -4475,8 +4692,10 @@ let _mpAlbums = JSON.parse(localStorage.getItem('mp_albums') || '{}');
 // default album: In-Built Songs
 if (!_mpAlbums['In-Built Songs']) _mpAlbums['In-Built Songs'] = MUSIC_TRACKS.map(t=>t.id);
 
+
 function _mpSaveLiked() { localStorage.setItem('mp_liked', JSON.stringify([..._mpLiked])); }
 function _mpSaveAlbums() { localStorage.setItem('mp_albums', JSON.stringify(_mpAlbums)); }
+
 
 function _mpFmt(s) {
   if (!s || isNaN(s)) return '0:00';
@@ -4488,114 +4707,89 @@ function _mpGetList() {
   return MUSIC_TRACKS;
 }
 
+
 window.renderMusicPlayer = function() { _mpBuildUI(); };
+
 
 function _mpBuildUI() {
   const root = document.getElementById('music-app-root');
   if (!root) return;
   const t = _mpGetTrack();
+  const list = _mpGetList();
   const pct = _mpDuration > 0 ? Math.min((_mpProgress/_mpDuration)*100,100) : 0;
   const isLiked = _mpLiked.has(t.id);
-  const searchVal = root._searchVal || '';
-  const list = _mpGetList().filter(tr =>
-    !searchVal || tr.title.toLowerCase().includes(searchVal.toLowerCase()) || tr.artist.toLowerCase().includes(searchVal.toLowerCase())
-  );
+
 
   root.innerHTML =
-    '<div style="display:flex;flex-direction:column;height:calc(100vh - 155px)">' +
+    '<div style="display:flex;flex-direction:column;height:calc(100vh - 120px);overflow:hidden">' +
 
-    // ── Compact Now Playing ──
-    '<div style="background:linear-gradient(135deg,'+t.colour+'18,'+t.colour+'06);border-bottom:1px solid var(--border);padding:12px 16px 10px">' +
-      '<div style="display:flex;align-items:center;gap:12px">' +
-        '<div style="width:52px;height:52px;border-radius:12px;background:'+t.colour+'20;border:2px solid '+t.colour+'40;display:flex;align-items:center;justify-content:center;flex-shrink:0;overflow:hidden">' +
-          '<img src="https://maplestory.io/api/GMS/255/mob/'+t.mob+'/render/stand" width="44" style="image-rendering:pixelated;object-fit:contain" onerror="this.remove()">' +
-        '</div>' +
-        '<div style="flex:1;min-width:0">' +
-          '<div style="font-weight:700;font-size:14px;color:var(--ink);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+t.title+'</div>' +
-          '<div style="font-size:11px;color:var(--muted)">'+t.artist+'</div>' +
-        '</div>' +
-        '<button onclick="window._mpToggleLike()" style="background:none;border:none;font-size:20px;color:'+(isLiked?'#D4708A':'var(--muted)')+';cursor:pointer;padding:4px;flex-shrink:0">'+(isLiked?'♥':'♡')+'</button>' +
-      '</div>' +
 
-      // Seek bar
-      '<div onclick="window._mpSeek(event)" style="height:4px;background:var(--parchment);border-radius:99px;cursor:pointer;position:relative;overflow:hidden;margin:10px 0 4px;border:1px solid var(--border)">' +
-        '<div style="position:absolute;left:0;top:0;height:100%;width:'+pct.toFixed(1)+'%;background:'+t.colour+';border-radius:99px;transition:width .4s linear"></div>' +
+    // ── Now Playing ──
+    '<div style="background:linear-gradient(180deg,'+t.colour+'22,'+t.colour+'06);border-bottom:1px solid var(--border);padding:20px 20px 16px;text-align:center">' +
+      '<div style="width:120px;height:120px;border-radius:18px;background:'+t.colour+'18;border:2px solid '+t.colour+'40;margin:0 auto 14px;display:flex;align-items:center;justify-content:center;box-shadow:0 10px 32px '+t.colour+'30;position:relative;overflow:hidden">' +
+        '<div style="position:absolute;inset:0;background:radial-gradient(circle at 30% 30%,rgba(255,255,255,0.15),transparent)"></div>' +
+        '<img src="https://maplestory.io/api/GMS/255/mob/'+t.mob+'/render/stand" width="90" style="image-rendering:pixelated;filter:drop-shadow(0 4px 12px '+t.colour+'60)" onerror="this.remove()">' +
       '</div>' +
-      '<div style="display:flex;justify-content:space-between;font-size:9px;color:var(--muted);margin-bottom:8px"><span>'+_mpFmt(_mpProgress)+'</span><span>'+_mpFmt(_mpDuration)+'</span></div>' +
-
-      // Controls
-      '<div style="display:flex;align-items:center;justify-content:center;gap:10px">' +
-        '<button onclick="window._mpToggleShuffle()" style="width:32px;height:32px;border-radius:8px;border:1.5px solid '+(_mpShuffle?t.colour:'var(--border)')+';background:'+(_mpShuffle?t.colour+'18':'transparent')+';color:'+(_mpShuffle?t.colour:'var(--muted)')+';font-size:14px;cursor:pointer">⇄</button>' +
-        '<button onclick="window._mpPrev()" style="width:38px;height:38px;border-radius:10px;border:1.5px solid var(--border);background:transparent;color:var(--ink);font-size:18px;cursor:pointer">⏮</button>' +
-        '<button onclick="window._mpTogglePlay()" style="width:52px;height:52px;border-radius:14px;border:none;background:'+t.colour+';color:#fff;font-size:24px;cursor:pointer;box-shadow:0 4px 16px '+t.colour+'60">'+(_mpPlaying?'⏸':'▶')+'</button>' +
-        '<button onclick="window._mpNext()" style="width:38px;height:38px;border-radius:10px;border:1.5px solid var(--border);background:transparent;color:var(--ink);font-size:18px;cursor:pointer">⏭</button>' +
-        '<button onclick="window._mpCycleRepeat()" style="width:32px;height:32px;border-radius:8px;border:1.5px solid '+(_mpRepeat!=='none'?t.colour:'var(--border)')+';background:'+(_mpRepeat!=='none'?t.colour+'18':'transparent')+';color:'+(_mpRepeat!=='none'?t.colour:'var(--muted)')+';font-size:14px;cursor:pointer">'+(_mpRepeat==='one'?'🔂':'🔁')+'</button>' +
-      '</div>' +
+      '<div style="font-family:var(--pixel);font-size:14px;font-weight:700;color:var(--ink);margin-bottom:3px">'+t.title+'</div>' +
+      '<div style="font-size:11px;color:var(--muted)">'+t.artist+'</div>' +
     '</div>' +
 
-    // ── Tabs + Search ──
-    '<div style="display:flex;align-items:center;gap:8px;padding:8px 12px 6px;border-bottom:1px solid var(--border)">' +
-      _mpTabBtn('all','All') +
-      _mpTabBtn('liked','♥') +
-      _mpTabBtn('albums','💿') +
-      '<input id="mp-search" type="search" placeholder="Search…" value="'+searchVal+'" ' +
-        'oninput="document.getElementById(\'music-app-root\')._searchVal=this.value;window._mpBuildUIDebounce()" ' +
-        'style="flex:1;border:1.5px solid var(--border);border-radius:8px;padding:6px 10px;font-size:12px;background:var(--parchment);color:var(--ink);outline:none;min-width:0">' +
+
+    // ── Seek bar ──
+    '<div style="padding:12px 20px 4px">' +
+      '<div onclick="window._mpSeek(event)" style="height:5px;background:var(--parchment);border-radius:99px;cursor:pointer;position:relative;overflow:hidden;border:1px solid var(--border)">' +
+        '<div style="position:absolute;left:0;top:0;height:100%;width:'+pct.toFixed(1)+'%;background:linear-gradient(90deg,'+t.colour+','+t.colour+'cc);border-radius:99px;transition:width .4s linear"></div>' +
+      '</div>' +
+      '<div style="display:flex;justify-content:space-between;font-size:10px;color:var(--muted);margin-top:4px"><span>'+_mpFmt(_mpProgress)+'</span><span>'+_mpFmt(_mpDuration)+'</span></div>' +
     '</div>' +
 
-    // ── Song list ──
-    '<div style="flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:6px 10px 12px">' +
-      (_mpTab === 'albums' ? _mpAlbumsView() :
-        list.length === 0 ? '<div style="text-align:center;padding:32px;color:var(--muted);font-size:13px">'+(searchVal?'No results for "'+searchVal+'"':'No songs here yet')+'</div>' :
-        list.map((tr) => {
-          const isCur = tr.id === t.id;
-          const liked = _mpLiked.has(tr.id);
-          const realIdx = MUSIC_TRACKS.indexOf(tr);
-          return '<div data-play="'+realIdx+'" style="display:flex;align-items:center;gap:10px;padding:8px 6px;border-radius:10px;cursor:pointer;background:'+(isCur?tr.colour+'14':'transparent')+';margin-bottom:2px">' +
-            '<div style="width:36px;height:36px;border-radius:8px;background:'+tr.colour+'18;display:flex;align-items:center;justify-content:center;flex-shrink:0">' +
-              '<img src="https://maplestory.io/api/GMS/255/mob/'+tr.mob+'/render/stand" width="30" style="image-rendering:pixelated;object-fit:contain" onerror="this.remove()">' +
-            '</div>' +
-            '<div style="flex:1;min-width:0">' +
-              '<div style="font-size:13px;font-weight:'+(isCur?'700':'400')+';color:'+(isCur?tr.colour:'var(--ink)')+';overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+tr.title+'</div>' +
-              '<div style="font-size:10px;color:var(--muted)">'+tr.artist+'</div>' +
-            '</div>' +
-            (isCur && _mpPlaying ? '<span style="font-size:10px;color:'+tr.colour+'">▶</span>' : '') +
-            '<button data-liketrack="'+tr.id+'" style="background:none;border:none;font-size:14px;color:'+(liked?'#D4708A':'var(--border)')+';cursor:pointer;padding:2px 4px">'+(liked?'♥':'♡')+'</button>' +
-          '</div>';
-        }).join('')
-      ) +
+
+    // ── Controls ──
+    '<div style="display:flex;align-items:center;justify-content:center;gap:12px;padding:4px 20px 8px">' +
+      '<button onclick="window._mpToggleShuffle()" style="width:36px;height:36px;border-radius:10px;border:1.5px solid '+(_mpShuffle?t.colour:'var(--border)')+';background:'+(_mpShuffle?t.colour+'18':'var(--parchment)')+';color:'+(_mpShuffle?t.colour:'var(--muted)')+';font-size:14px;cursor:pointer">⇄</button>' +
+      '<button onclick="window._mpPrev()" style="width:44px;height:44px;border-radius:12px;border:1.5px solid var(--border);background:var(--parchment);color:var(--ink);font-size:20px;cursor:pointer">⏮</button>' +
+      '<button onclick="window._mpTogglePlay()" style="width:58px;height:58px;border-radius:16px;border:none;background:linear-gradient(135deg,'+t.colour+','+t.colour+'bb);color:#fff;font-size:26px;cursor:pointer;box-shadow:0 6px 20px '+t.colour+'50">'+(_mpPlaying?'⏸':'▶')+'</button>' +
+      '<button onclick="window._mpNext()" style="width:44px;height:44px;border-radius:12px;border:1.5px solid var(--border);background:var(--parchment);color:var(--ink);font-size:20px;cursor:pointer">⏭</button>' +
+      '<button onclick="window._mpToggleLike()" style="width:36px;height:36px;border-radius:10px;border:1.5px solid '+(isLiked?'#D4708A':'var(--border)')+';background:'+(isLiked?'rgba(212,112,138,0.1)':'var(--parchment)')+';color:'+(isLiked?'#D4708A':'var(--muted)')+';font-size:16px;cursor:pointer">'+(isLiked?'♥':'♡')+'</button>' +
+    '</div>' +
+
+
+    // ── Volume ──
+    '<div style="display:flex;align-items:center;gap:8px;padding:0 20px 10px">' +
+      '<span style="font-size:12px">🔈</span>' +
+      '<div onclick="window._mpSetVol(event)" style="flex:1;height:4px;background:var(--parchment);border-radius:99px;cursor:pointer;position:relative;overflow:hidden;border:1px solid var(--border)">' +
+        '<div style="height:100%;width:'+Math.round(_mpVolume*100)+'%;background:linear-gradient(90deg,var(--gold),var(--gold-lt));border-radius:99px"></div>' +
+      '</div>' +
+      '<span style="font-size:12px">🔊</span>' +
+    '</div>' +
+
+
+    // ── Tabs ──
+    '<div style="display:flex;border-bottom:1px solid var(--border);background:var(--surf)">' +
+      _mpTabBtn('all','🎵 All') +
+      _mpTabBtn('liked','♥ Liked') +
+      _mpTabBtn('albums','💿 Albums') +
+    '</div>' +
+
+
+    // ── Tab content ──
+    '<div style="flex:1;overflow-y:auto;padding:8px 12px">' +
+      _mpTabContent(list, t) +
     '</div>' +
     '</div>';
 
-  // Re-attach delegation
-  root.onclick = function(e) {
-    const el = e.target.closest('[data-play],[data-mptab],[data-liketrack],[data-delalbum],[data-openalbum]');
-    if (!el) return;
-    if (el.dataset.play !== undefined) { window._mpPlay(parseInt(el.dataset.play)); return; }
-    if (el.dataset.mptab) { window._mpSetTab(el.dataset.mptab); return; }
-    if (el.dataset.liketrack) { e.stopPropagation(); window._mpLikeTrack(el.dataset.liketrack); return; }
-    if (el.dataset.delalbum) { e.stopPropagation(); window._mpDeleteAlbum(el.dataset.delalbum); return; }
-    if (el.dataset.openalbum) { window._mpOpenAlbum(el.dataset.openalbum); return; }
-  };
 
-  // Restore search focus if searching
-  if (searchVal) {
-    const inp = document.getElementById('mp-search');
-    if (inp) { inp.focus(); inp.setSelectionRange(inp.value.length, inp.value.length); }
-  }
+  // Event delegation for music player buttons
+  root.onclick = function(e) {
+    const btn = e.target.closest('[data-mptab],[data-liketrack],[data-delalbum],[data-openalbum]');
+    if (!btn) return;
+    if (btn.dataset.mptab) { window._mpSetTab(btn.dataset.mptab); return; }
+    if (btn.dataset.liketrack) { e.stopPropagation(); window._mpLikeTrack(btn.dataset.liketrack); return; }
+    if (btn.dataset.delalbum) { e.stopPropagation(); window._mpDeleteAlbum(btn.dataset.delalbum); return; }
+    if (btn.dataset.openalbum) { window._mpOpenAlbum(btn.dataset.openalbum); return; }
+  };
 }
 
-// Debounced rebuild for search
-let _mpSearchTimer = null;
-window._mpBuildUIDebounce = function() {
-  clearTimeout(_mpSearchTimer);
-  _mpSearchTimer = setTimeout(_mpBuildUI, 120);
-};
-
-window._mpCycleRepeat = function() {
-  _mpRepeat = _mpRepeat === 'none' ? 'all' : _mpRepeat === 'all' ? 'one' : 'none';
-  _mpBuildUI();
-};
 
 function _mpTabBtn(id, label) {
   const active = _mpTab === id;
@@ -4604,6 +4798,7 @@ function _mpTabBtn(id, label) {
   const col = active ? 'var(--gold)' : 'var(--muted)';
   return '<button data-mptab="' + id + '" style="flex:1;padding:10px 4px;border:none;border-bottom:2px solid ' + border + ';background:transparent;font-size:11px;font-weight:' + wt + ';color:' + col + ';cursor:pointer">' + label + '</button>';
 }
+
 
 function _mpTabContent(list, currentTrack) {
   if (_mpTab === 'albums') return _mpAlbumsView();
@@ -4624,6 +4819,7 @@ function _mpTabContent(list, currentTrack) {
     '</div>';
   }).join('');
 }
+
 
 function _mpAlbumsView() {
   const names = Object.keys(_mpAlbums);
@@ -4647,7 +4843,9 @@ function _mpAlbumsView() {
   '</div>';
 }
 
+
 window._mpSetTab = function(tab) { _mpTab = tab; _mpBuildUI(); };
+
 
 window._mpPlay = function(idx) {
   _mpTrackIdx = typeof idx === 'number' ? idx : 0;
@@ -4675,6 +4873,7 @@ window._mpPlay = function(idx) {
   }).catch(e => console.warn('Music play error:', e));
 };
 
+
 window._mpTogglePlay = function() {
   if (!_mpAudio) { window._mpPlay(0); return; }
   if (_mpPlaying) {
@@ -4687,6 +4886,7 @@ window._mpTogglePlay = function() {
   }
   _mpBuildUI();
 };
+
 
 window._mpNext = function() {
   const list = MUSIC_TRACKS;
@@ -4734,8 +4934,11 @@ window._mpOpenAlbum = function(encodedName) {
   if (tracks.length > 0) window._mpPlay(MUSIC_TRACKS.indexOf(tracks[0]));
 };
 
+
 window.MUSIC_TRACKS = MUSIC_TRACKS;
 window.SONG_FILES = SONG_FILES;
+
+
 
 
 </script>
@@ -4757,6 +4960,7 @@ if('serviceWorker' in navigator) {
   } catch(e) { console.log('SW not supported'); }
 }
 
+
 // PWA install prompt
 window._deferredInstallPrompt = null;
 window.addEventListener('beforeinstallprompt', e => {
@@ -4776,6 +4980,8 @@ window.addEventListener('appinstalled', () => {
 });
 // Apply saved preferences on load
 if(lsGet('intask_colorblind','0')==='1') document.body.classList.add('colorblind');
+
+
 
 
 </script>
@@ -4818,6 +5024,7 @@ window.confirmClearData = function() {
   setTimeout(() => el.querySelector('#clear-data-input').focus(), 100);
 };
 
+
 window.executeClearData = async function() {
   closeModal('settings-modal');
   // Second confirmation
@@ -4842,6 +5049,7 @@ window.executeClearData = async function() {
   document.getElementById('clear-data-modal')?.remove();
   document.body.appendChild(el2);
 };
+
 
 window.doExecuteClearData = async function() {
   document.querySelectorAll('div[style*="z-index:900"]').forEach(el => el.remove());
@@ -4877,6 +5085,7 @@ window.doExecuteClearData = async function() {
   }
 };
 
+
 </script>
 <script>
 // Bridge: global wrappers so onclick= attrs can call ES module functions
@@ -4884,6 +5093,8 @@ function confirmClearData(){if(window.confirmClearData)window.confirmClearData.a
 function copyInstallLink(){if(window.copyInstallLink)window.copyInstallLink.apply(window,arguments);}
 function _doDeleteEntry(){if(window._doDeleteEntry)window._doDeleteEntry.apply(window,arguments);}
 function _doDeleteTask(){if(window._doDeleteTask)window._doDeleteTask.apply(window,arguments);}
+function _doExSearch(){if(window._doExSearch)window._doExSearch.apply(window,arguments);}
+function _libSearch(){if(window._libSearch)window._libSearch.apply(window,arguments);}
 function _mpDeleteAlbum(){if(window._mpDeleteAlbum)window._mpDeleteAlbum.apply(window,arguments);}
 function _mpLikeTrack(){if(window._mpLikeTrack)window._mpLikeTrack.apply(window,arguments);}
 function _mpNewAlbum(){if(window._mpNewAlbum)window._mpNewAlbum.apply(window,arguments);}
@@ -4897,6 +5108,7 @@ function _mpSetVol(){if(window._mpSetVol)window._mpSetVol.apply(window,arguments
 function _mpToggleLike(){if(window._mpToggleLike)window._mpToggleLike.apply(window,arguments);}
 function _mpTogglePlay(){if(window._mpTogglePlay)window._mpTogglePlay.apply(window,arguments);}
 function _mpToggleShuffle(){if(window._mpToggleShuffle)window._mpToggleShuffle.apply(window,arguments);}
+function _showExSuggestions(){if(window._showExSuggestions)window._showExSuggestions.apply(window,arguments);}
 function addExToSession(){if(window.addExToSession)window.addExToSession.apply(window,arguments);}
 function addGuideToDiary(){if(window.addGuideToDiary)window.addGuideToDiary.apply(window,arguments);}
 function addHabit(){if(window.addHabit)window.addHabit.apply(window,arguments);}
@@ -5003,7 +5215,6 @@ function toggleLoginMute(){if(window.toggleLoginMute)window.toggleLoginMute.appl
 function toggleSetMode(){if(window.toggleSetMode)window.toggleSetMode.apply(window,arguments);}
 function toggleTimer(){if(window.toggleTimer)window.toggleTimer.apply(window,arguments);}
 function unlockSkill(){if(window.unlockSkill)window.unlockSkill.apply(window,arguments);}
-function resetSkills(){if(window.resetSkills)window.resetSkills.apply(window,arguments);}
 function updSet(){if(window.updSet)window.updSet.apply(window,arguments);}
 function updateExSearch(){if(window.updateExSearch)window.updateExSearch.apply(window,arguments);}
 </script>
@@ -5016,6 +5227,7 @@ function updateExSearch(){if(window.updateExSearch)window.updateExSearch.apply(w
     </filter>
   </defs>
 </svg>
+
 
 <!-- ═══ LOGIN SCREEN ═══ -->
 <div id="login" class="screen active">
@@ -5046,11 +5258,13 @@ function updateExSearch(){if(window.updateExSearch)window.updateExSearch.apply(w
   <div class="auth-card">
     <div id="auth-err" class="auth-error"></div>
 
+
     <!-- Auth tabs -->
     <div class="modal-tabs" style="margin-bottom:20px">
       <button class="modal-tab active" id="atab-account" onclick="switchAuthTab('account')">🚀 Account</button>
       <button class="modal-tab" id="atab-guest" onclick="switchAuthTab('guest')">👾 Guest</button>
     </div>
+
 
     <!-- Account tab -->
     <div id="auth-account-section">
@@ -5066,6 +5280,7 @@ function updateExSearch(){if(window.updateExSearch)window.updateExSearch.apply(w
       <button id="auth-toggle-btn" onclick="toggleAuthMode()" style="background:none;border:none;color:var(--gold);font-size:12px;font-weight:600;padding:8px 0;cursor:pointer;text-align:center;width:100%">Don't have an account? Create one</button>
       <p style="color:var(--muted);font-size:11px;margin-top:12px;text-align:center;font-weight:600">New user? Just enter email &amp; password and we'll create your account.</p>
     </div>
+
 
     <!-- Guest tab -->
     <div id="auth-guest-section" style="display:none">
@@ -5101,9 +5316,11 @@ function updateExSearch(){if(window.updateExSearch)window.updateExSearch.apply(w
       </div>
     </div>
 
+
     <p style="color:var(--border);font-size:11px;margin-top:16px;font-weight:600;text-align:center">Free forever · Private · No ads 🪐</p>
   </div>
 </div>
+
 
 <!-- ═══ PROFILE SETUP ═══ -->
 <div id="profile-setup" class="screen">
@@ -5120,8 +5337,10 @@ function updateExSearch(){if(window.updateExSearch)window.updateExSearch.apply(w
   </div>
 </div>
 
+
 <!-- ═══ MAIN APP ═══ -->
 <div id="app">
+
 
   <!-- HEADER -->
   <div class="header">
@@ -5147,8 +5366,10 @@ function updateExSearch(){if(window.updateExSearch)window.updateExSearch.apply(w
     </div>
   </div>
 
+
   <!-- PANELS -->
   <div class="panels">
+
 
     <!-- TODAY -->
     <div class="panel active" id="panel-today">
@@ -5173,6 +5394,7 @@ function updateExSearch(){if(window.updateExSearch)window.updateExSearch.apply(w
       <div id="chores-list"></div>
     </div>
 
+
     <!-- HABITS -->
     <div class="panel" id="panel-habits">
       <div class="mult-card">
@@ -5187,10 +5409,12 @@ function updateExSearch(){if(window.updateExSearch)window.updateExSearch.apply(w
       <div id="habits-list"></div>
     </div>
 
+
     <!-- CREW -->
     <div class="panel" id="panel-crew">
       <div id="crew-panel"></div>
     </div>
+
 
     <!-- AWARDS -->
     <div class="panel" id="panel-awards">
@@ -5207,12 +5431,15 @@ function updateExSearch(){if(window.updateExSearch)window.updateExSearch.apply(w
       <div class="badges-grid" id="badges-grid"></div>
     </div>
 
+
     <!-- FITNESS -->
     <div class="panel" id="panel-fitness">
       <div id="fitness-panel"></div>
     </div>
 
+
   </div>
+
 
   <!-- BOTTOM NAV -->
   <div class="bottom-nav">
@@ -5227,18 +5454,20 @@ function updateExSearch(){if(window.updateExSearch)window.updateExSearch.apply(w
     </button>
   </div>
 
+
   <!-- ══ MUSIC PANEL ══ -->
   <div class="panel" id="panel-music">
     <div id="music-app-root"></div>
   </div>
 
+
 </div><!-- end app -->
+
 
 <!-- ═══ MODALS ═══ -->
 
-<!-- Add Task Modal -->
 
-</body>
+<!-- Add Task Modal -->
 <div class="modal-overlay" id="task-modal" onclick="if(event.target===this)closeModal('task-modal')">
   <div class="modal">
     <div class="modal-handle"></div>
@@ -5269,6 +5498,7 @@ function updateExSearch(){if(window.updateExSearch)window.updateExSearch.apply(w
   </div>
 </div>
 
+
 <!-- Add Habit Modal -->
 <div class="modal-overlay" id="habit-modal" onclick="if(event.target===this)closeModal('habit-modal')">
   <div class="modal">
@@ -5286,6 +5516,7 @@ function updateExSearch(){if(window.updateExSearch)window.updateExSearch.apply(w
     <button class="big-btn" style="background:linear-gradient(135deg,#f59e0b,#f97316)" onclick="addHabit()">🔥 START STREAK</button>
   </div>
 </div>
+
 
 <!-- Crew Modal -->
 <div class="modal-overlay" id="crew-modal" onclick="if(event.target===this)closeModal('crew-modal')">
@@ -5320,6 +5551,7 @@ function updateExSearch(){if(window.updateExSearch)window.updateExSearch.apply(w
   </div>
 </div>
 
+
 <!-- ═══ OVERLAYS ═══ -->
 <div id="celebration">
   <div id="cel-title">TASK COMPLETE!</div>
@@ -5329,6 +5561,7 @@ function updateExSearch(){if(window.updateExSearch)window.updateExSearch.apply(w
   <div id="cel-hint" style="font-size:12px;color:var(--muted);margin-top:24px;font-weight:600">Tap anywhere to continue</div>
 </div>
 
+
 <div id="rest-overlay">
   <div class="rest-title-text">⏸ REST PERIOD</div>
   <div id="rest-display">01:00</div>
@@ -5336,7 +5569,9 @@ function updateExSearch(){if(window.updateExSearch)window.updateExSearch.apply(w
   <button class="skip-rest-btn" onclick="skipRest()">Skip Rest →</button>
 </div>
 
+
 <div id="toast"></div>
+
 
 </script>
 <!-- Settings Modal -->
@@ -5346,4 +5581,7 @@ function updateExSearch(){if(window.updateExSearch)window.updateExSearch.apply(w
     <div id="settings-panel"></div>
   </div>
 </div>
+
+
+</body>
 </html>
