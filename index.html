@@ -15,7 +15,13 @@
 <link rel="icon" href="https://maplestory.io/api/GMS/255/mob/100100/render/stand" type="image/png">
   <link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
 <style>:root{--nav-h:70px;}
-
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  /* Remove fixed height and hidden overflow to allow login scroll */
+  -webkit-font-smoothing: antialiased;
+}
 /* ============================================================
    RESET & VARIABLES
 ============================================================ */
@@ -151,9 +157,23 @@ body::after{display:none;}
 /* ============================================================
    TAB PANELS
 ============================================================ */
-.panels{flex:1;}
-.panel{display:none;overflow-y:scroll;padding:16px 16px calc(var(--nav-h) + 20px);-webkit-overflow-scrolling:touch;}
-.panel.active{display:block;height:calc(100vh - var(--nav-h) - 110px);}
+:root {
+  /* Keep your existing colors, then add this */
+  --bottom-nav-height: 80px; 
+}
+
+.panel {
+  display: none;
+  overflow-y: auto;
+  /* This padding creates the "buffer" so content clears the fixed nav */
+  padding: 16px 16px calc(16px + var(--bottom-nav-height));
+  -webkit-overflow-scrolling: touch;
+}
+
+.panel.active {
+  display: block;
+  /* Do not use a fixed height here; let the padding handle the spacing */
+}
 
 /* ============================================================
    SHARED COMPONENTS
@@ -218,7 +238,7 @@ body::after{display:none;}
 .done-btn.done-btn-done{background:var(--sage-bg);border:1.5px solid var(--sage);color:var(--sage);cursor:default;transform:none;box-shadow:none;}
 
 /* ============================================================
-   CREW TAB
+   PARTY TAB
 ============================================================ */
 .no-crew-wrap{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;min-height:60vh;padding:20px;}
 .no-crew-icon{font-size:72px;margin-bottom:16px;animation:float 3s ease-in-out infinite;}
@@ -1059,19 +1079,49 @@ async function loadProfile(uid) {
 
 function subscribeAll(uid, crewId) {
   unsubs.forEach(u => u()); unsubs = [];
+  
+  // 1. User Profile Listener
   unsubs.push(onSnapshot(doc(db,'users',uid), s => {
-    // Guard: only apply if this snapshot is for the current user
     if (s.exists() && currentUser && currentUser.uid === uid) {
       userProfile = s.data();
       renderHeader(); renderAwards(); updateBg(); synced = true; renderSyncDot();
     }
   }));
-  unsubs.push(onSnapshot(query(collection(db,'tasks'),where('uid','==',uid)), s => {
-    tasks = s.docs.map(d => ({id:d.id,...d.data()})); renderToday();
+
+  // 2. UPDATED: Multi-source Task Listener (Your tasks + Shared party tasks)
+  unsubs.push(onSnapshot(query(collection(db,'tasks'), where('uid','==',uid)), s => {
+    let myTasksMap = new Map();
+    // Add all tasks YOU created
+    s.docs.forEach(d => myTasksMap.set(d.id, {id:d.id, ...d.data()}));
+
+    // If you are in a party, also fetch tasks shared by other members
+    if (crewId) {
+      const sharedQuery = query(
+        collection(db, 'tasks'),
+        where('crewId', '==', crewId),
+        where('owner', '==', 'both')
+      );
+      
+      getDocs(sharedQuery).then(sharedSnap => {
+        sharedSnap.docs.forEach(d => {
+          if (!myTasksMap.has(d.id)) {
+            myTasksMap.set(d.id, {id: d.id, ...d.data()});
+          }
+        });
+        tasks = Array.from(myTasksMap.values());
+        renderToday();
+      });
+    } else {
+      tasks = Array.from(myTasksMap.values());
+      renderToday();
+    }
   }));
+
+  // 3. Habits Listener (Keep as is)
   unsubs.push(onSnapshot(query(collection(db,'habits'),where('uid','==',uid)), s => {
     habits = s.docs.map(d => ({id:d.id,...d.data()})); renderHabits();
   }));
+
   if (crewId) subscribeCrew(crewId);
 }
 
@@ -1394,17 +1444,48 @@ async function gainXP(amount, stats = {}) {
 
 // ─── TASKS ────────────────────────────────────────────────
 window.addTask = async () => {
-  const name = g('new-task-name').value.trim(); if (!name) { toast('Name your mission!'); return; }
-  await addDoc(collection(db,'tasks'), {
-    name, type:taskType, priority:taskPriority, repeat:taskRepeat,
-    uid:currentUser.uid, owner: taskType==='shared'||taskType==='chore' ? 'both' : currentUser.uid,
-    xp: XP[taskPriority]||XP.medium, done:false, createdAt:serverTimestamp()
-  });
-  closeModal('task-modal'); g('new-task-name').value = '';
-  taskType='personal'; taskPriority='medium'; taskRepeat='none';
-  playSound('launch'); toast('✅ Task added!');
-};
+  const name = g('new-task-name').value.trim(); 
+  if (!name) { 
+    toast('Name your mission!'); 
+    return; 
+  }
 
+  const deadline = g('task-deadline')?.value || null;
+  const isShared = g('task-shared')?.checked || false;
+
+  try {
+    await addDoc(collection(db, 'tasks'), {
+      name,
+      type: taskType,
+      priority: taskPriority,
+      repeat: taskRepeat,
+      deadline,
+      shared: isShared,
+      uid: currentUser.uid,
+      owner: (taskType === 'shared' || taskType === 'chore' || isShared) ? 'both' : currentUser.uid,
+      crewId: userProfile.crewId || null,
+      xp: XP[taskPriority] || XP.medium,
+      done: false,
+      createdAt: serverTimestamp(),
+      sortOrder: Date.now()
+    });
+
+    closeModal('task-modal');
+    g('new-task-name').value = '';
+    if (g('task-deadline')) g('task-deadline').value = ''; 
+    if (g('task-shared')) g('task-shared').checked = false; 
+    
+    taskType = 'personal';
+    taskPriority = 'medium';
+    taskRepeat = 'none';
+    
+    playSound('launch');
+    toast('✅ Task added!');
+  } catch (e) {
+    console.error("Error adding task: ", e);
+    toast('❌ Failed to add task');
+  }
+};
 window.completeTask = async id => {
   const t = tasks.find(x => x.id === id); if (!t || t.done) return;
   await updateDoc(doc(db,'tasks',id), {done:true, doneAt:serverTimestamp()});
@@ -1633,11 +1714,20 @@ window._doDeleteEntry = async id => {
 };
 
 // Session flow
-window.startWorkoutSession = () => {
-  activeSession = {name:'', exercises:[], startTime:Date.now()};
-  selEx=null; exQuery=''; currentSets=[{reps:8,weight:''}]; currentFeel='good';
-  if (!timerRunning) toggleTimer();
-  renderFitness();
+window.cancelSession = () => {
+  const el = document.createElement('div');
+  el.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:6000;display:flex;align-items:center;justify-content:center;padding:20px';
+  el.innerHTML = `<div style="background:var(--surf);border:3px solid var(--red);padding:24px;max-width:300px;box-shadow:4px 4px 0 rgba(0,0,0,.6);text-align:center">
+    <div style="font-size:10px;font-family:var(--pixel);color:var(--red);margin-bottom:12px;line-height:2">CANCEL WORKOUT?</div>
+    <div style="font-size:12px;color:var(--muted);margin-bottom:20px;line-height:1.6">
+      This will stop your current workout session. Logged exercises will stay saved, but the timer and session summary will be reset.
+    </div>
+    <div style="display:flex;gap:10px">
+      <button onclick="this.closest('div[style]').remove()" style="flex:1;padding:12px;border:2px solid var(--border);background:var(--surf2);color:var(--text);font-family:var(--pixel);font-size:8px;cursor:pointer;border-radius:0">Keep Going</button>
+      <button onclick="this.closest('div[style]').remove();window.doCancelSession()" style="flex:1;padding:12px;border:2px solid var(--red);background:var(--red);color:#fff;font-family:var(--pixel);font-size:8px;cursor:pointer;border-radius:0">Cancel</button>
+    </div>
+  </div>`;
+  document.body.appendChild(el);
 };
 
 window.selectExercise = id => {
@@ -1906,7 +1996,9 @@ window.cancelSession = () => {
 };
 
 window.doCancelSession = () => {
-  activeSession=null; resetTimer(); renderFitness();
+  activeSession = null;
+  resetTimer();
+  renderFitness(); 
 };
 
 window.logWorkoutEntry = async () => {
@@ -2179,10 +2271,14 @@ function showApp() {
   }
 }
 function showScreen(id) {
-  document.body.style.overflow = ''; // allow scroll on login/setup screens
+  // Allow scrolling on login and setup screens, but lock it once the app is active
+  document.body.style.overflow = (id === 'login' || id === 'profile-setup') ? 'auto' : 'hidden';
+  
   ['login','profile-setup'].forEach(s => g(s).classList.remove('active'));
   document.getElementById('app').classList.remove('active');
-  g(id).classList.add('active');
+  
+  const target = g(id);
+  if (target) target.classList.add('active');
 }
 
 function updateBg() {
@@ -2218,33 +2314,60 @@ function renderHeader() {
 }
 
 function renderToday() {
-  const myTasks = tasks.filter(t=>t.type!=='chore');
-  const myChores = tasks.filter(t=>t.type==='chore');
-  const done = tasks.filter(t=>t.done).length;
-  const pct = tasks.length?Math.round(done/tasks.length*100):0;
+  // Sort tasks by sortOrder so manual drag-and-drop works
+  const myTasks = tasks
+    .filter(t => t.type !== 'chore')
+    .sort((a, b) => (a.sortOrder || 0) - (b.sortOrder || 0));
+    
+  const myChores = tasks
+    .filter(t => t.type === 'chore')
+    .sort((a, b) => (a.sortOrder || 0) - (b.sortOrder || 0));
+
+  const done = tasks.filter(t => t.done).length;
+  const pct = tasks.length ? Math.round(done / tasks.length * 100) : 0;
+  
   g('prog-count').textContent = done;
-  g('prog-total').textContent = ' / '+tasks.length;
-  g('prog-fill').style.width = pct+'%';
+  g('prog-total').textContent = ' / ' + tasks.length;
+  g('prog-fill').style.width = pct + '%';
+  
   const pctEl = document.getElementById('prog-pct');
-  if(pctEl) pctEl.textContent = pct+'%';
-  g('tasks-list').innerHTML = myTasks.length ? myTasks.map(taskCard).join('') : emptyState('🎯','No tasks yet!');
-  g('chores-list').innerHTML = myChores.length ? myChores.map(taskCard).join('') : emptyState('🏠','No shared tasks yet!');
+  if (pctEl) pctEl.textContent = pct + '%';
+  
+  // Render the lists using the updated taskCard logic
+  g('tasks-list').innerHTML = myTasks.length ? myTasks.map(taskCard).join('') : emptyState('🎯', 'No tasks yet!');
+  g('chores-list').innerHTML = myChores.length ? myChores.map(taskCard).join('') : emptyState('🏠', 'No shared tasks yet!');
 }
+  
 
 function taskCard(t) {
   const pc = {high:'#ef4444',medium:'#f59e0b',low:'#10b981'};
   const tc = {personal:'#7c3aed',shared:'#06b6d4',chore:'#10b981',goal:'#f59e0b'};
   const c = pc[t.priority]||tc[t.type]||'#7c3aed';
   const rep = {daily:'🔁 Daily',weekly:'📅 Weekly',monthly:'🗓️ Monthly'}[t.repeat]||'';
-  return `<div class="task-card${t.done?' done':''}" style="--tc:${c}" onclick="completeTask('${t.id}')" oncontextmenu="event.preventDefault();deleteTask('${t.id}')">
+  
+  // ADDED: Format the deadline if it exists
+  const dueInfo = t.deadline ? `<span class="tag" style="color:var(--muted);border-color:var(--border)">📅 ${new Date(t.deadline).toLocaleDateString('en-GB',{day:'numeric',month:'short'})}</span>` : '';
+
+  return `<div class="task-card${t.done?' done':''}" 
+               style="--tc:${c}" 
+               draggable="true"
+               data-id="${t.id}"
+               onclick="completeTask('${t.id}')" 
+               oncontextmenu="event.preventDefault(); window.openTaskEdit('${t.id}')"
+               ontouchstart="window.startTaskHold(event, '${t.id}')"
+               ontouchend="window.endTaskHold()">
     <div class="task-check" style="border-color:${c};${t.done?`background:${c}`:''}">
       ${t.done?'<span style="color:#fff;font-size:13px;font-weight:900">✓</span>':''}
     </div>
     <div class="task-body">
-      <div class="task-name">${t.name}</div>
+      <div class="task-name">
+        ${t.name}
+        ${t.owner === 'both' ? '<span style="font-size:8px; background:var(--gold-bg); color:var(--gold); padding:2px 6px; border-radius:4px; margin-left:6px; vertical-align:middle; border:1px solid rgba(200,149,42,0.3); font-weight:800">PARTY</span>' : ''}
+      </div>
       <div class="task-tags">
-        <span class="tag" style="color:${tc[t.type]||'#7c3aed'};border-color:${tc[t.type]||'#7c3aed'}">${t.type==='shared'?'<img src="https://maplestory.io/api/GMS/255/item/1302086/icon" width="12" height="12" style="image-rendering:pixelated;vertical-align:middle">':t.type==='chore'?'<img src="https://maplestory.io/api/GMS/255/item/1322000/icon" width="12" height="12" style="image-rendering:pixelated;vertical-align:middle">':t.type==='goal'?'<img src="https://maplestory.io/api/GMS/255/item/1402000/icon" width="12" height="12" style="image-rendering:pixelated;vertical-align:middle">':'<img src="https://maplestory.io/api/GMS/255/item/1302000/icon" width="12" height="12" style="image-rendering:pixelated;vertical-align:middle">'} ${t.type}</span>
+        <span class="tag" style="color:${tc[t.type]||'#7c3aed'};border-color:${tc[t.type]||'#7c3aed'}">${t.type}</span>
         <span class="tag" style="color:${c};border-color:${c}">${t.priority}</span>
+        ${dueInfo}
         ${rep?`<span class="repeat-badge">${rep}</span>`:''}
       </div>
     </div>
@@ -2282,7 +2405,7 @@ function habitCard(h) {
 function renderCrew() {
   const panel = g('crew-panel'); if (!panel) return;
   if (!userProfile?.crewId || !crew) {
-    panel.innerHTML = `<div class="no-crew-wrap"><div class="no-crew-icon">🪐</div><div class="no-crew-title">No Crew Yet</div><div class="no-crew-sub">Create a crew or join one with a 6-digit code to connect with friends &amp; family.</div><button class="big-btn" onclick="openModal('crew-modal')">🚀 Create or Join a Crew</button></div>`;
+    panel.innerHTML = `<div class="no-crew-wrap"><div class="no-crew-icon">🪐</div><div class="no-crew-title">No Party Yet</div><div class="no-crew-sub">Create a crew or join one with a 6-digit code to connect with friends &amp; family.</div><button class="big-btn" onclick="openModal('crew-modal')">🚀 Create or Join a Crew</button></div>`;
     return;
   }
   const sorted = [...crewMembers].sort((a,b)=>(b.level*1000+(b.xp||0))-(a.level*1000+(a.xp||0)));
@@ -2294,7 +2417,7 @@ function renderCrew() {
       <div><div class="crew-name-text">${crew.name}</div><div class="crew-sub-text">${crewMembers.length} pilots · Code: <span style="color:var(--accent3);font-weight:900;letter-spacing:2px">${crew.code}</span></div></div>
       <button class="leave-btn" onclick="leaveCrew()">↩ Leave</button>
     </div>
-    <div class="sec-title" style="margin-bottom:10px"><img src="https://maplestory.io/api/GMS/255/item/4031138/icon" alt="" width="18" height="18" style="image-rendering:pixelated;vertical-align:middle;margin-right:4px"> CREW LEADERBOARD</div>
+    <div class="sec-title" style="margin-bottom:10px"><img src="https://maplestory.io/api/GMS/255/item/4031138/icon" alt="" width="18" height="18" style="image-rendering:pixelated;vertical-align:middle;margin-right:4px"> PARTY LEADERBOARD</div>
     <div class="lb-wrap">${sorted.map((m,i)=>`
       <div class="lb-row${m.id===currentUser?.uid?' me':''}">
         <span class="lb-rank">${medals[i]||'#'+(i+1)}</span>
@@ -2308,7 +2431,7 @@ function renderCrew() {
     </div>
     <div style="margin-top:16px"><div class="sec-title" style="margin-bottom:10px">QUICK NUDGES</div>
     <div class="nudge-scroll">${['🚀 You got this!','💪 Keep going!','⭐ Proud of you!','🔔 Reminder!','🎯 Focus time!','❤️ Love you!','🔥 On fire!','⚔️ Attack the boss!'].map(n=>`<button class="nudge-chip" onclick="sendNudge('${n}')">${n}</button>`).join('')}</div></div>
-    <div style="margin-top:16px"><div class="sec-title" style="margin-bottom:10px">CREW COMMS</div>
+    <div style="margin-top:16px"><div class="sec-title" style="margin-bottom:10px">Party comms</div>
     <div class="chat-box" id="chat-box"></div>
     <div class="msg-input-row">
       <input id="msg-input" class="msg-input" placeholder="Message the crew..." onkeydown="if(event.key==='Enter')sendCrewMsg()">
@@ -4494,7 +4617,7 @@ function _mpBuildUI() {
   const root = document.getElementById('music-app-root');
   if (!root) return;
   const t = _mpGetTrack();
-  const pct = _mpDuration > 0 ? Math.min((_mpProgress/_mpDuration)*100,100) : 0;
+  const pct = _mpDuration > 0 ? Math.min((_mpProgress / _mpDuration) * 100, 100) : 0;
   const isLiked = _mpLiked.has(t.id);
   const searchVal = root._searchVal || '';
   const list = _mpGetList().filter(tr =>
@@ -4505,40 +4628,42 @@ function _mpBuildUI() {
     '<div style="display:flex;flex-direction:column;height:calc(100vh - 155px)">' +
 
     // ── Compact Now Playing ──
-    '<div style="background:linear-gradient(135deg,'+t.colour+'18,'+t.colour+'06);border-bottom:1px solid var(--border);padding:12px 16px 10px">' +
+    '<div style="background:linear-gradient(135deg,' + t.colour + '18,' + t.colour + '06);border-bottom:1px solid var(--border);padding:12px 16px 10px">' +
       '<div style="display:flex;align-items:center;gap:12px">' +
-        '<div style="width:52px;height:52px;border-radius:12px;background:'+t.colour+'20;border:2px solid '+t.colour+'40;display:flex;align-items:center;justify-content:center;flex-shrink:0;overflow:hidden">' +
-          '<img src="https://maplestory.io/api/GMS/255/mob/'+t.mob+'/render/stand" width="44" style="image-rendering:pixelated;object-fit:contain" onerror="this.remove()">' +
+        '<div style="width:52px;height:52px;border-radius:12px;background:' + t.colour + '20;border:2px solid ' + t.colour + '40;display:flex;align-items:center;justify-content:center;flex-shrink:0;overflow:hidden">' +
+          '<img src="https://maplestory.io/api/GMS/255/mob/' + t.mob + '/render/stand" width="44" style="image-rendering:pixelated;object-fit:contain" onerror="this.remove()">' +
         '</div>' +
         '<div style="flex:1;min-width:0">' +
-          '<div style="font-weight:700;font-size:14px;color:var(--ink);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+t.title+'</div>' +
-          '<div style="font-size:11px;color:var(--muted)">'+t.artist+'</div>' +
+          '<div style="font-weight:700;font-size:14px;color:var(--ink);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">' + t.title + '</div>' +
+          '<div style="font-size:11px;color:var(--muted)">' + t.artist + '</div>' +
         '</div>' +
-        '<button onclick="window._mpToggleLike()" style="background:none;border:none;font-size:20px;color:'+(isLiked?'#D4708A':'var(--muted)')+';cursor:pointer;padding:4px;flex-shrink:0">'+(isLiked?'♥':'♡')+'</button>' +
+        '<button onclick="window._mpToggleLike()" style="background:none;border:none;font-size:20px;color:' + (isLiked ? '#D4708A' : 'var(--muted)') + ';cursor:pointer;padding:4px;flex-shrink:0">' + (isLiked ? '♥' : '♡') + '</button>' +
       '</div>' +
 
       // Seek bar
       '<div onclick="window._mpSeek(event)" style="height:4px;background:var(--parchment);border-radius:99px;cursor:pointer;position:relative;overflow:hidden;margin:10px 0 4px;border:1px solid var(--border)">' +
-        '<div style="position:absolute;left:0;top:0;height:100%;width:'+pct.toFixed(1)+'%;background:'+t.colour+';border-radius:99px;transition:width .4s linear"></div>' +
+        '<div style="position:absolute;left:0;top:0;height:100%;width:' + pct.toFixed(1) + '%;background:' + t.colour + ';border-radius:99px;transition:width .4s linear"></div>' +
       '</div>' +
-      '<div style="display:flex;justify-content:space-between;font-size:9px;color:var(--muted);margin-bottom:8px"><span>'+_mpFmt(_mpProgress)+'</span><span>'+_mpFmt(_mpDuration)+'</span></div>' +
+      '<div style="display:flex;justify-content:space-between;font-size:9px;color:var(--muted);margin-bottom:8px"><span>' + _mpFmt(_mpProgress) + '</span><span>' + _mpFmt(_mpDuration) + '</span></div>' +
 
       // Controls
       '<div style="display:flex;align-items:center;justify-content:center;gap:10px">' +
-        '<button onclick="window._mpToggleShuffle()" style="width:32px;height:32px;border-radius:8px;border:1.5px solid '+(_mpShuffle?t.colour:'var(--border)')+';background:'+(_mpShuffle?t.colour+'18':'transparent')+';color:'+(_mpShuffle?t.colour:'var(--muted)')+';font-size:14px;cursor:pointer">⇄</button>' +
+        '<button onclick="window._mpToggleShuffle()" style="width:32px;height:32px;border-radius:8px;border:1.5px solid ' + (_mpShuffle ? t.colour : 'var(--border)') + ';background:' + (_mpShuffle ? t.colour + '18' : 'transparent') + ';color:' + (_mpShuffle ? t.colour : 'var(--muted)') + ';font-size:14px;cursor:pointer">⇄</button>' +
         '<button onclick="window._mpPrev()" style="width:38px;height:38px;border-radius:10px;border:1.5px solid var(--border);background:transparent;color:var(--ink);font-size:18px;cursor:pointer">⏮</button>' +
-        '<button onclick="window._mpTogglePlay()" style="width:52px;height:52px;border-radius:14px;border:none;background:'+t.colour+';color:#fff;font-size:24px;cursor:pointer;box-shadow:0 4px 16px '+t.colour+'60">'+(_mpPlaying?'⏸':'▶')+'</button>' +
+        '<button onclick="window._mpTogglePlay()" style="width:52px;height:52px;border-radius:14px;border:none;background:' + t.colour + ';color:#fff;font-size:24px;cursor:pointer;box-shadow:0 4px 16px ' + t.colour + '60">' + (_mpPlaying ? '⏸' : '▶') + '</button>' +
         '<button onclick="window._mpNext()" style="width:38px;height:38px;border-radius:10px;border:1.5px solid var(--border);background:transparent;color:var(--ink);font-size:18px;cursor:pointer">⏭</button>' +
-        '<button onclick="window._mpCycleRepeat()" style="width:32px;height:32px;border-radius:8px;border:1.5px solid '+(_mpRepeat!=='none'?t.colour:'var(--border)')+';background:'+(_mpRepeat!=='none'?t.colour+'18':'transparent')+';color:'+(_mpRepeat!=='none'?t.colour:'var(--muted)')+';font-size:14px;cursor:pointer">'+(_mpRepeat==='one'?'🔂':'🔁')+'</button>' +
+        '<button onclick="window._mpCycleRepeat()" style="width:32px;height:32px;border-radius:8px;border:1.5px solid ' + (_mpRepeat !== 'none' ? t.colour : 'var(--border)') + ';background:' + (_mpRepeat !== 'none' ? t.colour + '18' : 'transparent') + ';color:' + (_mpRepeat !== 'none' ? t.colour : 'var(--muted)') + ';font-size:14px;cursor:pointer">' + (_mpRepeat === 'one' ? '🔂' : '🔁') + '</button>' +
+        // Add to Album Button
+        '<button onclick="window.mpOpenAddToAlbum(_mpTab===\'albums\'?\'In-Built Songs\':_mpTab)" style="width:32px;height:32px;border-radius:8px;border:1.5px solid var(--border);background:transparent;color:var(--muted);font-size:14px;cursor:pointer">+</button>' +
       '</div>' +
-    '</div>' +
+    '</div>' + 
 
     // ── Tabs + Search ──
     '<div style="display:flex;align-items:center;gap:8px;padding:8px 12px 6px;border-bottom:1px solid var(--border)">' +
-      _mpTabBtn('all','All') +
-      _mpTabBtn('liked','♥') +
-      _mpTabBtn('albums','💿') +
-      '<input id="mp-search" type="search" placeholder="Search…" value="'+searchVal+'" ' +
+      _mpTabBtn('all', 'All') +
+      _mpTabBtn('liked', '♥') +
+      _mpTabBtn('albums', '💿') +
+      '<input id="mp-search" type="search" placeholder="Search…" value="' + searchVal + '" ' +
         'oninput="document.getElementById(\'music-app-root\')._searchVal=this.value;window._mpBuildUIDebounce()" ' +
         'style="flex:1;border:1.5px solid var(--border);border-radius:8px;padding:6px 10px;font-size:12px;background:var(--parchment);color:var(--ink);outline:none;min-width:0">' +
     '</div>' +
@@ -4546,21 +4671,21 @@ function _mpBuildUI() {
     // ── Song list ──
     '<div style="flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:6px 10px 12px">' +
       (_mpTab === 'albums' ? _mpAlbumsView() :
-        list.length === 0 ? '<div style="text-align:center;padding:32px;color:var(--muted);font-size:13px">'+(searchVal?'No results for "'+searchVal+'"':'No songs here yet')+'</div>' :
+        list.length === 0 ? '<div style="text-align:center;padding:32px;color:var(--muted);font-size:13px">' + (searchVal ? 'No results for "' + searchVal + '"' : 'No songs here yet') + '</div>' :
         list.map((tr) => {
           const isCur = tr.id === t.id;
           const liked = _mpLiked.has(tr.id);
           const realIdx = MUSIC_TRACKS.indexOf(tr);
-          return '<div data-play="'+realIdx+'" style="display:flex;align-items:center;gap:10px;padding:8px 6px;border-radius:10px;cursor:pointer;background:'+(isCur?tr.colour+'14':'transparent')+';margin-bottom:2px">' +
-            '<div style="width:36px;height:36px;border-radius:8px;background:'+tr.colour+'18;display:flex;align-items:center;justify-content:center;flex-shrink:0">' +
-              '<img src="https://maplestory.io/api/GMS/255/mob/'+tr.mob+'/render/stand" width="30" style="image-rendering:pixelated;object-fit:contain" onerror="this.remove()">' +
+          return '<div data-play="' + realIdx + '" style="display:flex;align-items:center;gap:10px;padding:8px 6px;border-radius:10px;cursor:pointer;background:' + (isCur ? tr.colour + '14' : 'transparent') + ';margin-bottom:2px">' +
+            '<div style="width:36px;height:36px;border-radius:8px;background:' + tr.colour + '18;display:flex;align-items:center;justify-content:center;flex-shrink:0">' +
+              '<img src="https://maplestory.io/api/GMS/255/mob/' + tr.mob + '/render/stand" width="30" style="image-rendering:pixelated;object-fit:contain" onerror="this.remove()">' +
             '</div>' +
             '<div style="flex:1;min-width:0">' +
-              '<div style="font-size:13px;font-weight:'+(isCur?'700':'400')+';color:'+(isCur?tr.colour:'var(--ink)')+';overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+tr.title+'</div>' +
-              '<div style="font-size:10px;color:var(--muted)">'+tr.artist+'</div>' +
+              '<div style="font-size:13px;font-weight:' + (isCur ? '700' : '400') + ';color:' + (isCur ? tr.colour : 'var(--ink)') + ';overflow:hidden;text-overflow:ellipsis;white-space:nowrap">' + tr.title + '</div>' +
+              '<div style="font-size:10px;color:var(--muted)">' + tr.artist + '</div>' +
             '</div>' +
-            (isCur && _mpPlaying ? '<span style="font-size:10px;color:'+tr.colour+'">▶</span>' : '') +
-            '<button data-liketrack="'+tr.id+'" style="background:none;border:none;font-size:14px;color:'+(liked?'#D4708A':'var(--border)')+';cursor:pointer;padding:2px 4px">'+(liked?'♥':'♡')+'</button>' +
+            (isCur && _mpPlaying ? '<span style="font-size:10px;color:' + tr.colour + '">▶</span>' : '') +
+            '<button data-liketrack="' + tr.id + '" style="background:none;border:none;font-size:14px;color:' + (liked ? '#D4708A' : 'var(--border)') + ';cursor:pointer;padding:2px 4px">' + (liked ? '♥' : '♡') + '</button>' +
           '</div>';
         }).join('')
       ) +
@@ -4578,14 +4703,12 @@ function _mpBuildUI() {
     if (el.dataset.openalbum) { window._mpOpenAlbum(el.dataset.openalbum); return; }
   };
 
-  // Restore search focus if searching
   if (searchVal) {
     const inp = document.getElementById('mp-search');
     if (inp) { inp.focus(); inp.setSelectionRange(inp.value.length, inp.value.length); }
   }
 }
 
-// Debounced rebuild for search
 let _mpSearchTimer = null;
 window._mpBuildUIDebounce = function() {
   clearTimeout(_mpSearchTimer);
@@ -4596,7 +4719,7 @@ window._mpCycleRepeat = function() {
   _mpRepeat = _mpRepeat === 'none' ? 'all' : _mpRepeat === 'all' ? 'one' : 'none';
   _mpBuildUI();
 };
-
+  
 function _mpTabBtn(id, label) {
   const active = _mpTab === id;
   const border = active ? 'var(--gold)' : 'transparent';
@@ -4737,7 +4860,68 @@ window._mpOpenAlbum = function(encodedName) {
 window.MUSIC_TRACKS = MUSIC_TRACKS;
 window.SONG_FILES = SONG_FILES;
 
+// ─── TASK INTERACTION LOGIC (PASTE HERE) ──────────────────
+let holdTimer = null;
+let dragId = null;
 
+window.startTaskHold = (e, id) => {
+  if (holdTimer) clearTimeout(holdTimer);
+  holdTimer = setTimeout(() => {
+    window.openTaskEdit(id);
+  }, 500);
+};
+
+window.endTaskHold = () => {
+  if (holdTimer) {
+    clearTimeout(holdTimer);
+    holdTimer = null;
+  }
+};
+
+window.openTaskEdit = async (id) => {
+  const t = tasks.find(x => x.id === id);
+  if (!t) return;
+  const newName = prompt("Edit Task Name:", t.name);
+  if (newName && newName.trim() !== t.name) {
+    await updateDoc(doc(db, 'tasks', id), { name: newName.trim() });
+    toast("✅ Task updated!");
+  }
+};
+
+async function reorderTasks(draggedId, overId) {
+  const draggedTask = tasks.find(t => t.id === draggedId);
+  const overTask = tasks.find(t => t.id === overId);
+  if (!draggedTask || !overTask) return;
+  const tempOrder = draggedTask.sortOrder || Date.now();
+  await updateDoc(doc(db, 'tasks', draggedId), { sortOrder: overTask.sortOrder || Date.now() });
+  await updateDoc(doc(db, 'tasks', overId), { sortOrder: tempOrder });
+  toast("Order updated!");
+}
+
+document.addEventListener('dragstart', e => {
+  const card = e.target.closest('.task-card');
+  if (!card) return;
+  dragId = card.dataset.id;
+  e.dataTransfer.effectAllowed = 'move';
+  card.style.opacity = '0.5';
+});
+
+document.addEventListener('dragend', e => {
+  const card = e.target.closest('.task-card');
+  if (card) card.style.opacity = '1';
+});
+
+document.addEventListener('dragover', e => {
+  e.preventDefault();
+});
+
+document.addEventListener('drop', async e => {
+  const targetCard = e.target.closest('.task-card');
+  if (!targetCard || !dragId) return;
+  const targetId = targetCard.dataset.id;
+  if (dragId === targetId) return;
+  await reorderTasks(dragId, targetId);
+});
 </script>
 <script>
 // Inline service worker
@@ -5006,6 +5190,11 @@ function unlockSkill(){if(window.unlockSkill)window.unlockSkill.apply(window,arg
 function resetSkills(){if(window.resetSkills)window.resetSkills.apply(window,arguments);}
 function updSet(){if(window.updSet)window.updSet.apply(window,arguments);}
 function updateExSearch(){if(window.updateExSearch)window.updateExSearch.apply(window,arguments);}
+function startTaskHold(){if(window.startTaskHold)window.startTaskHold.apply(window,arguments);}
+function endTaskHold(){if(window.endTaskHold)window.endTaskHold.apply(window,arguments);}
+function openTaskEdit(){if(window.openTaskEdit)window.openTaskEdit.apply(window,arguments);}
+function mpOpenAddToAlbum(){if(window.mpOpenAddToAlbum)window.mpOpenAddToAlbum.apply(window,arguments);}
+function mpAddSongToAlbum(){if(window.mpAddSongToAlbum)window.mpAddSongToAlbum.apply(window,arguments);}
 </script>
 </head>
 <body>
@@ -5238,13 +5427,17 @@ function updateExSearch(){if(window.updateExSearch)window.updateExSearch.apply(w
 
 <!-- Add Task Modal -->
 
-</body>
 <div class="modal-overlay" id="task-modal" onclick="if(event.target===this)closeModal('task-modal')">
   <div class="modal">
     <div class="modal-handle"></div>
     <div class="modal-title">NEW TASK</div>
+    
     <label class="field-label">TASK NAME</label>
     <input id="new-task-name" class="form-input" placeholder="e.g. Take medication, Call dentist...">
+    
+    <label class="field-label">DEADLINE</label>
+    <input id="task-deadline" type="date" class="form-input" style="margin-bottom:12px;" />
+
     <label class="field-label">TYPE</label>
     <div class="pill-row">
       <button class="pill active" data-group="task-type" onclick="setTaskPill('personal','task-type',this)">👤 Personal</button>
@@ -5252,12 +5445,19 @@ function updateExSearch(){if(window.updateExSearch)window.updateExSearch.apply(w
       <button class="pill" data-group="task-type" onclick="setTaskPill('chore','task-type',this)">🏠 Shared</button>
       <button class="pill" data-group="task-type" onclick="setTaskPill('goal','task-type',this)">⭐ Goal</button>
     </div>
+
+    <label class="field-label" style="display: flex; align-items: center; gap: 8px; cursor: pointer; margin-bottom: 16px;">
+      <input id="task-shared" type="checkbox" style="width: 16px; height: 16px;" />
+      <span>Share with my party</span>
+    </label>
+
     <label class="field-label">PRIORITY & XP</label>
     <div class="pill-row">
       <button class="pill" data-group="task-priority" onclick="setTaskPill('low','task-priority',this)">🟢 Low · 20XP</button>
       <button class="pill active" data-group="task-priority" onclick="setTaskPill('medium','task-priority',this)">🟡 Medium · 30XP</button>
       <button class="pill" data-group="task-priority" onclick="setTaskPill('high','task-priority',this)">🔴 High · 50XP</button>
     </div>
+    
     <label class="field-label">REPEAT</label>
     <div class="pill-row">
       <button class="pill active" data-group="task-repeat" onclick="setTaskPill('none','task-repeat',this)">⭕ Once</button>
@@ -5265,7 +5465,17 @@ function updateExSearch(){if(window.updateExSearch)window.updateExSearch.apply(w
       <button class="pill" data-group="task-repeat" onclick="setTaskPill('weekly','task-repeat',this)">📅 Weekly</button>
       <button class="pill" data-group="task-repeat" onclick="setTaskPill('monthly','task-repeat',this)">🗓️ Monthly</button>
     </div>
+    
     <button class="big-btn" onclick="addTask()">⚡ ADD TASK</button>
+  </div>
+</div>
+  <div class="modal-overlay" id="music-add-modal" onclick="if(event.target===this)closeModal('music-add-modal')">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title">ADD TO ALBUM</div>
+    <div id="music-add-list" style="display:flex; flex-direction:column; gap:8px; max-height:50vh; overflow-y:auto; padding-right:4px;">
+      </div>
+    <button class="big-btn" style="margin-top:16px; background:var(--surf2); color:var(--text);" onclick="closeModal('music-add-modal')">Close</button>
   </div>
 </div>
 
@@ -5294,7 +5504,7 @@ function updateExSearch(){if(window.updateExSearch)window.updateExSearch.apply(w
     <div class="modal-title">🪐 JOIN THE ORBIT</div>
     <div class="modal-tabs">
       <button class="modal-tab active" id="ctab-create" onclick="switchCrewTab('create')">👑 Create Crew</button>
-      <button class="modal-tab" id="ctab-join" onclick="switchCrewTab('join')">🔗 Join Crew</button>
+      <button class="modal-tab" id="ctab-join" onclick="switchCrewTab('join')">🔗 Join Party</button>
     </div>
     <div id="crew-create-section">
       <div id="crew-create-form">
@@ -5306,7 +5516,7 @@ function updateExSearch(){if(window.updateExSearch)window.updateExSearch.apply(w
         <div class="code-display">
           <div style="font-size:11px;font-weight:800;color:var(--muted);letter-spacing:1px;margin-bottom:8px">✅ CREW CREATED! SHARE THIS CODE:</div>
           <div class="code-val" id="crew-code-val">------</div>
-          <div class="code-sub">Send this 6-digit code to anyone you want in your crew. They tap "Join Crew" and enter it.</div>
+          <div class="code-sub">Send this 6-digit code to anyone you want in your crew. They tap "Join Party" and enter it.</div>
           <button class="big-btn" style="background:linear-gradient(135deg,#10b981,#059669)" onclick="closeModal('crew-modal');document.getElementById('crew-created-box').style.display='none';document.getElementById('crew-create-form').style.display='block'">✅ Got it!</button>
         </div>
       </div>
@@ -5315,7 +5525,7 @@ function updateExSearch(){if(window.updateExSearch)window.updateExSearch.apply(w
       <label class="field-label">ENTER CREW CODE</label>
       <input id="join-input" class="join-input" placeholder="AB12CD" maxlength="6">
       <p style="color:var(--muted);font-size:12px;font-weight:600;margin-bottom:14px;text-align:center">Ask your crew leader for their 6-digit code</p>
-      <button class="big-btn" style="background:linear-gradient(135deg,var(--pink),var(--accent3))" onclick="joinCrew()">🔗 Join Crew</button>
+      <button class="big-btn" style="background:linear-gradient(135deg,var(--pink),var(--accent3))" onclick="joinCrew()">🔗 Join Party</button>
     </div>
   </div>
 </div>
@@ -5337,8 +5547,7 @@ function updateExSearch(){if(window.updateExSearch)window.updateExSearch.apply(w
 </div>
 
 <div id="toast"></div>
-
-</script>
+  
 <!-- Settings Modal -->
 <div class="modal-overlay" id="settings-modal" onclick="if(event.target===this)closeModal('settings-modal')">
   <div class="modal" style="max-height:85vh;overflow-y:auto">
@@ -5346,4 +5555,140 @@ function updateExSearch(){if(window.updateExSearch)window.updateExSearch.apply(w
     <div id="settings-panel"></div>
   </div>
 </div>
+
+<script>
+// Bridge: global wrappers so onclick attrs can call ES module functions
+function confirmClearData(){if(window.confirmClearData)window.confirmClearData.apply(window,arguments);}
+function copyInstallLink(){if(window.copyInstallLink)window.copyInstallLink.apply(window,arguments);}
+function _doDeleteEntry(){if(window._doDeleteEntry)window._doDeleteEntry.apply(window,arguments);}
+function _doDeleteTask(){if(window._doDeleteTask)window._doDeleteTask.apply(window,arguments);}
+function _mpDeleteAlbum(){if(window._mpDeleteAlbum)window._mpDeleteAlbum.apply(window,arguments);}
+function _mpLikeTrack(){if(window._mpLikeTrack)window._mpLikeTrack.apply(window,arguments);}
+function _mpNewAlbum(){if(window._mpNewAlbum)window._mpNewAlbum.apply(window,arguments);}
+function _mpNext(){if(window._mpNext)window._mpNext.apply(window,arguments);}
+function _mpOpenAlbum(){if(window._mpOpenAlbum)window._mpOpenAlbum.apply(window,arguments);}
+function _mpPlay(){if(window._mpPlay)window._mpPlay.apply(window,arguments);}
+function _mpPrev(){if(window._mpPrev)window._mpPrev.apply(window,arguments);}
+function _mpSeek(){if(window._mpSeek)window._mpSeek.apply(window,arguments);}
+function _mpSetTab(){if(window._mpSetTab)window._mpSetTab.apply(window,arguments);}
+function _mpSetVol(){if(window._mpSetVol)window._mpSetVol.apply(window,arguments);}
+function _mpToggleLike(){if(window._mpToggleLike)window._mpToggleLike.apply(window,arguments);}
+function _mpTogglePlay(){if(window._mpTogglePlay)window._mpTogglePlay.apply(window,arguments);}
+function _mpToggleShuffle(){if(window._mpToggleShuffle)window._mpToggleShuffle.apply(window,arguments);}
+function addExToSession(){if(window.addExToSession)window.addExToSession.apply(window,arguments);}
+function addGuideToDiary(){if(window.addGuideToDiary)window.addGuideToDiary.apply(window,arguments);}
+function addHabit(){if(window.addHabit)window.addHabit.apply(window,arguments);}
+function addSet(){if(window.addSet)window.addSet.apply(window,arguments);}
+function addTask(){if(window.addTask)window.addTask.apply(window,arguments);}
+function adjGuideReps(){if(window.adjGuideReps)window.adjGuideReps.apply(window,arguments);}
+function adjSet(){if(window.adjSet)window.adjSet.apply(window,arguments);}
+function applyIconDensity(){if(window.applyIconDensity)window.applyIconDensity.apply(window,arguments);}
+function calcExPoints(){if(window.calcExPoints)window.calcExPoints.apply(window,arguments);}
+function cancelSession(){if(window.cancelSession)window.cancelSession.apply(window,arguments);}
+function changeIconCount(){if(window.changeIconCount)window.changeIconCount.apply(window,arguments);}
+function clearExSelection(){if(window.clearExSelection)window.clearExSelection.apply(window,arguments);}
+function closeModal(){if(window.closeModal)window.closeModal.apply(window,arguments);}
+function closeTamaPostWorkout(){if(window.closeTamaPostWorkout)window.closeTamaPostWorkout.apply(window,arguments);}
+function completeHabit(){if(window.completeHabit)window.completeHabit.apply(window,arguments);}
+function completeProfile(){if(window.completeProfile)window.completeProfile.apply(window,arguments);}
+function completeTask(){if(window.completeTask)window.completeTask.apply(window,arguments);}
+function confirmDeleteAccount(){if(window.confirmDeleteAccount)window.confirmDeleteAccount.apply(window,arguments);}
+function createCrew(){if(window.createCrew)window.createCrew.apply(window,arguments);}
+function delSet(){if(window.delSet)window.delSet.apply(window,arguments);}
+function deleteBodyEntry(){if(window.deleteBodyEntry)window.deleteBodyEntry.apply(window,arguments);}
+function deleteTask(){if(window.deleteTask)window.deleteTask.apply(window,arguments);}
+function deleteWorkoutEntry(){if(window.deleteWorkoutEntry)window.deleteWorkoutEntry.apply(window,arguments);}
+function doCancelSession(){if(window.doCancelSession)window.doCancelSession.apply(window,arguments);}
+function doEmailLogin(){if(window.doEmailLogin)window.doEmailLogin.apply(window,arguments);}
+function doGoogleLogin(){if(window.doGoogleLogin)window.doGoogleLogin.apply(window,arguments);}
+function doGuestLogin(){if(window.doGuestLogin)window.doGuestLogin.apply(window,arguments);}
+function doGuestReturn(){if(window.doGuestReturn)window.doGuestReturn.apply(window,arguments);}
+function doLogout(){if(window.doLogout)window.doLogout.apply(window,arguments);}
+function doneSet(){if(window.doneSet)window.doneSet.apply(window,arguments);}
+function editAddSet(){if(window.editAddSet)window.editAddSet.apply(window,arguments);}
+function editAdjSet(){if(window.editAdjSet)window.editAdjSet.apply(window,arguments);}
+function editDelSet(){if(window.editDelSet)window.editDelSet.apply(window,arguments);}
+function editUpdSet(){if(window.editUpdSet)window.editUpdSet.apply(window,arguments);}
+function editWorkoutEntry(){if(window.editWorkoutEntry)window.editWorkoutEntry.apply(window,arguments);}
+function executeDeleteAccount(){if(window.executeDeleteAccount)window.executeDeleteAccount.apply(window,arguments);}
+function exportCSV(){if(window.exportCSV)window.exportCSV.apply(window,arguments);}
+function finishSession(){if(window.finishSession)window.finishSession.apply(window,arguments);}
+function getTamaState(){if(window.getTamaState)window.getTamaState.apply(window,arguments);}
+function getTotalStats(){if(window.getTotalStats)window.getTotalStats.apply(window,arguments);}
+function joinCrew(){if(window.joinCrew)window.joinCrew.apply(window,arguments);}
+function leaveCrew(){if(window.leaveCrew)window.leaveCrew.apply(window,arguments);}
+function logBodyEntry(){if(window.logBodyEntry)window.logBodyEntry.apply(window,arguments);}
+function logCardioEntry(){if(window.logCardioEntry)window.logCardioEntry.apply(window,arguments);}
+function logRunEntry(){if(window.logRunEntry)window.logRunEntry.apply(window,arguments);}
+function logSwimEntry(){if(window.logSwimEntry)window.logSwimEntry.apply(window,arguments);}
+function logWorkoutEntry(){if(window.logWorkoutEntry)window.logWorkoutEntry.apply(window,arguments);}
+function openModal(){if(window.openModal)window.openModal.apply(window,arguments);}
+function optInFitness(){if(window.optInFitness)window.optInFitness.apply(window,arguments);}
+function playLoginMusic(){if(window.playLoginMusic)window.playLoginMusic.apply(window,arguments);}
+function previewSong(){if(window.previewSong)window.previewSong.apply(window,arguments);}
+function promptInstall(){if(window.promptInstall)window.promptInstall.apply(window,arguments);}
+function removeSessionEx(){if(window.removeSessionEx)window.removeSessionEx.apply(window,arguments);}
+function renderBodyComp(){if(window.renderBodyComp)window.renderBodyComp.apply(window,arguments);}
+function renderCoach(){if(window.renderCoach)window.renderCoach.apply(window,arguments);}
+function renderDiary(){if(window.renderDiary)window.renderDiary.apply(window,arguments);}
+function renderGuides(){if(window.renderGuides)window.renderGuides.apply(window,arguments);}
+function renderLibrary(){if(window.renderLibrary)window.renderLibrary.apply(window,arguments);}
+function renderMusicPlayer(){if(window.renderMusicPlayer)window.renderMusicPlayer.apply(window,arguments);}
+function renderSettings(){if(window.renderSettings)window.renderSettings.apply(window,arguments);}
+function renderTamaFit(){if(window.renderTamaFit)window.renderTamaFit.apply(window,arguments);}
+function resetTimer(){if(window.resetTimer)window.resetTimer.apply(window,arguments);}
+function saveAllSettings(){if(window.saveAllSettings)window.saveAllSettings.apply(window,arguments);}
+function saveEditedEntry(){if(window.saveEditedEntry)window.saveEditedEntry.apply(window,arguments);}
+function saveNickname(){if(window.saveNickname)window.saveNickname.apply(window,arguments);}
+function savePetName(){if(window.savePetName)window.savePetName.apply(window,arguments);}
+function selectAvatar(){if(window.selectAvatar)window.selectAvatar.apply(window,arguments);}
+function selectColor(){if(window.selectColor)window.selectColor.apply(window,arguments);}
+function selectExercise(){if(window.selectExercise)window.selectExercise.apply(window,arguments);}
+function sendBoost(){if(window.sendBoost)window.sendBoost.apply(window,arguments);}
+function sendCrewMsg(){if(window.sendCrewMsg)window.sendCrewMsg.apply(window,arguments);}
+function sendNudge(){if(window.sendNudge)window.sendNudge.apply(window,arguments);}
+function setBodyMode(){if(window.setBodyMode)window.setBodyMode.apply(window,arguments);}
+function setFeel(){if(window.setFeel)window.setFeel.apply(window,arguments);}
+function setFitnessGoal(){if(window.setFitnessGoal)window.setFitnessGoal.apply(window,arguments);}
+function setHabitPill(){if(window.setHabitPill)window.setHabitPill.apply(window,arguments);}
+function setLogType(){if(window.setLogType)window.setLogType.apply(window,arguments);}
+function setModeHeader(){if(window.setModeHeader)window.setModeHeader.apply(window,arguments);}
+function setMusicVolume(){if(window.setMusicVolume)window.setMusicVolume.apply(window,arguments);}
+function setPill(){if(window.setPill)window.setPill.apply(window,arguments);}
+function setSongPref(){if(window.setSongPref)window.setSongPref.apply(window,arguments);}
+function setTaskPill(){if(window.setTaskPill)window.setTaskPill.apply(window,arguments);}
+function settingsPlayMusic(){if(window.settingsPlayMusic)window.settingsPlayMusic.apply(window,arguments);}
+function settingsSelectAvatar(){if(window.settingsSelectAvatar)window.settingsSelectAvatar.apply(window,arguments);}
+function settingsSelectColor(){if(window.settingsSelectColor)window.settingsSelectColor.apply(window,arguments);}
+function showExDetail(){if(window.showExDetail)window.showExDetail.apply(window,arguments);}
+function showGuide(){if(window.showGuide)window.showGuide.apply(window,arguments);}
+function showInstallInstructions(){if(window.showInstallInstructions)window.showInstallInstructions.apply(window,arguments);}
+function showTamaPostWorkout(){if(window.showTamaPostWorkout)window.showTamaPostWorkout.apply(window,arguments);}
+function skipRest(){if(window.skipRest)window.skipRest.apply(window,arguments);}
+function startRestTimer(){if(window.startRestTimer)window.startRestTimer.apply(window,arguments);}
+function startWorkoutSession(){if(window.startWorkoutSession)window.startWorkoutSession.apply(window,arguments);}
+function stopAllMusic(){if(window.stopAllMusic)window.stopAllMusic.apply(window,arguments);}
+function toggleBGM(){if(window.toggleBGM)window.toggleBGM.apply(window,arguments);}
+function stopLoginMusic(){if(window.stopLoginMusic)window.stopLoginMusic.apply(window,arguments);}
+function switchAuthTab(){if(window.switchAuthTab)window.switchAuthTab.apply(window,arguments);}
+function switchFitTab(){if(window.switchFitTab)window.switchFitTab.apply(window,arguments);}
+function switchSetMode(){if(window.switchSetMode)window.switchSetMode.apply(window,arguments);}
+function switchTab(){if(window.switchTab)window.switchTab.apply(window,arguments);}
+function toggleAuthMode(){if(window.toggleAuthMode)window.toggleAuthMode.apply(window,arguments);}
+function toggleBgmDefault(){if(window.toggleBgmDefault)window.toggleBgmDefault.apply(window,arguments);}
+function toggleColorBlind(){if(window.toggleColorBlind)window.toggleColorBlind.apply(window,arguments);}
+function toggleLoginMute(){if(window.toggleLoginMute)window.toggleLoginMute.apply(window,arguments);}
+function toggleSetMode(){if(window.toggleSetMode)window.toggleSetMode.apply(window,arguments);}
+function toggleTimer(){if(window.toggleTimer)window.toggleTimer.apply(window,arguments);}
+function unlockSkill(){if(window.unlockSkill)window.unlockSkill.apply(window,arguments);}
+function resetSkills(){if(window.resetSkills)window.resetSkills.apply(window,arguments);}
+function updSet(){if(window.updSet)window.updSet.apply(window,arguments);}
+function updateExSearch(){if(window.updateExSearch)window.updateExSearch.apply(window,arguments);}
+function startTaskHold(){if(window.startTaskHold)window.startTaskHold.apply(window,arguments);}
+function endTaskHold(){if(window.endTaskHold)window.endTaskHold.apply(window,arguments);}
+function openTaskEdit(){if(window.openTaskEdit)window.openTaskEdit.apply(window,arguments);}
+function mpOpenAddToAlbum(){if(window.mpOpenAddToAlbum)window.mpOpenAddToAlbum.apply(window,arguments);}
+function mpAddSongToAlbum(){if(window.mpAddSongToAlbum)window.mpAddSongToAlbum.apply(window,arguments);}
+</script>
+</body>
 </html>
