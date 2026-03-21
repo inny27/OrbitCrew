@@ -6,7 +6,6 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="theme-color" content="#0a0a1a">
-<meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="InTask">
 <link rel="manifest" href="data:application/manifest+json;base64,eyJuYW1lIjoiSW5UYXNrIiwic2hvcnRfbmFtZSI6IkluVGFzayIsImRlc2NyaXB0aW9uIjoiTGV2ZWwgdXAgbGlmZS4gVG9nZXRoZXIuIiwic3RhcnRfdXJsIjoiLi8iLCJzY29wZSI6Ii4vIiwiZGlzcGxheSI6InN0YW5kYWxvbmUiLCJvcmllbnRhdGlvbiI6InBvcnRyYWl0IiwiYmFja2dyb3VuZF9jb2xvciI6IiMwYTBhMWEiLCJ0aGVtZV9jb2xvciI6IiNmZmQ3MDAiLCJpY29ucyI6W3sic3JjIjoiaHR0cHM6Ly9tYXBsZXN0b3J5LmlvL2FwaS9HTVMvMjU1L21vYi8xMDAxMDAvcmVuZGVyL3N0YW5kIiwic2l6ZXMiOiIxOTJ4MTkyIiwidHlwZSI6ImltYWdlL3BuZyJ9LHsic3JjIjoiaHR0cHM6Ly9tYXBsZXN0b3J5LmlvL2FwaS9HTVMvMjU1L21vYi8xMDAxMDAvcmVuZGVyL3N0YW5kIiwic2l6ZXMiOiI1MTJ4NTEyIiwidHlwZSI6ImltYWdlL3BuZyJ9XSwiY2F0ZWdvcmllcyI6WyJwcm9kdWN0aXZpdHkiLCJsaWZlc3R5bGUiXX0=">
@@ -141,7 +140,7 @@ body::after{display:none;}
 /* ============================================================
    BOTTOM NAV
 ============================================================ */
-.bottom-nav{position:fixed;bottom:0;left:0;right:0;width:100%;background:rgba(253,248,240,0.95);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-top:1px solid var(--border);display:flex;justify-content:space-around;align-items:center;padding:8px 0;padding-bottom:max(8px,env(safe-area-inset-bottom));z-index:200;min-height:var(--nav-h);}
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;width:100%;background:rgba(253,248,240,0.95);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-top:1px solid var(--border);display:flex;justify-content:space-around;align-items:center;padding:8px 0;padding-bottom:max(8px,env(safe-area-inset-bottom));z-index:2000;min-height:var(--nav-h);}
 .bnav-btn{display:flex;flex-direction:column;align-items:center;gap:2px;cursor:pointer;color:var(--muted);padding:4px 10px;border:none;background:transparent;transition:.15s;position:relative;}
 .bnav-btn.active{color:var(--accent);}
 .bnav-btn.active::before{content:'▲';position:absolute;top:-14px;left:50%;transform:translateX(-50%);font-size:8px;color:var(--accent);}
@@ -220,13 +219,13 @@ body::after{display:none;}
 /* ============================================================
    CREW TAB
 ============================================================ */
-.no-crew-wrap{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;min-height:60vh;padding:20px;}
-.no-crew-icon{font-size:72px;margin-bottom:16px;animation:float 3s ease-in-out infinite;}
-.no-crew-title{font-size:22px;font-weight:900;margin-bottom:8px;}
-.no-crew-sub{color:var(--muted);font-size:14px;font-weight:600;line-height:1.7;margin-bottom:28px;}
-.crew-header-row{display:flex;align-items:center;justify-content:space-between;padding:12px 0 16px;}
-.crew-name-text{font-size:20px;font-weight:900;}
-.crew-sub-text{font-size:12px;color:var(--muted);font-weight:600;margin-top:2px;}
+.no-party-wrap{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;min-height:60vh;padding:20px;}
+.no-party-icon{font-size:72px;margin-bottom:16px;animation:float 3s ease-in-out infinite;}
+.no-party-title{font-size:22px;font-weight:900;margin-bottom:8px;}
+.no-party-sub{color:var(--muted);font-size:14px;font-weight:600;line-height:1.7;margin-bottom:28px;}
+.party-header-row{display:flex;align-items:center;justify-content:space-between;padding:12px 0 16px;}
+.party-name-text{font-size:20px;font-weight:900;}
+.party-sub-text{font-size:12px;color:var(--muted);font-weight:600;margin-top:2px;}
 .leave-btn{background:var(--surf);border:1px solid var(--border);border-radius:99px;padding:7px 14px;color:var(--muted);font-size:12px;font-weight:700;cursor:pointer;font-family:'Nunito',sans-serif;}
 .season-banner{border:1px solid;border-radius:12px;padding:8px 12px;margin-bottom:12px;text-align:center;}
 .lb-wrap{background:var(--surf);border:1px solid var(--border);border-radius:20px;overflow:hidden;}
@@ -554,8 +553,6 @@ body::after{display:none;}
 .code-val{font-family:'Inter',sans-serif;font-variant-numeric:tabular-nums;font-size:42px;font-weight:900;color:var(--accent3);letter-spacing:8px;margin:12px 0;text-shadow:0 0 30px rgba(245,158,11,.4);}
 .code-sub{font-size:12px;color:var(--muted);font-weight:600;line-height:1.7;margin-bottom:20px;}
 .join-input{width:100%;background:var(--surf2);border:1px solid var(--border);border-radius:12px;padding:16px;color:var(--text);font-family:'Inter',sans-serif;font-variant-numeric:tabular-nums;font-size:24px;font-weight:700;text-align:center;letter-spacing:10px;outline:none;text-transform:uppercase;margin-bottom:8px;}
-
-/* exercise animations removed */50%{transform:rotate(88deg) translateX(0);}}
 /* Run animation */
 @keyframes run-leg1{0%,100%{transform:rotate(30deg);}50%{transform:rotate(-30deg);}}
 @keyframes run-leg2{0%,100%{transform:rotate(-30deg);}50%{transform:rotate(30deg);}}
@@ -662,6 +659,16 @@ body.colorblind{filter:url(#colorblind-filter);}
 @keyframes mob-peek{0%,100%{transform:translateY(4px) scaleX(1)}50%{transform:translateY(-4px) scaleX(1)}}
 @keyframes mob-hop{0%,100%{transform:translateY(0) scaleY(1)}40%{transform:translateY(-12px) scaleY(1.1)}60%{transform:translateY(-10px) scaleY(1.05)}}
 @keyframes mob-sway{0%,100%{transform:rotate(0deg) translateY(0)}25%{transform:rotate(-3deg) translateY(-2px)}75%{transform:rotate(3deg) translateY(-2px)}}
+
+/* ── Drag & Drop ── */
+.task-card[draggable="true"]{cursor:grab;}
+.task-card.dragging{opacity:.45;border:2px dashed var(--accent);background:var(--gold-bg);}
+.task-drag-handle{color:var(--muted);font-size:16px;cursor:grab;padding:0 4px 0 0;flex-shrink:0;user-select:none;touch-action:none;}
+.task-drag-handle:active{cursor:grabbing;}
+/* ── Edit task modal ── */
+#edit-task-modal-overlay{z-index:5500;}
+/* ── Party tag ── */
+.party-tag{font-size:10px;font-weight:700;border:1px solid var(--accent2);border-radius:99px;padding:2px 8px;color:var(--accent2);}
 </style>
 
 <!-- Firebase -->
@@ -715,8 +722,8 @@ const BADGES = [
   {id:'champion',icon:'🏆',name:'Champion',desc:'Level 15',check:s=>(s.level||1)>=15},
   {id:'night_owl',icon:'🌙',name:'Night Owl',desc:'5 evening tasks',check:s=>(s.eveningDone||0)>=5},
   {id:'early_bird',icon:'🌅',name:'Early Bird',desc:'5 morning tasks',check:s=>(s.morningDone||0)>=5},
-  {id:'social',icon:'🌐',name:'Social',desc:'Join a crew',check:s=>(s.crewCount||0)>=1},
-  {id:'founder',icon:'👑',name:'Founder',desc:'Create a crew',check:s=>(s.crewsCreated||0)>=1},
+  {id:'social',icon:'🌐',name:'Social',desc:'Join a party',check:s=>(s.crewCount||0)>=1},
+  {id:'founder',icon:'👑',name:'Founder',desc:'Create a party',check:s=>(s.crewsCreated||0)>=1},
   {id:'boss_slayer',icon:'⚔️',name:'Boss Slayer',desc:'Defeat a boss',check:s=>(s.bossesDefeated||0)>=1},
   {id:'skilled',icon:'🧠',name:'Skilled',desc:'Unlock 3 skills',check:s=>(s.skillsUnlocked||0)>=3},
 ];
@@ -737,7 +744,7 @@ const SKILL_TREES = {
     {id:'crew_1',name:'Motivator',desc:'Boosts give +15 XP instead of +10',cost:100,requires:null,tamaMin:0},
     {id:'crew_2',name:'Synergy',desc:'Shared tasks give +50% XP',cost:250,requires:'crew_1',tamaMin:8},
     {id:'crew_3',name:'Party Leader',desc:'Boss battles deal 2× damage',cost:500,requires:'crew_2',tamaMin:20},
-    {id:'crew_4',name:'Raid Ready',desc:'All crew members +10% XP for 24h after crew boss win',cost:800,requires:'crew_3',tamaMin:75},
+    {id:'crew_4',name:'Raid Ready',desc:'All party members +10% XP for 24h after party boss win',cost:800,requires:'crew_3',tamaMin:75},
   ]},
   body:{name:'Body Mastery',icon:'💪',color:'#f59e0b',skills:[
     {id:'body_1',name:'Warm Up',desc:'Fitness sessions give +10 bonus XP',cost:60,requires:null,tamaMin:0},
@@ -752,240 +759,227 @@ const XP = {high:50,medium:30,low:20,habit:25,boost:10};
 const EXERCISE_DB = [
   // ── CHEST ──
   {id:'bench_press',name:'Bench Press',muscles:['Chest','Triceps','Shoulders'],type:'weights',difficulty:2,category:'compound',
-   demo:"",
-   desc:'Lie flat on bench, grip bar slightly wider than shoulders, lower to chest, press up explosively.',tips:'Keep shoulder blades retracted, feet flat. Slight arch for stability.',cues:'Squeeze the bar like bending it. Push the floor away with your feet.'},
+   demo:'vcBig73ojpE',
+   desc:'Lie flat on bench, grip bar slightly wider than shoulders, lower to chest, press up explosively.',tips:'Keep shoulder blades retracted, feet flat. Slight arch for stability.',cues:'Squeeze the bar like you are trying to bend it. Push the floor away with your feet.'},
+
+  {id:'incline_db_press',name:'Incline Dumbbell Press',muscles:['Upper Chest','Shoulders','Triceps'],type:'weights',difficulty:2,category:'compound',
+   demo:'DbFgADa2PL8',
+   desc:'Set bench to 30-45 degrees. Press dumbbells upward from shoulder level until arms are locked out.',tips:'Focus on pushing with the upper chest. Do not let the dumbbells clank at the top.',cues:'Drive your elbows together at the top. Keep your shoulder blades pinned to the bench.'},
+
+  {id:'cable_fly',name:'Cable Fly',muscles:['Chest','Biceps'],type:'weights',difficulty:1,category:'isolation',
+   demo:'KvH2GPH5mSrk',
+   desc:'Stand between cable pulleys. Bring handles together in a large hugging arc in front of your chest.',tips:'Maintain a slight bend in the elbows. Avoid using your back to swing the weight.',cues:'Imagine hugging a giant tree. Squeeze the chest hard at the center.'},
 
   {id:'pushup',name:'Push Up',muscles:['Chest','Triceps','Shoulders','Core'],type:'calisthenics',difficulty:1,category:'compound',
-   demo:"",
-   desc:'Hands shoulder-width apart, body straight, lower chest to floor and push up.',tips:'Keep core tight. Don\'t let hips sag or pike.',cues:'Full body tension. Screw hands into floor to activate chest.'},
+   demo:'IODxDxX7oi4',
+   desc:'Hands shoulder-width apart, body straight, lower chest to floor and push up.',tips:'Keep core tight. Don't let hips sag or pike.',cues:'Full body tension. Screw hands into floor to activate chest.'},
 
   {id:'dips',name:'Chest Dips',muscles:['Chest','Triceps','Shoulders'],type:'calisthenics',difficulty:2,category:'compound',
-   demo:"",
+   demo:'2z8JmR3yt9Y',
    desc:'Lean forward on parallel bars, lower until elbows at 90°, push up powerfully.',tips:'Lean forward for chest emphasis, stay upright for triceps.',cues:'Let elbows flare slightly outward as you descend.'},
 
   // ── BACK ──
   {id:'pullup',name:'Pull Up',muscles:['Back','Biceps','Core'],type:'calisthenics',difficulty:3,category:'compound',
-   demo:"",
-   desc:'Hang from bar with overhand grip, pull chest to bar, lower with full control.',tips:'Full dead hang at bottom. Think elbows to back pockets.',cues:'Initiate by depressing shoulder blades first — don\'t just pull with arms.'},
+   demo:'eGo4IYlbE5g',
+   desc:'Hang from bar with overhand grip, pull chest to bar, lower with full control.',tips:'Full dead hang at bottom. Think elbows to back pockets.',cues:'Initiate by depressing shoulder blades first — don't just pull with arms.'},
 
   {id:'bent_row',name:'Bent Over Row',muscles:['Back','Biceps','Rear Delts'],type:'weights',difficulty:3,category:'compound',
-   demo:"",
+   demo:'FWJR5Ve8bnQ',
    desc:'Hinge at hips, back parallel to floor, row bar to lower chest/upper abdomen.',tips:'Keep lower back neutral. Pull elbows past torso for full contraction.',cues:'Imagine cracking a walnut between your shoulder blades.'},
 
   {id:'deadlift',name:'Deadlift',muscles:['Back','Glutes','Hamstrings','Core'],type:'weights',difficulty:3,category:'compound',
-   demo:"",
-   desc:'Hip-width stance, hinge to grip bar, drive through floor keeping back flat.',tips:'Brace core like absorbing a punch. Bar stays close to legs.',cues:'Push the floor away — don\'t think of pulling the bar up.'},
+   demo:'op9kVnSso6Q',
+   desc:'Hip-width stance, hinge to grip bar, drive through floor keeping back flat.',tips:'Brace core like absorbing a punch. Bar stays close to legs.',cues:'Push the floor away. Stand tall and squeeze your glutes at the top.'},
 
   {id:'lat_pulldown',name:'Lat Pulldown',muscles:['Back','Biceps'],type:'weights',difficulty:1,category:'compound',
-   demo:"",
+   demo:'CAwf7n6Luuc',
    desc:'Wide grip, pull bar down to upper chest, control the return slowly.',tips:'Slight lean back. Never pull behind neck.',cues:'Think of pulling your elbows to your hips — not your hands.'},
+
+  {id:'seated_cable_row',name:'Seated Cable Row',muscles:['Back','Biceps','Rear Delts'],type:'weights',difficulty:1,category:'compound',
+   demo:'GZbfZ033f68',
+   desc:'Sit upright at cable machine, pull handle to abdomen, squeeze shoulder blades together.',tips:'Keep chest tall, do not round forward on the return.',cues:'Row your elbows behind your torso. Chest proud at the top.'},
 
   // ── SHOULDERS ──
   {id:'ohp',name:'Overhead Press',muscles:['Shoulders','Triceps','Core'],type:'weights',difficulty:3,category:'compound',
-   demo:"",
+   demo:'2yjwXTZQDDI',
    desc:'Press barbell from shoulders to overhead, full lockout at top.',tips:'Squeeze glutes and core. Bar path slightly back at top.',cues:'Push your head through the window at the top. Full lockout.'},
 
   {id:'lateral_raise',name:'Lateral Raise',muscles:['Side Delts'],type:'weights',difficulty:1,category:'isolation',
-   demo:"",
+   demo:'3VcKaXpzqRo',
    desc:'Raise dumbbells to sides to shoulder height, slight lean forward.',tips:'Lead with elbows. Go lighter than you think.',cues:'Imagine pouring water from a jug at the top.'},
+
+  {id:'face_pull',name:'Face Pull',muscles:['Rear Delts','Rotator Cuff','Upper Back'],type:'weights',difficulty:1,category:'isolation',
+   demo:'rep-GVS_8XU',
+   desc:'Pull rope attachment to face level with elbows high, external rotate at peak.',tips:'Essential for shoulder health and posture.',cues:'Pull to your eyes, not your chin. Elbows high and wide.'},
 
   // ── BICEPS ──
   {id:'bicep_curl',name:'Bicep Curl',muscles:['Biceps','Forearms'],type:'weights',difficulty:1,category:'isolation',
-   demo:"",
+   demo:'ykJmrZ5v0Oo',
    desc:'Curl up supinating wrist, squeeze at top, lower slowly with control.',tips:'Full range — full extension at bottom, full squeeze at top.',cues:'Elbow pinned to side. Wrist supinates as you curl up.'},
 
   {id:'hammer_curl',name:'Hammer Curl',muscles:['Biceps','Brachialis','Forearms'],type:'weights',difficulty:1,category:'isolation',
-   demo:"",
-   desc:'Neutral grip (thumbs up), curl without rotating wrist.',tips:'Great for arm thickness and brachialis development.',cues:'Keep neutral grip throughout. Same motion as a hammer.'},
+   demo:'zC_nINlFRCnQ',
+   desc:'Neutral grip (thumbs up), curl without rotating wrist.',tips:'Great for arm thickness and brachialis development.',cues:'Keep neutral grip throughout. Same motion as using a hammer.'},
 
   // ── TRICEPS ──
   {id:'skull_crusher',name:'Skull Crusher',muscles:['Triceps'],type:'weights',difficulty:2,category:'isolation',
-   demo:"",
+   demo:'d_KZxkY_0cM',
    desc:'Lie on bench, lower bar to forehead bending only at elbows.',tips:'Keep elbows pointing to ceiling throughout.',cues:'Only the forearm moves — upper arm stays stationary.'},
 
   {id:'tricep_pushdown',name:'Tricep Pushdown',muscles:['Triceps'],type:'weights',difficulty:1,category:'isolation',
-   demo:"",
+   demo:'2-LAMcpzODU',
    desc:'Push rope or bar down extending arms fully at cable machine.',tips:'Keep elbows pinned to sides.',cues:'Separate rope at bottom for full contraction.'},
 
   // ── LEGS ──
   {id:'squat',name:'Back Squat',muscles:['Quads','Glutes','Hamstrings','Core'],type:'weights',difficulty:3,category:'compound',
-   demo:"",
+   demo:'ultWZbUMPL8',
    desc:'Bar on traps, squat to parallel or below, knees track over toes, drive up.',tips:'Chest stays up. Weight in mid-foot throughout.',cues:'Break at hips and knees simultaneously. Spread the floor with your feet.'},
 
   {id:'rdl',name:'Romanian Deadlift',muscles:['Hamstrings','Glutes','Back'],type:'weights',difficulty:2,category:'compound',
-   demo:"",
+   demo:'hCDzSR6Ppis',
    desc:'Slight knee bend, hinge at hips lowering bar down legs, feel the hamstring stretch.',tips:'Bar stays close to legs throughout.',cues:'Push your hips back to a wall behind you. Feel the hamstring load.'},
 
   {id:'leg_press',name:'Leg Press',muscles:['Quads','Glutes','Hamstrings'],type:'weights',difficulty:1,category:'compound',
-   demo:"",
-   desc:'Feet shoulder-width on platform, lower sled, press back without locking knees.',tips:'Don\'t let lower back peel off the pad at the bottom.',cues:'Press through full foot. Don\'t just push with toes.'},
+   demo:'IZxyjW7SKNI',
+   desc:'Feet shoulder-width on platform, lower sled, press back without locking knees.',tips:'Don't let lower back peel off the pad at the bottom.',cues:'Press through full foot. Don't just push with toes.'},
 
   {id:'lunge',name:'Walking Lunge',muscles:['Quads','Glutes','Hamstrings'],type:'calisthenics',difficulty:2,category:'compound',
-   demo:"",
-   desc:'Step forward, lower back knee toward floor, push off front foot, repeat.',tips:'Keep torso upright. Front knee tracks over toes.',cues:'Step out, drop down — don\'t lean forward.'},
+   demo:'D7KaRcUTQeE',
+   desc:'Step forward, lower back knee toward floor, push off front foot, repeat.',tips:'Keep torso upright. Front knee tracks over toes.',cues:'Step out, drop down — don't lean forward.'},
 
   {id:'glute_bridge',name:'Glute Bridge',muscles:['Glutes','Hamstrings','Core'],type:'calisthenics',difficulty:1,category:'isolation',
-   demo:"",
-   desc:'Lie on back, feet flat, drive hips up squeezing glutes hard at top.',tips:'Tuck pelvis under at top for full glute activation.',cues:'Push through heels. Posterior pelvic tilt at the top.'},
+   demo:'OUgsJ8-Vi0E',
+   desc:'Lie on back, feet flat on floor, drive hips up squeezing glutes.',tips:'Full hip extension at the top. Pause for 1 second.',cues:'Drive your knees forward. Squeeze like you are cracking a walnut.'},
+
+  {id:'bulgarian_split_squat',name:'Bulgarian Split Squat',muscles:['Quads','Glutes','Hamstrings','Balance'],type:'weights',difficulty:2,category:'compound',
+   demo:'vq5-vdgJc0I',
+   desc:'Rear foot elevated on bench, squat down on front leg until knee nearly touches floor.',tips:'Front foot far enough forward that shin stays vertical.',cues:'Sink straight down. Lead with your back knee to the floor.'},
+
+  {id:'calf_raise',name:'Calf Raise',muscles:['Calves'],type:'weights',difficulty:1,category:'isolation',
+   demo:'gwLzBv3bZpQ',
+   desc:'Stand on edge of step, raise onto tiptoes, lower below step level for full stretch.',tips:'Full range of motion — don't bounce at the bottom.',cues:'Rise up slow, pause at top, lower for 3 seconds.'},
 
   // ── CORE ──
   {id:'plank',name:'Plank',muscles:['Core','Shoulders','Glutes'],type:'calisthenics',difficulty:1,category:'isolation',
-   demo:"",
-   desc:'Forearms on floor, body straight, hold position. No sagging or piking.',tips:'Breathe steadily. Full body tension throughout.',cues:'Squeeze everything — glutes, abs, quads. Push floor away with forearms.'},
+   demo:'pSHjTRCQxIw',
+   desc:'Hold straight-body position on forearms and toes, core braced.',tips:'Neutral spine. Don't let hips sag or pike.',cues:'Squeeze everything — abs, glutes, quads. Breathe steadily.'},
 
-  {id:'dead_bug',name:'Dead Bug',muscles:['Core','Hip Flexors'],type:'calisthenics',difficulty:2,category:'isolation',
-   demo:"",
-   desc:'Lie on back, extend opposite arm and leg keeping lower back flat on floor.',tips:'Lower back must stay glued to floor throughout.',cues:'Press lower back into floor before you move anything.'},
+  {id:'dead_bug',name:'Dead Bug',muscles:['Core','Hip Flexors'],type:'calisthenics',difficulty:1,category:'isolation',
+   demo:'g_BYB0R-4Ws',
+   desc:'Lie on back, extend opposite arm and leg simultaneously while lower back stays flat.',tips:'Press lower back into the floor throughout.',cues:'Go slow. Control beats speed every time.'},
 
-  {id:'hanging_leg_raise',name:'Hanging Leg Raise',muscles:['Core','Hip Flexors'],type:'calisthenics',difficulty:3,category:'isolation',
-   demo:"",
-   desc:'Hang from bar, raise legs to parallel or above with posterior pelvic tilt.',tips:'Don\'t swing. Hollow body position throughout.',cues:'Think about tilting your pelvis back at the top to fully engage the abs.'},
+  {id:'hanging_leg_raise',name:'Hanging Leg Raise',muscles:['Core','Hip Flexors'],type:'calisthenics',difficulty:2,category:'isolation',
+   demo:'Pr1ieGZ5ATk',
+   desc:'Hang from bar, raise legs to parallel or above while keeping them straight.',tips:'Avoid swinging. Initiate with abs, not hip flexors.',cues:'Think about pulling your pelvis up, not just raising your legs.'},
 
-  // ── ADVANCED CALISTHENICS ──
-  {id:'muscle_up',name:'Muscle Up',muscles:['Back','Chest','Triceps','Core'],type:'calisthenics',difficulty:3,category:'compound',
-   demo:"",
-   desc:'Explosive pull up transitioning over the bar into a dip — the king of calisthenics.',tips:'Master strict pull ups and dips first. False grip helps the transition.',cues:'Explosive pull, lean slightly forward, drive elbows back and over the bar.'},
+  {id:'ab_wheel',name:'Ab Wheel',muscles:['Core','Shoulders','Lats'],type:'calisthenics',difficulty:3,category:'isolation',
+   demo:'q6SxTm79x_s',
+   desc:'Kneel on floor, roll wheel forward fully extending, pull back with abs.',tips:'Keep core fully braced. Start with small range until strong.',cues:'Hollow body position throughout. Pull from your abs, not arms.'},
+
+  // ── CALISTHENICS ADVANCED ──
+  {id:'muscle_up',name:'Muscle Up',muscles:['Back','Chest','Triceps'],type:'calisthenics',difficulty:3,category:'compound',
+   demo:'F-xEL4Gkzos',
+   desc:'An explosive pull-up that transitions into a dip to bring your body above the bar.',tips:'Master strict pull-ups first. The transition is all about the lean.',cues:'Pull the bar to your hips, not your chest. False grip helps.'},
 
   {id:'pistol_squat',name:'Pistol Squat',muscles:['Quads','Glutes','Balance'],type:'calisthenics',difficulty:3,category:'compound',
-   demo:"",
-   desc:'Single leg squat to full depth while extending other leg forward.',tips:'Use TRX or a pole for assistance while building strength.',cues:'Sit back into your heel. Counter-balance with arms outstretched.'},
+   demo:'vq5-vdgJc0I',
+   desc:'A single-leg squat with the non-working leg extended straight out in front.',tips:'Use a pole or wall for balance while learning.',cues:'Sit back into your heel. Keep your chest up and arms forward.'},
 
-  {id:'planche_lean',name:'Planche Lean',muscles:['Chest','Shoulders','Core','Wrists'],type:'calisthenics',difficulty:3,category:'compound',
-   demo:"",
-   desc:'Lean forward on straight arms beyond your hands until body is parallel to ground. Start with a lean and progress to tuck, advanced tuck, straddle, full.',tips:'Wrist conditioning is critical before training planche. Protracted scapula is essential.',cues:'Depress and protract shoulder blades hard. Push the ground away.'},
+  {id:'dragon_flag',name:'Dragon Flag',muscles:['Core','Lower Back'],type:'calisthenics',difficulty:3,category:'isolation',
+   demo:'pvz7k5gOKAw',
+   desc:'Lift your body into a straight line using only your upper back as a pivot point on the bench.',tips:'Keep your core locked tight. Lower very slowly.',cues:'Think of your body as a single rigid board — no bending.'},
 
-  {id:'tuck_planche',name:'Tuck Planche',muscles:['Chest','Shoulders','Core','Triceps'],type:'calisthenics',difficulty:3,category:'compound',
-   demo:"",
-   desc:'Both legs tucked to chest while holding straight arms parallel to ground. First step to full planche.',tips:'Build planche leans for 3+ months before attempting tuck planche holds.',cues:'Squeeze everything. Protract scapula maximally. Aim for 5-10 second holds.'},
+  {id:'l_sit',name:'L-Sit',muscles:['Core','Triceps'],type:'calisthenics',difficulty:3,category:'isolation',
+   demo:'IUZKcvEOaG4',
+   desc:'Support bodyweight on hands with legs held straight out at a 90-degree angle.',tips:'Depress your shoulders hard. Point toes.',cues:'Push the floor away from you. Compress your abs hard.'},
 
-  {id:'straddle_planche',name:'Straddle Planche',muscles:['Chest','Shoulders','Core','Triceps'],type:'calisthenics',difficulty:3,category:'compound',
-   demo:"",
-   desc:'Body parallel to ground, legs straddled wide, arms straight. Advanced progression from tuck planche.',tips:'Straddle reduces difficulty versus full planche. Build 10s+ tuck planche first.',cues:'Wide straddle reduces lever length. Push the ground. Protract scapula.'},
+  {id:'planche_lean',name:'Planche Lean',muscles:['Chest','Shoulders','Core'],type:'calisthenics',difficulty:3,category:'compound',
+   demo:'5d9S01JKZ6g',
+   desc:'In push-up position lean forward past wrists, loading anterior shoulder and core.',tips:'Fingers pointing backward increases difficulty.',cues:'Lean forward progressively. Hold for 10-30 seconds.'},
 
-  {id:'full_planche',name:'Full Planche',muscles:['Chest','Shoulders','Core','Triceps','Full Body'],type:'calisthenics',difficulty:3,category:'compound',
-   demo:"",
-   desc:'Entire body horizontal, legs together, arms straight. The ultimate calisthenics strength skill. Takes 1-3+ years of dedicated training.',tips:'Requires exceptional shoulder, chest, and core strength. Progressive overload through lean → tuck → adv tuck → straddle → full.',cues:'Every muscle engaged. Think of a rigid plank floating in the air. Protract and depress scapula hard.'},
+  {id:'tuck_planche',name:'Tuck Planche',muscles:['Chest','Shoulders','Core'],type:'calisthenics',difficulty:3,category:'compound',
+   demo:'7RbPncGFZL8',
+   desc:'Hold body off ground with knees tucked to chest, arms straight.',tips:'Depression and protraction of scapula is key.',cues:'Push through your hands. Hollow body position.'},
 
-  {id:'front_lever',name:'Front Lever',muscles:['Back','Core','Biceps','Shoulders'],type:'calisthenics',difficulty:3,category:'compound',
-   demo:"",
-   desc:'Hang from bar, body horizontal facing up, arms straight. Requires exceptional back and core strength.',tips:'Progress: tuck → advanced tuck → one leg → straddle → full. Each stage takes months.',cues:'Depress shoulder blades. Pull the bar toward your hips. Keep body rigid like a plank.'},
+  {id:'handstand_pushup',name:'Handstand Push-up',muscles:['Shoulders','Triceps','Core'],type:'calisthenics',difficulty:3,category:'compound',
+   demo:'WRL_FnCkEkY',
+   desc:'Handstand against wall, lower head toward floor and press back up.',tips:'Head position is key — tuck chin or look at hands.',cues:'Elbows track 45 degrees, not flared wide.'},
 
-  {id:'tuck_front_lever',name:'Tuck Front Lever',muscles:['Back','Core','Biceps'],type:'calisthenics',difficulty:3,category:'compound',
-   demo:"",
-   desc:'Front lever with knees tucked to chest. The entry point for front lever training.',tips:'Aim for 3 sets of 10 second holds before progressing to advanced tuck.',cues:'Pull the bar towards your waist. Depress scapula. Core braced hard.'},
+  {id:'front_lever',name:'Front Lever',muscles:['Back','Core','Shoulders'],type:'calisthenics',difficulty:3,category:'isolation',
+   demo:'lhRR5w5Dbpo',
+   desc:'Hang from bar and hold body horizontal, face up, with straight arms.',tips:'Progress through tuck, one-leg, then full.',cues:'Pull the bar to your hips. Engage lats hard.'},
 
-  {id:'back_lever',name:'Back Lever',muscles:['Chest','Shoulders','Biceps','Core'],type:'calisthenics',difficulty:3,category:'compound',
-   demo:"",
-   desc:'Hang from bar, body horizontal facing down, arms straight. Often learned before front lever.',tips:'Start with skin the cat to condition the shoulder joints.',cues:'Supinated grip typically easier. Keep body rigid and horizontal.'},
-
-  {id:'dragon_flag',name:'Dragon Flag',muscles:['Core','Lower Back','Shoulders'],type:'calisthenics',difficulty:3,category:'isolation',
-   demo:"",
-   desc:'Lie on bench gripping behind head, raise entire body except shoulders to horizontal, lower with control. Made famous by Bruce Lee.',tips:'Learn tucked dragon flag first. Requires tremendous core strength.',cues:'The body moves as one rigid unit. No hinging at the hips.'},
-
-  {id:'human_flag',name:'Human Flag',muscles:['Core','Shoulders','Back','Full Body'],type:'calisthenics',difficulty:3,category:'compound',
-   demo:"",
-   desc:'Body held horizontally perpendicular to a vertical pole using only arm strength. One of the rarest calisthenics skills.',tips:'Years of dedicated lateral strength work required. Train lever exercises first.',cues:'Bottom arm pushes, top arm pulls. Body forms one rigid line.'},
-
-  {id:'handstand_pushup',name:'Handstand Push Up',muscles:['Shoulders','Triceps','Core'],type:'calisthenics',difficulty:3,category:'compound',
-   demo:"",
-   desc:'Inverted against wall, bend arms lowering head to floor, press back up. Upper body squat.',tips:'Master handstand hold first. Pike push ups as regression.',cues:'Wide hand placement. Push through entire palm. Full lockout at top.'},
-
-  {id:'l_sit',name:'L-Sit',muscles:['Core','Hip Flexors','Triceps','Shoulders'],type:'calisthenics',difficulty:3,category:'isolation',
-   demo:"",
-   desc:'Support on hands/parallettes, hold legs parallel to floor with straight knees.',tips:'Build tuck L-sit first. Requires both core and pressing strength.',cues:'Push down hard into the ground. Protract shoulders. Point toes.'},
-
-  {id:'v_sit',name:'V-Sit',muscles:['Core','Hip Flexors','Shoulders'],type:'calisthenics',difficulty:3,category:'isolation',
-   demo:"",
-   desc:'Like an L-sit but legs angled upward, body forming a V shape. Extreme core compression strength.',tips:'Master L-sit for 30+ seconds before attempting V-sit.',cues:'Compress hip flexors maximally. Push down into ground. Point toes to ceiling.'},
-
-  {id:'skin_cat',name:'Skin the Cat',muscles:['Shoulders','Back','Core'],type:'calisthenics',difficulty:3,category:'compound',
-   demo:"",
-   desc:'Hang from bar, pull legs through arms rotating body into German hang, then reverse. Excellent shoulder prep.',tips:'Essential prerequisite for back lever and iron cross work.',cues:'Control the movement throughout. Don\'t just drop into German hang.'},
-
-  {id:'archer_pushup',name:'Archer Push Up',muscles:['Chest','Triceps','Shoulders'],type:'calisthenics',difficulty:3,category:'compound',
-   demo:"",
-   desc:'Wide stance push up shifting weight to one arm at a time. Progression toward one-arm push up.',tips:'One arm nearly straight, other arm does the work.',cues:'Keep hips square. Full range of motion on working arm.'},
-
-  {id:'one_arm_pushup',name:'One Arm Push Up',muscles:['Chest','Triceps','Core'],type:'calisthenics',difficulty:3,category:'compound',
-   demo:"",
-   desc:'Full push up on one arm. Requires exceptional unilateral pushing strength and core stability.',tips:'Widen feet stance. Build archer push ups first.',cues:'Keep body from rotating. Core braced. Push explosively.'},
-
-  {id:'typewriter_pullup',name:'Typewriter Pull Up',muscles:['Back','Biceps','Core'],type:'calisthenics',difficulty:3,category:'compound',
-   demo:"",
-   desc:'Pull up then travel laterally across the bar, shifting weight from arm to arm at the top. Like a typewriter.',tips:'Master strict pull ups first. Requires strong lateral pulling.',cues:'Keep chin above bar throughout the lateral movement.'},
+  {id:'tuck_front_lever',name:'Tuck Front Lever',muscles:['Back','Core'],type:'calisthenics',difficulty:3,category:'isolation',
+   demo:'tB1DFJjw9I8',
+   desc:'Hang from bar with body horizontal and knees tucked to chest.',tips:'First step to full front lever.',cues:'Keep scapula depressed and retracted. Hold rigid.'},
 
   // ── RUNNING ──
-  {id:'easy_run',name:'Easy Run',muscles:['Full Body','Cardio'],type:'run',difficulty:1,category:'cardio',
-   demo:"",
-   desc:'Comfortable conversational pace. You should be able to hold a full conversation.',tips:'60-70% of training should be at this pace. Builds aerobic base.',cues:'Nose breathing comfortable. Land midfoot, not heel. Relax shoulders.'},
+  {id:'easy_run',name:'Easy Run',muscles:['Full Body','Endurance'],type:'run',difficulty:1,category:'cardio',
+   demo:'_kGcKg_lsGc',
+   desc:'Comfortable pace where you can hold a full conversation.',tips:'This should be 70-80% of all your running.',cues:'If you can't speak in sentences, slow down.'},
 
-  {id:'interval_run',name:'Interval Run',muscles:['Full Body','Cardio'],type:'run',difficulty:3,category:'cardio',
-   demo:"",
-   desc:'Alternate hard efforts with recovery. e.g. 400m hard, 200m easy jog.',tips:'Full recovery between hard efforts. Quality over quantity.',cues:'Hard efforts feel like 8/10. Recovery is genuinely slow.'},
+  {id:'interval_run',name:'Interval Run',muscles:['Full Body','Speed','Cardio'],type:'run',difficulty:3,category:'cardio',
+   demo:'xvPzYbMC9BE',
+   desc:'Alternate hard efforts with rest intervals — e.g. 400m fast, 200m walk.',tips:'Warm up properly. Quality over quantity.',cues:'Run the hard parts at 90% effort. Recover fully between.'},
 
-  {id:'tempo_run',name:'Tempo Run',muscles:['Full Body','Cardio'],type:'run',difficulty:3,category:'cardio',
-   demo:"",
-   desc:'Comfortably hard pace sustained for 20-40 minutes. Lactate threshold training.',tips:'Should be able to say a few words but not hold a conversation.',cues:'Find a pace that feels hard but sustainable. Breathe rhythmically.'},
+  {id:'tempo_run',name:'Tempo Run',muscles:['Full Body','Endurance','Speed'],type:'run',difficulty:2,category:'cardio',
+   demo:'GKNQtRqnS_A',
+   desc:'Comfortably hard pace sustained for 20-40 minutes.',tips:'Should feel like 7/10 effort — hard but controlled.',cues:'Maintain the pace even when it gets uncomfortable.'},
+
+  {id:'long_run',name:'Long Run',muscles:['Full Body','Endurance'],type:'run',difficulty:2,category:'cardio',
+   demo:'_kGcKg_lsGc',
+   desc:'Easy to moderate pace for 60+ minutes to build aerobic base.',tips:'Run at conversational pace. 20-30% of weekly mileage.',cues:'Slow down more than you think you need to.'},
+
+  {id:'hill_repeats',name:'Hill Repeats',muscles:['Full Body','Strength','Cardio'],type:'run',difficulty:3,category:'cardio',
+   demo:'xvPzYbMC9BE',
+   desc:'Sprint uphill hard, jog or walk back down. Repeat 6-10 times.',tips:'Best bang-for-buck run workout for strength and speed.',cues:'Drive arms and knees hard uphill. Controlled jog on recovery.'},
+
+  {id:'recovery_run',name:'Recovery Run',muscles:['Full Body','Active Recovery'],type:'run',difficulty:1,category:'cardio',
+   demo:'_kGcKg_lsGc',
+   desc:'Very easy pace, 20-40 minutes to flush lactic acid on rest days.',tips:'Should feel almost embarrassingly slow.',cues:'If in doubt, slow down. You should be able to sing.'},
 
   // ── SWIMMING ──
-  {id:'freestyle',name:'Freestyle',muscles:['Shoulders','Back','Core','Legs'],type:'swim',difficulty:2,category:'cardio',
-   demo:"",
-   desc:'Alternating arm stroke with flutter kick. Most efficient swimming stroke.',tips:'Rotate body with each stroke. Breathe every 2-3 strokes.',cues:'High elbow catch. Pull water past hip before recovering arm.'},
+  {id:'freestyle',name:'Freestyle',muscles:['Shoulders','Back','Core','Legs'],type:'swim',difficulty:1,category:'cardio',
+   demo:'5HLW2AI_4_E',
+   desc:'Front crawl with alternating arms and flutter kick, head rotates to breathe.',tips:'Reach long on each stroke. Keep hips high.',cues:'Catch the water early and pull past your hip.'},
 
-  {id:'breaststroke',name:'Breaststroke',muscles:['Chest','Back','Legs'],type:'swim',difficulty:2,category:'cardio',
-   demo:"",
-   desc:'Simultaneous arm pull with frog kick. Great for beginners.',tips:'Glide phase after each stroke — don\'t rush.',cues:'Arms pull while legs recover. Legs kick while arms recover.'},
-,
-  // ── CHEST ──
-  {id:'incline_db_press',name:'Incline Dumbbell Press',muscles:['Upper Chest','Shoulders','Triceps'],type:'weights',difficulty:2,category:'compound',demo:'',desc:'Set bench to 30-45°. Press dumbbells up converging at top.',tips:'30° optimal for upper chest. Control the descent.',cues:'Lead with your chest not your hands.'},
-  {id:'cable_fly',name:'Cable Fly',muscles:['Chest','Biceps'],type:'weights',difficulty:1,category:'isolation',demo:'',desc:'Stand between cables, arms wide, bring handles together in a hugging arc.',tips:'Keep slight bend in elbows. Focus on the stretch at bottom.',cues:'Imagine hugging a giant tree. Squeeze pecs at the peak.'},
-  {id:'close_grip_bench',name:'Close Grip Bench Press',muscles:['Triceps','Chest','Shoulders'],type:'weights',difficulty:2,category:'compound',demo:'',desc:'Bench press with hands shoulder-width apart to shift emphasis to triceps.',tips:'Keep elbows tucked close to body throughout.',cues:'Push the bar slightly toward feet at top to fully extend triceps.'},
-  // ── BACK ──
-  {id:'seated_cable_row',name:'Seated Cable Row',muscles:['Back','Biceps','Rear Delts'],type:'weights',difficulty:1,category:'compound',demo:'',desc:'Sit at cable row, pull handle to lower chest squeezing shoulder blades.',tips:'Sit upright. Full stretch at the front.',cues:'Lead with elbows. Drive them behind your torso.'},
-  {id:'face_pull',name:'Face Pull',muscles:['Rear Delts','Rotator Cuff','Upper Back'],type:'weights',difficulty:1,category:'isolation',demo:'',desc:'Cable at head height, pull rope to face splitting rope at end, elbows flared high.',tips:'One of the best shoulder health exercises. Do it often.',cues:'Pull to forehead not chin. External rotation at the end.'},
-  {id:'tbar_row',name:'T-Bar Row',muscles:['Back','Biceps','Rear Delts'],type:'weights',difficulty:3,category:'compound',demo:'',desc:'Straddle barbell, hinge forward, row bar to sternum.',tips:'Keep back flat. Chest supported variation removes lower back stress.',cues:'Drive elbows straight back. Squeeze like cracking a walnut.'},
-  {id:'chest_supported_row',name:'Chest Supported Row',muscles:['Back','Biceps','Rear Delts'],type:'weights',difficulty:1,category:'compound',demo:'',desc:'Lie face down on incline bench, row dumbbells straight up.',tips:'Eliminating lower back removes a common weak link.',cues:'Row to your hips not your shoulders.'},
-  // ── SHOULDERS ──
-  {id:'db_shoulder_press',name:'Dumbbell Shoulder Press',muscles:['Shoulders','Triceps'],type:'weights',difficulty:2,category:'compound',demo:'',desc:'Seated or standing, press dumbbells overhead from shoulder height.',tips:'Keep core braced throughout.',cues:'Press dumbbells up and slightly in forming a slight arc at top.'},
-  {id:'arnold_press',name:'Arnold Press',muscles:['Shoulders','Triceps','Rotator Cuff'],type:'weights',difficulty:2,category:'compound',demo:'',desc:'Start palms facing you at chin, rotate and press overhead finishing palms out.',tips:'Named after Arnold. Hits all three delt heads.',cues:'The rotation is the key — slow and controlled on the way down.'},
-  {id:'upright_row',name:'Upright Row',muscles:['Side Delts','Traps','Biceps'],type:'weights',difficulty:2,category:'compound',demo:'',desc:'Pull barbell or dumbbells straight up along body to chin level.',tips:'Wider grip is safer for shoulders. Stop at chest if you feel impingement.',cues:'Lead with elbows. Think of them as hooks pulling the weight up.'},
-  // ── BICEPS ──
-  {id:'preacher_curl',name:'Preacher Curl',muscles:['Biceps','Brachialis'],type:'weights',difficulty:1,category:'isolation',demo:'',desc:'Rest upper arm on preacher bench pad, curl through full range.',tips:'Eliminates cheating. Great for peak contraction.',cues:'Full stretch at the bottom. Control the negative.'},
-  {id:'incline_curl',name:'Incline Dumbbell Curl',muscles:['Biceps','Long Head'],type:'weights',difficulty:1,category:'isolation',demo:'',desc:'Lie back on incline bench, arms hanging, curl dumbbells.',tips:'Incredible stretch on long head of bicep.',cues:'Let gravity fully stretch the bicep before curling.'},
-  // ── TRICEPS ──
-  {id:'overhead_tricep_ext',name:'Overhead Tricep Extension',muscles:['Triceps','Long Head'],type:'weights',difficulty:1,category:'isolation',demo:'',desc:'Hold dumbbell overhead with both hands, lower behind head bending at elbows.',tips:'Best exercise for the long head — the largest portion.',cues:'Keep elbows pointing straight up. Only forearms move.'},
-  {id:'tricep_dips',name:'Tricep Dips',muscles:['Triceps','Chest','Shoulders'],type:'calisthenics',difficulty:2,category:'compound',demo:'',desc:'On parallel bars, lower body keeping torso upright for tricep emphasis.',tips:'Stay upright to focus triceps. Lean forward for chest.',cues:'Elbows point straight back, not flared.'},
-  // ── LEGS ──
-  {id:'hip_thrust',name:'Hip Thrust',muscles:['Glutes','Hamstrings','Core'],type:'weights',difficulty:2,category:'compound',demo:'',desc:'Back against bench, barbell across hips, drive hips up squeezing glutes at top.',tips:'Best glute exercise. Use a barbell pad.',cues:'Posterior pelvic tilt at the top. Full hip extension — squeeze hard.'},
-  {id:'bulgarian_split_squat',name:'Bulgarian Split Squat',muscles:['Quads','Glutes','Hamstrings','Balance'],type:'weights',difficulty:3,category:'compound',demo:'',desc:'Rear foot elevated on bench, lower front leg to parallel, drive up through front heel.',tips:'Most brutal leg exercise. Humbling but incredibly effective.',cues:'Keep torso upright. Think lunge not squat.'},
-  {id:'hack_squat',name:'Hack Squat',muscles:['Quads','Glutes'],type:'weights',difficulty:2,category:'compound',demo:'',desc:'Feet forward on hack squat machine, lower to parallel.',tips:'High foot = more glutes. Low foot = more quads.',cues:'Push knees out over toes as you descend.'},
-  {id:'leg_extension',name:'Leg Extension',muscles:['Quads'],type:'weights',difficulty:1,category:'isolation',demo:'',desc:'Seated at machine, extend legs to full lockout, lower with control.',tips:'Best for quad isolation. Control the descent.',cues:'Pause at full extension. Squeeze the quad hard.'},
-  {id:'leg_curl',name:'Lying Leg Curl',muscles:['Hamstrings'],type:'weights',difficulty:1,category:'isolation',demo:'',desc:'Lie face down on leg curl machine, curl heels towards glutes.',tips:'Point toes slightly for more hamstring activation.',cues:'Do not let hips rise. Full range of motion.'},
-  {id:'standing_calf_raise',name:'Standing Calf Raise',muscles:['Calves','Soleus'],type:'weights',difficulty:1,category:'isolation',demo:'',desc:'Stand on edge of platform, raise up on toes, lower heel below platform.',tips:'Calves need high volume and full range. Slow negatives.',cues:'Pause at bottom for full stretch. Explode up.'},
-  // ── CORE ──
-  {id:'hollow_body_hold',name:'Hollow Body Hold',muscles:['Core','Hip Flexors'],type:'calisthenics',difficulty:2,category:'isolation',demo:'',desc:'Lie on back, flatten lower back, raise legs and shoulders maintaining rigid curved shape.',tips:'Foundation of gymnastics. Harder than it looks.',cues:'Press lower back INTO the floor. Maintain the curve throughout.'},
-  {id:'ab_rollout',name:'Ab Wheel Rollout',muscles:['Core','Lats','Shoulders'],type:'calisthenics',difficulty:3,category:'isolation',demo:'',desc:'Kneel holding ab wheel, roll forward extending body, return using core.',tips:'One of the most demanding core exercises. Build slowly.',cues:'Brace abs before rolling. Pull back with your lats.'},
-  {id:'mountain_climbers',name:'Mountain Climbers',muscles:['Core','Hip Flexors','Cardio'],type:'calisthenics',difficulty:2,category:'compound',demo:'',desc:'Plank position, alternate driving knees to chest rapidly.',tips:'Keep hips level. Do not let them pike up or sag.',cues:'Imagine running horizontally. Drive knee toward opposite shoulder.'},
-  {id:'bicycle_crunch',name:'Bicycle Crunch',muscles:['Core','Obliques'],type:'calisthenics',difficulty:1,category:'isolation',demo:'',desc:'On back, alternate elbow to opposite knee in cycling motion.',tips:'Slow and controlled beats fast and sloppy.',cues:'Rotate from your torso not your neck.'},
-  // ── CALISTHENICS ──
-  {id:'pike_push_up',name:'Pike Push Up',muscles:['Shoulders','Triceps','Core'],type:'calisthenics',difficulty:2,category:'compound',demo:'',desc:'Start in downward dog, lower head towards floor then push up.',tips:'Best regression for handstand push up. Elevate feet to increase difficulty.',cues:'Keep hips high. Shoulder press movement not push up.'},
-  {id:'diamond_push_up',name:'Diamond Push Up',muscles:['Triceps','Chest','Shoulders'],type:'calisthenics',difficulty:2,category:'compound',demo:'',desc:'Push up with hands close forming a diamond shape, elbows tucked.',tips:'One of the best bodyweight tricep exercises.',cues:'Elbows scrape along your sides throughout.'},
-  {id:'chin_up',name:'Chin Up',muscles:['Biceps','Back','Core'],type:'calisthenics',difficulty:2,category:'compound',demo:'',desc:'Underhand grip pull up — supinated grip emphasises biceps.',tips:'Easier than pull up due to bicep involvement.',cues:'Drive elbows to sides. Chest to bar.'},
-  {id:'inverted_row',name:'Inverted Row',muscles:['Back','Biceps','Core'],type:'calisthenics',difficulty:1,category:'compound',demo:'',desc:'Lie under bar, pull chest up to it keeping body straight.',tips:'Best regression for pull up. Elevate feet to increase difficulty.',cues:'Keep body rigid as a plank. Pull bar to lower chest.'},
-  {id:'burpee',name:'Burpee',muscles:['Full Body','Cardio'],type:'calisthenics',difficulty:2,category:'compound',demo:'',desc:'Drop to plank, push up, jump feet to hands, jump up with arms overhead.',tips:'Scale by removing push up or jump.',cues:'Land softly. Keep a rhythm.'},
-  {id:'box_jump',name:'Box Jump',muscles:['Quads','Glutes','Calves','Power'],type:'calisthenics',difficulty:2,category:'compound',demo:'',desc:'Standing jump onto box, land softly, step back down.',tips:'Never jump back down — step down.',cues:'Load hips, explode up, land like a cat.'},
-  // ── RUNNING ──
-  {id:'long_run',name:'Long Run',muscles:['Full Body','Endurance'],type:'run',difficulty:2,category:'cardio',demo:'',desc:'Easy to moderate pace for 60+ minutes.',tips:'Run at conversational pace. 20-30% of weekly mileage.',cues:'Slow down more than you think you need to.'},
-  {id:'hill_repeats',name:'Hill Repeats',muscles:['Full Body','Strength','Cardio'],type:'run',difficulty:3,category:'cardio',demo:'',desc:'Sprint uphill hard, jog/walk back down. Repeat 6-10 times.',tips:'Best bang for buck run workout.',cues:'Drive arms and knees hard uphill. Controlled jog on recovery.'},
-  {id:'recovery_run',name:'Recovery Run',muscles:['Full Body','Active Recovery'],type:'run',difficulty:1,category:'cardio',demo:'',desc:'Very easy pace, 20-40 minutes.',tips:'Should feel almost embarrassingly slow.',cues:'If in doubt, slow down. You should be able to sing.'},
-  // ── SWIMMING ──
-  {id:'backstroke',name:'Backstroke',muscles:['Back','Shoulders','Core','Legs'],type:'swim',difficulty:2,category:'cardio',demo:'',desc:'On your back, alternating arm strokes with flutter kick.',tips:'Keep hips high. One shoulder clears water as other enters.',cues:'Look straight up. Drive hips into each stroke.'},
-  {id:'butterfly',name:'Butterfly',muscles:['Chest','Shoulders','Core','Legs'],type:'swim',difficulty:3,category:'cardio',demo:'',desc:'Simultaneous overhead arm pull with dolphin kick.',tips:'Master dolphin kick before adding arms. It is 70% kick.',cues:'Two kicks per arm cycle — one as arms enter, one as they exit.'},
+  {id:'breaststroke',name:'Breaststroke',muscles:['Chest','Inner Thighs','Core'],type:'swim',difficulty:2,category:'cardio',
+   demo:'am5gPCxS3jM',
+   desc:'Simultaneous arm pull with a frog kick, glide between strokes.',tips:'Time the glide — don't rush the next stroke.',cues:'Pull, breathe, kick, glide. Timing is everything.'},
+
+  {id:'backstroke',name:'Backstroke',muscles:['Back','Shoulders','Core','Legs'],type:'swim',difficulty:2,category:'cardio',
+   demo:'HmkRvZJSNJo',
+   desc:'On your back, alternating arm strokes with flutter kick.',tips:'Keep hips high. One shoulder clears water as other enters.',cues:'Look straight up. Drive hips into each stroke.'},
+
+  {id:'butterfly',name:'Butterfly',muscles:['Chest','Shoulders','Core','Legs'],type:'swim',difficulty:3,category:'cardio',
+   demo:'zDPeRPYlMrM',
+   desc:'Simultaneous overhead arm pull with dolphin kick.',tips:'Master dolphin kick before adding arms. It is 70% kick.',cues:'Two kicks per arm cycle — one as arms enter, one as they exit.'},
+
   // ── CARDIO ──
-  {id:'jump_rope',name:'Jump Rope',muscles:['Calves','Shoulders','Cardio','Coordination'],type:'cardio',difficulty:2,category:'cardio',demo:'',desc:'Jump rope with light bouncing, wrists rotating rope, land on balls of feet.',tips:'10 mins = 30 mins jogging calorie-wise.',cues:'Jump just high enough to clear rope. Stay on your toes.'},
-  {id:'rowing_machine',name:'Rowing Machine',muscles:['Back','Legs','Core','Cardio'],type:'cardio',difficulty:2,category:'compound',demo:'',desc:'Drive with legs first, lean back, pull handle to lower chest.',tips:'80% legs, 20% arms. Most people overuse arms.',cues:'Legs. Body. Arms. Arms. Body. Legs. That is the sequence.'},
-  {id:'assault_bike',name:'Assault Bike',muscles:['Full Body','Cardio'],type:'cardio',difficulty:3,category:'cardio',demo:'',desc:'Full body air bike — push and pull handles while pedalling.',tips:'One of the most brutal conditioning tools.',cues:'Push AND pull handles. Use whole body not just legs.'},
-  {id:'sled_push',name:'Sled Push',muscles:['Quads','Glutes','Core','Cardio'],type:'cardio',difficulty:3,category:'compound',demo:'',desc:'Push weighted sled using short powerful strides.',tips:'No eccentric = no soreness. Can push hard with less recovery.',cues:'Low body position, drive through balls of feet, pump arms.'}];
+  {id:'burpee',name:'Burpee',muscles:['Full Body','Cardio'],type:'calisthenics',difficulty:2,category:'compound',
+   demo:'dZgVxmf6jeQ',
+   desc:'Drop to plank, push up, jump feet to hands, jump up with arms overhead.',tips:'Scale by removing push up or jump.',cues:'Land softly on feet. Snap your hips forward into the squat.'},
+
+  {id:'box_jump',name:'Box Jump',muscles:['Quads','Glutes','Calves','Power'],type:'calisthenics',difficulty:2,category:'compound',
+   demo:'52ldYMFMkLo',
+   desc:'Standing jump onto box, land softly, step back down.',tips:'Never jump back down — step down to protect knees.',cues:'Load hips, explode up, land like a cat.'},
+
+  {id:'jump_rope',name:'Jump Rope',muscles:['Calves','Shoulders','Cardio','Coordination'],type:'cardio',difficulty:2,category:'cardio',
+   demo:'FJmRQ5iTXKE',
+   desc:'Jump rope with light bouncing, wrists rotating rope, land on balls of feet.',tips:'10 mins = ~30 mins jogging calorie-wise.',cues:'Jump just high enough to clear rope. Stay on your toes.'},
+
+  {id:'rowing_machine',name:'Rowing Machine',muscles:['Back','Legs','Core','Cardio'],type:'cardio',difficulty:2,category:'compound',
+   demo:'H0r5HGbZzGk',
+   desc:'Drive with legs first, lean back, pull handle to lower chest.',tips:'80% legs, 20% arms. Most people overuse arms.',cues:'Legs. Body. Arms. Arms. Body. Legs. That is the sequence.'},
+
+  {id:'assault_bike',name:'Assault Bike',muscles:['Full Body','Cardio'],type:'cardio',difficulty:3,category:'cardio',
+   demo:'pILGPEZlMoo',
+   desc:'Full body air bike — push and pull handles while pedalling hard.',tips:'One of the most brutal conditioning tools. Pace yourself.',cues:'Push AND pull handles. Use your whole body, not just legs.'},
+
+  {id:'sled_push',name:'Sled Push',muscles:['Quads','Glutes','Core','Cardio'],type:'cardio',difficulty:3,category:'compound',
+   demo:'MzNBpLIEa_4',
+   desc:'Push weighted sled using short powerful strides.',tips:'No eccentric loading = less soreness. Push harder than you think.',cues:'Low body position, drive through balls of feet, pump arms.'}
+];
 
 
 const WORKOUT_GUIDES = [
@@ -999,7 +993,7 @@ const WORKOUT_GUIDES = [
 // ─── STATE ────────────────────────────────────────────────
 const BASE_URL = 'https://maplestory.io/api/GMS/255/item';
 let currentUser = null, userProfile = null;
-let tasks = [], habits = [], crew = null, crewMembers = [], crewMessages = [], boss = null;
+let tasks = [], habits = [], party = null, partyMembers = [], partyMessages = [], boss = null;
 let bodyEntries = [], workoutEntries = [], fitnessProfile = null;
 let unsubs = [], activeTab = 'today', synced = false;
 let _authHandled = false; // prevents onAuthStateChanged double-handling
@@ -1072,13 +1066,13 @@ function subscribeAll(uid, crewId) {
   unsubs.push(onSnapshot(query(collection(db,'habits'),where('uid','==',uid)), s => {
     habits = s.docs.map(d => ({id:d.id,...d.data()})); renderHabits();
   }));
-  if (crewId) subscribeCrew(crewId);
+  if (crewId) subscribeParty(crewId);
 }
 
-function subscribeCrew(crewId) {
-  unsubs.push(onSnapshot(doc(db,'crews',crewId), s => { if(s.exists()){crew={id:s.id,...s.data()};renderCrew();} }));
-  unsubs.push(onSnapshot(query(collection(db,'users'),where('crewId','==',crewId)), s => { crewMembers=s.docs.map(d=>({id:d.id,...d.data()}));renderCrew(); }));
-  unsubs.push(onSnapshot(query(collection(db,'crews',crewId,'messages'),orderBy('createdAt','asc')), s => { crewMessages=s.docs.map(d=>({id:d.id,...d.data()}));renderMessages(); }));
+function subscribeParty(crewId) {
+  unsubs.push(onSnapshot(doc(db,'crews',crewId), s => { if(s.exists()){party={id:s.id,...s.data()};renderParty();} }));
+  unsubs.push(onSnapshot(query(collection(db,'users'),where('crewId','==',crewId)), s => { partyMembers=s.docs.map(d=>({id:d.id,...d.data()}));renderParty(); }));
+  unsubs.push(onSnapshot(query(collection(db,'crews',crewId,'messages'),orderBy('createdAt','asc')), s => { partyMessages=s.docs.map(d=>({id:d.id,...d.data()}));renderMessages(); }));
   unsubs.push(onSnapshot(doc(db,'crews',crewId,'boss','current'), s => { if(s.exists()){boss=s.data();renderBoss();} }));
 }
 
@@ -1395,12 +1389,18 @@ async function gainXP(amount, stats = {}) {
 // ─── TASKS ────────────────────────────────────────────────
 window.addTask = async () => {
   const name = g('new-task-name').value.trim(); if (!name) { toast('Name your mission!'); return; }
+  const deadlineEl = g('new-task-deadline');
+  const deadline = deadlineEl ? deadlineEl.value : '';
+  const sort_order = tasks.length; // append to end
   await addDoc(collection(db,'tasks'), {
     name, type:taskType, priority:taskPriority, repeat:taskRepeat,
     uid:currentUser.uid, owner: taskType==='shared'||taskType==='chore' ? 'both' : currentUser.uid,
-    xp: XP[taskPriority]||XP.medium, done:false, createdAt:serverTimestamp()
+    xp: XP[taskPriority]||XP.medium, done:false, sort_order,
+    deadline_date: deadline || null,
+    createdAt:serverTimestamp()
   });
   closeModal('task-modal'); g('new-task-name').value = '';
+  if (deadlineEl) deadlineEl.value = '';
   taskType='personal'; taskPriority='medium'; taskRepeat='none';
   playSound('launch'); toast('✅ Task added!');
 };
@@ -1528,39 +1528,35 @@ window.copyInstallLink = function() {
   }
 };
 
-window.createCrew = async () => {
-  const name = g('crew-name-input').value.trim(); if (!name) { toast('Name your crew!'); return; }
-  const btn = g('create-crew-btn'); btn.disabled=true; btn.textContent='Creating...';
+window.createParty = async () => {
+  const name = g('party-name-input').value.trim(); if (!name) { toast('Name your party!'); return; }
+  const btn = g('create-party-btn'); btn.disabled=true; btn.textContent='Creating...';
   const code = genCode();
   const uSnap = await getDoc(doc(db,'users',currentUser.uid)); const uData = uSnap.data()||{};
   const ref = await addDoc(collection(db,'crews'),{name,code,createdBy:currentUser.uid,createdAt:serverTimestamp(),memberCount:1});
   await updateDoc(doc(db,'users',currentUser.uid),{crewId:ref.id,crewsCreated:(uData.crewsCreated||0)+1,crewCount:(uData.crewCount||0)+1});
-  subscribeCrew(ref.id); await initBoss();
+  subscribeParty(ref.id); await initBoss();
   await gainXP(50,{crewsCreated:1,crewCount:1});
-  g('crew-code-val').textContent = code;
-  g('crew-create-form').style.display = 'none';
-  g('crew-created-box').style.display = 'block';
+  g('party-code-val').textContent = code;
+  g('party-create-form').style.display = 'none';
+  g('party-created-box').style.display = 'block';
   playSound('unlock'); spawnConfetti(30);
-  setTimeout(()=>toast(`🎉 Crew "${name}" created! Code: ${code}`),300);
+  setTimeout(()=>toast(`🎉 Party "${name}" created! Code: ${code}`),300);
 };
 
-window.joinCrew = async () => {
+window.joinParty = async () => {
   const code = g('join-input').value.trim().toUpperCase(); if (!code) { toast('Enter a code!'); return; }
   const snap = await getDocs(query(collection(db,'crews'),where('code','==',code)));
-  if (snap.empty) { toast('❌ Invalid crew code!'); return; }
+  if (snap.empty) { toast('❌ Invalid party code!'); return; }
   const cd = snap.docs[0];
   const uSnap = await getDoc(doc(db,'users',currentUser.uid)); const uData = uSnap.data()||{};
   await updateDoc(doc(db,'users',currentUser.uid),{crewId:cd.id,crewCount:(uData.crewCount||0)+1});
   await updateDoc(doc(db,'crews',cd.id),{memberCount:(cd.data().memberCount||0)+1});
-  subscribeCrew(cd.id); await gainXP(20,{crewCount:1});
-  closeModal('crew-modal'); playSound('unlock'); toast(`🎉 Joined "${cd.data().name}"!`);
+  subscribeParty(cd.id); await gainXP(20,{crewCount:1});
+  closeModal('party-modal'); playSound('unlock'); toast(`🎉 Joined "${cd.data().name}"!`);
 };
 
-window.leaveCrew = async () => {
-  // confirmed
-  await updateDoc(doc(db,'users',currentUser.uid),{crewId:null});
-  crew=null; crewMembers=[]; crewMessages=[]; boss=null; renderCrew(); toast('Left the crew.');
-};
+// leaveParty is defined below with confirmation modal
 
 async function sendMsg(text) {
   if (!userProfile?.crewId || !text.trim()) return;
@@ -1570,12 +1566,48 @@ async function sendMsg(text) {
     text:text.trim(), createdAt:serverTimestamp()
   });
 }
-window.sendCrewMsg = async () => { const inp=g('msg-input'); await sendMsg(inp.value); inp.value=''; };
+window.sendPartyMsg = async () => { const inp=g('msg-input'); await sendMsg(inp.value); inp.value=''; };
 window.sendNudge = t => sendMsg(t);
 window.sendBoost = async targetName => {
   await sendMsg(`⚡ BOOST to ${targetName}! You are crushing it! 🚀`);
   await gainXP(XP.boost); playSound('boost'); toast(`⚡ Boost sent!`); spawnConfetti();
 };
+window.switchPartyTab = function(tab) {
+  const createSec = document.getElementById('party-create-section');
+  const joinSec = document.getElementById('party-join-section');
+  const tabCreate = document.getElementById('ptab-create');
+  const tabJoin = document.getElementById('ptab-join');
+  if (!createSec || !joinSec) return;
+  if (tab === 'join') {
+    createSec.style.display = 'none'; joinSec.style.display = 'block';
+    if (tabCreate) tabCreate.classList.remove('active');
+    if (tabJoin) tabJoin.classList.add('active');
+  } else {
+    createSec.style.display = 'block'; joinSec.style.display = 'none';
+    if (tabCreate) tabCreate.classList.add('active');
+    if (tabJoin) tabJoin.classList.remove('active');
+  }
+};
+
+window.leaveParty = function() {
+  const overlay = document.createElement('div');
+  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px';
+  overlay.innerHTML = `<div style="background:var(--surf);border:3px solid var(--accent);border-radius:0;padding:24px;max-width:300px;width:100%;box-shadow:4px 4px 0 rgba(0,0,0,.6);text-align:center">
+    <div style="font-size:10px;font-family:var(--pixel);color:var(--accent);margin-bottom:12px;line-height:2">⚠️ LEAVE PARTY?</div>
+    <div style="font-size:13px;color:var(--muted);margin-bottom:20px;line-height:1.6">You will lose access to shared tasks and party chat.</div>
+    <div style="display:flex;gap:10px">
+      <button onclick="this.closest('div[style]').remove()" style="flex:1;padding:12px;border-radius:0;border:2px solid var(--border);background:var(--surf2);color:var(--text);font-family:var(--pixel);font-size:8px;cursor:pointer">No, Stay</button>
+      <button onclick="this.closest('div[style]').remove();window._doLeaveParty()" style="flex:1;padding:12px;border-radius:0;border:2px solid var(--red);background:var(--red);color:#fff;font-family:var(--pixel);font-size:8px;cursor:pointer">Yes, Leave</button>
+    </div>
+  </div>`;
+  document.body.appendChild(overlay);
+};
+
+window._doLeaveParty = async function() {
+  await updateDoc(doc(db,'users',currentUser.uid),{crewId:null});
+  party=null; partyMembers=[]; partyMessages=[]; boss=null; renderParty(); toast('Left the party.');
+};
+
 
 // ─── FITNESS ──────────────────────────────────────────────
 window.optInFitness = async () => {
@@ -1906,7 +1938,10 @@ window.cancelSession = () => {
 };
 
 window.doCancelSession = () => {
-  activeSession=null; resetTimer(); renderFitness();
+  activeSession=null; resetTimer();
+  // Route to Diary view without page refresh
+  const diaryBtn = document.getElementById('ft-diary');
+  switchFitTab('diary', diaryBtn);
 };
 
 window.logWorkoutEntry = async () => {
@@ -2173,6 +2208,8 @@ function showApp() {
   setTimeout(()=>applyIconDensity(parseInt(lsGet('intask_icon_count','5'))),300);
   // Stop login music when entering app
   if(window.stopLoginMusic) window.stopLoginMusic();
+  // Load user music preferences
+  _mpLoadUserMusic().catch(()=>{});
   // Auto-start BGM if enabled
   if(lsGet('intask_bgm_default','0')==='1') {
     setTimeout(() => { if(window.toggleBGM) window.toggleBGM(); }, 800);
@@ -2218,10 +2255,11 @@ function renderHeader() {
 }
 
 function renderToday() {
-  const myTasks = tasks.filter(t=>t.type!=='chore');
-  const myChores = tasks.filter(t=>t.type==='chore');
-  const done = tasks.filter(t=>t.done).length;
-  const pct = tasks.length?Math.round(done/tasks.length*100):0;
+  const sorted = [...tasks].sort((a,b) => (a.sort_order ?? Infinity) - (b.sort_order ?? Infinity));
+  const myTasks = sorted.filter(t=>t.type!=='chore');
+  const myChores = sorted.filter(t=>t.type==='chore');
+  const done = sorted.filter(t=>t.done).length;
+  const pct = sorted.length?Math.round(done/sorted.length*100):0;
   g('prog-count').textContent = done;
   g('prog-total').textContent = ' / '+tasks.length;
   g('prog-fill').style.width = pct+'%';
@@ -2229,6 +2267,8 @@ function renderToday() {
   if(pctEl) pctEl.textContent = pct+'%';
   g('tasks-list').innerHTML = myTasks.length ? myTasks.map(taskCard).join('') : emptyState('🎯','No tasks yet!');
   g('chores-list').innerHTML = myChores.length ? myChores.map(taskCard).join('') : emptyState('🏠','No shared tasks yet!');
+  // Enable drag-and-drop after DOM update
+  requestAnimationFrame(enableTaskDragAndDrop);
 }
 
 function taskCard(t) {
@@ -2236,21 +2276,171 @@ function taskCard(t) {
   const tc = {personal:'#7c3aed',shared:'#06b6d4',chore:'#10b981',goal:'#f59e0b'};
   const c = pc[t.priority]||tc[t.type]||'#7c3aed';
   const rep = {daily:'🔁 Daily',weekly:'📅 Weekly',monthly:'🗓️ Monthly'}[t.repeat]||'';
-  return `<div class="task-card${t.done?' done':''}" style="--tc:${c}" onclick="completeTask('${t.id}')" oncontextmenu="event.preventDefault();deleteTask('${t.id}')">
+  const partyName = (t.type==='shared'||t.type==='chore') && party ? ` · ${party.name}` : '';
+  const deadlineStr = t.deadline_date ? `<span class="tag" style="color:var(--accent2);border-color:var(--accent2)">📅 ${t.deadline_date}</span>` : '';
+  return `<div class="task-card${t.done?' done':''}" style="--tc:${c};cursor:grab" 
+    data-id="${t.id}"
+    draggable="true"
+    onclick="completeTask('${t.id}')"
+    oncontextmenu="event.preventDefault();event.stopPropagation();openEditTaskModal('${t.id}')"
+    ontouchstart="window._taskLongPress('${t.id}',event)">
+    <div class="task-drag-handle" onclick="event.stopPropagation()" style="color:var(--muted);font-size:16px;cursor:grab;padding:0 4px 0 0;flex-shrink:0;user-select:none">⠿</div>
     <div class="task-check" style="border-color:${c};${t.done?`background:${c}`:''}">
       ${t.done?'<span style="color:#fff;font-size:13px;font-weight:900">✓</span>':''}
     </div>
     <div class="task-body">
       <div class="task-name">${t.name}</div>
       <div class="task-tags">
-        <span class="tag" style="color:${tc[t.type]||'#7c3aed'};border-color:${tc[t.type]||'#7c3aed'}">${t.type==='shared'?'<img src="https://maplestory.io/api/GMS/255/item/1302086/icon" width="12" height="12" style="image-rendering:pixelated;vertical-align:middle">':t.type==='chore'?'<img src="https://maplestory.io/api/GMS/255/item/1322000/icon" width="12" height="12" style="image-rendering:pixelated;vertical-align:middle">':t.type==='goal'?'<img src="https://maplestory.io/api/GMS/255/item/1402000/icon" width="12" height="12" style="image-rendering:pixelated;vertical-align:middle">':'<img src="https://maplestory.io/api/GMS/255/item/1302000/icon" width="12" height="12" style="image-rendering:pixelated;vertical-align:middle">'} ${t.type}</span>
+        <span class="tag" style="color:${tc[t.type]||'#7c3aed'};border-color:${tc[t.type]||'#7c3aed'}">${t.type==='shared'?'<img src="https://maplestory.io/api/GMS/255/item/1302086/icon" width="12" height="12" style="image-rendering:pixelated;vertical-align:middle">':t.type==='chore'?'<img src="https://maplestory.io/api/GMS/255/item/1322000/icon" width="12" height="12" style="image-rendering:pixelated;vertical-align:middle">':t.type==='goal'?'<img src="https://maplestory.io/api/GMS/255/item/1402000/icon" width="12" height="12" style="image-rendering:pixelated;vertical-align:middle">':'<img src="https://maplestory.io/api/GMS/255/item/1302000/icon" width="12" height="12" style="image-rendering:pixelated;vertical-align:middle">'} ${t.type}${partyName}</span>
         <span class="tag" style="color:${c};border-color:${c}">${t.priority}</span>
         ${rep?`<span class="repeat-badge">${rep}</span>`:''}
+        ${deadlineStr}
       </div>
     </div>
     <span class="xp-badge">+${t.xp||30}XP</span>
   </div>`;
 }
+
+
+// ─── TASK DRAG & DROP ─────────────────────────────
+let _dragSrcId = null;
+
+function enableTaskDragAndDrop() {
+  const lists = ['tasks-list','chores-list'];
+  lists.forEach(listId => {
+    const taskList = document.getElementById(listId);
+    if (!taskList) return;
+    const items = taskList.querySelectorAll('.task-card');
+    items.forEach(item => {
+      item.addEventListener('dragstart', e => {
+        _dragSrcId = item.dataset.id;
+        e.dataTransfer.setData('text/plain', item.dataset.id);
+        item.style.opacity = '0.5';
+        item.classList.add('dragging');
+      });
+      item.addEventListener('dragend', () => {
+        item.style.opacity = '';
+        item.classList.remove('dragging');
+        saveNewTaskOrder();
+      });
+    });
+    taskList.addEventListener('dragover', e => {
+      e.preventDefault();
+      const dragging = taskList.querySelector('.dragging');
+      if (!dragging) return;
+      const after = getDragAfterElement(taskList, e.clientY);
+      if (after == null) taskList.appendChild(dragging);
+      else taskList.insertBefore(dragging, after);
+    });
+  });
+}
+
+function getDragAfterElement(container, y) {
+  const els = [...container.querySelectorAll('.task-card:not(.dragging)')];
+  return els.reduce((closest, child) => {
+    const box = child.getBoundingClientRect();
+    const offset = y - box.top - box.height / 2;
+    if (offset < 0 && offset > closest.offset) return { offset, element: child };
+    return closest;
+  }, { offset: Number.NEGATIVE_INFINITY }).element;
+}
+
+async function saveNewTaskOrder() {
+  const allItems = [...document.querySelectorAll('#tasks-list .task-card, #chores-list .task-card')];
+  const batch = [];
+  allItems.forEach((item, index) => {
+    if (item.dataset.id) batch.push({ id: item.dataset.id, sort_order: index });
+  });
+  // Update Firestore for each task
+  for (const { id, sort_order } of batch) {
+    try { await updateDoc(doc(db, 'tasks', id), { sort_order }); } catch(e) {}
+  }
+}
+
+// Long press for mobile edit
+let _longPressTimer = null;
+window._taskLongPress = function(id, e) {
+  if (_longPressTimer) clearTimeout(_longPressTimer);
+  _longPressTimer = setTimeout(() => {
+    e.preventDefault();
+    openEditTaskModal(id);
+  }, 500);
+  const cancel = () => { clearTimeout(_longPressTimer); _longPressTimer = null; };
+  e.target.addEventListener('touchend', cancel, {once:true});
+  e.target.addEventListener('touchmove', cancel, {once:true});
+};
+
+// ─── EDIT TASK MODAL ──────────────────────────────
+window.openEditTaskModal = function(id) {
+  const t = tasks.find(x => x.id === id);
+  if (!t) return;
+  // Remove any existing edit modal
+  document.getElementById('edit-task-modal-overlay')?.remove();
+
+  const overlay = document.createElement('div');
+  overlay.id = 'edit-task-modal-overlay';
+  overlay.className = 'modal-overlay';
+  overlay.style.display = 'flex';
+  overlay.innerHTML = `
+    <div class="modal" style="max-height:90vh;overflow-y:auto">
+      <div class="modal-handle"></div>
+      <div class="modal-title">✏️ EDIT TASK</div>
+      <label class="field-label">TASK NAME</label>
+      <input id="edit-task-name" class="form-input" value="${t.name.replace(/"/g,'&quot;')}" placeholder="Task name...">
+      <label class="field-label">TYPE</label>
+      <div class="pill-row">
+        <button class="pill${t.type==='personal'?' active':''}" data-group="edit-task-type" onclick="window._setEditPill('personal','edit-task-type',this)">👤 Personal</button>
+        <button class="pill${t.type==='shared'?' active':''}" data-group="edit-task-type" onclick="window._setEditPill('shared','edit-task-type',this)">👫 Party Task</button>
+        <button class="pill${t.type==='chore'?' active':''}" data-group="edit-task-type" onclick="window._setEditPill('chore','edit-task-type',this)">🏠 Chore</button>
+        <button class="pill${t.type==='goal'?' active':''}" data-group="edit-task-type" onclick="window._setEditPill('goal','edit-task-type',this)">⭐ Goal</button>
+      </div>
+      <label class="field-label">PRIORITY</label>
+      <div class="pill-row">
+        <button class="pill${t.priority==='low'?' active':''}" data-group="edit-task-priority" onclick="window._setEditPill('low','edit-task-priority',this)">🟢 Low · 20XP</button>
+        <button class="pill${(t.priority==='medium'||!t.priority)?' active':''}" data-group="edit-task-priority" onclick="window._setEditPill('medium','edit-task-priority',this)">🟡 Medium · 30XP</button>
+        <button class="pill${t.priority==='high'?' active':''}" data-group="edit-task-priority" onclick="window._setEditPill('high','edit-task-priority',this)">🔴 High · 50XP</button>
+      </div>
+      <label class="field-label">REPEAT</label>
+      <div class="pill-row">
+        <button class="pill${(!t.repeat||t.repeat==='none')?' active':''}" data-group="edit-task-repeat" onclick="window._setEditPill('none','edit-task-repeat',this)">⭕ Once</button>
+        <button class="pill${t.repeat==='daily'?' active':''}" data-group="edit-task-repeat" onclick="window._setEditPill('daily','edit-task-repeat',this)">🔁 Daily</button>
+        <button class="pill${t.repeat==='weekly'?' active':''}" data-group="edit-task-repeat" onclick="window._setEditPill('weekly','edit-task-repeat',this)">📅 Weekly</button>
+        <button class="pill${t.repeat==='monthly'?' active':''}" data-group="edit-task-repeat" onclick="window._setEditPill('monthly','edit-task-repeat',this)">🗓️ Monthly</button>
+      </div>
+      <label class="field-label">DEADLINE <span style="font-weight:400;color:var(--muted)">(optional)</span></label>
+      <input id="edit-task-deadline" class="form-input" type="date" value="${t.deadline_date||''}" style="margin-bottom:14px">
+      <div style="display:flex;gap:10px">
+        <button class="big-btn" style="background:var(--parchment);border:1.5px solid var(--border);color:var(--muted)" onclick="document.getElementById('edit-task-modal-overlay')?.remove()">Cancel</button>
+        <button class="big-btn" onclick="window._saveEditTask('${id}')">💾 Save Changes</button>
+      </div>
+      <button onclick="deleteTask('${id}');document.getElementById('edit-task-modal-overlay')?.remove()" style="width:100%;padding:10px;margin-top:8px;border:1.5px solid var(--red);background:transparent;color:var(--red);border-radius:10px;font-size:13px;font-weight:600;cursor:pointer">🗑️ Delete Task</button>
+    </div>`;
+  overlay.addEventListener('click', e => { if (e.target === overlay) overlay.remove(); });
+  document.body.appendChild(overlay);
+};
+
+window._setEditPill = function(val, group, el) {
+  document.querySelectorAll(`[data-group="${group}"]`).forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+};
+
+window._saveEditTask = async function(id) {
+  const name = document.getElementById('edit-task-name')?.value.trim();
+  if (!name) { toast('Task name required!'); return; }
+  const type = document.querySelector('[data-group="edit-task-type"].active')?.textContent.includes('Personal') ? 'personal' :
+               document.querySelector('[data-group="edit-task-type"].active')?.textContent.includes('Party') ? 'shared' :
+               document.querySelector('[data-group="edit-task-type"].active')?.textContent.includes('Chore') ? 'chore' : 'goal';
+  const priority = document.querySelector('[data-group="edit-task-priority"].active')?.textContent.includes('Low') ? 'low' :
+                   document.querySelector('[data-group="edit-task-priority"].active')?.textContent.includes('High') ? 'high' : 'medium';
+  const repeat = document.querySelector('[data-group="edit-task-repeat"].active')?.textContent.includes('Daily') ? 'daily' :
+                 document.querySelector('[data-group="edit-task-repeat"].active')?.textContent.includes('Weekly') ? 'weekly' :
+                 document.querySelector('[data-group="edit-task-repeat"].active')?.textContent.includes('Monthly') ? 'monthly' : 'none';
+  const deadline = document.getElementById('edit-task-deadline')?.value || null;
+  const xp = {high:50,medium:30,low:20}[priority]||30;
+  await updateDoc(doc(db,'tasks',id), { name, type, priority, repeat, xp, deadline_date: deadline || null });
+  document.getElementById('edit-task-modal-overlay')?.remove();
+  toast('✅ Task updated!');
+};
 
 function renderHabits() {
   const streak = userProfile?.currentStreak||0;
@@ -2279,22 +2469,22 @@ function habitCard(h) {
   </div>`;
 }
 
-function renderCrew() {
-  const panel = g('crew-panel'); if (!panel) return;
-  if (!userProfile?.crewId || !crew) {
-    panel.innerHTML = `<div class="no-crew-wrap"><div class="no-crew-icon">🪐</div><div class="no-crew-title">No Crew Yet</div><div class="no-crew-sub">Create a crew or join one with a 6-digit code to connect with friends &amp; family.</div><button class="big-btn" onclick="openModal('crew-modal')">🚀 Create or Join a Crew</button></div>`;
+function renderParty() {
+  const panel = g('party-panel'); if (!panel) return;
+  if (!userProfile?.crewId || !party) {
+    panel.innerHTML = `<div class="no-party-wrap"><div class="no-party-icon">🪐</div><div class="no-party-title">No Party Yet</div><div class="no-party-sub">Create a party or join one with a 6-digit code to connect with friends &amp; family.</div><button class="big-btn" onclick="openModal('party-modal')">🚀 Create or Join a Crew</button></div>`;
     return;
   }
-  const sorted = [...crewMembers].sort((a,b)=>(b.level*1000+(b.xp||0))-(a.level*1000+(a.xp||0)));
+  const sorted = [...partyMembers].sort((a,b)=>(b.level*1000+(b.xp||0))-(a.level*1000+(a.xp||0)));
   const medals = ['🥇','🥈','🥉'];
   panel.innerHTML = `
     <div class="season-banner" style="border-color:var(--border);background:var(--surf2)"><span style="font-size:11px;font-weight:600;color:var(--muted);letter-spacing:0.5px">⚔️ SEASON 1: THE AWAKENING</span></div>
     <div id="boss-section"></div>
     <div class="crew-header-row">
-      <div><div class="crew-name-text">${crew.name}</div><div class="crew-sub-text">${crewMembers.length} pilots · Code: <span style="color:var(--accent3);font-weight:900;letter-spacing:2px">${crew.code}</span></div></div>
-      <button class="leave-btn" onclick="leaveCrew()">↩ Leave</button>
+      <div><div class="crew-name-text">${party.name}</div><div class="crew-sub-text">${partyMembers.length} pilots · Code: <span style="color:var(--accent3);font-weight:900;letter-spacing:2px">${party.code}</span></div></div>
+      <button class="leave-btn" onclick="leaveParty()">↩ Leave</button>
     </div>
-    <div class="sec-title" style="margin-bottom:10px"><img src="https://maplestory.io/api/GMS/255/item/4031138/icon" alt="" width="18" height="18" style="image-rendering:pixelated;vertical-align:middle;margin-right:4px"> CREW LEADERBOARD</div>
+    <div class="sec-title" style="margin-bottom:10px"><img src="https://maplestory.io/api/GMS/255/item/4031138/icon" alt="" width="18" height="18" style="image-rendering:pixelated;vertical-align:middle;margin-right:4px"> PARTY LEADERBOARD</div>
     <div class="lb-wrap">${sorted.map((m,i)=>`
       <div class="lb-row${m.id===currentUser?.uid?' me':''}">
         <span class="lb-rank">${medals[i]||'#'+(i+1)}</span>
@@ -2308,11 +2498,11 @@ function renderCrew() {
     </div>
     <div style="margin-top:16px"><div class="sec-title" style="margin-bottom:10px">QUICK NUDGES</div>
     <div class="nudge-scroll">${['🚀 You got this!','💪 Keep going!','⭐ Proud of you!','🔔 Reminder!','🎯 Focus time!','❤️ Love you!','🔥 On fire!','⚔️ Attack the boss!'].map(n=>`<button class="nudge-chip" onclick="sendNudge('${n}')">${n}</button>`).join('')}</div></div>
-    <div style="margin-top:16px"><div class="sec-title" style="margin-bottom:10px">CREW COMMS</div>
+    <div style="margin-top:16px"><div class="sec-title" style="margin-bottom:10px">PARTY COMMS</div>
     <div class="chat-box" id="chat-box"></div>
     <div class="msg-input-row">
-      <input id="msg-input" class="msg-input" placeholder="Message the crew..." onkeydown="if(event.key==='Enter')sendCrewMsg()">
-      <button class="send-btn" onclick="sendCrewMsg()">➤</button>
+      <input id="msg-input" class="msg-input" placeholder="Message the party..." onkeydown="if(event.key==='Enter')sendPartyMsg()">
+      <button class="send-btn" onclick="sendPartyMsg()">➤</button>
     </div></div>`;
   renderBoss();
   renderMessages();
@@ -2335,8 +2525,8 @@ function renderBoss() {
 
 function renderMessages() {
   const box = g('chat-box'); if (!box) return;
-  if (!crewMessages.length) { box.innerHTML='<div class="empty-chat">No messages yet. Say hi! 👋</div>'; return; }
-  box.innerHTML = crewMessages.map(m=>{
+  if (!partyMessages.length) { box.innerHTML='<div class="empty-chat">No messages yet. Say hi! 👋</div>'; return; }
+  box.innerHTML = partyMessages.map(m=>{
     const isMe = m.from===currentUser?.uid;
     return `<div class="msg-wrap${isMe?' msg-me':''}">
       ${!isMe?`<div class="msg-av" style="border-color:var(--border);background:var(--surf2)">${m.avatar?`<img src="${AVATAR_URL(m.avatar)}" width="32" height="32" style="image-rendering:pixelated;object-fit:contain" onerror="this.style.display='none'">`:`<span style="font-size:20px">👤</span>`}</div>`:''}
@@ -2497,7 +2687,7 @@ window.renderSettings = function renderSettings() {
 
       <div style="margin-top:14px;padding:10px;background:rgba(255,215,0,.08);border:1px solid rgba(255,215,0,.2);border-radius:0">
         <div style="font-size:9px;font-family:var(--pixel);color:var(--accent);margin-bottom:6px">SHARE WITH FRIENDS</div>
-        <div style="font-size:12px;color:var(--muted);margin-bottom:8px">Share InTask with your crew:</div>
+        <div style="font-size:12px;color:var(--muted);margin-bottom:8px">Share InTask with your party:</div>
         <div style="display:flex;gap:8px;align-items:center;background:var(--surf2);border:1px solid var(--border);padding:8px;word-break:break-all">
           <span style="font-size:11px;color:var(--accent2);flex:1">https://inny27.github.io/OrbitCrew</span>
           <button onclick="copyInstallLink()" style="border:1px solid var(--accent);background:transparent;color:var(--accent);font-family:var(--pixel);font-size:8px;padding:6px 10px;cursor:pointer;white-space:nowrap">COPY</button>
@@ -2517,7 +2707,7 @@ window.renderSettings = function renderSettings() {
       </div>
       <label class="field-label">NOW PLAYING</label>
       <select id="settings-music-select" class="form-input" style="margin-bottom:12px" onchange="setSongPref('bgm',this.value);setSongPref('login',this.value)">
-        ${[['Above the Treetops - Lith Harbour','Above the Treetops - Lith Harbour'],['Floral Life - Henesys','Floral Life - Henesys'],['Missing You - Ellinia','Missing You - Ellinia'],['Title - Login','Title - Login']].map(([v,l])=>`<option value="${v}"${v===(lsGet('intask_bgm_song')||DEFAULT_BGM_SONG)?' selected':''}>${l}</option>`).join('')}
+        ${[['Above the Treetops','Above the Treetops'],['Floral Life','Floral Life'],['Missing You','Missing You'],['Title Screen','Title Screen']].map(([v,l])=>`<option value="${v}"${v===(lsGet('intask_bgm_song')||DEFAULT_BGM_SONG)?' selected':''}>${l}</option>`).join('')}
       </select>
       <div style="display:flex;gap:10px;margin-bottom:12px">
         <button class="big-btn" style="flex:1;padding:12px" onclick="window.settingsPlayMusic()">▶ Play</button>
@@ -4149,7 +4339,7 @@ function showCel(title,sub,xp,extra='') {
 function missionCel(name,xp){showCel('TASK COMPLETE!',name,`+${xp} XP`);}
 function levelUpCel(l){playSound('levelup');showCel('⚡ LEVEL UP! ⚡',`You are now ${getTitle(l)}`,`LEVEL ${l}`,'+2 Skill Points earned!');}
 function badgeCel(b){showCel('BADGE UNLOCKED!',`${b.icon} ${b.name}`,b.desc);}
-function bossCel(){playSound('boss');showCel('⚔️ BOSS DEFEATED!',boss?.name||'The enemy falls!','+500 XP for the crew!',boss?.reward||'');}
+function bossCel(){playSound('boss');showCel('⚔️ BOSS DEFEATED!',boss?.name||'The enemy falls!','+500 XP for the party!',boss?.reward||'');}
 
 function spawnConfetti(count=40) {
   const cols=['#7c3aed','#06b6d4','#f59e0b','#ec4899','#10b981','#fff','#f97316'];
@@ -4182,7 +4372,7 @@ window.switchTab = tab => {
   const _ic = parseInt(lsGet('intask_icon_count','5'));
   setTimeout(()=>applyIconDensity(_ic), 100);
   if(tab==='habits') renderHabits();
-  if(tab==='crew') renderCrew();
+  if(tab==='party') renderParty();
   if(tab==='awards') renderAwards();
   if(tab==='fitness') renderFitness();
   if(tab==='music') renderMusicPlayer();
@@ -4267,7 +4457,7 @@ window.addEventListener('popstate', function(e) {
     <div style="font-size:10px;font-family:var(--pixel);color:var(--accent);margin-bottom:12px;line-height:2">LEAVE INTASK?</div>
     <div style="font-size:13px;color:var(--muted);margin-bottom:20px;line-height:1.6">Your data is saved. Sign out?</div>
     <div style="display:flex;gap:10px">
-      <button onclick="document.getElementById('exit-confirm-overlay').remove()" style="flex:1;padding:12px;border-radius:0;border:2px solid var(--border);background:var(--surf2);color:var(--text);font-family:var(--pixel);font-size:8px;cursor:pointer">Stay</button>
+      <button onclick="document.getElementById('exit-confirm-overlay').remove();history.pushState({tab:activeTab},'',location.href)" style="flex:1;padding:12px;border-radius:0;border:2px solid var(--border);background:var(--surf2);color:var(--text);font-family:var(--pixel);font-size:8px;cursor:pointer">Stay</button>
       <button onclick="window.doLogout&&window.doLogout()" style="flex:1;padding:12px;border-radius:0;border:2px solid var(--accent);background:var(--accent);color:#0a0a1a;font-family:var(--pixel);font-size:8px;cursor:pointer">Sign Out</button>
     </div>
   </div>`;
@@ -4459,7 +4649,7 @@ const MUSIC_TRACKS = [
   {id:'sea_shanty_2',title:'Sea Shanty 2',artist:'In-Built Songs',album:'In-Built Songs',url:'https://inny27.github.io/OrbitCrew/sea%20shanty%202.mp3',mob:'1120100',colour:'#0055aa'}
 ];
 
-// Player state - persisted in localStorage per user
+// Player state
 let _mpTrackIdx = 0;
 let _mpAudio = null;
 let _mpPlaying = false;
@@ -4470,13 +4660,58 @@ let _mpProgress = 0;
 let _mpDuration = 0;
 let _mpProgressInterval = null;
 let _mpTab = 'all'; // 'all' | 'liked' | 'albums'
-let _mpLiked = new Set(JSON.parse(localStorage.getItem('mp_liked') || '[]'));
-let _mpAlbums = JSON.parse(localStorage.getItem('mp_albums') || '{}');
-// default album: In-Built Songs
-if (!_mpAlbums['In-Built Songs']) _mpAlbums['In-Built Songs'] = MUSIC_TRACKS.map(t=>t.id);
+let _mpLiked = new Set();
+let _mpAlbums = {};
 
-function _mpSaveLiked() { localStorage.setItem('mp_liked', JSON.stringify([..._mpLiked])); }
-function _mpSaveAlbums() { localStorage.setItem('mp_albums', JSON.stringify(_mpAlbums)); }
+// Load liked/albums from Firestore per user (falls back to localStorage for guests)
+async function _mpLoadUserMusic() {
+  if (!currentUser) {
+    // Guest: use localStorage
+    _mpLiked = new Set(JSON.parse(localStorage.getItem('mp_liked_' + (currentUser?.uid||'anon')) || '[]'));
+    _mpAlbums = JSON.parse(localStorage.getItem('mp_albums_' + (currentUser?.uid||'anon')) || '{}');
+  } else {
+    try {
+      const snap = await getDoc(doc(db, 'users', currentUser.uid));
+      if (snap.exists()) {
+        const d = snap.data();
+        _mpLiked = new Set(d.mp_liked || []);
+        _mpAlbums = d.mp_albums || {};
+      }
+    } catch(e) {
+      // fallback to localStorage
+      _mpLiked = new Set(JSON.parse(localStorage.getItem('mp_liked_' + currentUser.uid) || '[]'));
+      _mpAlbums = JSON.parse(localStorage.getItem('mp_albums_' + currentUser.uid) || '{}');
+    }
+  }
+  if (!_mpAlbums['In-Built Songs']) _mpAlbums['In-Built Songs'] = MUSIC_TRACKS.map(t=>t.id);
+}
+
+async function _mpSaveLiked() {
+  if (!currentUser) {
+    localStorage.setItem('mp_liked_anon', JSON.stringify([..._mpLiked]));
+    return;
+  }
+  try {
+    await updateDoc(doc(db,'users',currentUser.uid), { mp_liked: [..._mpLiked] });
+  } catch(e) {
+    localStorage.setItem('mp_liked_' + currentUser.uid, JSON.stringify([..._mpLiked]));
+  }
+}
+
+async function _mpSaveAlbums() {
+  if (!currentUser) {
+    localStorage.setItem('mp_albums_anon', JSON.stringify(_mpAlbums));
+    return;
+  }
+  try {
+    await updateDoc(doc(db,'users',currentUser.uid), { mp_albums: _mpAlbums });
+  } catch(e) {
+    localStorage.setItem('mp_albums_' + currentUser.uid, JSON.stringify(_mpAlbums));
+  }
+}
+
+// Load music data when tab is opened
+const _origRenderMusicPlayer = window.renderMusicPlayer;
 
 function _mpFmt(s) {
   if (!s || isNaN(s)) return '0:00';
@@ -4488,7 +4723,13 @@ function _mpGetList() {
   return MUSIC_TRACKS;
 }
 
-window.renderMusicPlayer = function() { _mpBuildUI(); };
+window.renderMusicPlayer = function() {
+  if (!_mpAlbums['In-Built Songs']) {
+    _mpLoadUserMusic().then(() => _mpBuildUI());
+  } else {
+    _mpBuildUI();
+  }
+};
 
 function _mpBuildUI() {
   const root = document.getElementById('music-app-root');
@@ -4574,6 +4815,7 @@ function _mpBuildUI() {
     if (el.dataset.play !== undefined) { window._mpPlay(parseInt(el.dataset.play)); return; }
     if (el.dataset.mptab) { window._mpSetTab(el.dataset.mptab); return; }
     if (el.dataset.liketrack) { e.stopPropagation(); window._mpLikeTrack(el.dataset.liketrack); return; }
+    if (el.dataset.addalbum) { e.stopPropagation(); window._mpAddToAlbum(el.dataset.addalbum); return; }
     if (el.dataset.delalbum) { e.stopPropagation(); window._mpDeleteAlbum(el.dataset.delalbum); return; }
     if (el.dataset.openalbum) { window._mpOpenAlbum(el.dataset.openalbum); return; }
   };
@@ -4621,6 +4863,7 @@ function _mpTabContent(list, currentTrack) {
         '<div style="font-size:10px;color:var(--muted)">'+tr.artist+'</div>' +
       '</div>' +
       '<button data-liketrack="' + tr.id + '" style="background:none;border:none;font-size:15px;color:' + (liked ? '#D4708A' : 'var(--muted)') + ';cursor:pointer;padding:4px">' + (liked ? '♥' : '♡') + '</button>' +
+      '<button data-addalbum="' + tr.id + '" style="background:none;border:none;font-size:13px;color:var(--muted);cursor:pointer;padding:4px" title="Add to album">📂</button>' +
     '</div>';
   }).join('');
 }
@@ -4713,25 +4956,59 @@ window._mpLikeTrack = function(id) {
   if (_mpLiked.has(id)) _mpLiked.delete(id); else _mpLiked.add(id);
   _mpSaveLiked(); _mpBuildUI();
 };
-window._mpNewAlbum = function() {
+window._mpNewAlbum = async function() {
   const name = prompt('Album name:');
   if (!name || !name.trim()) return;
-  if (_mpAlbums[name.trim()]) { alert('Album already exists!'); return; }
+  if (_mpAlbums[name.trim()]) { toast('Album already exists!'); return; }
   _mpAlbums[name.trim()] = [];
-  _mpSaveAlbums(); _mpBuildUI();
+  await _mpSaveAlbums(); _mpBuildUI();
 };
-window._mpDeleteAlbum = function(encodedName) {
+window._mpDeleteAlbum = async function(encodedName) {
   const name = decodeURIComponent(encodedName);
-  if (name === 'In-Built Songs') { alert('Cannot delete the default album.'); return; }
-  if (!confirm('Delete album "' + name + '"?')) return;
-  delete _mpAlbums[name];
-  _mpSaveAlbums(); _mpBuildUI();
+  if (name === 'In-Built Songs') { toast('Cannot delete the default album.'); return; }
+  const overlay = document.createElement('div');
+  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px';
+  overlay.innerHTML = `<div style='background:var(--surf);border:3px solid var(--red);border-radius:0;padding:24px;max-width:280px;width:100%;text-align:center'><div style='font-size:10px;font-family:var(--pixel);color:var(--red);margin-bottom:12px'>DELETE ALBUM?</div><div style='font-size:12px;color:var(--muted);margin-bottom:20px'>${name}</div><div style='display:flex;gap:10px'><button onclick='this.closest("div[style]").remove()' style='flex:1;padding:10px;border:2px solid var(--border);background:var(--surf2);color:var(--text);font-family:var(--pixel);font-size:8px;cursor:pointer'>Cancel</button><button onclick='window._doDeleteAlbum(decodeURIComponent("${encodedName}"));this.closest("div[style]").remove()' style='flex:1;padding:10px;border:2px solid var(--red);background:var(--red);color:#fff;font-family:var(--pixel);font-size:8px;cursor:pointer'>Delete</button></div></div>`;
+  document.body.appendChild(overlay);
+};
+window._doDeleteAlbum = async function(name) {
+  delete _mpAlbums[name]; await _mpSaveAlbums(); _mpBuildUI();
 };
 window._mpOpenAlbum = function(encodedName) {
   const name = decodeURIComponent(encodedName);
   const ids = _mpAlbums[name] || [];
   const tracks = MUSIC_TRACKS.filter(t => ids.includes(t.id));
   if (tracks.length > 0) window._mpPlay(MUSIC_TRACKS.indexOf(tracks[0]));
+};
+
+
+window._mpAddToAlbum = async function(trackId) {
+  const albumNames = Object.keys(_mpAlbums).filter(n => n !== 'In-Built Songs');
+  if (!albumNames.length) {
+    toast('Create an album first in the Albums tab!');
+    return;
+  }
+  // Build a simple picker
+  const overlay = document.createElement('div');
+  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px';
+  const track = MUSIC_TRACKS.find(t=>t.id===trackId);
+  overlay.innerHTML = `<div style="background:var(--surf);border-radius:16px;padding:20px;max-width:300px;width:100%">
+    <div style="font-family:var(--pixel);font-size:10px;color:var(--accent);margin-bottom:12px">ADD TO ALBUM</div>
+    <div style="font-size:13px;font-weight:700;margin-bottom:14px">${track ? track.title : trackId}</div>
+    ${albumNames.map(n=>`<button onclick="window._doAddToAlbum('${trackId}','${encodeURIComponent(n)}');this.closest('div[style]').remove()" style="width:100%;padding:10px;margin-bottom:8px;border:1.5px solid var(--border);background:var(--surf2);color:var(--text);border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;text-align:left">📂 ${n}</button>`).join('')}
+    <button onclick="this.closest('div[style]').remove()" style="width:100%;padding:10px;border:1.5px solid var(--border);background:transparent;color:var(--muted);border-radius:10px;font-size:13px;cursor:pointer">Cancel</button>
+  </div>`;
+  document.body.appendChild(overlay);
+};
+
+window._doAddToAlbum = async function(trackId, encodedAlbum) {
+  const album = decodeURIComponent(encodedAlbum);
+  if (!_mpAlbums[album]) _mpAlbums[album] = [];
+  if (_mpAlbums[album].includes(trackId)) { toast('Already in that album!'); return; }
+  _mpAlbums[album].push(trackId);
+  await _mpSaveAlbums();
+  toast('Added to ' + album + '!');
+  _mpBuildUI();
 };
 
 window.MUSIC_TRACKS = MUSIC_TRACKS;
@@ -4885,6 +5162,9 @@ function copyInstallLink(){if(window.copyInstallLink)window.copyInstallLink.appl
 function _doDeleteEntry(){if(window._doDeleteEntry)window._doDeleteEntry.apply(window,arguments);}
 function _doDeleteTask(){if(window._doDeleteTask)window._doDeleteTask.apply(window,arguments);}
 function _mpDeleteAlbum(){if(window._mpDeleteAlbum)window._mpDeleteAlbum.apply(window,arguments);}
+function _doDeleteAlbum(){if(window._doDeleteAlbum)window._doDeleteAlbum.apply(window,arguments);}
+function _mpAddToAlbum(){if(window._mpAddToAlbum)window._mpAddToAlbum.apply(window,arguments);}
+function _doAddToAlbum(){if(window._doAddToAlbum)window._doAddToAlbum.apply(window,arguments);}
 function _mpLikeTrack(){if(window._mpLikeTrack)window._mpLikeTrack.apply(window,arguments);}
 function _mpNewAlbum(){if(window._mpNewAlbum)window._mpNewAlbum.apply(window,arguments);}
 function _mpNext(){if(window._mpNext)window._mpNext.apply(window,arguments);}
@@ -4915,7 +5195,7 @@ function completeHabit(){if(window.completeHabit)window.completeHabit.apply(wind
 function completeProfile(){if(window.completeProfile)window.completeProfile.apply(window,arguments);}
 function completeTask(){if(window.completeTask)window.completeTask.apply(window,arguments);}
 function confirmDeleteAccount(){if(window.confirmDeleteAccount)window.confirmDeleteAccount.apply(window,arguments);}
-function createCrew(){if(window.createCrew)window.createCrew.apply(window,arguments);}
+function createParty(){if(window.createParty)window.createParty.apply(window,arguments);}
 function delSet(){if(window.delSet)window.delSet.apply(window,arguments);}
 function deleteBodyEntry(){if(window.deleteBodyEntry)window.deleteBodyEntry.apply(window,arguments);}
 function deleteTask(){if(window.deleteTask)window.deleteTask.apply(window,arguments);}
@@ -4937,8 +5217,10 @@ function exportCSV(){if(window.exportCSV)window.exportCSV.apply(window,arguments
 function finishSession(){if(window.finishSession)window.finishSession.apply(window,arguments);}
 function getTamaState(){if(window.getTamaState)window.getTamaState.apply(window,arguments);}
 function getTotalStats(){if(window.getTotalStats)window.getTotalStats.apply(window,arguments);}
-function joinCrew(){if(window.joinCrew)window.joinCrew.apply(window,arguments);}
-function leaveCrew(){if(window.leaveCrew)window.leaveCrew.apply(window,arguments);}
+function joinParty(){if(window.joinParty)window.joinParty.apply(window,arguments);}
+function leaveParty(){if(window.leaveParty)window.leaveParty.apply(window,arguments);}
+function _doLeaveParty(){if(window._doLeaveParty)window._doLeaveParty.apply(window,arguments);}
+function switchPartyTab(){if(window.switchPartyTab)window.switchPartyTab.apply(window,arguments);}
 function logBodyEntry(){if(window.logBodyEntry)window.logBodyEntry.apply(window,arguments);}
 function logCardioEntry(){if(window.logCardioEntry)window.logCardioEntry.apply(window,arguments);}
 function logRunEntry(){if(window.logRunEntry)window.logRunEntry.apply(window,arguments);}
@@ -4967,7 +5249,7 @@ function selectAvatar(){if(window.selectAvatar)window.selectAvatar.apply(window,
 function selectColor(){if(window.selectColor)window.selectColor.apply(window,arguments);}
 function selectExercise(){if(window.selectExercise)window.selectExercise.apply(window,arguments);}
 function sendBoost(){if(window.sendBoost)window.sendBoost.apply(window,arguments);}
-function sendCrewMsg(){if(window.sendCrewMsg)window.sendCrewMsg.apply(window,arguments);}
+function sendPartyMsg(){if(window.sendPartyMsg)window.sendPartyMsg.apply(window,arguments);}
 function sendNudge(){if(window.sendNudge)window.sendNudge.apply(window,arguments);}
 function setBodyMode(){if(window.setBodyMode)window.setBodyMode.apply(window,arguments);}
 function setFeel(){if(window.setFeel)window.setFeel.apply(window,arguments);}
@@ -5188,8 +5470,8 @@ function updateExSearch(){if(window.updateExSearch)window.updateExSearch.apply(w
     </div>
 
     <!-- CREW -->
-    <div class="panel" id="panel-crew">
-      <div id="crew-panel"></div>
+    <div class="panel" id="panel-party">
+      <div id="party-panel"></div>
     </div>
 
     <!-- AWARDS -->
@@ -5218,7 +5500,7 @@ function updateExSearch(){if(window.updateExSearch)window.updateExSearch.apply(w
   <div class="bottom-nav">
     <button class="bnav-btn active" data-tab="today" onclick="switchTab('today')"><img src="https://maplestory.io/api/GMS/255/item/4161001/icon" alt="Today" width="28" height="28" style="image-rendering:pixelated;object-fit:contain" onerror="this.style.display='none'" data-fallback="<span class=bnav-icon>🎯</span>"><span class="bnav-label">Today</span></button>
     <button class="bnav-btn" data-tab="habits" onclick="switchTab('habits')"><img src="https://maplestory.io/api/GMS/255/item/2430005/icon" alt="Habits" width="28" height="28" style="image-rendering:pixelated;object-fit:contain" onerror="this.style.display='none'" data-fallback="<span class=bnav-icon>🔥</span>"><span class="bnav-label">Habits</span></button>
-    <button class="bnav-btn" data-tab="crew" onclick="switchTab('crew')"><img src="https://maplestory.io/api/GMS/255/item/4001025/icon" alt="Crew" width="28" height="28" style="image-rendering:pixelated;object-fit:contain" onerror="this.style.display='none'" data-fallback="<span class=bnav-icon>🪐</span>"><span class="bnav-label">Crew</span></button>
+    <button class="bnav-btn" data-tab="party" onclick="switchTab('party')"><img src="https://maplestory.io/api/GMS/255/item/4001025/icon" alt="Party" width="28" height="28" style="image-rendering:pixelated;object-fit:contain" onerror="this.style.display='none'" data-fallback="<span class=bnav-icon>🪐</span>"><span class="bnav-label">Party</span></button>
     <button class="bnav-btn" data-tab="awards" onclick="switchTab('awards')"><img src="https://maplestory.io/api/GMS/255/item/4031138/icon" alt="Awards" width="28" height="28" style="image-rendering:pixelated;object-fit:contain" onerror="this.style.display='none'" data-fallback="<span class=bnav-icon>🏆</span>"><span class="bnav-label">Awards</span></button>
     <button class="bnav-btn" data-tab="fitness" onclick="switchTab('fitness')"><img src="https://maplestory.io/api/GMS/255/item/1302000/icon" alt="Fitness" width="28" height="28" style="image-rendering:pixelated;object-fit:contain" onerror="this.style.display='none'" data-fallback="<span class=bnav-icon>💪</span>"><span class="bnav-label">Fitness</span></button>
     <button class="bnav-btn" data-tab="music" onclick="switchTab('music')">
@@ -5238,7 +5520,6 @@ function updateExSearch(){if(window.updateExSearch)window.updateExSearch.apply(w
 
 <!-- Add Task Modal -->
 
-</body>
 <div class="modal-overlay" id="task-modal" onclick="if(event.target===this)closeModal('task-modal')">
   <div class="modal">
     <div class="modal-handle"></div>
@@ -5248,8 +5529,8 @@ function updateExSearch(){if(window.updateExSearch)window.updateExSearch.apply(w
     <label class="field-label">TYPE</label>
     <div class="pill-row">
       <button class="pill active" data-group="task-type" onclick="setTaskPill('personal','task-type',this)">👤 Personal</button>
-      <button class="pill" data-group="task-type" onclick="setTaskPill('shared','task-type',this)">👫 Shared</button>
-      <button class="pill" data-group="task-type" onclick="setTaskPill('chore','task-type',this)">🏠 Shared</button>
+      <button class="pill" data-group="task-type" onclick="setTaskPill('shared','task-type',this)">👫 Party Task</button>
+      <button class="pill" data-group="task-type" onclick="setTaskPill('chore','task-type',this)">🏠 Chore</button>
       <button class="pill" data-group="task-type" onclick="setTaskPill('goal','task-type',this)">⭐ Goal</button>
     </div>
     <label class="field-label">PRIORITY & XP</label>
@@ -5265,6 +5546,8 @@ function updateExSearch(){if(window.updateExSearch)window.updateExSearch.apply(w
       <button class="pill" data-group="task-repeat" onclick="setTaskPill('weekly','task-repeat',this)">📅 Weekly</button>
       <button class="pill" data-group="task-repeat" onclick="setTaskPill('monthly','task-repeat',this)">🗓️ Monthly</button>
     </div>
+    <label class="field-label">DEADLINE <span style="font-weight:400;color:var(--muted)">(optional)</span></label>
+    <input id="new-task-deadline" class="form-input" type="date" style="margin-bottom:14px">
     <button class="big-btn" onclick="addTask()">⚡ ADD TASK</button>
   </div>
 </div>
@@ -5288,34 +5571,34 @@ function updateExSearch(){if(window.updateExSearch)window.updateExSearch.apply(w
 </div>
 
 <!-- Crew Modal -->
-<div class="modal-overlay" id="crew-modal" onclick="if(event.target===this)closeModal('crew-modal')">
+<div class="modal-overlay" id="party-modal" onclick="if(event.target===this)closeModal('party-modal')">
   <div class="modal">
     <div class="modal-handle"></div>
     <div class="modal-title">🪐 JOIN THE ORBIT</div>
     <div class="modal-tabs">
-      <button class="modal-tab active" id="ctab-create" onclick="switchCrewTab('create')">👑 Create Crew</button>
-      <button class="modal-tab" id="ctab-join" onclick="switchCrewTab('join')">🔗 Join Crew</button>
+      <button class="modal-tab active" id="ptab-create" onclick="switchPartyTab('create')">👑 Create Party</button>
+      <button class="modal-tab" id="ptab-join" onclick="switchPartyTab('join')">🔗 Join Party</button>
     </div>
-    <div id="crew-create-section">
-      <div id="crew-create-form">
-        <label class="field-label">CREW NAME</label>
-        <input id="crew-name-input" class="form-input" placeholder="e.g. The Johnson Crew, Dream Team...">
-        <button id="create-crew-btn" class="big-btn" onclick="createCrew()">👑 Create Crew</button>
+    <div id="party-create-section">
+      <div id="party-create-form">
+        <label class="field-label">PARTY NAME</label>
+        <input id="party-name-input" class="form-input" placeholder="e.g. The Johnson Party, Dream Team...">
+        <button id="create-party-btn" class="big-btn" onclick="createParty()">👑 Create Party</button>
       </div>
-      <div id="crew-created-box" style="display:none">
+      <div id="party-created-box" style="display:none">
         <div class="code-display">
-          <div style="font-size:11px;font-weight:800;color:var(--muted);letter-spacing:1px;margin-bottom:8px">✅ CREW CREATED! SHARE THIS CODE:</div>
-          <div class="code-val" id="crew-code-val">------</div>
-          <div class="code-sub">Send this 6-digit code to anyone you want in your crew. They tap "Join Crew" and enter it.</div>
-          <button class="big-btn" style="background:linear-gradient(135deg,#10b981,#059669)" onclick="closeModal('crew-modal');document.getElementById('crew-created-box').style.display='none';document.getElementById('crew-create-form').style.display='block'">✅ Got it!</button>
+          <div style="font-size:11px;font-weight:800;color:var(--muted);letter-spacing:1px;margin-bottom:8px">✅ PARTY CREATED! SHARE THIS CODE:</div>
+          <div class="code-val" id="party-code-val">------</div>
+          <div class="code-sub">Send this 6-digit code to anyone you want in your party. They tap "Join Party" and enter it.</div>
+          <button class="big-btn" style="background:linear-gradient(135deg,#10b981,#059669)" onclick="closeModal('party-modal');document.getElementById('party-created-box').style.display='none';document.getElementById('party-create-form').style.display='block'">✅ Got it!</button>
         </div>
       </div>
     </div>
-    <div id="crew-join-section" style="display:none">
+    <div id="party-join-section" style="display:none">
       <label class="field-label">ENTER CREW CODE</label>
       <input id="join-input" class="join-input" placeholder="AB12CD" maxlength="6">
-      <p style="color:var(--muted);font-size:12px;font-weight:600;margin-bottom:14px;text-align:center">Ask your crew leader for their 6-digit code</p>
-      <button class="big-btn" style="background:linear-gradient(135deg,var(--pink),var(--accent3))" onclick="joinCrew()">🔗 Join Crew</button>
+      <p style="color:var(--muted);font-size:12px;font-weight:600;margin-bottom:14px;text-align:center">Ask your party leader for their 6-digit code</p>
+      <button class="big-btn" style="background:linear-gradient(135deg,var(--pink),var(--accent3))" onclick="joinParty()">🔗 Join Party</button>
     </div>
   </div>
 </div>
@@ -5338,7 +5621,7 @@ function updateExSearch(){if(window.updateExSearch)window.updateExSearch.apply(w
 
 <div id="toast"></div>
 
-</script>
+
 <!-- Settings Modal -->
 <div class="modal-overlay" id="settings-modal" onclick="if(event.target===this)closeModal('settings-modal')">
   <div class="modal" style="max-height:85vh;overflow-y:auto">
@@ -5346,4 +5629,5 @@ function updateExSearch(){if(window.updateExSearch)window.updateExSearch.apply(w
     <div id="settings-panel"></div>
   </div>
 </div>
+</body>
 </html>
