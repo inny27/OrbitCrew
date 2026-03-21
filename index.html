@@ -1022,6 +1022,7 @@ const WORKOUT_GUIDES = [
 const BASE_URL = 'https://maplestory.io/api/GMS/255/item';
 let currentUser = null, userProfile = null;
 let tasks = [], habits = [], party = null, partyMembers = [], partyMessages = [], boss = null;
+let _ownTasks = [], _partyTasks = []; // separate to avoid race conditions
 let bodyEntries = [], workoutEntries = [], fitnessProfile = null;
 let unsubs = [], activeTab = 'today', synced = false;
 let _authHandled = false; // prevents onAuthStateChanged double-handling
@@ -1079,8 +1080,19 @@ async function loadProfile(uid) {
   }
 }
 
+
+// ─── TASK MERGE ───────────────────────────────────────────
+// Own tasks and party tasks are kept in separate arrays.
+// This function merges them into the shared `tasks` array
+// that the rest of the app reads. Safe to call from either snapshot.
+function _mergeTasks() {
+  // Party tasks that aren't already in own tasks (by id)
+  const ownIds = new Set(_ownTasks.map(t => t.id));
+  tasks = [..._ownTasks, ..._partyTasks.filter(t => !ownIds.has(t.id))];
+}
 function subscribeAll(uid, crewId) {
   unsubs.forEach(u => u()); unsubs = [];
+  _ownTasks = []; _partyTasks = []; tasks = [];
   unsubs.push(onSnapshot(doc(db,'users',uid), s => {
     // Guard: only apply if this snapshot is for the current user
     if (s.exists() && currentUser && currentUser.uid === uid) {
@@ -1089,26 +1101,21 @@ function subscribeAll(uid, crewId) {
     }
   }));
   unsubs.push(onSnapshot(query(collection(db,'tasks'),where('uid','==',uid)), s => {
-    // Own tasks
-    const ownTasks = s.docs.map(d => ({id:d.id,...d.data()}));
-    // Merge with any party tasks already loaded (avoid duplicates by id)
-    const partyTaskIds = new Set(tasks.filter(t=>t._fromParty).map(t=>t.id));
-    const partyTasks = tasks.filter(t=>t._fromParty);
-    const merged = [...ownTasks, ...partyTasks.filter(pt => !ownTasks.find(ot=>ot.id===pt.id))];
-    tasks = merged;
+    // Own tasks only — stored separately, never mixed with party tasks here
+    _ownTasks = s.docs.map(d => ({id:d.id,...d.data()}));
+    _mergeTasks();
     renderToday();
   }));
-  // Subscribe to shared tasks from same party (by partyId field)
+  // Subscribe to OTHER party members' shared tasks (by partyId field)
   if (crewId) {
     unsubs.push(onSnapshot(
       query(collection(db,'tasks'), where('partyId','==',crewId)),
       s => {
-        // All tasks in this party (including own — deduplicate)
-        const partyShared = s.docs
+        // Only other members' shared tasks — own tasks are in _ownTasks already
+        _partyTasks = s.docs
           .map(d => ({id:d.id,...d.data(),_fromParty:true}))
-          .filter(t => t.uid !== uid); // exclude own (already in main query)
-        const ownTasks = tasks.filter(t=>!t._fromParty);
-        tasks = [...ownTasks, ...partyShared.filter(pt => !ownTasks.find(ot=>ot.id===pt.id))];
+          .filter(t => t.uid !== uid);
+        _mergeTasks();
         renderToday();
       }
     ));
