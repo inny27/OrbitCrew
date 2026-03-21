@@ -1089,8 +1089,30 @@ function subscribeAll(uid, crewId) {
     }
   }));
   unsubs.push(onSnapshot(query(collection(db,'tasks'),where('uid','==',uid)), s => {
-    tasks = s.docs.map(d => ({id:d.id,...d.data()})); renderToday();
+    // Own tasks
+    const ownTasks = s.docs.map(d => ({id:d.id,...d.data()}));
+    // Merge with any party tasks already loaded (avoid duplicates by id)
+    const partyTaskIds = new Set(tasks.filter(t=>t._fromParty).map(t=>t.id));
+    const partyTasks = tasks.filter(t=>t._fromParty);
+    const merged = [...ownTasks, ...partyTasks.filter(pt => !ownTasks.find(ot=>ot.id===pt.id))];
+    tasks = merged;
+    renderToday();
   }));
+  // Subscribe to shared tasks from same party (by partyId field)
+  if (crewId) {
+    unsubs.push(onSnapshot(
+      query(collection(db,'tasks'), where('partyId','==',crewId)),
+      s => {
+        // All tasks in this party (including own — deduplicate)
+        const partyShared = s.docs
+          .map(d => ({id:d.id,...d.data(),_fromParty:true}))
+          .filter(t => t.uid !== uid); // exclude own (already in main query)
+        const ownTasks = tasks.filter(t=>!t._fromParty);
+        tasks = [...ownTasks, ...partyShared.filter(pt => !ownTasks.find(ot=>ot.id===pt.id))];
+        renderToday();
+      }
+    ));
+  }
   unsubs.push(onSnapshot(query(collection(db,'habits'),where('uid','==',uid)), s => {
     habits = s.docs.map(d => ({id:d.id,...d.data()})); renderHabits();
   }));
@@ -1550,9 +1572,11 @@ window.addTask = async () => {
   const deadlineEl = g('new-task-deadline');
   const deadline = deadlineEl ? deadlineEl.value : '';
   const sort_order = tasks.length; // append to end
+  const isShared = taskType==='shared'||taskType==='chore';
   await addDoc(collection(db,'tasks'), {
     name, type:taskType, priority:taskPriority, repeat:taskRepeat,
-    uid:currentUser.uid, owner: taskType==='shared'||taskType==='chore' ? 'both' : currentUser.uid,
+    uid:currentUser.uid, owner: isShared ? 'both' : currentUser.uid,
+    partyId: isShared ? (userProfile?.crewId || null) : null,
     xp: XP[taskPriority]||XP.medium, done:false, sort_order,
     deadline_date: deadline || null,
     createdAt:serverTimestamp()
@@ -2558,6 +2582,7 @@ window.openEditTaskModal = function(id) {
     <div class="modal" style="max-height:90vh;overflow-y:auto">
       <div class="modal-handle"></div>
       <div class="modal-title">✏️ EDIT TASK</div>
+      ${t.done ? '<button onclick="window._reopenTask(\''  + id + '\');document.getElementById(\'edit-task-modal-overlay\')?.remove()" style="width:100%;padding:10px;margin-bottom:12px;border:1.5px solid var(--green);background:rgba(122,158,126,.1);color:var(--green);border-radius:10px;font-size:13px;font-weight:600;cursor:pointer">↩ Mark as Incomplete</button>' : ''}
       <label class="field-label">TASK NAME</label>
       <input id="edit-task-name" class="form-input" value="${t.name.replace(/"/g,'&quot;')}" placeholder="Task name...">
       <label class="field-label">TYPE</label>
@@ -2586,12 +2611,41 @@ window.openEditTaskModal = function(id) {
         <button class="big-btn" style="background:var(--parchment);border:1.5px solid var(--border);color:var(--muted)" onclick="document.getElementById('edit-task-modal-overlay')?.remove()">Cancel</button>
         <button class="big-btn" onclick="window._saveEditTask('${id}')">💾 Save Changes</button>
       </div>
-      <button onclick="deleteTask('${id}');document.getElementById('edit-task-modal-overlay')?.remove()" style="width:100%;padding:10px;margin-top:8px;border:1.5px solid var(--red);background:transparent;color:var(--red);border-radius:10px;font-size:13px;font-weight:600;cursor:pointer">🗑️ Delete Task</button>
+      <button id="edit-del-btn-${id}" onclick="window._editModalDelete('${id}',this)" style="width:100%;padding:10px;margin-top:8px;border:1.5px solid var(--red);background:transparent;color:var(--red);border-radius:10px;font-size:13px;font-weight:600;cursor:pointer">🗑️ Delete Task</button>
     </div>`;
   overlay.addEventListener('click', e => { if (e.target === overlay) overlay.remove(); });
   document.body.appendChild(overlay);
 };
 
+
+
+window._editModalDelete = function(id, btn) {
+  if (btn.dataset.armed === '1') {
+    // Second tap — actually delete
+    document.getElementById('edit-task-modal-overlay')?.remove();
+    window._doDeleteTask(id);
+    toast('🗑️ Task deleted');
+  } else {
+    // First tap — arm it
+    btn.dataset.armed = '1';
+    btn.textContent = '⚠️ Tap again to confirm delete';
+    btn.style.background = 'var(--red)';
+    btn.style.color = '#fff';
+    // Auto-disarm after 3s
+    setTimeout(() => {
+      if (btn && btn.dataset.armed === '1') {
+        btn.dataset.armed = '0';
+        btn.textContent = '🗑️ Delete Task';
+        btn.style.background = 'transparent';
+        btn.style.color = 'var(--red)';
+      }
+    }, 3000);
+  }
+};
+window._reopenTask = async function(id) {
+  await updateDoc(doc(db,'tasks',id), {done:false, doneAt:null});
+  toast('↩ Task re-opened!');
+};
 window._setEditPill = function(val, group, el) {
   document.querySelectorAll(`[data-group="${group}"]`).forEach(b => b.classList.remove('active'));
   el.classList.add('active');
@@ -5170,8 +5224,76 @@ window._doDeleteAlbum = async function(name) {
 window._mpOpenAlbum = function(encodedName) {
   const name = decodeURIComponent(encodedName);
   const ids = _mpAlbums[name] || [];
-  const tracks = MUSIC_TRACKS.filter(t => ids.includes(t.id));
-  if (tracks.length > 0) window._mpPlay(MUSIC_TRACKS.indexOf(tracks[0]));
+  const tracks = MUSIC_TRACKS.filter(function(t){ return ids.includes(t.id); });
+  const isDefault = name === 'In-Built Songs';
+
+  const root = document.getElementById('music-app-root');
+  if (!root) return;
+  const listEl = root.querySelector('#mp-list');
+  if (!listEl) { _mpBuildUI(); return; }
+
+  const firstId = ids[0] || '';
+  let rows = '';
+  if (tracks.length === 0) {
+    rows = '<div style="text-align:center;padding:32px;color:var(--muted);font-size:13px">No songs yet. Tap \u{1F4C2} on any song to add it.</div>';
+  } else {
+    tracks.forEach(function(tr) {
+      const realIdx = MUSIC_TRACKS.indexOf(tr);
+      const removeBtn = isDefault ? '' :
+        '<button data-removefromalbum="' + tr.id + '" data-albumname="' + encodeURIComponent(name) + '" style="background:none;border:none;color:var(--muted);font-size:16px;cursor:pointer;padding:4px" title="Remove">✕</button>';
+      rows += '<div style="display:flex;align-items:center;gap:10px;padding:8px 6px;border-radius:10px;margin-bottom:2px">' +
+        '<div data-albumplay="' + realIdx + '" style="display:flex;align-items:center;gap:10px;flex:1;cursor:pointer">' +
+          '<div style="width:36px;height:36px;border-radius:8px;background:' + tr.colour + '18;display:flex;align-items:center;justify-content:center;flex-shrink:0">' +
+            '<img src="https://maplestory.io/api/GMS/255/mob/' + tr.mob + '/render/stand" width="30" style="image-rendering:pixelated;object-fit:contain" onerror="this.remove()">' +
+          '</div>' +
+          '<div style="flex:1;min-width:0">' +
+            '<div style="font-size:13px;font-weight:500;color:var(--ink);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">' + tr.title + '</div>' +
+            '<div style="font-size:10px;color:var(--muted)">' + tr.artist + '</div>' +
+          '</div>' +
+        '</div>' +
+        removeBtn +
+      '</div>';
+    });
+  }
+
+  const playAllBtn = tracks.length > 0
+    ? '<button data-albumplayall="' + encodeURIComponent(firstId) + '" style="background:var(--midnight);color:#fff;border:none;border-radius:8px;padding:5px 12px;font-size:11px;font-weight:600;cursor:pointer">\u25b6 Play All</button>'
+    : '';
+
+  listEl.innerHTML =
+    '<div style="display:flex;align-items:center;gap:10px;padding:4px 0 12px">' +
+      '<button data-mptab="albums" style="background:none;border:none;color:var(--accent2);font-size:13px;font-weight:700;cursor:pointer;padding:4px">\u2190 Albums</button>' +
+      '<div style="flex:1;font-size:13px;font-weight:700;color:var(--ink)">' + name + '</div>' +
+      playAllBtn +
+    '</div>' +
+    rows;
+
+  // Wire up album detail clicks via delegation on root
+  _mpAttachDelegation(root);
+  // Extra delegation for album-specific data attrs
+  listEl.onclick = function(e) {
+    const el = e.target.closest('[data-albumplay],[data-albumplayall],[data-removefromalbum]');
+    if (!el) return;
+    if (el.dataset.albumplay !== undefined) { window._mpPlay(parseInt(el.dataset.albumplay)); return; }
+    if (el.dataset.albumplayall !== undefined) {
+      const startTrack = MUSIC_TRACKS.find(function(t){ return t.id === decodeURIComponent(el.dataset.albumplayall); });
+      if (startTrack) window._mpPlay(MUSIC_TRACKS.indexOf(startTrack));
+      return;
+    }
+    if (el.dataset.removefromalbum) {
+      e.stopPropagation();
+      window._mpRemoveFromAlbum(el.dataset.removefromalbum, el.dataset.albumname);
+    }
+  };
+};
+window._mpRemoveFromAlbum = async function(trackId, encodedAlbum) {
+  const album = decodeURIComponent(encodedAlbum);
+  if (!_mpAlbums[album]) return;
+  _mpAlbums[album] = _mpAlbums[album].filter(id => id !== trackId);
+  await _mpSaveAlbums();
+  toast('Removed from ' + album);
+  // Refresh album detail view
+  window._mpOpenAlbum(encodedAlbum);
 };
 
 
@@ -5200,7 +5322,11 @@ window._doAddToAlbum = async function(trackId, encodedAlbum) {
   if (_mpAlbums[album].includes(trackId)) { toast('Already in that album!'); return; }
   _mpAlbums[album].push(trackId);
   await _mpSaveAlbums();
-  toast('Added to ' + album + '!');
+  // Close any open picker overlays
+  document.querySelectorAll('[id^="mp-album-picker"]').forEach(el => el.remove());
+  toast('Added to ' + album + '! Tap 💿 to view.');
+  // Switch to albums tab so user sees it immediately
+  _mpTab = 'albums';
   _mpBuildUI();
 };
 
