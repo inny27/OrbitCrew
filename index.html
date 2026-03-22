@@ -120,14 +120,14 @@ body::after{display:none;}
 .hdr-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;gap:8px;min-width:0;}
 .hdr-left{display:flex;align-items:center;gap:10px;flex:1;min-width:0;overflow:hidden;}
 .hdr-avatar{font-size:22px;width:36px;height:36px;border-radius:0;border:2px solid var(--accent);display:flex;align-items:center;justify-content:center;background:var(--surf2);box-shadow:2px 2px 0 rgba(0,0,0,.5);}
-.hdr-name{font-size:16px;font-weight:700;color:var(--ink);font-family:var(--pixel);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:160px;}
+.hdr-name{font-size:15px;font-weight:700;color:var(--ink);font-family:var(--pixel);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:120px;}
 .hdr-badge{display:inline-flex;align-items:center;gap:3px;font-size:11px;font-weight:500;color:var(--muted);padding:1px 0;margin-top:1px;}
-.hdr-right{display:flex;align-items:center;gap:8px;flex-shrink:0;min-width:0;overflow:visible;}
+.hdr-right{display:flex;align-items:center;gap:6px;flex-shrink:0;overflow:visible;}
 .sync-pill{display:flex;align-items:center;gap:4px;background:transparent;border:none;padding:0;}
 .sync-dot{width:6px;height:6px;border-radius:99px;background:var(--green);}
 .sync-text{font-size:10px;font-weight:600;color:var(--muted);}
-.sp-pill{font-size:11px;font-weight:600;color:var(--muted);border-radius:4px;padding:3px 8px;background:var(--surf2);border:1px solid var(--border);}
-.mult-pill{font-family:'Inter',sans-serif;font-variant-numeric:tabular-nums;font-size:11px;font-weight:900;background:var(--surf);border:1px solid var(--border);border-radius:99px;padding:5px 10px;}
+.sp-pill{font-size:10px;font-weight:600;color:var(--muted);border-radius:4px;padding:3px 6px;background:var(--surf2);border:1px solid var(--border);}
+.mult-pill{font-family:'Inter',sans-serif;font-variant-numeric:tabular-nums;font-size:10px;font-weight:900;background:var(--surf);border:1px solid var(--border);border-radius:99px;padding:4px 7px;}
 .logout-btn{background:var(--parchment);border:1px solid var(--border);border-radius:10px;width:34px;height:34px;font-size:14px;cursor:pointer;color:var(--muted);display:flex;align-items:center;justify-content:center;transition:.2s;}
 .xp-row{display:flex;align-items:center;gap:8px;}
 .xp-label{font-size:9px;font-weight:800;color:var(--muted);width:18px;}
@@ -175,10 +175,10 @@ body::after{display:none;}
 /* ============================================================
    TODAY TAB
 ============================================================ */
-.progress-card{background:linear-gradient(135deg,var(--gold-bg),var(--gold-bg2));border:1.5px solid rgba(200,149,42,0.22);border-radius:20px;padding:18px 20px;margin-bottom:16px;box-shadow:0 4px 18px rgba(200,149,42,0.1);}
+.progress-card{background:linear-gradient(135deg,var(--gold-bg),var(--gold-bg2));border:1.5px solid rgba(200,149,42,0.22);border-radius:14px;padding:10px 14px;margin-bottom:10px;box-shadow:0 2px 10px rgba(200,149,42,0.08);display:flex;align-items:center;gap:12px;}
 .prog-label{font-size:11px;font-weight:600;color:var(--muted);margin-bottom:2px;}
-.prog-count{font-size:36px;font-weight:800;line-height:1;color:var(--text);}
-.prog-total{font-size:20px;color:var(--muted);font-weight:600;}
+.prog-count{font-size:24px;font-weight:800;line-height:1;color:var(--text);}
+.prog-total{font-size:14px;color:var(--muted);font-weight:600;}
 .prog-sub{font-size:12px;color:var(--muted);font-weight:500;margin:4px 0 8px;}
 .prog-bar{height:4px;background:var(--border);border-radius:99px;overflow:hidden;}
 .prog-fill{height:100%;border-radius:99px;background:var(--accent);transition:width .5s ease;}
@@ -687,6 +687,30 @@ body.colorblind{filter:url(#colorblind-filter);}
 .task-card:hover .task-edit-btn{opacity:1;}
 .task-card:hover .task-edit-btn:hover{color:var(--accent);border-color:var(--accent);background:var(--gold-bg);}
 @media(hover:none){.task-edit-btn{display:none;}} /* hide on touch devices — long-press handles it */
+
+/* ── Weather Card ── */
+.weather-card{background:linear-gradient(135deg,rgba(126,184,212,.15),rgba(126,184,212,.05));border:1.5px solid rgba(126,184,212,.3);border-radius:14px;padding:10px 14px;margin-bottom:10px;position:relative;}
+.weather-loading{font-size:11px;color:var(--muted);text-align:center;padding:6px;}
+.weather-now{display:flex;align-items:center;gap:12px;}
+.weather-icon{font-size:32px;flex-shrink:0;}
+.weather-temp{font-size:26px;font-weight:800;color:var(--ink);line-height:1;}
+.weather-desc{font-size:11px;color:var(--muted);font-weight:600;margin-top:2px;}
+.weather-loc{font-size:10px;color:var(--sky);font-weight:700;margin-top:1px;}
+.weather-detail{display:flex;gap:10px;margin-top:6px;flex-wrap:wrap;}
+.weather-pill{font-size:10px;font-weight:600;color:var(--muted);background:rgba(126,184,212,.12);border-radius:99px;padding:2px 8px;}
+.weather-forecast{display:flex;gap:6px;margin-top:8px;overflow-x:auto;padding-bottom:2px;}
+.weather-forecast::-webkit-scrollbar{display:none;}
+.wf-day{flex-shrink:0;text-align:center;background:rgba(255,255,255,.5);border-radius:8px;padding:5px 8px;min-width:44px;}
+.wf-day-lbl{font-size:9px;font-weight:700;color:var(--muted);}
+.wf-day-icon{font-size:16px;margin:2px 0;}
+.wf-day-hi{font-size:10px;font-weight:700;color:var(--ink);}
+.wf-day-lo{font-size:9px;color:var(--muted);}
+.weather-err{font-size:11px;color:var(--muted);text-align:center;padding:8px;}
+/* ── Google Calendar ── */
+.gcal-event{display:flex;align-items:flex-start;gap:8px;padding:7px 10px;border-radius:8px;background:rgba(66,133,244,.08);border-left:3px solid #4285f4;margin-bottom:5px;}
+.gcal-time{font-size:10px;font-weight:700;color:#4285f4;flex-shrink:0;margin-top:1px;}
+.gcal-title{font-size:12px;font-weight:600;color:var(--ink);line-height:1.4;}
+.gcal-connect{text-align:center;padding:10px;font-size:12px;color:var(--muted);}
 /* ── Drag & Drop ── */
 .task-card[draggable="true"]{cursor:grab;}
 .task-card.dragging{opacity:.45;border:2px dashed var(--accent);background:var(--gold-bg);}
@@ -726,6 +750,8 @@ const fb = initializeApp({
 const db = getFirestore(fb);
 const auth = getAuth(fb);
 const googleProvider = new GoogleAuthProvider();
+googleProvider.addScope('https://www.googleapis.com/auth/calendar.readonly');
+let _gcalToken = null; // OAuth access token for Google Calendar
 
 // ─── CONSTANTS ────────────────────────────────────────────
 const AVATARS = ['130100','130101','130102','100100','100102','1210100','1210101','1210102','2230102','2230100','2230101','8130100','1120100','1110100','5220003','3230200','8820007','5120000','2220000','4230100','9300217','9300218','3000000','4000000'];
@@ -1006,7 +1032,589 @@ const EXERCISE_DB = [
 
   {id:'sled_push',name:'Sled Push',muscles:['Quads','Glutes','Core','Cardio'],type:'cardio',difficulty:3,category:'compound',
    demo:'MzNBpLIEa_4',
-   desc:'Push weighted sled using short powerful strides.',tips:'No eccentric loading = less soreness. Push harder than you think.',cues:'Low body position, drive through balls of feet, pump arms.'}
+   desc:'Push weighted sled using short powerful strides.',tips:'No eccentric loading = less soreness. Push harder than you think.',cues:'Low body position, drive through balls of feet, pump arms.'},
+  // ── DAILY MOVEMENT / LOCOMOTION ──
+  {id:'walking',name:'Walking',muscles:['Full Body','Cardio','Endurance'],type:'cardio',difficulty:1,category:'cardio',
+   demo:'aGPtT6KPRWQ',
+   desc:'Sustained walking at a comfortable pace. One of the most underrated forms of exercise.',
+   tips:'Aim for 30 mins daily. Walk tall — shoulders back, core gently engaged.',
+   cues:'Heel-to-toe. Swing arms naturally. Breathe through your nose if possible.'},
+
+  {id:'jogging',name:'Jogging',muscles:['Full Body','Cardio','Calves'],type:'run',difficulty:1,category:'cardio',
+   demo:'_kGcKg_lsGc',
+   desc:'Light continuous run between walking and full running pace.',
+   tips:'Land midfoot, not heel. Short strides, high cadence.',
+   cues:'Shuffle forward. Relax your shoulders. You should still be able to hold a conversation.'},
+
+  {id:'nordic_walk',name:'Nordic Walking',muscles:['Full Body','Shoulders','Cardio'],type:'cardio',difficulty:1,category:'cardio',
+   demo:'iFLrPP5YcR4',
+   desc:'Walking with poles in an alternating arm-leg pattern, engaging the upper body.',
+   tips:'Plant poles behind your body and push off. Do not plant them ahead.',
+   cues:'Drive through the pole. Opposite arm to opposite leg.'},
+
+  {id:'bear_crawl',name:'Bear Crawl',muscles:['Core','Shoulders','Quads','Cardio'],type:'calisthenics',difficulty:2,category:'compound',
+   demo:'aLyJDfGBFBM',
+   desc:'Quadrupedal movement on hands and feet with knees hovering just off the ground.',
+   tips:'Keep hips level. Move opposite arm and leg together.',
+   cues:'Think of a bear walking — slow, controlled, ground parallel. Hover knees 2cm off floor.'},
+
+  {id:'baby_crawl',name:'Baby Crawl',muscles:['Core','Coordination','Shoulders'],type:'calisthenics',difficulty:1,category:'compound',
+   demo:'aLyJDfGBFBM',
+   desc:'Classic hands-and-knees crawl pattern, excellent for core and coordination rehab.',
+   tips:'Great mobility warm-up and spinal coordination drill.',
+   cues:'Opposite arm and leg move together. Keep a neutral spine throughout.'},
+
+  {id:'commando_crawl',name:'Commando Crawl',muscles:['Core','Shoulders','Chest','Triceps'],type:'calisthenics',difficulty:2,category:'compound',
+   demo:'cnyTQDSE884',
+   desc:'Low crawl on elbows and toes, dragging body forward close to the ground.',
+   tips:'Keep hips flat. Pull with elbows, push with toes.',
+   cues:'Stay low. Use your lats and core to drive forward, not your back.'},
+
+  {id:'crab_walk',name:'Crab Walk',muscles:['Glutes','Triceps','Core','Shoulders'],type:'calisthenics',difficulty:2,category:'compound',
+   demo:'dO7FtKjKzOs',
+   desc:'Sitting reverse table position, walk forward and backward on hands and feet.',
+   tips:'Keep hips elevated throughout. Do not let them sag.',
+   cues:'Drive hips up. Move opposite hand and foot together.'},
+
+  {id:'inchworm',name:'Inchworm',muscles:['Hamstrings','Core','Shoulders','Chest'],type:'calisthenics',difficulty:1,category:'compound',
+   demo:'SKfmzOGi3xA',
+   desc:'Walk hands out from standing to push-up position, then walk feet to hands. Repeat.',
+   tips:'Keep legs as straight as possible — it stretches the hamstrings.',
+   cues:'Hands walk out slow. Push-up position pause. Walk feet in fully before standing.'},
+
+  // ── MOUNTAIN CLIMBERS + VARIATIONS ──
+  {id:'mountain_climbers',name:'Mountain Climbers',muscles:['Core','Cardio','Shoulders','Hip Flexors'],type:'calisthenics',difficulty:2,category:'compound',
+   demo:'cnyTQDSE884',
+   desc:'In plank position, rapidly alternate driving knees to chest.',
+   tips:'Keep hips level. The faster you go the more cardiovascular it becomes.',
+   cues:'Flat back. Drive knee to chest, not to armpit. Snap back fully before switching.'},
+
+  {id:'cross_body_mountain_climber',name:'Cross-Body Mountain Climber',muscles:['Core','Obliques','Shoulders'],type:'calisthenics',difficulty:2,category:'isolation',
+   demo:'cnyTQDSE884',
+   desc:'Mountain climbers where each knee drives toward the opposite elbow to target the obliques.',
+   tips:'Slow it down to really feel the rotation.',
+   cues:'Twist the hip slightly on each rep. Control beats speed here.'},
+
+  {id:'slow_mountain_climber',name:'Slow Mountain Climbers',muscles:['Core','Hip Flexors','Shoulders'],type:'calisthenics',difficulty:2,category:'isolation',
+   demo:'cnyTQDSE884',
+   desc:'Mountain climbers performed in a slow controlled tempo — 3 seconds per rep.',
+   tips:'Far superior to fast mountain climbers for true core strength.',
+   cues:'Hold the knee-to-chest position for a beat. Extend fully back before switching.'},
+
+  // ── PLANCHE PROGRESSION ──
+  {id:'planche_lean',name:'Planche Lean',muscles:['Chest','Shoulders','Core','Wrists'],type:'calisthenics',difficulty:2,category:'isolation',
+   demo:'Cd5DUuMFNJs',
+   desc:'In push-up position, lean forward past the wrists while holding straight arms, loading the anterior shoulder.',
+   tips:'Progress by gradually increasing the lean angle. Fingertips-forward helps wrist conditioning.',
+   cues:'Lean forward until you feel shoulder loading. Do not let elbows bend.'},
+
+  {id:'tuck_planche',name:'Tuck Planche',muscles:['Chest','Shoulders','Core','Triceps'],type:'calisthenics',difficulty:3,category:'isolation',
+   demo:'FDMZiZGVLpg',
+   desc:'Hold body off ground horizontally with knees tucked tightly to chest, straight arms.',
+   tips:'Depress and protract the scapula. Round the back slightly.',
+   cues:'Push the floor away. Keep tuck tight — chin near knees.'},
+
+  {id:'advanced_tuck_planche',name:'Advanced Tuck Planche',muscles:['Chest','Shoulders','Core','Triceps'],type:'calisthenics',difficulty:3,category:'isolation',
+   demo:'FDMZiZGVLpg',
+   desc:'Like tuck planche but with hips extended further back, reducing tuck angle. Harder lever position.',
+   tips:'Bridge between tuck and straddle planche.',
+   cues:'Push hips back and down. Keep knees tucked at a wider angle from chest.'},
+
+  {id:'straddle_planche',name:'Straddle Planche',muscles:['Chest','Shoulders','Core','Triceps'],type:'calisthenics',difficulty:3,category:'isolation',
+   demo:'1UqRb6AZKJE',
+   desc:'Body held horizontal with straight arms, legs spread wide in a straddle to reduce lever arm.',
+   tips:'Wider the straddle, the easier. Build to 10-second holds before progressing.',
+   cues:'Legs spread 90+ degrees. Push through your hands. Protract scapula hard.'},
+
+  {id:'full_planche',name:'Full Planche',muscles:['Chest','Shoulders','Core','Triceps','Wrists'],type:'calisthenics',difficulty:3,category:'isolation',
+   demo:'1UqRb6AZKJE',
+   desc:'Body held perfectly horizontal with straight arms and straight legs together. One of calisthenics most elite holds.',
+   tips:'Expect years of training. Requires exceptional shoulder and core strength.',
+   cues:'Body must be parallel to ground. Legs together and straight. Arms fully locked.'},
+
+  {id:'planche_pushup',name:'Planche Push-Up',muscles:['Chest','Shoulders','Core','Triceps'],type:'calisthenics',difficulty:3,category:'compound',
+   demo:'1UqRb6AZKJE',
+   desc:'A push-up performed while maintaining the planche position — body horizontal throughout the movement.',
+   tips:'Must have a solid straddle or full planche hold first.',
+   cues:'Lower your chest to the floor while keeping the planche body line. Do not pike hips.'},
+
+  {id:'planche_to_handstand',name:'Planche to Handstand',muscles:['Chest','Shoulders','Core','Triceps','Balance'],type:'calisthenics',difficulty:3,category:'compound',
+   demo:'1UqRb6AZKJE',
+   desc:'Transition dynamically from the planche position upward into a handstand. An elite-level skill.',
+   tips:'Requires full planche and press handstand competency independently first.',
+   cues:'Push through the arms as you tuck then press legs overhead. Control the shift of balance.'},
+
+  {id:'maltese',name:'Maltese',muscles:['Chest','Shoulders','Core','Triceps'],type:'calisthenics',difficulty:3,category:'isolation',
+   demo:'1UqRb6AZKJE',
+   desc:'An extreme planche variation where the hands are positioned at hip level, dramatically increasing the lever arm.',
+   tips:'Considered one of the hardest static gymnastics elements. Requires years of specific training.',
+   cues:'Hands below hip line. Horizontal body. Full straight-arm lock.'},
+
+  // ── HANDSTAND PROGRESSIONS ──
+  {id:'wall_handstand',name:'Wall Handstand',muscles:['Shoulders','Core','Wrists','Balance'],type:'calisthenics',difficulty:2,category:'isolation',
+   demo:'WRL_FnCkEkY',
+   desc:'Handstand held with feet against a wall for support. Essential foundation skill.',
+   tips:'Start face-to-wall for body alignment feedback. Progress to back-to-wall for balance.',
+   cues:'Lock elbows. Push through shoulders. Squeeze core and glutes. Point toes.'},
+
+  {id:'freestanding_handstand',name:'Freestanding Handstand',muscles:['Shoulders','Core','Wrists','Balance'],type:'calisthenics',difficulty:3,category:'isolation',
+   demo:'WRL_FnCkEkY',
+   desc:'Unsupported handstand held in balance through finger pressure and shoulder adjustments.',
+   tips:'Balance is maintained via subtle finger pressure and shoulder microadjustments.',
+   cues:'Keep a hollow body. Look at your hands. Use your fingers like brakes.'},
+
+  {id:'handstand_walk',name:'Handstand Walk',muscles:['Shoulders','Core','Balance','Wrists'],type:'calisthenics',difficulty:3,category:'compound',
+   demo:'WRL_FnCkEkY',
+   desc:'Walking on hands while maintaining an inverted balance position.',
+   tips:'Lean slightly in the direction of travel. Catch balance with quick hand steps.',
+   cues:'Small steps. Lead with the hand on the side you want to travel. Keep straight body line.'},
+
+  {id:'press_handstand',name:'Press Handstand',muscles:['Shoulders','Core','Hamstrings','Balance'],type:'calisthenics',difficulty:3,category:'compound',
+   demo:'WRL_FnCkEkY',
+   desc:'Press from standing or straddle L-sit directly into a handstand with straight arms throughout.',
+   tips:'Requires exceptional shoulder strength and hamstring flexibility.',
+   cues:'Lean forward, lift hips, press through straight arms into the vertical.'},
+
+  // ── BACK LEVER ──
+  {id:'back_lever',name:'Back Lever',muscles:['Back','Biceps','Core','Shoulders'],type:'calisthenics',difficulty:3,category:'isolation',
+   demo:'NKjWZfSEAFM',
+   desc:'Hanging from a bar, hold body horizontal face-down with straight arms.',
+   tips:'Progress through skin-the-cat, tuck back lever, then full.',
+   cues:'Protract scapula. Press into the bar. Body must be perfectly horizontal.'},
+
+  {id:'skin_the_cat',name:'Skin the Cat',muscles:['Shoulders','Core','Back'],type:'calisthenics',difficulty:2,category:'compound',
+   demo:'dZVFGXDqpGI',
+   desc:'From a dead hang, pull knees to chest, invert through the bar, extend to a German hang, then reverse.',
+   tips:'Great shoulder mobility and back lever prep movement.',
+   cues:'Tuck tight. Controlled inversion. Extend slowly in the German hang. Reverse with control.'},
+
+  // ── HUMAN FLAG ──
+  {id:'human_flag',name:'Human Flag',muscles:['Core','Shoulders','Back','Lats'],type:'calisthenics',difficulty:3,category:'isolation',
+   demo:'kAsYB5yb8jQ',
+   desc:'Hold body horizontal sideways on a vertical pole with straight arms — one pushing, one pulling.',
+   tips:'One arm pushes (bottom), one arm pulls (top). Build with tuck and straddle versions first.',
+   cues:'Push and pull simultaneously. Keep hips stacked. Body parallel to ground.'},
+
+  // ── CORE VARIATIONS ──
+  {id:'hollow_body_hold',name:'Hollow Body Hold',muscles:['Core','Hip Flexors'],type:'calisthenics',difficulty:2,category:'isolation',
+   demo:'LlDNef_Ztsc',
+   desc:'Lying on back, press lower back into floor while holding arms overhead and legs extended slightly off ground.',
+   tips:'The foundation of all gymnastics. Mandatory for handstands, planche, and rings work.',
+   cues:'Flatten your lower back fully into the floor. Arms by ears. Legs 15–30cm off floor.'},
+
+  {id:'hollow_body_rock',name:'Hollow Body Rock',muscles:['Core','Hip Flexors'],type:'calisthenics',difficulty:2,category:'isolation',
+   demo:'LlDNef_Ztsc',
+   desc:'Rocking back and forth in the hollow body position without losing the shape.',
+   tips:'If you lose the hollow shape, the rocking loses its benefit entirely.',
+   cues:'Rock from shoulders to hips and back. Never break the rigid C-curve.'},
+
+  {id:'v_sit',name:'V-Sit',muscles:['Core','Hip Flexors','Triceps'],type:'calisthenics',difficulty:3,category:'isolation',
+   demo:'HoE-C85ZWCg',
+   desc:'Balance on sitting bones with legs and torso elevated in a V shape, hands pushing into floor.',
+   tips:'Harder than L-sit. Compress the hip flexors hard. Point toes.',
+   cues:'Legs above horizontal. Lean back slightly. Push floor away with hands.'},
+
+  {id:'ab_rollout',name:'Ab Wheel Rollout',muscles:['Core','Lats','Shoulders'],type:'calisthenics',difficulty:3,category:'isolation',
+   demo:'j2iaMqnXm8k',
+   desc:'From kneeling or standing, roll wheel forward to full extension and pull back with abs.',
+   tips:'Do not hyperextend your lower back at the bottom.',
+   cues:'Brace core before rolling. Pull back by contracting abs — not by bending arms.'},
+
+  {id:'windshield_wiper',name:'Windshield Wipers',muscles:['Obliques','Core','Hip Flexors'],type:'calisthenics',difficulty:3,category:'isolation',
+   demo:'hdng3Nm1x70',
+   desc:'Hanging from a bar, raise legs to horizontal and rotate side to side like windshield wipers.',
+   tips:'The further you rotate, the more oblique engagement.',
+   cues:'Control both directions. Lead with hips. Avoid swinging for momentum.'},
+
+  {id:'toes_to_bar',name:'Toes to Bar',muscles:['Core','Hip Flexors','Back'],type:'calisthenics',difficulty:2,category:'isolation',
+   demo:'hdng3Nm1x70',
+   desc:'Hanging from a pull-up bar, raise straight legs until toes touch the bar.',
+   tips:'Keep arms straight. Initiate from the core, not the hip flexors.',
+   cues:'Scapula engaged. Drive toes up, not just hips.'},
+
+  {id:'pallof_press',name:'Pallof Press',muscles:['Core','Obliques','Chest'],type:'weights',difficulty:1,category:'isolation',
+   demo:'AH_QZLHBxAU',
+   desc:'Anti-rotation press: hold cable at chest, press out and return while resisting rotation.',
+   tips:'The further from the anchor, the harder. Do not let hips rotate.',
+   cues:'Brace the core. Press straight out. Resist any twisting.'},
+
+  // ── GLUTE / HIP ──
+  {id:'hip_thrust',name:'Hip Thrust',muscles:['Glutes','Hamstrings','Core'],type:'weights',difficulty:1,category:'isolation',
+   demo:'xDmFkJxPzeM',
+   desc:'Upper back on bench, barbell across hips, drive hips up to full extension.',
+   tips:'Best exercise for glute hypertrophy. Squeeze hard at the top.',
+   cues:'Drive knees out. Posterior pelvic tilt at the top. Hold for one second.'},
+
+  {id:'donkey_kick',name:'Donkey Kick',muscles:['Glutes','Core'],type:'calisthenics',difficulty:1,category:'isolation',
+   demo:'OWpKBFEEABg',
+   desc:'On all fours, kick one leg straight back and up, squeezing the glute at the top.',
+   tips:'Avoid rotating the hip open. Keep the working-side hip pointed down.',
+   cues:'Lead with the heel. Glute squeeze at the top. Stable core throughout.'},
+
+  {id:'fire_hydrant',name:'Fire Hydrant',muscles:['Glutes','Hip Abductors'],type:'calisthenics',difficulty:1,category:'isolation',
+   demo:'OWpKBFEEABg',
+   desc:'On all fours, lift one knee out to the side like a dog at a fire hydrant.',
+   tips:'Excellent hip external rotation and glute med activation.',
+   cues:'Keep the hip stable. Only the working leg moves. Control the return.'},
+
+  {id:'single_leg_rdl',name:'Single-Leg RDL',muscles:['Hamstrings','Glutes','Balance'],type:'weights',difficulty:2,category:'compound',
+   demo:'hCDzSR6Ppis',
+   desc:'Single-leg Romanian deadlift — hinge at hip on one leg, weight in opposite hand.',
+   tips:'Use a wall or bench as a spotter first. Hip hinge, not a squat.',
+   cues:'Push free leg straight back as you hinge forward. Keep a flat back.'},
+
+  // ── UPPER BODY PUSHING ──
+  {id:'pike_push_up',name:'Pike Push-Up',muscles:['Shoulders','Triceps','Core'],type:'calisthenics',difficulty:2,category:'compound',
+   demo:'sposDXWEB0A',
+   desc:'Inverted V push-up position, lower head toward floor. Vertical pressing pattern prep for HSPU.',
+   tips:'The more vertical your torso the harder and more shoulder-dominant.',
+   cues:'Elbows track 45 degrees. Lower crown of head toward floor.'},
+
+  {id:'diamond_push_up',name:'Diamond Push-Up',muscles:['Triceps','Chest','Shoulders'],type:'calisthenics',difficulty:2,category:'compound',
+   demo:'J0DXBSpgeFE',
+   desc:'Hands form a diamond shape under the chest — shifts emphasis heavily to triceps.',
+   tips:'Keep elbows close to body throughout. Avoid flaring.',
+   cues:'Diamond hands. Elbows pointing back, not out.'},
+
+  {id:'archer_push_up',name:'Archer Push-Up',muscles:['Chest','Shoulders','Triceps'],type:'calisthenics',difficulty:2,category:'compound',
+   demo:'qbDFBuFGJXM',
+   desc:'Wide push-up where one arm bends fully while the other stays straight, shifting all load to one side.',
+   tips:'Progression toward one-arm push-up.',
+   cues:'Lower toward the bending arm. Keep the straight arm as a guide rail, not a crutch.'},
+
+  {id:'one_arm_pushup',name:'One-Arm Push-Up',muscles:['Chest','Shoulders','Triceps','Core'],type:'calisthenics',difficulty:3,category:'compound',
+   demo:'qbDFBuFGJXM',
+   desc:'Full push-up performed on a single arm with feet wider for balance.',
+   tips:'Turn hand slightly outward. Keep hips square — do not rotate.',
+   cues:'Core braced. Lower to the floor. Press straight up. Resist rotation with everything.'},
+
+  {id:'close_grip_bench',name:'Close-Grip Bench Press',muscles:['Triceps','Chest','Shoulders'],type:'weights',difficulty:2,category:'compound',
+   demo:'GnRzg_IYZs4',
+   desc:'Bench press with hands shoulder-width or closer, maximising tricep involvement.',
+   tips:'Do not go too narrow — stress on wrists. Hands just inside shoulder width is ideal.',
+   cues:'Tuck elbows to sides. Lower to lower chest. Drive up through triceps.'},
+
+  {id:'dip_bar_l_sit',name:'L-Sit on Dip Bars',muscles:['Core','Triceps','Hip Flexors'],type:'calisthenics',difficulty:3,category:'isolation',
+   demo:'IUZKcvEOaG4',
+   desc:'L-sit performed on dip bars — body supported on straight arms, legs held parallel to floor.',
+   tips:'Slightly easier than floor L-sit. Work to 30-second holds.',
+   cues:'Depress the shoulders. Compress abs and hip flexors. Point toes.'},
+
+  // ── UPPER BODY PULLING ──
+  {id:'chin_up',name:'Chin-Up',muscles:['Biceps','Back','Core'],type:'calisthenics',difficulty:2,category:'compound',
+   demo:'FDMZiZGVLpg',
+   desc:'Underhand grip pull-up — greater bicep involvement and often easier than overhand.',
+   tips:'Full range — dead hang to chin above bar.',
+   cues:'Pull elbows toward hips. Supinated grip activates biceps more than pull-up.'},
+
+  {id:'typewriter_pullup',name:'Typewriter Pull-Up',muscles:['Back','Biceps','Core'],type:'calisthenics',difficulty:3,category:'compound',
+   demo:'Bn6sauqHZVo',
+   desc:'At the top of a pull-up, shift weight laterally from side to side before descending.',
+   tips:'Builds unilateral strength toward one-arm pull-up.',
+   cues:'Pull up centre, shift right, slide to left, return centre. Elbows stay high throughout.'},
+
+  {id:'inverted_row',name:'Inverted Row',muscles:['Back','Biceps','Core'],type:'calisthenics',difficulty:1,category:'compound',
+   demo:'PGcTxvw6sMQ',
+   desc:'Lying under a bar, pull chest up to bar with straight body. Angle determines difficulty.',
+   tips:'The more horizontal your body, the harder. Feet elevated = hardest variation.',
+   cues:'Pull shoulder blades back and down. Chest to bar. Body straight as a plank.'},
+
+  {id:'tbar_row',name:'T-Bar Row',muscles:['Back','Biceps','Rear Delts'],type:'weights',difficulty:2,category:'compound',
+   demo:'j3Igk5nyZE4',
+   desc:'Row using a T-bar or landmine setup, allowing a neutral grip and heavy loading.',
+   tips:'Brace the lower back. Pull the bar high toward the lower chest.',
+   cues:'Hinge forward. Pull elbows past your torso. Squeeze the back at the top.'},
+
+  {id:'chest_supported_row',name:'Chest-Supported Row',muscles:['Back','Biceps','Rear Delts'],type:'weights',difficulty:1,category:'compound',
+   demo:'xQNrFHEMhI4',
+   desc:'Lying chest-down on an incline bench, row dumbbells with no lower back involvement.',
+   tips:'Eliminates cheating via body swing. Pure back isolation.',
+   cues:'Retract scapula before pulling. Lead with elbows. Squeeze hard at the top.'},
+
+  // ── SHOULDER WORK ──
+  {id:'db_shoulder_press',name:'Dumbbell Shoulder Press',muscles:['Shoulders','Triceps'],type:'weights',difficulty:2,category:'compound',
+   demo:'qEwKCR5JCog',
+   desc:'Seated or standing dumbbell overhead press — greater range and stability demand than barbell.',
+   tips:'Press dumbbells together at the top for extra adduction.',
+   cues:'Elbows at 45 degrees. Full lockout at top. Control the descent.'},
+
+  {id:'arnold_press',name:'Arnold Press',muscles:['Shoulders','Triceps','Chest'],type:'weights',difficulty:2,category:'compound',
+   demo:'6Z15_WdXmVw',
+   desc:'Dumbbell press with a rotation from a palms-facing-you start to palms-out at the top.',
+   tips:'Hits all three delt heads through the rotation.',
+   cues:'Start palms toward you, rotate as you press, finish palms forward.'},
+
+  {id:'upright_row',name:'Upright Row',muscles:['Shoulders','Traps','Biceps'],type:'weights',difficulty:2,category:'compound',
+   demo:'VFkJKPEiEOI',
+   desc:'Pull barbell or dumbbells vertically from thigh to chin, elbows high.',
+   tips:'Wide grip reduces shoulder impingement risk. Never force the range.',
+   cues:'Lead with elbows. Keep bar close to body. Stop at nipple height if shoulders protest.'},
+
+  // ── BICEP / TRICEP ──
+  {id:'preacher_curl',name:'Preacher Curl',muscles:['Biceps','Brachialis'],type:'weights',difficulty:1,category:'isolation',
+   demo:'fIWP-FRFNU0',
+   desc:'Barbell curl with arms rested on angled preacher bench — eliminates cheating.',
+   tips:'Full extension at the bottom. Do not let elbow hyperextend.',
+   cues:'Arms on pad, upper arm stays still. Curl smooth and controlled.'},
+
+  {id:'incline_curl',name:'Incline Dumbbell Curl',muscles:['Biceps','Long Head Emphasis'],type:'weights',difficulty:1,category:'isolation',
+   demo:'soxrZlIl35U',
+   desc:'Seated on an incline bench, arms hang behind torso — targets the long head of the bicep.',
+   tips:'Arms hang freely. The stretch position loads the bicep uniquely.',
+   cues:'Let arms hang fully. Curl without rocking the body. The stretch is the point.'},
+
+  {id:'overhead_tricep_ext',name:'Overhead Tricep Extension',muscles:['Triceps','Long Head'],type:'weights',difficulty:1,category:'isolation',
+   demo:'_gsUck-7M74',
+   desc:'Dumbbell or barbell held overhead, lower behind head bending only at the elbows.',
+   tips:'Hits the long head of the tricep, which most pushdown variations miss.',
+   cues:'Upper arms stay vertical and still. Only forearms move.'},
+
+  // ── LEGS ──
+  {id:'hack_squat',name:'Hack Squat',muscles:['Quads','Glutes','Calves'],type:'weights',difficulty:2,category:'compound',
+   demo:'EdtgAPKWZAU',
+   desc:'Machine squat with angled back pad — loads quads heavily with less spinal compression than barbell squat.',
+   tips:'Feet high on platform for more glute. Feet low for more quad.',
+   cues:'Full depth. Knees track over toes. Drive through full foot.'},
+
+  {id:'leg_extension',name:'Leg Extension',muscles:['Quads'],type:'weights',difficulty:1,category:'isolation',
+   demo:'YyvSfVjQeL0',
+   desc:'Seated machine exercise extending the knee to full lockout against resistance.',
+   tips:'Full range. Hold peak contraction. Use lighter weight than you think.',
+   cues:'Flex hard at the top. Lower slowly. Do not use momentum.'},
+
+  {id:'leg_curl',name:'Leg Curl',muscles:['Hamstrings'],type:'weights',difficulty:1,category:'isolation',
+   demo:'1Tq3QdYUuHs',
+   desc:'Lying or seated machine curl, flexing the knee against resistance.',
+   tips:'Plantarflex feet (point toes) to pre-stretch hamstrings.',
+   cues:'Curl through full range. Do not let hips rise off pad.'},
+
+  {id:'standing_calf_raise',name:'Standing Calf Raise',muscles:['Calves'],type:'weights',difficulty:1,category:'isolation',
+   demo:'JbyjNymZOt0',
+   desc:'Rise onto tiptoes against resistance — calf gastrocnemius focus.',
+   tips:'Full stretch at the bottom — step edge helps. Pause at top.',
+   cues:'Rise high, pause, lower slow. The calves need full range.'},
+
+  {id:'seated_calf_raise',name:'Seated Calf Raise',muscles:['Calves','Soleus'],type:'weights',difficulty:1,category:'isolation',
+   demo:'JbyjNymZOt0',
+   desc:'Calf raise performed seated — isolates the soleus which lies beneath the gastrocnemius.',
+   tips:'Bent knee shifts emphasis to soleus. Use controlled slow tempo.',
+   cues:'Knee bent 90 degrees. Full range. The pause at bottom is key.'},
+
+  {id:'goblet_squat',name:'Goblet Squat',muscles:['Quads','Glutes','Core'],type:'weights',difficulty:1,category:'compound',
+   demo:'ultWZbUMPL8',
+   desc:'Squat holding a dumbbell or kettlebell at chest — great for beginners and warm-ups.',
+   tips:'The weight acts as a counterbalance — makes achieving depth easier.',
+   cues:'Chest up. Elbows inside knees at the bottom. Drive through full foot.'},
+
+  {id:'sumo_deadlift',name:'Sumo Deadlift',muscles:['Glutes','Inner Thighs','Back','Hamstrings'],type:'weights',difficulty:3,category:'compound',
+   demo:'op9kVnSso6Q',
+   desc:'Wide-stance deadlift with toes pointed out — shorter torso lean, more hip activation.',
+   tips:'Feet wide, toes 45+ degrees out. Push knees out over toes.',
+   cues:'Sit into the hips. Pull the bar close to shins. Drive the floor apart.'},
+
+  {id:'trap_bar_deadlift',name:'Trap Bar Deadlift',muscles:['Back','Glutes','Quads','Hamstrings'],type:'weights',difficulty:2,category:'compound',
+   demo:'op9kVnSso6Q',
+   desc:'Deadlift using a hexagonal trap bar, which places load closer to the body centre.',
+   tips:'More quad-friendly than conventional. Easier to learn for beginners.',
+   cues:'Stand inside the bar. Hip hinge. Drive through full foot. Stand tall.'},
+
+  {id:'step_up',name:'Step-Up',muscles:['Quads','Glutes','Balance'],type:'calisthenics',difficulty:1,category:'compound',
+   demo:'D7KaRcUTQeE',
+   desc:'Step onto a box or bench one foot at a time, fully extending the hip at the top.',
+   tips:'Drive through the heel of the stepping foot. Avoid pushing off the back foot.',
+   cues:'Step up, extend fully, step down controlled. One leg does all the work.'},
+
+  {id:'reverse_lunge',name:'Reverse Lunge',muscles:['Quads','Glutes','Balance'],type:'calisthenics',difficulty:1,category:'compound',
+   demo:'D7KaRcUTQeE',
+   desc:'Step backward into the lunge instead of forward — less knee stress.',
+   tips:'Easier on the patella than forward lunge. Good for people with knee issues.',
+   cues:'Step back, drop the knee, return to standing. Control the descent.'},
+
+  {id:'lateral_lunge',name:'Lateral Lunge',muscles:['Glutes','Inner Thighs','Quads'],type:'calisthenics',difficulty:2,category:'compound',
+   demo:'D7KaRcUTQeE',
+   desc:'Step out to the side and squat onto one leg while the other stays straight.',
+   tips:'Sit into the hip of the working leg. Chest up. Straight leg foot flat.',
+   cues:'Wide step sideways. Sit into one hip. Push back to centre.'},
+
+  // ── CARDIO / PLYOMETRICS ──
+  {id:'jumping_jacks',name:'Jumping Jacks',muscles:['Full Body','Cardio'],type:'calisthenics',difficulty:1,category:'cardio',
+   demo:'dZgVxmf6jeQ',
+   desc:'Jump feet wide while raising arms overhead, then jump back together.',
+   tips:'Great warm-up and low-impact cardio filler between sets.',
+   cues:'Land soft. Keep a slight bend in the knees throughout.'},
+
+  {id:'high_knees',name:'High Knees',muscles:['Hip Flexors','Calves','Cardio'],type:'calisthenics',difficulty:1,category:'cardio',
+   demo:'cnyTQDSE884',
+   desc:'Running on the spot driving knees above hip height with each step.',
+   tips:'Drive arms in opposition to legs. Stay on the balls of your feet.',
+   cues:'Knees above hips. Fast feet. Pump arms. Land soft.'},
+
+  {id:'butt_kicks',name:'Butt Kicks',muscles:['Hamstrings','Calves','Cardio'],type:'calisthenics',difficulty:1,category:'cardio',
+   demo:'cnyTQDSE884',
+   desc:'Running on the spot kicking heels up toward the glutes.',
+   tips:'Great hamstring activation and warm-up drill.',
+   cues:'Kick heels to your glutes. Stay tall. Pump arms.'},
+
+  {id:'lateral_bound',name:'Lateral Bound',muscles:['Glutes','Calves','Balance','Power'],type:'calisthenics',difficulty:2,category:'cardio',
+   demo:'52r_Ul5k03g',
+   desc:'Single-leg lateral jump, landing softly on the opposite foot.',
+   tips:'Stick each landing for 2 seconds before jumping back.',
+   cues:'Drive off one foot. Land soft on the other. Absorb with a bent knee.'},
+
+  {id:'broad_jump',name:'Broad Jump',muscles:['Quads','Glutes','Calves','Power'],type:'calisthenics',difficulty:2,category:'compound',
+   demo:'52r_Ul5k03g',
+   desc:'Maximal horizontal jump from standing — measures lower body power.',
+   tips:'Swing arms for momentum. Stick the landing with soft knees.',
+   cues:'Load hips, swing arms, jump as far as possible. Land balanced and still.'},
+
+  {id:'depth_jump',name:'Depth Jump',muscles:['Quads','Glutes','Calves','Power'],type:'calisthenics',difficulty:3,category:'cardio',
+   demo:'52r_Ul5k03g',
+   desc:'Step off a box, land briefly, then immediately jump as high as possible.',
+   tips:'Minimise ground contact time — the brief landing is the entire point.',
+   cues:'Step off, land, EXPLODE up immediately. Ground contact under 0.2 seconds.'},
+
+  {id:'tuck_jump',name:'Tuck Jump',muscles:['Quads','Calves','Core','Power'],type:'calisthenics',difficulty:2,category:'cardio',
+   demo:'52r_Ul5k03g',
+   desc:'Jump and pull both knees to chest at peak height.',
+   tips:'Land soft, immediately repeat. Great for power and conditioning.',
+   cues:'Explode up. Tuck knees to chest. Land with bent knees, immediately jump again.'},
+
+  {id:'jump_squat',name:'Jump Squat',muscles:['Quads','Glutes','Calves','Power'],type:'calisthenics',difficulty:2,category:'compound',
+   demo:'52r_Ul5k03g',
+   desc:'Squat down then explode upward, leaving the ground. Land in squat and repeat.',
+   tips:'Land softly in the squat position — the eccentric landing is where injuries happen.',
+   cues:'Squat, explode, land soft. Keep chest up through the whole movement.'},
+
+  // ── RINGS ──
+  {id:'ring_dip',name:'Ring Dip',muscles:['Chest','Triceps','Shoulders'],type:'calisthenics',difficulty:3,category:'compound',
+   demo:'2z8JmR3yt9Y',
+   desc:'Dip performed on gymnastics rings — extreme stability demand compared to bars.',
+   tips:'Must stabilise the rings throughout. Harder than any bar dip.',
+   cues:'Rings turned out at the top for support position. Control the instability.'},
+
+  {id:'ring_pushup',name:'Ring Push-Up',muscles:['Chest','Triceps','Shoulders','Core'],type:'calisthenics',difficulty:2,category:'compound',
+   demo:'IODxDxX7oi4',
+   desc:'Push-up with hands in gymnastics rings close to the floor — intense stability demand.',
+   tips:'Lower rings = more horizontal body = harder.',
+   cues:'Turn rings out at the top. Keep core and glutes engaged the entire time.'},
+
+  {id:'ring_row',name:'Ring Row',muscles:['Back','Biceps','Core'],type:'calisthenics',difficulty:1,category:'compound',
+   demo:'PGcTxvw6sMQ',
+   desc:'Inverted row using gymnastics rings — rings allow natural wrist rotation.',
+   tips:'More joint-friendly than bar rows. Adjust angle by walking in or out.',
+   cues:'Pull chest to rings. Turn rings out at the top. Body stays straight.'},
+
+  {id:'muscle_up_rings',name:'Ring Muscle-Up',muscles:['Back','Chest','Triceps'],type:'calisthenics',difficulty:3,category:'compound',
+   demo:'F-xEL4Gkzos',
+   desc:'Muscle-up on gymnastics rings — harder than bar muscle-up due to instability.',
+   tips:'Master bar muscle-up first. The false grip is essential on rings.',
+   cues:'False grip. Pull rings to hips. Transition forward. Lock out.'},
+
+  // ── MOBILITY / FLEXIBILITY ──
+  {id:'world_greatest_stretch',name:'World Greatest Stretch',muscles:['Hip Flexors','Thoracic','Hamstrings'],type:'calisthenics',difficulty:1,category:'compound',
+   demo:'SKfmzOGi3xA',
+   desc:'Lunge with forward fold, thoracic rotation, and pigeon — a comprehensive multi-joint mobility drill.',
+   tips:'Excellent as a daily warm-up or cool-down. Works everything in one flow.',
+   cues:'Lunge deep. Rotate the upper back. Open the hip. Breathe into each position.'},
+
+  {id:'hip_90_90',name:'Hip 90/90 Stretch',muscles:['Hip External Rotation','Glutes','Piriformis'],type:'calisthenics',difficulty:1,category:'isolation',
+   demo:'SKfmzOGi3xA',
+   desc:'Sitting with both legs at 90 degrees — one in front, one to the side. Targets hip rotators.',
+   tips:'Can be performed as an active stretch by shifting weight forward over each shin.',
+   cues:'Sit tall. Shift weight over the front shin. Feel the external rotation.'},
+
+  {id:'cat_cow',name:'Cat-Cow',muscles:['Spine','Core'],type:'calisthenics',difficulty:1,category:'isolation',
+   demo:'kqnua4rHqey',
+   desc:'On all fours, alternate arching the spine up (cat) and down (cow) with breath.',
+   tips:'Coordinate breath with movement — exhale on cat, inhale on cow.',
+   cues:'Full spinal range. Chin to chest on cat. Look up on cow.'},
+
+  {id:'thoracic_rotation',name:'Thoracic Rotation',muscles:['Thoracic Spine','Obliques'],type:'calisthenics',difficulty:1,category:'isolation',
+   demo:'kqnua4rHqey',
+   desc:'In quadruped, place one hand behind head and rotate the elbow up toward the ceiling.',
+   tips:'Keep the lower back still — only thoracic spine moves.',
+   cues:'Follow elbow with eyes. Rotate until you can not go further. Hold briefly.'},
+
+  {id:'deep_squat_hold',name:'Deep Squat Hold',muscles:['Hips','Ankles','Spine'],type:'calisthenics',difficulty:1,category:'isolation',
+   demo:'ultWZbUMPL8',
+   desc:'Hold a deep bodyweight squat for time — develops ankle mobility, hip flexion, and spinal stability.',
+   tips:'Feet shoulder-width, toes turned out slightly. Use door frame if needed.',
+   cues:'Chest up. Weight through full foot. Elbows push knees open.'},
+
+  {id:'pigeon_pose',name:'Pigeon Pose',muscles:['Hip External Rotators','Glutes','Hip Flexors'],type:'calisthenics',difficulty:1,category:'isolation',
+   demo:'SKfmzOGi3xA',
+   desc:'Front leg bent at 90 degrees, rear leg extended back — deep hip flexor and glute stretch.',
+   tips:'Use a block or rolled mat under the front hip if needed.',
+   cues:'Fold forward over the front leg. Breathe. Stay for 2+ minutes per side.'},
+
+  // ── FUNCTIONAL / SPORT ──
+  {id:'farmers_carry',name:'Farmer Carry',muscles:['Grip','Traps','Core','Full Body'],type:'weights',difficulty:1,category:'compound',
+   demo:'rt_CqnAJznU',
+   desc:'Walk a set distance carrying heavy weights at your sides — full body loaded carry.',
+   tips:'One of the best bang-for-buck exercises. Builds grip, traps, and core.',
+   cues:'Stand tall. Tight core. Small quick steps. Do not lean to one side.'},
+
+  {id:'sandbag_carry',name:'Sandbag Carry',muscles:['Core','Back','Grip','Full Body'],type:'weights',difficulty:2,category:'compound',
+   demo:'rt_CqnAJznU',
+   desc:'Carry a heavy sandbag in various positions (bearhug, shoulder, zercher) for distance.',
+   tips:'Unpredictable load forces constant core stabilisation.',
+   cues:'Brace the core. Move controlled. The bag will shift — adapt.'},
+
+  {id:'turkish_getup',name:'Turkish Get-Up',muscles:['Shoulders','Core','Glutes','Balance'],type:'weights',difficulty:3,category:'compound',
+   demo:'rt_CqnAJznU',
+   desc:'Rise from lying to standing while holding a kettlebell locked out overhead throughout.',
+   tips:'Go slow. Every position is a pause point. Arm stays vertical always.',
+   cues:'Eyes on the bell. Nine positions. Control every transition.'},
+
+  {id:'kettlebell_swing',name:'Kettlebell Swing',muscles:['Glutes','Hamstrings','Core','Shoulders'],type:'weights',difficulty:2,category:'compound',
+   demo:'op9kVnSso6Q',
+   desc:'Hip hinge-driven explosive movement swinging a kettlebell to chest height.',
+   tips:'It is a HIP HINGE not a squat. The power comes from hip extension.',
+   cues:'Hike the bell back between thighs. Snap the hips to project it forward. Glutes squeeze at top.'},
+
+  {id:'kettlebell_clean',name:'Kettlebell Clean',muscles:['Glutes','Hamstrings','Shoulders','Core'],type:'weights',difficulty:2,category:'compound',
+   demo:'op9kVnSso6Q',
+   desc:'Clean a kettlebell from swing to racked position at shoulder with a smooth rotation.',
+   tips:'Guide the bell in an arc — never let it bang the forearm.',
+   cues:'Hike, drive hips, guide bell close to body, punch fist through and rack.'},
+
+  {id:'battle_ropes',name:'Battle Ropes',muscles:['Shoulders','Core','Arms','Cardio'],type:'cardio',difficulty:2,category:'cardio',
+   demo:'RIpVT9t7MeY',
+   desc:'Heavy rope waves, slams, and alternating movements — intense cardio and upper body conditioning.',
+   tips:'Try interval work: 20s on, 10s off. Maintain posture.',
+   cues:'Athletic stance. Brace core. Make the waves as large and consistent as possible.'},
+
+  {id:'medicine_ball_slam',name:'Medicine Ball Slam',muscles:['Core','Shoulders','Full Body','Power'],type:'cardio',difficulty:2,category:'compound',
+   demo:'pILGPEZlMoo',
+   desc:'Raise a medicine ball overhead and slam it into the floor as hard as possible.',
+   tips:'Full hip extension at the top. Full hip flexion on the slam.',
+   cues:'Arms overhead, extend fully. Slam with your whole body, not just arms.'},
+
+  {id:'tyre_flip',name:'Tyre Flip',muscles:['Full Body','Power','Glutes','Back'],type:'weights',difficulty:3,category:'compound',
+   demo:'MzNBpLIEa_4',
+   desc:'Deadlift a heavy tyre from the ground and drive it up and over.',
+   tips:'Transition from deadlift to push at hip height. Do not bend over the tyre.',
+   cues:'Deadlift it up. When it reaches hip height, switch to a push. Drive through.'},
+
+  // ── SWIMMING ──
+  {id:'sidestroke',name:'Sidestroke',muscles:['Core','Shoulders','Legs'],type:'swim',difficulty:1,category:'cardio',
+   demo:'5HLW2AI_4_E',
+   desc:'Swimming on the side using a scissor kick and asymmetric arm pulls.',
+   tips:'Great for recovery swimming. Used in lifesaving.',
+   cues:'Lay on your side. Top arm pulls, bottom arm sculls. Scissor kick.'},
+
+  {id:'open_water_swim',name:'Open Water Swimming',muscles:['Full Body','Endurance','Navigation'],type:'swim',difficulty:3,category:'cardio',
+   demo:'5HLW2AI_4_E',
+   desc:'Swimming in lakes, rivers, or the ocean — different sighting and pacing demands to pool.',
+   tips:'Sight every 10 strokes. Acclimate to cold water gradually.',
+   cues:'Lift head to sight, not full rotation. Steady pace. Know your exit before you start.'},
+
+  {id:'water_polo_eggbeater',name:'Eggbeater Kick',muscles:['Hip Adductors','Hip Abductors','Core'],type:'swim',difficulty:2,category:'isolation',
+   demo:'5HLW2AI_4_E',
+   desc:'Alternating rotary leg kick used in water polo to maintain vertical height without hands.',
+   tips:'Each leg traces a circular path independently.',
+   cues:'Alternate circles. Keep knees below the surface. Drive the rotation from the hips.'},
+
 ];
 
 
@@ -1043,6 +1651,7 @@ let taskType = 'personal', taskPriority = 'medium', taskRepeat = 'none';
 let habitTime = 'morning';
 let selEx = null, exQuery = '', currentSets = [{reps:8,weight:'',dur:''}], currentFeel = 'good', setMode = 'reps'; // setMode: 'reps' | 'duration'
 let libFilter = 'all', libSearch = '';
+let customExercises = []; // user-created exercises, loaded from Firestore
 let streakMult = 1;
 
 // ─── AUTH ─────────────────────────────────────────────────
@@ -1161,6 +1770,11 @@ window.doGoogleLogin = async () => {
   try {
     const result = await signInWithPopup(auth, googleProvider);
     currentUser = result.user;
+    // Capture OAuth token for Google Calendar
+    const credential = result._tokenResponse || result.credential;
+    if (result._tokenResponse && result._tokenResponse.oauthAccessToken) {
+      _gcalToken = result._tokenResponse.oauthAccessToken;
+    }
     toast('Signing in...');
   } catch(e) {
     if (e.code === 'auth/popup-closed-by-user') {
@@ -1461,6 +2075,9 @@ window.openCalendar = function() {
   _calYear = new Date().getFullYear();
   _calMonth = new Date().getMonth();
   document.getElementById('calendar-overlay').classList.add('open');
+  // Show connect button if Google user but no token yet
+  const gcalBtn = document.getElementById('gcal-connect-btn');
+  if (gcalBtn) gcalBtn.style.display = (!_gcalToken && currentUser?.providerData?.some(p=>p.providerId==='google.com')) ? 'inline-block' : 'none';
   renderCalendar();
 };
 window.closeCalendar = function() {
@@ -1480,74 +2097,289 @@ window.setCalTab = function(tab, el) {
   renderCalendar();
 };
 
-function renderCalendar() {
+async function renderCalendar() {
   const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
   document.getElementById('cal-month-label').textContent = months[_calMonth] + ' ' + _calYear;
 
   const today = new Date();
   const firstDay = new Date(_calYear, _calMonth, 1);
   const daysInMonth = new Date(_calYear, _calMonth+1, 0).getDate();
-  // Monday-first: 0=Mon..6=Sun
   let startDow = firstDay.getDay() - 1; if (startDow < 0) startDow = 6;
 
-  // Filter tasks with deadlines
+  // Filter InTask tasks with deadlines
   const filtered = tasks.filter(t => {
     if (!t.deadline_date) return false;
     const [y,m,d] = t.deadline_date.split('-').map(Number);
     if (y !== _calYear || m-1 !== _calMonth) return false;
     if (_calTab === 'personal') return t.type === 'personal' || t.type === 'goal';
     if (_calTab === 'party') return t.type === 'shared' || t.type === 'chore';
+    if (_calTab === 'gcal') return false; // gcal tab shows only gcal events
     return true;
   });
 
-  // Build day map: day number -> tasks[]
   const dayMap = {};
   filtered.forEach(t => {
     const day = parseInt(t.deadline_date.split('-')[2]);
     if (!dayMap[day]) dayMap[day] = [];
-    dayMap[day].push(t);
+    dayMap[day].push({kind:'task', data:t});
   });
+
+  // Merge Google Calendar events
+  let gcalEvents = [];
+  if (_calTab === 'gcal' || _calTab === 'all') {
+    gcalEvents = await loadGCalEvents(_calYear, _calMonth);
+    gcalEvents.forEach(ev => {
+      if (!ev.start) return;
+      const evDate = new Date(ev.start);
+      if (evDate.getFullYear() === _calYear && evDate.getMonth() === _calMonth) {
+        const d = evDate.getDate();
+        if (!dayMap[d]) dayMap[d] = [];
+        dayMap[d].push({kind:'gcal', data:ev});
+      }
+    });
+  }
 
   const pc = {high:'#ef4444',medium:'#f59e0b',low:'#10b981'};
   let cells = '';
-  // Empty leading cells
   for (let i = 0; i < startDow; i++) cells += '<div class="cal-day"></div>';
-  // Day cells
   for (let d = 1; d <= daysInMonth; d++) {
     const isToday = d === today.getDate() && _calMonth === today.getMonth() && _calYear === today.getFullYear();
-    const dayTasks = dayMap[d] || [];
-    const hasTasks = dayTasks.length > 0;
-    cells += '<div class="cal-day'+(isToday?' today':'')+(hasTasks?' has-task':'')+'"'+(hasTasks?' onclick="showCalDay('+d+')"':'')+'>'+
-      '<div class="cal-day-num">'+d+'</div>'+
-      dayTasks.slice(0,3).map(t => '<div class="cal-day-dot" style="background:'+(pc[t.priority]||'var(--accent)')+'22;color:'+(pc[t.priority]||'var(--accent)')+'">'+t.name+'</div>').join('')+
-      (dayTasks.length>3?'<div style="font-size:8px;color:var(--muted);margin-top:1px">+' + (dayTasks.length-3) + ' more</div>':'')+
-    '</div>';
+    const dayItems = dayMap[d] || [];
+    const hasItems = dayItems.length > 0;
+    const dots = dayItems.slice(0, 2).map(item => {
+      if (item.kind === 'task') {
+        const col = pc[item.data.priority] || 'var(--accent)';
+        return `<div class="cal-day-dot" style="background:${col}22;color:${col}">${escHtml(item.data.name)}</div>`;
+      } else {
+        return `<div class="cal-day-dot" style="background:#4285f420;color:#4285f4">${escHtml(item.data.title)}</div>`;
+      }
+    }).join('');
+    const more = dayItems.length > 2 ? `<div style="font-size:7px;color:var(--muted)">+${dayItems.length-2}</div>` : '';
+    cells += `<div class="cal-day${isToday?' today':''}${hasItems?' has-task':''}" onclick="showCalDay(${d})">` +
+      `<div class="cal-day-num">${d}</div>${dots}${more}</div>`;
   }
   document.getElementById('cal-days-grid').innerHTML = cells;
   document.getElementById('cal-task-list').style.display = 'none';
+
+  // Update GCal connect button visibility
+  const gcalBtn = document.getElementById('gcal-connect-btn');
+  if (gcalBtn) gcalBtn.style.display = _gcalToken ? 'none' : 'inline-block';
 }
 
 window.showCalDay = function(day) {
-  const filtered = tasks.filter(t => {
+  const pc = {high:'#ef4444',medium:'#f59e0b',low:'#10b981'};
+  const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const listEl = document.getElementById('cal-task-list');
+
+  // InTask tasks for this day
+  const filteredTasks = tasks.filter(t => {
     if (!t.deadline_date) return false;
     const [y,m,d] = t.deadline_date.split('-').map(Number);
     if (y !== _calYear || m-1 !== _calMonth || d !== day) return false;
     if (_calTab === 'personal') return t.type === 'personal' || t.type === 'goal';
     if (_calTab === 'party') return t.type === 'shared' || t.type === 'chore';
+    if (_calTab === 'gcal') return false;
     return true;
   });
-  const listEl = document.getElementById('cal-task-list');
-  const pc = {high:'#ef4444',medium:'#f59e0b',low:'#10b981'};
-  const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-  listEl.innerHTML = '<div style="font-size:10px;font-weight:700;color:var(--muted);letter-spacing:1px;margin-bottom:8px">'+day+' '+months[_calMonth]+' '+_calYear+'</div>'+
-    filtered.map(t => '<div class="cal-task-item">'+
-      '<div style="width:8px;height:8px;border-radius:50%;background:'+(pc[t.priority]||'var(--accent)')+';flex-shrink:0"></div>'+
-      '<div style="flex:1;font-size:13px;font-weight:600;color:'+(t.done?'var(--muted)':'var(--ink)')+'">'+t.name+(t.done?' ✓':'')+'</div>'+
-      '<span style="font-size:10px;color:var(--muted)">'+t.priority+'</span>'+
-    '</div>').join('');
+
+  // GCal events for this day
+  const filteredEvents = (_calTab === 'gcal' || _calTab === 'all') ? _gcalEvents.filter(ev => {
+    if (!ev.start) return false;
+    const evDate = new Date(ev.start);
+    return evDate.getFullYear() === _calYear && evDate.getMonth() === _calMonth && evDate.getDate() === day;
+  }) : [];
+
+  const dateLabel = `${day} ${months[_calMonth]} ${_calYear}`;
+
+  let html = `<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+    <div style="font-size:13px;font-weight:700;color:var(--ink)">${dateLabel}</div>
+    <button onclick="document.getElementById('cal-task-list').style.display='none'" style="background:none;border:none;color:var(--muted);font-size:16px;cursor:pointer">✕</button>
+  </div>`;
+
+  if (filteredEvents.length) {
+    html += '<div style="font-size:9px;font-weight:700;color:#4285f4;letter-spacing:1px;margin-bottom:6px">GOOGLE CALENDAR</div>';
+    html += filteredEvents.map(ev => {
+      let timeStr = '';
+      if (!ev.allDay && ev.start) {
+        const t = new Date(ev.start);
+        const h = t.getHours(), mi = t.getMinutes().toString().padStart(2,'0');
+        const ampm = h >= 12 ? 'pm' : 'am';
+        timeStr = `${h % 12 || 12}:${mi}${ampm}`;
+      } else {
+        timeStr = 'All day';
+      }
+      return `<div class="gcal-event"><div class="gcal-time">${timeStr}</div><div class="gcal-title">${escHtml(ev.title)}</div></div>`;
+    }).join('');
+  }
+
+  if (filteredTasks.length) {
+    html += '<div style="font-size:9px;font-weight:700;color:var(--accent);letter-spacing:1px;margin:8px 0 6px">INTASK</div>';
+    html += filteredTasks.map(t =>
+      `<div class="cal-task-item">
+        <div style="width:8px;height:8px;border-radius:50%;background:${pc[t.priority]||'var(--accent)'};flex-shrink:0;margin-top:3px"></div>
+        <div style="flex:1">
+          <div style="font-size:13px;font-weight:600;color:${t.done?'var(--muted)':'var(--ink)'}">${escHtml(t.name)}${t.done?' ✓':''}</div>
+          <div style="font-size:10px;color:var(--muted)">${t.priority} · ${t.type}</div>
+        </div>
+      </div>`
+    ).join('');
+  }
+
+  if (!filteredTasks.length && !filteredEvents.length) {
+    html += '<div style="text-align:center;padding:16px;color:var(--muted);font-size:13px">Nothing on this day</div>';
+  }
+
+  listEl.innerHTML = html;
   listEl.style.display = 'block';
 };
 
+
+// ─── BOM WEATHER ──────────────────────────────────────────
+const WMO_ICONS = {0:'☀️',1:'🌤',2:'⛅',3:'☁️',45:'🌫',48:'🌫',51:'🌦',53:'🌦',55:'🌧',61:'🌧',63:'🌧',65:'🌧',71:'🌨',73:'🌨',75:'🌨',77:'🌨',80:'🌦',81:'🌧',82:'⛈',85:'🌨',86:'🌨',95:'⛈',96:'⛈',99:'⛈'};
+const WMO_DESC = {0:'Clear sky',1:'Mainly clear',2:'Partly cloudy',3:'Overcast',45:'Foggy',48:'Foggy',51:'Light drizzle',53:'Drizzle',55:'Heavy drizzle',61:'Light rain',63:'Rain',65:'Heavy rain',71:'Light snow',73:'Snow',75:'Heavy snow',80:'Rain showers',81:'Rain showers',82:'Heavy showers',95:'Thunderstorm',96:'Thunderstorm',99:'Thunderstorm'};
+let _weatherLoaded = false;
+
+async function loadWeather() {
+  const card = document.getElementById('weather-loading');
+  const content = document.getElementById('weather-content');
+  if (!card || !content) return;
+
+  try {
+    // Get device location
+    const pos = await new Promise((res, rej) =>
+      navigator.geolocation.getCurrentPosition(res, rej, {timeout:8000, maximumAge:300000})
+    );
+    const {latitude: lat, longitude: lon} = pos.coords;
+
+    // Open-Meteo uses BOM data for Australia — free, no key, CORS-open
+    const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}` +
+      `&current=temperature_2m,apparent_temperature,weather_code,wind_speed_10m,relative_humidity_2m` +
+      `&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max` +
+      `&timezone=auto&forecast_days=5`;
+
+    const resp = await fetch(url);
+    if (!resp.ok) throw new Error('Weather fetch failed');
+    const data = await resp.json();
+
+    const c = data.current;
+    const d = data.daily;
+    const icon = WMO_ICONS[c.weather_code] || '🌤';
+    const desc = WMO_DESC[c.weather_code] || '';
+    const temp = Math.round(c.temperature_2m);
+    const feel = Math.round(c.apparent_temperature);
+    const wind = Math.round(c.wind_speed_10m);
+    const hum = Math.round(c.relative_humidity_2m);
+    const todayMax = Math.round(d.temperature_2m_max[0]);
+    const todayMin = Math.round(d.temperature_2m_min[0]);
+    const rain = d.precipitation_probability_max[0];
+
+    // Reverse-geocode suburb name from BOM API
+    let suburb = '';
+    try {
+      // Use BOM location API for suburb name
+      const bomResp = await fetch(`https://api.weather.bom.gov.au/v1/locations?search=${lat},${lon}`);
+      if (bomResp.ok) {
+        const bomData = await bomResp.json();
+        suburb = bomData.data?.[0]?.name || '';
+      }
+    } catch(e) {
+      // BOM suburb lookup failed — use coordinates
+      try {
+        const geoResp = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json`);
+        if (geoResp.ok) {
+          const geoData = await geoResp.json();
+          suburb = geoData.address?.suburb || geoData.address?.city || geoData.address?.town || '';
+        }
+      } catch(e2) {}
+    }
+
+    const dayNames = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+    const forecastHTML = d.time.slice(1, 5).map((dateStr, i) => {
+      const dow = dayNames[new Date(dateStr).getDay()];
+      const fi = WMO_ICONS[d.weather_code[i+1]] || '🌤';
+      return `<div class="wf-day"><div class="wf-day-lbl">${dow}</div><div class="wf-day-icon">${fi}</div><div class="wf-day-hi">${Math.round(d.temperature_2m_max[i+1])}°</div><div class="wf-day-lo">${Math.round(d.temperature_2m_min[i+1])}°</div></div>`;
+    }).join('');
+
+    content.innerHTML = `
+      <div class="weather-now">
+        <div class="weather-icon">${icon}</div>
+        <div style="flex:1;min-width:0">
+          <div style="display:flex;align-items:baseline;gap:4px">
+            <div class="weather-temp">${temp}°C</div>
+            <div style="font-size:11px;color:var(--muted)">Feels ${feel}°</div>
+          </div>
+          <div class="weather-desc">${desc} · ${todayMin}°–${todayMax}°</div>
+          ${suburb?`<div class="weather-loc">📍 ${suburb}</div>`:''}
+        </div>
+        <div style="text-align:right;flex-shrink:0">
+          <div style="font-size:11px;color:var(--muted)">${rain}% 🌧</div>
+          <div style="font-size:10px;color:var(--muted)">${hum}% 💧</div>
+          <div style="font-size:10px;color:var(--muted)">${wind}km/h 💨</div>
+        </div>
+      </div>
+      <div class="weather-forecast">${forecastHTML}</div>`;
+
+    card.style.display = 'none';
+    content.style.display = 'block';
+    _weatherLoaded = true;
+
+  } catch(err) {
+    if (err.code === 1) { // Permission denied
+      card.innerHTML = '<div class="weather-err">📍 Enable location for weather</div>';
+    } else {
+      card.innerHTML = '<div class="weather-err">🌤 Weather unavailable</div>';
+    }
+  }
+}
+
+// ─── GOOGLE CALENDAR ──────────────────────────────────────
+let _gcalEvents = []; // cached events
+let _gcalLoading = false;
+
+async function loadGCalEvents(year, month) {
+  if (!_gcalToken) return [];
+  if (_gcalLoading) return _gcalEvents;
+  _gcalLoading = true;
+  try {
+    const start = new Date(year, month, 1).toISOString();
+    const end = new Date(year, month + 1, 0, 23, 59, 59).toISOString();
+    const url = `https://www.googleapis.com/calendar/v3/calendars/primary/events` +
+      `?timeMin=${encodeURIComponent(start)}&timeMax=${encodeURIComponent(end)}` +
+      `&singleEvents=true&orderBy=startTime&maxResults=100`;
+    const resp = await fetch(url, {headers: {Authorization: 'Bearer ' + _gcalToken}});
+    if (resp.status === 401) { _gcalToken = null; return []; } // token expired
+    if (!resp.ok) return [];
+    const data = await resp.json();
+    _gcalEvents = (data.items || []).map(ev => ({
+      id: ev.id,
+      title: ev.summary || '(No title)',
+      start: ev.start?.dateTime || ev.start?.date || '',
+      end: ev.end?.dateTime || ev.end?.date || '',
+      allDay: !ev.start?.dateTime,
+      color: ev.colorId ? '#4285f4' : '#4285f4'
+    }));
+    return _gcalEvents;
+  } catch(e) {
+    return [];
+  } finally {
+    _gcalLoading = false;
+  }
+}
+
+async function connectGCal() {
+  try {
+    const result = await signInWithPopup(auth, googleProvider);
+    if (result._tokenResponse?.oauthAccessToken) {
+      _gcalToken = result._tokenResponse.oauthAccessToken;
+      _gcalEvents = [];
+      toast('📅 Google Calendar connected!');
+      renderCalendar();
+    }
+  } catch(e) {
+    toast('Could not connect Google Calendar');
+  }
+}
+window.connectGCal = connectGCal;
 // ─── UNDO ─────────────────────────────────────────────────
 let _lastCompletedTask = null; // {id, xp, totalDone, shared, priority}
 
@@ -1626,8 +2458,9 @@ window._doDeleteTask = async id => { await deleteDoc(doc(db,'tasks',id)); };
 // ─── HABITS ───────────────────────────────────────────────
 window.addHabit = async () => {
   const name = g('new-habit-name').value.trim(); if (!name) { toast('Name your habit!'); return; }
+  const scheduleDays = getSelectedHabitDays();
   await addDoc(collection(db,'habits'), {
-    name, time:habitTime, uid:currentUser.uid,
+    name, time:habitTime, scheduleDays, uid:currentUser.uid,
     streak:0, maxStreak:0, doneDays:{}, lastDoneDate:null, createdAt:serverTimestamp()
   });
   closeModal('habit-modal'); g('new-habit-name').value = ''; toast('🔥 Streak started!');
@@ -1640,6 +2473,10 @@ window.completeHabit = async id => {
   const yesterday = new Date(Date.now()-86400000).toDateString();
   const hasBuffer = (userProfile?.skills||[]).includes('res_1');
   const dayBefore = new Date(Date.now()-172800000).toDateString();
+  const schedule = h.scheduleDays || [1,2,3,4,5,6,0]; // default every day for old habits
+  const todayDow = new Date().getDay();
+  if (!schedule.includes(todayDow)) { toast('📅 Not a scheduled day — but logged anyway!'); }
+  // For streak continuity, check if the last scheduled day was yesterday or before
   const continued = h.lastDoneDate===yesterday || (hasBuffer && h.lastDoneDate===dayBefore);
   const streak = continued ? h.streak+1 : 1;
   const maxStreak = Math.max(h.maxStreak||0, streak);
@@ -1649,6 +2486,265 @@ window.completeHabit = async id => {
   playSound('streak');
   toast(`🔥 ${streak}-day streak! ×${streakMult.toFixed(1)} — +${Math.floor(XP.habit*streakMult)}XP`);
   renderHabits();
+};
+
+
+// ─── HABIT SCHEDULE & EDIT ────────────────────────────────
+let habitScheduleDays = [1,2,3,4,5]; // Mon-Fri default
+
+window.toggleHabitDay = function(btn) {
+  const day = parseInt(btn.dataset.day);
+  if (btn.classList.contains('active')) {
+    btn.classList.remove('active');
+  } else {
+    btn.classList.add('active');
+  }
+};
+
+function getSelectedHabitDays() {
+  const btns = document.querySelectorAll('#habit-modal [data-group="habit-sched"]');
+  const days = [];
+  btns.forEach(b => { if (b.classList.contains('active')) days.push(parseInt(b.dataset.day)); });
+  return days.length ? days : [1,2,3,4,5];
+}
+
+window.openEditHabitModal = function(id) {
+  const h = habits.find(x => x.id === id);
+  if (!h) return;
+  document.getElementById('edit-habit-modal-overlay')?.remove();
+  const DAY_LABELS = ['S','M','T','W','T','F','S'];
+  const schedule = h.scheduleDays || [1,2,3,4,5];
+  const timeOptions = ['morning','afternoon','evening','anytime'];
+
+  const overlay = document.createElement('div');
+  overlay.id = 'edit-habit-modal-overlay';
+  overlay.className = 'modal-overlay';
+  overlay.style.display = 'flex';
+  overlay.innerHTML = `
+    <div class="modal" style="max-height:90vh;overflow-y:auto">
+      <div class="modal-handle"></div>
+      <div class="modal-title">✏️ EDIT STREAK</div>
+      <label class="field-label">HABIT NAME</label>
+      <input id="edit-habit-name" class="form-input" value="${h.name.replace(/"/g,'&quot;')}" placeholder="Habit name...">
+      <label class="field-label">TIME OF DAY</label>
+      <div class="pill-row">
+        ${timeOptions.map(t=>`<button class="pill${h.time===t?' active':''}" data-group="edit-habit-time" onclick="window._setEditPill('${t}','edit-habit-time',this)">${{morning:'🌅 Morning',afternoon:'☀️ Afternoon',evening:'🌙 Evening',anytime:'⏰ Anytime'}[t]}</button>`).join('')}
+      </div>
+      <label class="field-label">SCHEDULE</label>
+      <div class="pill-row" style="gap:6px;flex-wrap:nowrap">
+        ${[1,2,3,4,5,6,0].map(d=>`<button class="pill${schedule.includes(d)?' active':''}" data-group="edit-habit-sched" data-day="${d}" onclick="this.classList.toggle('active')">${DAY_LABELS[d]}</button>`).join('')}
+      </div>
+      <p style="font-size:11px;color:var(--muted);margin:-6px 0 12px">Highlighted days count toward the streak.</p>
+      <div style="display:flex;gap:10px">
+        <button class="big-btn" style="background:var(--parchment);border:1.5px solid var(--border);color:var(--muted)" onclick="document.getElementById('edit-habit-modal-overlay')?.remove()">Cancel</button>
+        <button class="big-btn" style="background:linear-gradient(135deg,#f59e0b,#f97316)" onclick="window._saveEditHabit('${id}')">💾 Save</button>
+      </div>
+      <button onclick="window._deleteHabit('${id}');document.getElementById('edit-habit-modal-overlay')?.remove()" style="width:100%;padding:10px;margin-top:8px;border:1.5px solid var(--red);background:transparent;color:var(--red);border-radius:10px;font-size:13px;font-weight:600;cursor:pointer" id="del-habit-btn-${id}">🗑️ Delete Streak</button>
+    </div>`;
+  overlay.addEventListener('click', e => { if (e.target === overlay) overlay.remove(); });
+  document.body.appendChild(overlay);
+
+  // Wire up two-tap delete
+  const delBtn = document.getElementById('del-habit-btn-' + id);
+  if (delBtn) {
+    delBtn.onclick = function() {
+      if (this.dataset.armed === '1') {
+        document.getElementById('edit-habit-modal-overlay')?.remove();
+        window._deleteHabit(id);
+      } else {
+        this.dataset.armed = '1';
+        this.textContent = '⚠️ Tap again to confirm delete';
+        this.style.background = 'var(--red)'; this.style.color = '#fff';
+        setTimeout(() => {
+          if (this.dataset.armed === '1') {
+            this.dataset.armed = '0';
+            this.textContent = '🗑️ Delete Streak';
+            this.style.background = 'transparent'; this.style.color = 'var(--red)';
+          }
+        }, 3000);
+      }
+    };
+  }
+};
+
+window._saveEditHabit = async function(id) {
+  const name = document.getElementById('edit-habit-name')?.value.trim();
+  if (!name) { toast('Habit name required!'); return; }
+  const time = document.querySelector('[data-group="edit-habit-time"].active')?.dataset?.group
+    ? (document.querySelector('[data-group="edit-habit-time"].active')?.textContent.toLowerCase().includes('morning') ? 'morning' :
+       document.querySelector('[data-group="edit-habit-time"].active')?.textContent.toLowerCase().includes('afternoon') ? 'afternoon' :
+       document.querySelector('[data-group="edit-habit-time"].active')?.textContent.toLowerCase().includes('evening') ? 'evening' : 'anytime')
+    : 'anytime';
+  const schedBtns = document.querySelectorAll('[data-group="edit-habit-sched"]');
+  const scheduleDays = [...schedBtns].filter(b=>b.classList.contains('active')).map(b=>parseInt(b.dataset.day));
+  await updateDoc(doc(db,'habits',id), {name, time, scheduleDays: scheduleDays.length ? scheduleDays : [1,2,3,4,5]});
+  document.getElementById('edit-habit-modal-overlay')?.remove();
+  toast('✅ Streak updated!');
+};
+
+window._deleteHabit = async function(id) {
+  await deleteDoc(doc(db,'habits',id));
+  toast('🗑️ Streak deleted');
+};
+
+// ─── CUSTOM EXERCISES ─────────────────────────────────────
+
+function getAllExercises() {
+  // Merge built-in + custom, custom appear first in search
+  return [...customExercises, ...EXERCISE_DB];
+}
+
+async function loadCustomExercises(uid) {
+  try {
+    const snap = await getDocs(collection(db, 'users', uid, 'customExercises'));
+    customExercises = snap.docs.map(d => ({...d.data(), _custom: true, _docId: d.id}));
+  } catch(e) {
+    customExercises = [];
+  }
+}
+
+window.openCreateExerciseModal = function() {
+  document.getElementById('custom-ex-modal-overlay')?.remove();
+  const overlay = document.createElement('div');
+  overlay.id = 'custom-ex-modal-overlay';
+  overlay.className = 'modal-overlay';
+  overlay.style.display = 'flex';
+  overlay.innerHTML = `
+    <div class="modal" style="max-height:92vh;overflow-y:auto">
+      <div class="modal-handle"></div>
+      <div class="modal-title">🏋️ CREATE EXERCISE</div>
+
+      <label class="field-label">EXERCISE NAME</label>
+      <input id="cex-name" class="form-input" placeholder="e.g. Resistance Band Curl...">
+
+      <label class="field-label">MUSCLES WORKED <span style="font-weight:400;color:var(--muted)">(comma-separated)</span></label>
+      <input id="cex-muscles" class="form-input" placeholder="e.g. Biceps, Forearms">
+
+      <label class="field-label">TYPE</label>
+      <div class="pill-row">
+        <button class="pill active" data-group="cex-type" onclick="window._setEditPill('weights','cex-type',this)">🏋️ Weights</button>
+        <button class="pill" data-group="cex-type" onclick="window._setEditPill('calisthenics','cex-type',this)">💪 Cali</button>
+        <button class="pill" data-group="cex-type" onclick="window._setEditPill('cardio','cex-type',this)">❤️ Cardio</button>
+        <button class="pill" data-group="cex-type" onclick="window._setEditPill('run','cex-type',this)">🏃 Run</button>
+        <button class="pill" data-group="cex-type" onclick="window._setEditPill('swim','cex-type',this)">🏊 Swim</button>
+      </div>
+
+      <label class="field-label">DIFFICULTY</label>
+      <div class="pill-row">
+        <button class="pill active" data-group="cex-diff" onclick="window._setEditPill('1','cex-diff',this)">⭐ Beginner</button>
+        <button class="pill" data-group="cex-diff" onclick="window._setEditPill('2','cex-diff',this)">⭐⭐ Intermediate</button>
+        <button class="pill" data-group="cex-diff" onclick="window._setEditPill('3','cex-diff',this)">⭐⭐⭐ Advanced</button>
+      </div>
+
+      <label class="field-label">CATEGORY</label>
+      <div class="pill-row">
+        <button class="pill active" data-group="cex-cat" onclick="window._setEditPill('compound','cex-cat',this)">Compound</button>
+        <button class="pill" data-group="cex-cat" onclick="window._setEditPill('isolation','cex-cat',this)">Isolation</button>
+        <button class="pill" data-group="cex-cat" onclick="window._setEditPill('cardio','cex-cat',this)">Cardio</button>
+      </div>
+
+      <label class="field-label">DESCRIPTION</label>
+      <textarea id="cex-desc" class="form-input" rows="3" placeholder="How to perform this exercise..." style="resize:vertical;min-height:70px"></textarea>
+
+      <label class="field-label">TIPS <span style="font-weight:400;color:var(--muted)">(optional)</span></label>
+      <input id="cex-tips" class="form-input" placeholder="Coaching tip...">
+
+      <label class="field-label">COACHING CUES <span style="font-weight:400;color:var(--muted)">(optional)</span></label>
+      <input id="cex-cues" class="form-input" placeholder="Mental cue or key phrase...">
+
+      <label class="field-label">YOUTUBE VIDEO ID <span style="font-weight:400;color:var(--muted)">(optional — the part after watch?v=)</span></label>
+      <input id="cex-demo" class="form-input" placeholder="e.g. dQw4w9WgXcQ">
+
+      <div style="display:flex;gap:10px;margin-top:4px">
+        <button class="big-btn" style="background:var(--parchment);border:1.5px solid var(--border);color:var(--muted)" onclick="document.getElementById('custom-ex-modal-overlay')?.remove()">Cancel</button>
+        <button class="big-btn" onclick="window._saveCustomExercise()">💾 Save Exercise</button>
+      </div>
+      <p style="font-size:11px;color:var(--muted);margin-top:8px;text-align:center">This exercise will only be visible to you.</p>
+    </div>`;
+  overlay.addEventListener('click', e => { if(e.target === overlay) overlay.remove(); });
+  document.body.appendChild(overlay);
+};
+
+window._saveCustomExercise = async function(editId) {
+  const name = document.getElementById('cex-name')?.value.trim();
+  if (!name) { toast('Exercise name required!'); return; }
+  const musclesRaw = document.getElementById('cex-muscles')?.value.trim();
+  const muscles = musclesRaw ? musclesRaw.split(',').map(m => m.trim()).filter(Boolean) : ['Full Body'];
+  const type = document.querySelector('[data-group="cex-type"].active')?.dataset?.group
+    ? ['weights','calisthenics','cardio','run','swim'].find(t =>
+        document.querySelector('[data-group="cex-type"].active')?.textContent.toLowerCase().includes(
+          {weights:'weights',calisthenics:'cali',cardio:'cardio',run:'run',swim:'swim'}[t]
+        )
+      ) || 'weights'
+    : 'weights';
+  const difficulty = parseInt(document.querySelector('[data-group="cex-diff"].active')?.textContent.match(/⭐/g)?.length || 1);
+  const category = document.querySelector('[data-group="cex-cat"].active')?.textContent.trim().toLowerCase() || 'compound';
+  const desc = document.getElementById('cex-desc')?.value.trim() || '';
+  const tips = document.getElementById('cex-tips')?.value.trim() || '';
+  const cues = document.getElementById('cex-cues')?.value.trim() || '';
+  const demo = document.getElementById('cex-demo')?.value.trim() || '';
+
+  const id = editId || ('custom_' + name.toLowerCase().replace(/[^a-z0-9]/g,'_') + '_' + Date.now().toString(36));
+  const data = {id, name, muscles, type, difficulty, category, desc, tips, cues, demo, _custom: true, uid: currentUser.uid, createdAt: Date.now()};
+
+  try {
+    const ref = doc(db, 'users', currentUser.uid, 'customExercises', id);
+    await setDoc(ref, data);
+    // Update local array
+    const idx = customExercises.findIndex(e => e.id === id);
+    if (idx >= 0) customExercises[idx] = {...data, _docId: id};
+    else customExercises.unshift({...data, _docId: id});
+    document.getElementById('custom-ex-modal-overlay')?.remove();
+    toast('✅ Exercise saved!');
+    if (typeof window.renderLibrary === 'function') window.renderLibrary();
+  } catch(e) {
+    toast('Error saving exercise. Try again.');
+    console.error(e);
+  }
+};
+
+window.deleteCustomExercise = async function(id) {
+  try {
+    await deleteDoc(doc(db, 'users', currentUser.uid, 'customExercises', id));
+    customExercises = customExercises.filter(e => e.id !== id);
+    toast('🗑️ Exercise deleted');
+    if (typeof window.renderLibrary === 'function') window.renderLibrary();
+  } catch(e) {
+    toast('Error deleting exercise.');
+  }
+};
+
+window.openEditCustomExercise = function(id) {
+  const ex = customExercises.find(e => e.id === id);
+  if (!ex) return;
+  window.openCreateExerciseModal();
+  // Pre-fill after modal is rendered
+  requestAnimationFrame(() => {
+    const n = document.getElementById('cex-name'); if(n) n.value = ex.name;
+    const m = document.getElementById('cex-muscles'); if(m) m.value = (ex.muscles||[]).join(', ');
+    const d = document.getElementById('cex-desc'); if(d) d.value = ex.desc||'';
+    const t = document.getElementById('cex-tips'); if(t) t.value = ex.tips||'';
+    const c = document.getElementById('cex-cues'); if(c) c.value = ex.cues||'';
+    const v = document.getElementById('cex-demo'); if(v) v.value = ex.demo||'';
+    // Set type pill
+    document.querySelectorAll('[data-group="cex-type"]').forEach(b => {
+      const map = {weights:'weights',calisthenics:'cali',cardio:'cardio',run:'run',swim:'swim'};
+      b.classList.toggle('active', b.textContent.toLowerCase().includes(map[ex.type]||'weights'));
+    });
+    // Set difficulty pill
+    document.querySelectorAll('[data-group="cex-diff"]').forEach(b => {
+      b.classList.toggle('active', (b.textContent.match(/⭐/g)||[]).length === ex.difficulty);
+    });
+    // Set category pill
+    document.querySelectorAll('[data-group="cex-cat"]').forEach(b => {
+      b.classList.toggle('active', b.textContent.toLowerCase().trim() === (ex.category||'compound'));
+    });
+    // Change save button to update
+    const saveBtn = document.querySelector('#custom-ex-modal-overlay .big-btn:last-child');
+    if (saveBtn) saveBtn.onclick = () => window._saveCustomExercise(id);
+    const title = document.querySelector('#custom-ex-modal-overlay .modal-title');
+    if (title) title.textContent = '✏️ EDIT EXERCISE';
+  });
 };
 
 // ─── BOSS ─────────────────────────────────────────────────
@@ -1888,7 +2984,7 @@ window.selectExercise = id => {
       playSound('complete');
     }
   }
-  selEx = EXERCISE_DB.find(e=>e.id===id);
+  selEx = getAllExercises().find(e=>e.id===id);
   exQuery = ''; currentSets=[{reps:8,weight:'',duration:30,mode:'reps'}]; currentFeel='good'; setMode='reps';
   updateExFormSection();
   // Clear search input after selection
@@ -2362,7 +3458,7 @@ function smartSearch(q) {
   q = q.toLowerCase();
   const related = {'bicep':['Biceps','Forearms'],'curl':['Biceps','Forearms'],'chest':['Chest','Triceps'],'push':['Chest','Triceps','Shoulders'],'back':['Back','Biceps'],'pull':['Back','Biceps'],'shoulder':['Shoulders'],'delt':['Shoulders'],'leg':['Quads','Hamstrings','Glutes'],'squat':['Quads','Glutes'],'core':['Core'],'abs':['Core'],'tricep':['Triceps'],'glute':['Glutes'],'ham':['Hamstrings']};
   const relMuscles = Object.entries(related).filter(([k])=>q.includes(k)).flatMap(([,v])=>v);
-  return EXERCISE_DB.filter(ex => ex.name.toLowerCase().includes(q) || ex.muscles.some(m=>m.toLowerCase().includes(q)) || ex.type.toLowerCase().includes(q) || relMuscles.some(m=>ex.muscles.includes(m))).slice(0,6);
+  return getAllExercises().filter(ex => ex.name.toLowerCase().includes(q) || ex.muscles.some(m=>m.toLowerCase().includes(q)) || ex.type.toLowerCase().includes(q) || relMuscles.some(m=>ex.muscles.includes(m))).slice(0,6);
 }
 
 window._showExSuggestions = () => {
@@ -2413,6 +3509,10 @@ function showApp() {
   if(window.stopLoginMusic) window.stopLoginMusic();
   // Load user music preferences
   _mpLoadUserMusic().catch(()=>{});
+  // Load custom exercises
+  loadCustomExercises(currentUser.uid).catch(()=>{});
+  // Load weather (once)
+  if (!_weatherLoaded) setTimeout(loadWeather, 600);
   // Auto-start BGM if enabled
   if(lsGet('intask_bgm_default','0')==='1') {
     setTimeout(() => { if(window.toggleBGM) window.toggleBGM(); }, 800);
@@ -2496,7 +3596,7 @@ function taskCard(t) {
       ${t.done?'<span style="color:#fff;font-size:13px;font-weight:900">✓</span>':''}
     </div>
     <div class="task-body">
-      <div class="task-name">${t.name}</div>
+      <div class="task-name">${escHtml(t.name)}</div>
       <div class="task-tags">
         <span class="tag" style="color:${tc[t.type]||'#7c3aed'};border-color:${tc[t.type]||'#7c3aed'}">${t.type==='shared'?'<img src="https://maplestory.io/api/GMS/255/item/1302086/icon" width="12" height="12" style="image-rendering:pixelated;vertical-align:middle">':t.type==='chore'?'<img src="https://maplestory.io/api/GMS/255/item/1322000/icon" width="12" height="12" style="image-rendering:pixelated;vertical-align:middle">':t.type==='goal'?'<img src="https://maplestory.io/api/GMS/255/item/1402000/icon" width="12" height="12" style="image-rendering:pixelated;vertical-align:middle">':'<img src="https://maplestory.io/api/GMS/255/item/1302000/icon" width="12" height="12" style="image-rendering:pixelated;vertical-align:middle">'} ${t.type}${partyName}</span>
         <span class="tag" style="color:${c};border-color:${c}">${t.priority}</span>
@@ -2690,19 +3790,32 @@ function renderHabits() {
 function habitCard(h) {
   const today = new Date().toDateString();
   const doneToday = !!(h.doneDays?.[today]);
-  const days = ['M','T','W','T','F','S','S'];
+  const DAY_LABELS = ['S','M','T','W','T','F','S'];
+  const schedule = h.scheduleDays || [1,2,3,4,5];
   const last7 = Array.from({length:7},(_,i)=>{
     const d = new Date(Date.now()-(6-i)*86400000);
-    return {label:days[d.getDay()===0?6:d.getDay()-1], done:!!(h.doneDays?.[d.toDateString()]), today:i===6};
+    const dow = d.getDay();
+    const scheduled = schedule.includes(dow);
+    return {label:DAY_LABELS[dow], done:!!(h.doneDays?.[d.toDateString()]), today:i===6, scheduled};
   });
   const mult = Math.min(1+((h.streak||0)*0.2),10).toFixed(1);
+  const schedLabel = schedule.length===7 ? 'Every day' :
+    (schedule.length===5 && [1,2,3,4,5].every(d=>schedule.includes(d))) ? 'Weekdays' :
+    (schedule.length===2 && [0,6].every(d=>schedule.includes(d))) ? 'Weekends' :
+    schedule.map(d=>DAY_LABELS[d]).join(' ');
   return `<div class="habit-card">
     <div class="habit-top">
-      <div><div class="habit-name">${h.name}</div><div class="habit-meta">⏰ ${h.time} · ×${mult} multiplier</div></div>
-      <div style="text-align:right"><div class="streak-count">${h.streak||0}</div><div style="font-size:11px;color:var(--muted)">🔥 days</div></div>
+      <div style="flex:1;min-width:0">
+        <div class="habit-name">${escHtml(h.name)}</div>
+        <div class="habit-meta">⏰ ${h.time} · ${schedLabel} · ×${mult}</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:6px;flex-shrink:0">
+        <div style="text-align:right;flex-shrink:0"><div class="streak-count">${h.streak||0}</div><div style="font-size:11px;color:var(--muted)">🔥 days</div></div>
+        <button onclick="event.stopPropagation();openEditHabitModal('${h.id}')" style="background:none;border:1px solid var(--border);border-radius:6px;color:var(--muted);font-size:12px;cursor:pointer;padding:4px 6px" title="Edit">✏️</button>
+      </div>
     </div>
-    <div class="days-row">${last7.map(d=>`<div class="day-dot${d.done?' done':''}${d.today?' today':''}">${d.label}</div>`).join('')}</div>
-    <button class="done-btn${doneToday?' done-btn-done':''}" onclick="${doneToday?'':'completeHabit(\''+h.id+'\')'}">${doneToday?'✅ Done! Come back tomorrow':'✓ Mark Done  +XP × multiplier'}</button>
+    <div class="days-row">${last7.map(d=>'<div class="day-dot'+(d.done?' done':'')+(d.today?' today':'')+'" style="'+(d.scheduled?'':'opacity:.3')+'">'+ d.label+'</div>').join('')}</div>
+    <button class="done-btn${doneToday?' done-btn-done':''}" onclick="${doneToday?'void 0':'completeHabit(\'' + h.id + '\')'}">${doneToday?'✅ Done! Come back tomorrow':'✓ Mark Done +XP × multiplier'}</button>
   </div>`;
 }
 
@@ -2718,7 +3831,7 @@ function renderParty() {
     <div class="season-banner" style="border-color:var(--border);background:var(--surf2)"><span style="font-size:11px;font-weight:600;color:var(--muted);letter-spacing:0.5px">⚔️ SEASON 1: THE AWAKENING</span></div>
     <div id="boss-section"></div>
     <div class="crew-header-row">
-      <div><div class="crew-name-text">${party.name}</div><div class="crew-sub-text">${partyMembers.length} pilots · Code: <span style="color:var(--accent3);font-weight:900;letter-spacing:2px">${party.code}</span></div></div>
+      <div><div class="crew-name-text">${escHtml(party.name)}</div><div class="crew-sub-text">${partyMembers.length} pilots · Code: <span style="color:var(--accent3);font-weight:900;letter-spacing:2px">${party.code}</span></div></div>
       <button class="leave-btn" onclick="leaveParty()">↩ Leave</button>
     </div>
     <div class="sec-title" style="margin-bottom:10px"><img src="https://maplestory.io/api/GMS/255/item/4031138/icon" alt="" width="18" height="18" style="image-rendering:pixelated;vertical-align:middle;margin-right:4px"> PARTY LEADERBOARD</div>
@@ -2727,10 +3840,10 @@ function renderParty() {
         <span class="lb-rank">${medals[i]||'#'+(i+1)}</span>
         <div class="lb-av" style="border-color:var(--border);background:var(--surf2)">${m.avatar?`<img src="${AVATAR_URL(m.avatar)}" width="32" height="32" style="image-rendering:pixelated;object-fit:contain" onerror="this.style.display='none'">`:`<span style="font-size:20px">👤</span>`}</div>
         <div style="flex:1">
-          <div class="lb-name">${m.displayName} ${(m.badges||[]).slice(0,3).map(bid=>{const b=BADGES.find(x=>x.id===bid);return b?b.icon:''}).join('')}</div>
+          <div class="lb-name">${escHtml(m.displayName)} ${(m.badges||[]).slice(0,3).map(bid=>{const b=BADGES.find(x=>x.id===bid);return b?b.icon:''}).join('')}</div>
           <div class="lb-level">LVL ${m.level} ${m.title} · ${m.xp||0}XP · 🔥${m.currentStreak||0}</div>
         </div>
-        ${m.id!==currentUser?.uid?`<button class="boost-mini" onclick="sendBoost('${m.displayName}')">⚡</button>`:`<span style="color:var(--accent3);font-size:10px;font-weight:800">YOU</span>`}
+        ${m.id!==currentUser?.uid?`<button class="boost-mini" onclick="sendBoost('${escHtml(m.displayName)}')">⚡</button>`:`<span style="color:var(--accent3);font-size:10px;font-weight:800">YOU</span>`}
       </div>`).join('')}
     </div>
     <div style="margin-top:16px"><div class="sec-title" style="margin-bottom:10px">QUICK NUDGES</div>
@@ -2752,7 +3865,7 @@ function renderBoss() {
   s.innerHTML = `<div class="boss-card${boss.defeated?' defeated':''}">
     <div class="boss-top">
       <span class="boss-icon${boss.defeated?'':''}">${'<img src="https://maplestory.io/api/GMS/255/mob/8800000/render/stand" alt="Boss" width="48" height="48" style="image-rendering:pixelated" onerror="this.src=\'https://maplestory.io/api/GMS/255/mob/100100/render/stand\'">'}</span>
-      <div style="flex:1"><div class="boss-name-text">${boss.name||'Boss'}</div><div class="boss-sub">${boss.defeated?'💀 DEFEATED':'⚔️ Attack by completing tasks!'}</div></div>
+      <div style="flex:1"><div class="boss-name-text">${escHtml(boss.name||'Boss')}</div><div class="boss-sub">${boss.defeated?'💀 DEFEATED':'⚔️ Attack by completing tasks!'}</div></div>
       <div class="boss-hp-num" style="color:${hpCol}">${boss.hp||0}<span style="font-size:11px;color:var(--muted)">/${boss.maxHp}</span></div>
     </div>
     <div class="boss-bar-wrap"><div class="boss-bar-fill" style="width:${pct}%;background:${hpCol}"></div></div>
@@ -2768,7 +3881,7 @@ function renderMessages() {
     return `<div class="msg-wrap${isMe?' msg-me':''}">
       ${!isMe?`<div class="msg-av" style="border-color:var(--border);background:var(--surf2)">${m.avatar?`<img src="${AVATAR_URL(m.avatar)}" width="32" height="32" style="image-rendering:pixelated;object-fit:contain" onerror="this.style.display='none'">`:`<span style="font-size:20px">👤</span>`}</div>`:''}
       <div class="bubble${isMe?' me':''}" style="${isMe?'background:var(--accent)':''}">
-        ${!isMe?`<div class="bubble-sender">${m.displayName}</div>`:''}${m.text}
+        ${!isMe?`<div class="bubble-sender">${escHtml(m.displayName)}</div>`:''}${escHtml(m.text)}
       </div>
     </div>`;
   }).join('');
@@ -4244,29 +5357,40 @@ function groupByDate(entries) {
 
 window.renderLibrary = function() {
   const lf = window._libF||'all';
-  const ls = String(window._libQ||'');
-  const filtered = EXERCISE_DB.filter(function(ex) {
-    if (!ex.muscles || !ex.difficulty) return false; // skip guide entries
-    const typeMatch = lf==='all' || ex.type===lf;
-    const searchMatch = !ls || ex.name.toLowerCase().includes(ls) || ex.muscles.some(function(m){return m.toLowerCase().includes(ls);});
+  const ls = String(window._libQ||'').toLowerCase();
+  const allEx = getAllExercises();
+  const filtered = allEx.filter(function(ex) {
+    if (!ex.muscles || !ex.difficulty) return false;
+    const typeMatch = lf==='all' || (lf==='custom' ? ex._custom : ex.type===lf);
+    const searchMatch = !ls || ex.name.toLowerCase().includes(ls) || (ex.muscles||[]).some(function(m){return m.toLowerCase().includes(ls);});
     return typeMatch && searchMatch;
   });
-  const typeIcon = {weights:'Weights',calisthenics:'Cali',run:'Run',swim:'Swim',cardio:'Cardio'};
   const s = getFitSub(); if(!s) return;
   const cards = filtered.map(function(ex) {
+    const isCustom = !!ex._custom;
+    const badge = isCustom ? '<span style="font-size:9px;font-weight:700;background:rgba(124,58,237,.15);color:#7c3aed;border-radius:99px;padding:2px 7px;margin-left:6px">MINE</span>' : '';
+    const actions = isCustom
+      ? '<div style="display:flex;gap:4px;flex-shrink:0">'
+          +'<button data-editcex="'+ex.id+'" style="background:none;border:1px solid var(--border);border-radius:6px;color:var(--muted);font-size:11px;cursor:pointer;padding:3px 7px">✏️</button>'
+          +'<button data-delcex="'+ex.id+'" style="background:none;border:1px solid var(--border);border-radius:6px;color:var(--red);font-size:11px;cursor:pointer;padding:3px 7px">🗑</button>'
+        +'</div>'
+      : '<div class="ex-lib-right"><div class="ex-lib-type">'+ex.type+'</div></div>';
     return '<div class="ex-lib-card" data-exid="'+ex.id+'">'
-      +'<div class="ex-lib-info"><div class="ex-lib-name">'+ex.name+'</div>'
-      +'<div class="ex-lib-muscles">'+ex.muscles.join(', ')+'</div></div>'
-      +'<div class="ex-lib-right"><div class="ex-lib-type">'+ex.type+'</div></div>'
+      +'<div class="ex-lib-info"><div class="ex-lib-name">'+escHtml(ex.name)+badge+'</div>'
+      +'<div class="ex-lib-muscles">'+escHtml((ex.muscles||[]).join(', '))+'</div></div>'
+      +actions
       +'</div>';
   }).join('');
-  const filterBtns = [['all','All'],['weights','Weights'],['calisthenics','Cali'],['run','Run'],['swim','Swim'],['cardio','Cardio']].map(function(pair) {
-    return '<button class="lib-filter-btn'+(lf===pair[0]?' active':'')+'" onclick="window._libF=\''+pair[0]+'\';window.renderLibrary()">'+pair[1]+'</button>';
+  const filterBtns = [['all','All'],['weights','Weights'],['calisthenics','Cali'],['run','Run'],['swim','Swim'],['cardio','Cardio'],['custom','⭐ Mine']].map(function(pair) {
+    return '<button class="lib-filter-btn'+(lf===pair[0]?' active':'')+'" data-libf="'+pair[0]+'" onclick="window._libF=this.dataset.libf;window.renderLibrary()">'+pair[1]+'</button>';
   }).join('');
-  s.innerHTML = '<div class="sec-title" style="margin-bottom:12px">EXERCISE LIBRARY</div>'
-    +'<input id="lib-s" class="form-input" placeholder="Search exercises..." style="margin-bottom:10px" value="'+ls+'">'
+  s.innerHTML = '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">'
+    +'<div class="sec-title" style="margin:0">EXERCISE LIBRARY</div>'
+    +'<button onclick="window.openCreateExerciseModal()" style="background:var(--midnight);color:#fff;border:none;border-radius:8px;padding:6px 12px;font-size:11px;font-weight:700;cursor:pointer">+ Create</button>'
+    +'</div>'
+    +'<input id="lib-s" class="form-input" placeholder="Search exercises..." style="margin-bottom:10px" value="'+escHtml(ls)+'">'
     +'<div class="lib-filters">'+filterBtns+'</div>'
-    +'<div style="font-size:10px;color:var(--muted);margin:6px 0 10px">'+filtered.length+' exercises</div>'
+    +'<div style="font-size:10px;color:var(--muted);margin:6px 0 10px">'+filtered.length+' exercises'+(customExercises.length?' · '+customExercises.length+' custom':'')+'</div>'
     +'<div id="lib-results">'+cards+'</div>';
   var inp = document.getElementById('lib-s');
   if(inp) inp.addEventListener('input', function(){window._libQ=this.value;window.renderLibrary();});
@@ -4287,6 +5411,24 @@ window.renderLibrary = function() {
       }
     }, {passive:false});
     res.addEventListener('click', function(e) {
+      // Edit custom exercise button
+      var editBtn = e.target.closest('[data-editcex]');
+      if(editBtn) { e.stopPropagation(); window.openEditCustomExercise(editBtn.dataset.editcex); return; }
+      // Delete custom exercise button
+      var delBtn = e.target.closest('[data-delcex]');
+      if(delBtn) {
+        e.stopPropagation();
+        var delId = delBtn.dataset.delcex;
+        delBtn.textContent = '⚠️';
+        delBtn.style.background = 'var(--red)'; delBtn.style.color = '#fff';
+        if(delBtn._armed) { window.deleteCustomExercise(delId); }
+        else {
+          delBtn._armed = true;
+          setTimeout(function(){ delBtn._armed=false; delBtn.textContent='🗑'; delBtn.style.background=''; delBtn.style.color='var(--red)'; }, 2500);
+        }
+        return;
+      }
+      // Show detail
       var card = e.target.closest('[data-exid]');
       if(card && card.dataset.exid) window.showExDetail(card.dataset.exid);
     });
@@ -4296,7 +5438,7 @@ window.renderLibrary = function() {
 
 
 window.showExDetail = id => {
-  const ex=EXERCISE_DB.find(e=>e.id===id); if(!ex) return;
+  const ex=getAllExercises().find(e=>e.id===id); if(!ex) return;
   const s=getFitSub(); if(!s) return;
   const diffLabels=['Beginner','Beginner','Intermediate','Advanced','Elite'];
   const ytMap = {
@@ -4576,7 +5718,7 @@ function showCel(title,sub,xp,extra='') {
 function missionCel(name,xp){showCel('TASK COMPLETE!',name,`+${xp} XP`);}
 function levelUpCel(l){playSound('levelup');showCel('⚡ LEVEL UP! ⚡',`You are now ${getTitle(l)}`,`LEVEL ${l}`,'+2 Skill Points earned!');}
 function badgeCel(b){showCel('BADGE UNLOCKED!',`${b.icon} ${b.name}`,b.desc);}
-function bossCel(){playSound('boss');showCel('⚔️ BOSS DEFEATED!',boss?.name||'The enemy falls!','+500 XP for the party!',boss?.reward||'');}
+function bossCel(){playSound('boss');showCel('⚔️ BOSS DEFEATED!',escHtml(boss?.name||'The enemy falls!'),'+500 XP for the party!',boss?.reward||'');}
 
 function spawnConfetti(count=40) {
   const cols=['#7c3aed','#06b6d4','#f59e0b','#ec4899','#10b981','#fff','#f97316'];
@@ -4596,6 +5738,7 @@ function playSound(t){const m={complete:()=>{tone(523,.1);setTimeout(()=>tone(65
 
 // ─── UI HELPERS ───────────────────────────────────────────
 function g(id){return document.getElementById(id);}
+function escHtml(s){if(s==null)return '';return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');}
 function emptyState(icon,text){return `<div class="empty-state"><div class="empty-icon">${icon}</div><div class="empty-text">${text}</div></div>`;}
 
 window.switchTab = tab => {
@@ -4631,7 +5774,7 @@ window.setHabitPill=(val,el)=>{setPill(el,'habit-time');habitTime=val;};
 window.selectAvatar=(a,el)=>{selAvatar=a;document.querySelectorAll('.av-btn').forEach(x=>x.classList.remove('sel'));el.classList.add('sel');};
 window.selectColor=(c,el)=>{selColor=c;document.querySelectorAll('.col-dot').forEach(x=>{x.classList.remove('sel');x.style.outline='';});el.classList.add('sel');el.style.outline='3px solid white';};
 
-function showAuthError(msg){g('auth-err').textContent=msg;g('auth-err').style.display='block';}
+function showAuthError(msg){const _e=g('auth-err');if(!_e)return;_e.textContent=msg||'';_e.style.display=(msg&&msg.trim())?'block':'none';}
 function toast(msg){const t=g('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2800);}
 
 // Celebrate overlay close
@@ -5140,7 +6283,7 @@ function _mpAlbumsView() {
         '<div style="width:48px;height:48px;border-radius:10px;background:var(--parchment);display:flex;align-items:center;justify-content:center;flex-shrink:0">' +
           (first ? '<img src="https://maplestory.io/api/GMS/255/mob/'+first.mob+'/render/stand" width="40" style="image-rendering:pixelated" onerror="this.remove()">' : '💿') +
         '</div>' +
-        '<div style="flex:1"><div style="font-size:13px;font-weight:600;color:var(--ink)">'+name+'</div><div style="font-size:11px;color:var(--muted)">'+ids.length+' songs</div></div>' +
+        '<div style="flex:1"><div style="font-size:13px;font-weight:600;color:var(--ink)">'+escHtml(name)+'</div><div style="font-size:11px;color:var(--muted)">'+ids.length+' songs</div></div>' +
         '<button data-delalbum="' + encodeURIComponent(name) + '" style="background:none;border:none;color:var(--muted);font-size:18px;cursor:pointer;padding:4px">🗑</button>' +
       '</div>';
     }).join('')) +
@@ -5273,7 +6416,7 @@ window._mpOpenAlbum = function(encodedName) {
   listEl.innerHTML =
     '<div style="display:flex;align-items:center;gap:10px;padding:4px 0 12px">' +
       '<button data-mptab="albums" style="background:none;border:none;color:var(--accent2);font-size:13px;font-weight:700;cursor:pointer;padding:4px">\u2190 Albums</button>' +
-      '<div style="flex:1;font-size:13px;font-weight:700;color:var(--ink)">' + name + '</div>' +
+      '<div style="flex:1;font-size:13px;font-weight:700;color:var(--ink)">' + escHtml(name) + '</div>' +
       playAllBtn +
     '</div>' +
     rows;
@@ -5381,7 +6524,8 @@ window.addEventListener('appinstalled', () => {
   if(window.toast) toast('🎉 InTask installed successfully!');
 });
 // Apply saved preferences on load
-if(lsGet('intask_colorblind','0')==='1') document.body.classList.add('colorblind');
+// Apply colorblind mode on load (reads localStorage directly - lsGet is module-scoped)
+(function(){var _cbKey='intask_colorblind';var _uid=null;try{_uid=Object.keys(localStorage).find(function(k){return k.startsWith(_cbKey+'_') && k!==_cbKey+'_anon';});}catch(e){}var _cbVal=localStorage.getItem(_cbKey+(_uid?'_'+_uid.replace(_cbKey+'_',''):'_anon'))||localStorage.getItem(_cbKey+'_anon')||'0';if(_cbVal==='1')document.body.classList.add('colorblind');})();
 
 
 </script>
@@ -5763,19 +6907,23 @@ function updateExSearch(){if(window.updateExSearch)window.updateExSearch.apply(w
 
     <!-- TODAY -->
     <div class="panel active" id="panel-today">
+      <!-- Weather widget -->
+      <div class="weather-card" id="weather-card">
+        <div class="weather-loading" id="weather-loading">🌤 Fetching weather…</div>
+        <div id="weather-content" style="display:none"></div>
+      </div>
+      <!-- Compact progress -->
       <div class="progress-card">
-        <div style="flex:1">
-          <div class="prog-label" style="display:flex;align-items:center;gap:6px"><img src="https://maplestory.io/api/GMS/255/item/2000000/icon" alt="" width="20" height="20" style="image-rendering:pixelated">TODAY'S PROGRESS</div>
-          <div style="display:flex;align-items:baseline;gap:2px;margin:4px 0 8px">
-            <span class="prog-count" id="prog-count">0</span>
-            <span class="prog-total" id="prog-total"> / 0</span>
-            <span style="font-size:12px;color:var(--muted);margin-left:4px">tasks done</span>
+        <div style="flex:1;min-width:0">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:5px">
+            <span class="prog-label" style="margin:0">TODAY</span>
+            <span style="font-size:11px;font-weight:600;color:var(--muted)">
+              <span class="prog-count" id="prog-count">0</span><span class="prog-total" id="prog-total"> / 0</span>
+              <span style="margin-left:2px">tasks</span>
+            </span>
+            <span style="font-size:13px;font-weight:800;color:var(--accent);margin-left:auto" id="prog-pct">0%</span>
           </div>
           <div class="prog-bar"><div class="prog-fill" id="prog-fill" style="width:0%"></div></div>
-        </div>
-        <div style="text-align:right;flex-shrink:0">
-          <div style="font-size:28px;font-weight:800;color:var(--accent)" id="prog-pct">0%</div>
-          <div style="font-size:11px;color:var(--muted);font-weight:500">complete</div>
         </div>
       </div>
       <div class="sec-head" style="margin-top:0;margin-bottom:12px"><span class="sec-title" style="font-size:13px">📅 CALENDAR TASKS</span><button class="icon-btn" onclick="openCalendar()" style="font-size:11px;padding:5px 12px">📅 View Calendar</button></div>
@@ -5899,6 +7047,17 @@ function updateExSearch(){if(window.updateExSearch)window.updateExSearch.apply(w
       <button class="pill" data-group="habit-time" onclick="setHabitPill('evening',this)">🌙 Evening</button>
       <button class="pill" data-group="habit-time" onclick="setHabitPill('anytime',this)">⏰ Anytime</button>
     </div>
+    <label class="field-label">SCHEDULE <span style="font-weight:400;color:var(--muted)">— which days count?</span></label>
+    <div class="pill-row" style="gap:6px;flex-wrap:nowrap">
+      <button class="pill active" data-group="habit-sched" data-day="1" onclick="toggleHabitDay(this)">M</button>
+      <button class="pill active" data-group="habit-sched" data-day="2" onclick="toggleHabitDay(this)">T</button>
+      <button class="pill active" data-group="habit-sched" data-day="3" onclick="toggleHabitDay(this)">W</button>
+      <button class="pill active" data-group="habit-sched" data-day="4" onclick="toggleHabitDay(this)">T</button>
+      <button class="pill active" data-group="habit-sched" data-day="5" onclick="toggleHabitDay(this)">F</button>
+      <button class="pill" data-group="habit-sched" data-day="6" onclick="toggleHabitDay(this)">S</button>
+      <button class="pill" data-group="habit-sched" data-day="0" onclick="toggleHabitDay(this)">S</button>
+    </div>
+    <p style="font-size:11px;color:var(--muted);margin:-6px 0 12px;font-weight:500">Tap to toggle days. Highlighted = counts toward streak.</p>
     <div style="display:flex;gap:10px">
       <button class="big-btn" style="background:var(--parchment);border:1.5px solid var(--border);color:var(--muted)" onclick="closeModal('habit-modal')">Cancel</button>
       <button class="big-btn" style="background:linear-gradient(135deg,#f59e0b,#f97316)" onclick="addHabit()">🔥 START STREAK</button>
@@ -5946,12 +7105,14 @@ function updateExSearch(){if(window.updateExSearch)window.updateExSearch.apply(w
     <button class="cal-nav-btn" onclick="calNav(-1)">‹</button>
     <span class="cal-title" id="cal-month-label">Month Year</span>
     <button class="cal-nav-btn" onclick="calNav(1)">›</button>
-    <button onclick="closeCalendar()" style="background:none;border:none;font-size:20px;cursor:pointer;color:var(--muted);margin-left:8px">✕</button>
+    <button id="gcal-connect-btn" onclick="connectGCal()" style="background:#4285f4;color:#fff;border:none;border-radius:8px;padding:4px 10px;font-size:10px;font-weight:700;cursor:pointer;margin-left:8px;display:none">📅 Connect</button>
+    <button onclick="closeCalendar()" style="background:none;border:none;font-size:20px;cursor:pointer;color:var(--muted);margin-left:6px">✕</button>
   </div>
   <div class="cal-tabs">
     <button class="cal-tab active" id="caltab-personal" onclick="setCalTab('personal',this)">👤 Personal</button>
     <button class="cal-tab" id="caltab-party" onclick="setCalTab('party',this)">👫 Party</button>
     <button class="cal-tab" id="caltab-all" onclick="setCalTab('all',this)">All</button>
+    <button class="cal-tab" id="caltab-gcal" onclick="setCalTab('gcal',this)">📅 GCal</button>
   </div>
   <div class="cal-grid-wrap">
     <div class="cal-dow-row">
