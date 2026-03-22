@@ -750,7 +750,9 @@ const fb = initializeApp({
 const db = getFirestore(fb);
 const auth = getAuth(fb);
 const googleProvider = new GoogleAuthProvider();
-googleProvider.addScope('https://www.googleapis.com/auth/calendar.readonly');
+// Note: calendar.readonly scope is requested separately via calendarProvider only when user taps Connect
+const calendarProvider = new GoogleAuthProvider();
+calendarProvider.addScope('https://www.googleapis.com/auth/calendar.readonly');
 let _gcalToken = null; // OAuth access token for Google Calendar
 
 // ─── CONSTANTS ────────────────────────────────────────────
@@ -1770,11 +1772,7 @@ window.doGoogleLogin = async () => {
   try {
     const result = await signInWithPopup(auth, googleProvider);
     currentUser = result.user;
-    // Capture OAuth token for Google Calendar
-    const credential = result._tokenResponse || result.credential;
-    if (result._tokenResponse && result._tokenResponse.oauthAccessToken) {
-      _gcalToken = result._tokenResponse.oauthAccessToken;
-    }
+    // Calendar token captured separately via connectGCal()
     toast('Signing in...');
   } catch(e) {
     if (e.code === 'auth/popup-closed-by-user') {
@@ -2158,12 +2156,34 @@ async function renderCalendar() {
     cells += `<div class="cal-day${isToday?' today':''}${hasItems?' has-task':''}" onclick="showCalDay(${d})">` +
       `<div class="cal-day-num">${d}</div>${dots}${more}</div>`;
   }
+  // GCal tab without token — show connect prompt instead of empty grid
+  if ((_calTab === 'gcal') && !_gcalToken) {
+    document.getElementById('cal-days-grid').innerHTML = '';
+    document.getElementById('cal-task-list').style.display = 'none';
+    const grid = document.getElementById('cal-days-grid');
+    if (grid) {
+      grid.style.display = 'block';
+      grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:40px 20px">
+        <div style="font-size:36px;margin-bottom:12px">📅</div>
+        <div style="font-size:15px;font-weight:700;color:var(--ink);margin-bottom:8px">Connect Google Calendar</div>
+        <div style="font-size:12px;color:var(--muted);margin-bottom:20px;line-height:1.6">Sign in with Google to see your events here. Read-only — InTask cannot modify your calendar.</div>
+        <button id="gcal-big-connect-btn" onclick="connectGCal()" style="background:#4285f4;color:#fff;border:none;border-radius:12px;padding:14px 28px;font-size:14px;font-weight:700;cursor:pointer;box-shadow:0 4px 14px rgba(66,133,244,.4)">📅 Connect Google Calendar</button>
+        <div id="gcal-loading-msg" style="display:none;font-size:12px;color:var(--muted);margin-top:12px">Connecting...</div>
+        <p style="font-size:10px;color:var(--muted);margin-top:16px">Read-only access. Your data stays private.</p>
+      </div>`;
+    }
+    const gcalBtn = document.getElementById('gcal-connect-btn');
+    if (gcalBtn) gcalBtn.style.display = 'none';
+    return;
+  }
+
+  document.getElementById('cal-days-grid').style.display = '';
   document.getElementById('cal-days-grid').innerHTML = cells;
   document.getElementById('cal-task-list').style.display = 'none';
 
-  // Update GCal connect button visibility
-  const gcalBtn = document.getElementById('gcal-connect-btn');
-  if (gcalBtn) gcalBtn.style.display = _gcalToken ? 'none' : 'inline-block';
+  // Update GCal connect button visibility in header
+  const gcalBtn2 = document.getElementById('gcal-connect-btn');
+  if (gcalBtn2) gcalBtn2.style.display = (!_gcalToken && (_calTab==='all')) ? 'inline-block' : 'none';
 }
 
 window.showCalDay = function(day) {
@@ -2367,16 +2387,42 @@ async function loadGCalEvents(year, month) {
 }
 
 async function connectGCal() {
+  const btn = document.getElementById('gcal-connect-btn');
+  const bigBtn = document.getElementById('gcal-big-connect-btn');
+  const loadingEl = document.getElementById('gcal-loading-msg');
   try {
-    const result = await signInWithPopup(auth, googleProvider);
-    if (result._tokenResponse?.oauthAccessToken) {
-      _gcalToken = result._tokenResponse.oauthAccessToken;
+    if (btn) { btn.textContent = '⏳ Connecting...'; btn.disabled = true; }
+    if (bigBtn) { bigBtn.textContent = '⏳ Connecting...'; bigBtn.disabled = true; }
+    if (loadingEl) loadingEl.style.display = 'block';
+
+    const result = await signInWithPopup(auth, calendarProvider);
+
+    // Proper token extraction via Firebase API
+    const credential = GoogleAuthProvider.credentialFromResult(result);
+    const token = credential?.accessToken;
+
+    if (token) {
+      _gcalToken = token;
       _gcalEvents = [];
+      _gcalLoading = false;
       toast('📅 Google Calendar connected!');
       renderCalendar();
+    } else {
+      toast('⚠️ Could not get Calendar access. Try again.');
     }
   } catch(e) {
-    toast('Could not connect Google Calendar');
+    if (e.code === 'auth/popup-closed-by-user') {
+      toast('Calendar connection cancelled.');
+    } else if (e.code === 'auth/popup-blocked') {
+      toast('Popup blocked. Please allow popups for this site.');
+    } else {
+      toast('Could not connect Google Calendar: ' + (e.code || e.message));
+      console.error('GCal connect error:', e);
+    }
+  } finally {
+    if (btn) { btn.textContent = '📅 Connect'; btn.disabled = false; }
+    if (bigBtn) { bigBtn.textContent = '📅 Connect Google Calendar'; bigBtn.disabled = false; }
+    if (loadingEl) loadingEl.style.display = 'none';
   }
 }
 window.connectGCal = connectGCal;
