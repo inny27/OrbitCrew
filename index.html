@@ -152,7 +152,28 @@ body::after{display:none;}
 ============================================================ */
 .panels{flex:1;min-height:0;overflow:hidden;}
 .panel{display:none;}
-.panel.active{display:block;height:100%;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:16px 16px calc(var(--nav-h) + 56px);box-sizing:border-box;}
+.panel.active{display:block;height:100%;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:16px 16px calc(var(--nav-h) + 160px);box-sizing:border-box;}
+
+
+/* ── Task Archive ── */
+.archive-section{margin-top:16px;}
+.archive-toggle{display:flex;align-items:center;justify-content:space-between;width:100%;background:none;border:none;padding:6px 0;cursor:pointer;color:var(--muted);font-family:var(--pixel);font-size:11px;font-weight:700;letter-spacing:.5px;}
+.archive-toggle:hover{color:var(--ink);}
+.archive-toggle .archive-chevron{transition:transform .25s;font-size:13px;}
+.archive-toggle.open .archive-chevron{transform:rotate(180deg);}
+.archive-list{overflow:hidden;max-height:0;transition:max-height .3s ease;}
+.archive-list.open{max-height:9999px;}
+.task-card.archived{opacity:.45;filter:grayscale(30%);}
+
+/* ── Section collapse toggle ── */
+.sec-collapse-btn{background:none;border:none;cursor:pointer;color:var(--muted);font-size:14px;padding:2px 4px;transition:transform .25s;}
+.sec-collapse-btn.open{transform:rotate(180deg);}
+.sec-body{overflow:hidden;transition:max-height .3s ease;}
+.sec-body.open{max-height:9999px;}
+.sec-body.closed{max-height:0;}
+
+/* ── Date created badge ── */
+.task-created{font-size:9px;color:var(--muted);margin-top:3px;opacity:.75;}
 
 /* ============================================================
    SHARED COMPONENTS
@@ -2426,6 +2447,8 @@ async function connectGCal() {
   }
 }
 window.connectGCal = connectGCal;
+window.toggleSection = toggleSection;
+window.toggleArchive = toggleArchive;
 // ─── UNDO ─────────────────────────────────────────────────
 let _lastCompletedTask = null; // {id, xp, totalDone, shared, priority}
 
@@ -3608,36 +3631,52 @@ function renderHeader() {
 
 function renderToday() {
   const sorted = [...tasks].sort((a,b) => (a.sort_order ?? Infinity) - (b.sort_order ?? Infinity));
-  const myTasks = sorted.filter(t=>t.type!=='chore' && t.type!=='shared');
-  const myChores = sorted.filter(t=>t.type==='chore' || t.type==='shared');
-  const done = sorted.filter(t=>t.done).length;
-  const pct = sorted.length?Math.round(done/sorted.length*100):0;
-  g('prog-count').textContent = done;
-  g('prog-total').textContent = ' / '+tasks.length;
+  // Split active vs done
+  const active = sorted.filter(t => !t.done);
+  const done   = sorted.filter(t => t.done);
+  const myTasks   = active.filter(t => t.type!=='chore' && t.type!=='shared');
+  const myChores  = active.filter(t => t.type==='chore' || t.type==='shared');
+  const doneCount = done.length;
+  const pct = sorted.length ? Math.round(doneCount/sorted.length*100) : 0;
+  g('prog-count').textContent = doneCount;
+  g('prog-total').textContent = ' / '+sorted.length;
   g('prog-fill').style.width = pct+'%';
   const pctEl = document.getElementById('prog-pct');
   if(pctEl) pctEl.textContent = pct+'%';
   g('tasks-list').innerHTML = myTasks.length ? myTasks.map(taskCard).join('') : emptyState('🎯','No tasks yet!');
   g('chores-list').innerHTML = myChores.length ? myChores.map(taskCard).join('') : emptyState('🏠','No shared tasks yet!');
+  // Archive section
+  const archiveSection = document.getElementById('archive-section');
+  const archiveList    = document.getElementById('archive-list');
+  if (archiveSection && archiveList) {
+    if (done.length > 0) {
+      archiveSection.style.display = 'block';
+      archiveList.innerHTML = done.map(t => taskCard(t, true)).join('');
+    } else {
+      archiveSection.style.display = 'none';
+      archiveList.innerHTML = '';
+    }
+  }
   // Enable drag-and-drop after DOM update
   requestAnimationFrame(enableTaskDragAndDrop);
 }
 
-function taskCard(t) {
+function taskCard(t, isArchived = false) {
   const pc = {high:'#ef4444',medium:'#f59e0b',low:'#10b981'};
   const tc = {personal:'#7c3aed',shared:'#06b6d4',chore:'#10b981',goal:'#f59e0b'};
   const c = pc[t.priority]||tc[t.type]||'#7c3aed';
   const rep = {daily:'🔁 Daily',weekly:'📅 Weekly',monthly:'🗓️ Monthly'}[t.repeat]||'';
   const partyName = (t.type==='shared'||t.type==='chore') && party ? ` · ${party.name}` : '';
   const deadlineStr = t.deadline_date ? `<span class="tag" style="color:var(--accent2);border-color:var(--accent2)">📅 ${t.deadline_date}</span>` : '';
-  return `<div class="task-card${t.done?' done':''}" style="--tc:${c};cursor:grab" 
+  return `<div class="task-card${t.done?' done':''}${isArchived?' archived':''}" style="--tc:${c};cursor:${isArchived?'default':'grab'}" 
     data-id="${t.id}"
-    draggable="true"
-    onclick="completeTask('${t.id}')"
-    oncontextmenu="event.preventDefault();event.stopPropagation();openEditTaskModal('${t.id}')"
-    ontouchstart="window._taskLongPress('${t.id}',event)">
-    <div class="task-drag-handle" onclick="event.stopPropagation()" style="color:var(--muted);font-size:16px;cursor:grab;padding:0 4px 0 0;flex-shrink:0;user-select:none">⠿</div>
-    <button class="task-edit-btn" onclick="event.stopPropagation();openEditTaskModal('${t.id}')">✏️</button>
+    draggable="${isArchived?'false':'true'}"
+    onclick="${isArchived?'void 0':('completeTask(\'' + t.id + '\')')}"
+    oncontextmenu="event.preventDefault();event.stopPropagation();${isArchived?'void 0':('openEditTaskModal(\'' + t.id + '\')')}"
+    ontouchstart="${isArchived?'':('window._taskLongPress(\'' + t.id + '\',event)')}"
+    style="${isArchived?'pointer-events:none;cursor:default;':''}">
+    ${!isArchived ? '<div class="task-drag-handle" onclick="event.stopPropagation()" style="color:var(--muted);font-size:16px;cursor:grab;padding:0 4px 0 0;flex-shrink:0;user-select:none">⠿</div>' : ''}
+    ${!isArchived ? '<button class="task-edit-btn" onclick="event.stopPropagation();openEditTaskModal(\''+ t.id +'\')">✏️</button>' : ''}
     <div class="task-check" style="border-color:${c};${t.done?`background:${c}`:''}">
       ${t.done?'<span style="color:#fff;font-size:13px;font-weight:900">✓</span>':''}
     </div>
@@ -3649,12 +3688,48 @@ function taskCard(t) {
         ${rep?`<span class="repeat-badge">${rep}</span>`:''}
         ${deadlineStr}
       </div>
+      ${t.createdAt ? `<div class="task-created">📅 Created ${formatTaskDate(t.createdAt)}</div>` : ''}
     </div>
-    <span class="xp-badge">+${t.xp||30}XP</span>
+    ${isArchived ? `<button onclick="event.stopPropagation();window._reopenTask('${t.id}')" style="font-size:10px;padding:4px 8px;border:1.5px solid var(--green);background:rgba(122,158,126,.12);color:var(--green);border-radius:8px;cursor:pointer;pointer-events:all;flex-shrink:0">↩</button>` : `<span class="xp-badge">+${t.xp||30}XP</span>`}
   </div>`;
 }
 
 
+
+// ─── TASK DATE FORMATTER ──────────────────────────────────
+function formatTaskDate(ts) {
+  if (!ts) return '';
+  // Firestore Timestamp or JS Date
+  const d = ts?.toDate ? ts.toDate() : (ts?.seconds ? new Date(ts.seconds*1000) : new Date(ts));
+  if (isNaN(d)) return '';
+  const now = new Date();
+  const diff = Math.floor((now - d) / 86400000);
+  if (diff === 0) return 'today';
+  if (diff === 1) return 'yesterday';
+  if (diff < 7) return diff + 'd ago';
+  return d.toLocaleDateString('en-AU',{day:'numeric',month:'short'});
+}
+
+// ─── SECTION COLLAPSE ────────────────────────────────────
+function toggleSection(listId, btnId) {
+  const wrap = document.getElementById(listId + '-wrap');
+  const btn  = document.getElementById(btnId);
+  if (!wrap || !btn) return;
+  const isOpen = wrap.classList.contains('open');
+  wrap.classList.toggle('open', !isOpen);
+  wrap.classList.toggle('closed', isOpen);
+  btn.classList.toggle('open', !isOpen);
+}
+
+// ─── ARCHIVE TOGGLE ──────────────────────────────────────
+function toggleArchive() {
+  const list = document.getElementById('archive-list');
+  const btn  = document.getElementById('archive-toggle-btn');
+  if (!list || !btn) return;
+  const isOpen = list.classList.contains('open');
+  list.classList.toggle('open', !isOpen);
+  btn.classList.toggle('open', !isOpen);
+}
 // ─── TASK DRAG & DROP ─────────────────────────────
 let _dragSrcId = null;
 
@@ -6701,6 +6776,8 @@ function addGuideToDiary(){if(window.addGuideToDiary)window.addGuideToDiary.appl
 function addHabit(){if(window.addHabit)window.addHabit.apply(window,arguments);}
 function addSet(){if(window.addSet)window.addSet.apply(window,arguments);}
 function addTask(){if(window.addTask)window.addTask.apply(window,arguments);}
+function toggleSection(){if(window.toggleSection)window.toggleSection.apply(window,arguments);}
+function toggleArchive(){if(window.toggleArchive)window.toggleArchive.apply(window,arguments);}
 function adjGuideReps(){if(window.adjGuideReps)window.adjGuideReps.apply(window,arguments);}
 function adjSet(){if(window.adjSet)window.adjSet.apply(window,arguments);}
 function applyIconDensity(){if(window.applyIconDensity)window.applyIconDensity.apply(window,arguments);}
@@ -6973,10 +7050,33 @@ function updateExSearch(){if(window.updateExSearch)window.updateExSearch.apply(w
         </div>
       </div>
       <div class="sec-head" style="margin-top:0;margin-bottom:12px"><span class="sec-title" style="font-size:13px">📅 CALENDAR TASKS</span><button class="icon-btn" onclick="openCalendar()" style="font-size:11px;padding:5px 12px">📅 View Calendar</button></div>
-      <div class="sec-head"><span class="sec-title">🎯 MY TASKS</span><button class="add-btn" onclick="openModal('task-modal')">+</button></div>
-      <div id="tasks-list"></div>
-      <div class="sec-head" style="margin-top:8px"><span class="sec-title">🏠 SHARED TASKS</span><button class="add-btn" onclick="taskType='chore';openModal('task-modal')">+</button></div>
-      <div id="chores-list"></div>
+      <div class="sec-head">
+        <span class="sec-title">🎯 MY TASKS</span>
+        <div style="display:flex;align-items:center;gap:6px">
+          <button class="add-btn" onclick="openModal('task-modal')">+</button>
+          <button class="sec-collapse-btn open" id="my-tasks-toggle" onclick="toggleSection('tasks-list','my-tasks-toggle')" title="Collapse">▼</button>
+        </div>
+      </div>
+      <div class="sec-body open" id="tasks-list-wrap">
+        <div id="tasks-list"></div>
+      </div>
+      <div class="sec-head" style="margin-top:8px">
+        <span class="sec-title">🏠 SHARED TASKS</span>
+        <div style="display:flex;align-items:center;gap:6px">
+          <button class="add-btn" onclick="taskType='chore';openModal('task-modal')">+</button>
+          <button class="sec-collapse-btn" id="chores-toggle" onclick="toggleSection('chores-list','chores-toggle')" title="Expand">▼</button>
+        </div>
+      </div>
+      <div class="sec-body closed" id="chores-list-wrap">
+        <div id="chores-list"></div>
+      </div>
+      <div class="archive-section" id="archive-section" style="display:none">
+        <button class="archive-toggle" id="archive-toggle-btn" onclick="toggleArchive()">
+          <span>📦 COMPLETED TASKS</span>
+          <span class="archive-chevron">▼</span>
+        </button>
+        <div class="archive-list" id="archive-list"></div>
+      </div>
     </div>
 
     <!-- HABITS -->
