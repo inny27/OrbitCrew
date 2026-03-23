@@ -204,11 +204,11 @@ body::before{
 .prog-fill{height:100%;border-radius:99px;background:var(--accent);transition:width .5s ease;}
 .task-card{background:var(--surf);border:1px solid rgba(200,149,42,0.08);border-radius:14px;padding:12px 14px;margin-bottom:8px;display:flex;align-items:center;gap:12px;cursor:pointer;transition:all .2s;box-shadow:0 2px 10px var(--shadow);}
 .task-card:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(44,35,64,0.1);}
-.task-card.done:not(.archived){opacity:1;}.task-card.archived{opacity:.5;filter:grayscale(20%);}
+.task-card.archived{opacity:.5;filter:grayscale(15%);}
 .task-check{width:26px;height:26px;border-radius:99px;border:2px solid;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .3s;}
 .task-body{flex:1;min-width:0;}
 .task-name{font-size:14px;font-weight:700;margin-bottom:5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.task-card.done .task-name{text-decoration:line-through;color:var(--muted);}
+.task-card.archived .task-name{text-decoration:line-through;color:var(--muted);}
 .task-tags{display:flex;gap:6px;flex-wrap:wrap;}
 .tag{font-size:10px;font-weight:700;border:1px solid var(--border);border-radius:99px;padding:2px 8px;color:var(--muted);}
 .xp-badge{font-size:11px;font-weight:800;color:var(--accent3);font-family:'Inter',sans-serif;font-variant-numeric:tabular-nums;flex-shrink:0;}
@@ -3025,7 +3025,15 @@ window.deleteWorkoutEntry = async id => {
 };
 
 window._doDeleteEntry = async id => {
-  workoutEntries = workoutEntries.filter(e=>e.id!==id); await saveFitness(); toast('Deleted.'); renderDiary();
+  workoutEntries = workoutEntries.filter(e => e.id !== id);
+  try {
+    await saveFitness();
+    toast('Deleted.');
+  } catch(err) {
+    console.error('Delete save error:', err);
+    toast('Removed locally.');
+  }
+  if (window.renderDiary) window.renderDiary();
 };
 
 // Session flow
@@ -3664,7 +3672,7 @@ function taskCard(t, isArchived = false) {
   const rep = {daily:'🔁 Daily',weekly:'📅 Weekly',monthly:'🗓️ Monthly'}[t.repeat]||'';
   const partyName = (t.type==='shared'||t.type==='chore') && party ? ` · ${party.name}` : '';
   const deadlineStr = t.deadline_date ? `<span class="tag" style="color:var(--accent2);border-color:var(--accent2)">📅 ${t.deadline_date}</span>` : '';
-  return `<div class="task-card${t.done?' done':''}${isArchived?' archived':''}"
+  return `<div class="task-card${isArchived?' done archived':''}"
     style="--tc:${c};${isArchived?'pointer-events:none;cursor:default;':'cursor:grab;'}"
     data-id="${t.id}"
     draggable="${isArchived?'false':'true'}"
@@ -3707,7 +3715,7 @@ function formatTaskDate(ts) {
 }
 
 // ─── SECTION COLLAPSE ────────────────────────────────────
-function toggleSection(listId, btnId) {
+window.toggleSection = function(listId, btnId) {
   const wrap = document.getElementById(listId + '-wrap');
   const btn  = document.getElementById(btnId);
   if (!wrap || !btn) return;
@@ -3715,17 +3723,17 @@ function toggleSection(listId, btnId) {
   wrap.classList.toggle('open', !isOpen);
   wrap.classList.toggle('closed', isOpen);
   btn.classList.toggle('open', !isOpen);
-}
+};
 
 // ─── ARCHIVE TOGGLE ──────────────────────────────────────
-function toggleArchive() {
+window.toggleArchive = function() {
   const list = document.getElementById('archive-list');
   const btn  = document.getElementById('archive-toggle-btn');
   if (!list || !btn) return;
   const isOpen = list.classList.contains('open');
   list.classList.toggle('open', !isOpen);
   btn.classList.toggle('open', !isOpen);
-}
+};
 // ─── TASK DRAG & DROP ─────────────────────────────
 let _dragSrcId = null;
 
