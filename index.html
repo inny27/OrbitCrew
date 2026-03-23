@@ -79,7 +79,7 @@ body::after{display:none;}
 ============================================================ */
 .screen{display:none;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:32px 20px;position:relative;z-index:1;background:var(--bg);overflow-y:auto;}
 .screen.active{display:flex;}
-#app{display:none;flex-direction:column;width:100%;height:100vh;max-height:100vh;overflow:hidden;position:relative;z-index:1;}
+#app{display:none;flex-direction:column;width:100%;min-height:100vh;position:relative;z-index:1;}
 #app.active{display:flex;}
 
 /* ============================================================
@@ -116,18 +116,18 @@ body::after{display:none;}
 /* ============================================================
    APP HEADER
 ============================================================ */
-.header{padding:max(16px,env(safe-area-inset-top)) 16px 10px;background:rgba(253,248,240,0.95);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100;}
-.hdr-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;gap:8px;min-width:0;}
-.hdr-left{display:flex;align-items:center;gap:10px;flex:1;min-width:0;overflow:hidden;}
+.header{padding:48px 16px 10px;background:rgba(253,248,240,0.95);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100;}
+.hdr-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
+.hdr-left{display:flex;align-items:center;gap:10px;}
 .hdr-avatar{font-size:22px;width:36px;height:36px;border-radius:0;border:2px solid var(--accent);display:flex;align-items:center;justify-content:center;background:var(--surf2);box-shadow:2px 2px 0 rgba(0,0,0,.5);}
-.hdr-name{font-size:15px;font-weight:700;color:var(--ink);font-family:var(--pixel);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:120px;}
+.hdr-name{font-size:16px;font-weight:700;color:var(--ink);font-family:var(--pixel);}
 .hdr-badge{display:inline-flex;align-items:center;gap:3px;font-size:11px;font-weight:500;color:var(--muted);padding:1px 0;margin-top:1px;}
-.hdr-right{display:flex;align-items:center;gap:6px;flex-shrink:0;overflow:visible;}
+.hdr-right{display:flex;align-items:center;gap:8px;}
 .sync-pill{display:flex;align-items:center;gap:4px;background:transparent;border:none;padding:0;}
 .sync-dot{width:6px;height:6px;border-radius:99px;background:var(--green);}
 .sync-text{font-size:10px;font-weight:600;color:var(--muted);}
-.sp-pill{font-size:10px;font-weight:600;color:var(--muted);border-radius:4px;padding:3px 6px;background:var(--surf2);border:1px solid var(--border);}
-.mult-pill{font-family:'Inter',sans-serif;font-variant-numeric:tabular-nums;font-size:10px;font-weight:900;background:var(--surf);border:1px solid var(--border);border-radius:99px;padding:4px 7px;}
+.sp-pill{font-size:11px;font-weight:600;color:var(--muted);border-radius:4px;padding:3px 8px;background:var(--surf2);border:1px solid var(--border);}
+.mult-pill{font-family:'Inter',sans-serif;font-variant-numeric:tabular-nums;font-size:11px;font-weight:900;background:var(--surf);border:1px solid var(--border);border-radius:99px;padding:5px 10px;}
 .logout-btn{background:var(--parchment);border:1px solid var(--border);border-radius:10px;width:34px;height:34px;font-size:14px;cursor:pointer;color:var(--muted);display:flex;align-items:center;justify-content:center;transition:.2s;}
 .xp-row{display:flex;align-items:center;gap:8px;}
 .xp-label{font-size:9px;font-weight:800;color:var(--muted);width:18px;}
@@ -150,30 +150,9 @@ body::after{display:none;}
 /* ============================================================
    TAB PANELS
 ============================================================ */
-.panels{flex:1;min-height:0;overflow:hidden;}
-.panel{display:none;}
-.panel.active{display:block;height:100%;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:16px 16px calc(var(--nav-h) + 160px);box-sizing:border-box;}
-
-
-/* ── Task Archive ── */
-.archive-section{margin-top:16px;}
-.archive-toggle{display:flex;align-items:center;justify-content:space-between;width:100%;background:none;border:none;padding:6px 0;cursor:pointer;color:var(--muted);font-family:var(--pixel);font-size:11px;font-weight:700;letter-spacing:.5px;}
-.archive-toggle:hover{color:var(--ink);}
-.archive-toggle .archive-chevron{transition:transform .25s;font-size:13px;}
-.archive-toggle.open .archive-chevron{transform:rotate(180deg);}
-.archive-list{overflow:hidden;max-height:0;transition:max-height .3s ease;}
-.archive-list.open{max-height:9999px;}
-.task-card.archived{opacity:.45;filter:grayscale(30%);}
-
-/* ── Section collapse toggle ── */
-.sec-collapse-btn{background:none;border:none;cursor:pointer;color:var(--muted);font-size:14px;padding:2px 4px;transition:transform .25s;}
-.sec-collapse-btn.open{transform:rotate(180deg);}
-.sec-body{overflow:hidden;transition:max-height .3s ease;}
-.sec-body.open{max-height:9999px;}
-.sec-body.closed{max-height:0;}
-
-/* ── Date created badge ── */
-.task-created{font-size:9px;color:var(--muted);margin-top:3px;opacity:.75;}
+.panels{flex:1;}
+.panel{display:none;overflow-y:auto;padding:16px 16px calc(var(--nav-h) + 36px);-webkit-overflow-scrolling:touch;}
+.panel.active{display:block;height:calc(100vh - 110px);overflow-y:auto;-webkit-overflow-scrolling:touch;padding:16px 16px calc(var(--nav-h) + 160px);box-sizing:border-box;}
 
 /* ============================================================
    SHARED COMPONENTS
@@ -196,10 +175,10 @@ body::after{display:none;}
 /* ============================================================
    TODAY TAB
 ============================================================ */
-.progress-card{background:linear-gradient(135deg,var(--gold-bg),var(--gold-bg2));border:1.5px solid rgba(200,149,42,0.22);border-radius:14px;padding:10px 14px;margin-bottom:10px;box-shadow:0 2px 10px rgba(200,149,42,0.08);display:flex;align-items:center;gap:12px;}
+.progress-card{background:linear-gradient(135deg,var(--gold-bg),var(--gold-bg2));border:1.5px solid rgba(200,149,42,0.22);border-radius:20px;padding:18px 20px;margin-bottom:16px;box-shadow:0 4px 18px rgba(200,149,42,0.1);}
 .prog-label{font-size:11px;font-weight:600;color:var(--muted);margin-bottom:2px;}
-.prog-count{font-size:24px;font-weight:800;line-height:1;color:var(--text);}
-.prog-total{font-size:14px;color:var(--muted);font-weight:600;}
+.prog-count{font-size:36px;font-weight:800;line-height:1;color:var(--text);}
+.prog-total{font-size:20px;color:var(--muted);font-weight:600;}
 .prog-sub{font-size:12px;color:var(--muted);font-weight:500;margin:4px 0 8px;}
 .prog-bar{height:4px;background:var(--border);border-radius:99px;overflow:hidden;}
 .prog-fill{height:100%;border-radius:99px;background:var(--accent);transition:width .5s ease;}
@@ -695,12 +674,12 @@ body.colorblind{filter:url(#colorblind-filter);}
 .cal-dow-row{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;margin-bottom:4px;}
 .cal-dow{text-align:center;font-size:9px;font-weight:700;color:var(--muted);padding:4px 0;}
 .cal-days{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;}
-.cal-day{height:68px;min-height:68px;max-height:68px;border-radius:8px;padding:4px;border:1px solid transparent;position:relative;cursor:default;overflow:hidden;box-sizing:border-box;}
+.cal-day{min-height:54px;border-radius:8px;padding:4px;border:1px solid transparent;position:relative;cursor:default;}
 .cal-day.today{border-color:var(--gold);background:var(--gold-bg);}
 .cal-day.has-task{cursor:pointer;}
 .cal-day-num{font-size:10px;font-weight:700;color:var(--muted);line-height:1;}
 .cal-day.today .cal-day-num{color:var(--gold);font-weight:900;}
-.cal-day-dot{font-size:8px;font-weight:700;border-radius:4px;padding:1px 3px;margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100%;display:block;}
+.cal-day-dot{font-size:8px;font-weight:700;border-radius:4px;padding:1px 3px;margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 .cal-task-list{padding:12px 16px;border-top:1px solid var(--border);max-height:220px;overflow-y:auto;}
 .cal-task-item{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:10px;background:var(--surf);border:1px solid var(--border);margin-bottom:6px;}
 /* ── Task card edit button (desktop hover) ── */
@@ -709,16 +688,14 @@ body.colorblind{filter:url(#colorblind-filter);}
 .task-card:hover .task-edit-btn:hover{color:var(--accent);border-color:var(--accent);background:var(--gold-bg);}
 @media(hover:none){.task-edit-btn{display:none;}} /* hide on touch devices — long-press handles it */
 
-/* ── Weather Card ── */
-.weather-card{background:linear-gradient(135deg,rgba(126,184,212,.15),rgba(126,184,212,.05));border:1.5px solid rgba(126,184,212,.3);border-radius:14px;padding:10px 14px;margin-bottom:10px;position:relative;}
+/* ── Weather ── */
+.weather-card{background:linear-gradient(135deg,rgba(126,184,212,.15),rgba(126,184,212,.05));border:1.5px solid rgba(126,184,212,.3);border-radius:14px;padding:10px 14px;margin-bottom:10px;}
 .weather-loading{font-size:11px;color:var(--muted);text-align:center;padding:6px;}
 .weather-now{display:flex;align-items:center;gap:12px;}
-.weather-icon{font-size:32px;flex-shrink:0;}
-.weather-temp{font-size:26px;font-weight:800;color:var(--ink);line-height:1;}
+.weather-icon{font-size:28px;flex-shrink:0;}
+.weather-temp{font-size:24px;font-weight:800;color:var(--ink);line-height:1;}
 .weather-desc{font-size:11px;color:var(--muted);font-weight:600;margin-top:2px;}
 .weather-loc{font-size:10px;color:var(--sky);font-weight:700;margin-top:1px;}
-.weather-detail{display:flex;gap:10px;margin-top:6px;flex-wrap:wrap;}
-.weather-pill{font-size:10px;font-weight:600;color:var(--muted);background:rgba(126,184,212,.12);border-radius:99px;padding:2px 8px;}
 .weather-forecast{display:flex;gap:6px;margin-top:8px;overflow-x:auto;padding-bottom:2px;}
 .weather-forecast::-webkit-scrollbar{display:none;}
 .wf-day{flex-shrink:0;text-align:center;background:rgba(255,255,255,.5);border-radius:8px;padding:5px 8px;min-width:44px;}
@@ -727,11 +704,19 @@ body.colorblind{filter:url(#colorblind-filter);}
 .wf-day-hi{font-size:10px;font-weight:700;color:var(--ink);}
 .wf-day-lo{font-size:9px;color:var(--muted);}
 .weather-err{font-size:11px;color:var(--muted);text-align:center;padding:8px;}
-/* ── Google Calendar ── */
+/* ── GCal events ── */
 .gcal-event{display:flex;align-items:flex-start;gap:8px;padding:7px 10px;border-radius:8px;background:rgba(66,133,244,.08);border-left:3px solid #4285f4;margin-bottom:5px;}
 .gcal-time{font-size:10px;font-weight:700;color:#4285f4;flex-shrink:0;margin-top:1px;}
 .gcal-title{font-size:12px;font-weight:600;color:var(--ink);line-height:1.4;}
-.gcal-connect{text-align:center;padding:10px;font-size:12px;color:var(--muted);}
+/* ── Compact progress ── */
+.progress-card{background:linear-gradient(135deg,var(--gold-bg),var(--gold-bg2));border:1.5px solid rgba(200,149,42,0.22);border-radius:14px;padding:10px 14px;margin-bottom:10px;box-shadow:0 2px 10px rgba(200,149,42,0.08);}
+.prog-count{font-size:22px;font-weight:800;line-height:1;color:var(--text);}
+.prog-total{font-size:13px;color:var(--muted);font-weight:600;}
+/* ── Task archive / collapsible sections ── */
+.sec-toggle{background:none;border:none;color:var(--muted);cursor:pointer;font-size:13px;padding:2px 6px;transition:.2s;flex-shrink:0;}
+.sec-toggle:hover{color:var(--accent);}
+.task-archive-section{margin-top:4px;}
+.task-date{font-size:9px;color:var(--muted);font-weight:500;margin-top:2px;}
 /* ── Drag & Drop ── */
 .task-card[draggable="true"]{cursor:grab;}
 .task-card.dragging{opacity:.45;border:2px dashed var(--accent);background:var(--gold-bg);}
@@ -745,11 +730,7 @@ body.colorblind{filter:url(#colorblind-filter);}
 
 <!-- Firebase -->
 
-<script type="module">import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js';
-import { getFirestore,collection,doc,setDoc,onSnapshot,addDoc,updateDoc,serverTimestamp,getDoc,query,orderBy,where,getDocs,deleteDoc } from 'https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js';
-import { getAuth,signOut,onAuthStateChanged,GoogleAuthProvider,signInWithPopup,createUserWithEmailAndPassword,signInWithEmailAndPassword,signInAnonymously,updateProfile } from 'https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js';
-
-const DEFAULT_LOGIN_SONG = 'Floral Life';
+<script type="module">const DEFAULT_LOGIN_SONG = 'Floral Life';
 const DEFAULT_BGM_SONG = 'Above the Treetops';
 
 function getSongUrl(name) {
@@ -758,6 +739,9 @@ function getSongUrl(name) {
 
 
 
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js';
+import { getFirestore,collection,doc,setDoc,onSnapshot,addDoc,updateDoc,serverTimestamp,getDoc,query,orderBy,where,getDocs,deleteDoc } from 'https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js';
+import { getAuth,signOut,onAuthStateChanged,GoogleAuthProvider,signInWithPopup,createUserWithEmailAndPassword,signInWithEmailAndPassword,signInAnonymously,updateProfile } from 'https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js';
 
 // ─── CONFIG ───────────────────────────────────────────────
 const fb = initializeApp({
@@ -771,10 +755,13 @@ const fb = initializeApp({
 const db = getFirestore(fb);
 const auth = getAuth(fb);
 const googleProvider = new GoogleAuthProvider();
-// Note: calendar.readonly scope is requested separately via calendarProvider only when user taps Connect
 const calendarProvider = new GoogleAuthProvider();
 calendarProvider.addScope('https://www.googleapis.com/auth/calendar.readonly');
-let _gcalToken = null; // OAuth access token for Google Calendar
+calendarProvider.setCustomParameters({prompt:'consent',access_type:'online'});
+let _gcalToken = null;
+let _gcalEvents = [];
+let _gcalLoading = false;
+let _gcalLastError = null;
 
 // ─── CONSTANTS ────────────────────────────────────────────
 const AVATARS = ['130100','130101','130102','100100','100102','1210100','1210101','1210102','2230102','2230100','2230101','8130100','1120100','1110100','5220003','3230200','8820007','5120000','2220000','4230100','9300217','9300218','3000000','4000000'];
@@ -821,7 +808,7 @@ const SKILL_TREES = {
     {id:'crew_1',name:'Motivator',desc:'Boosts give +15 XP instead of +10',cost:100,requires:null,tamaMin:0},
     {id:'crew_2',name:'Synergy',desc:'Shared tasks give +50% XP',cost:250,requires:'crew_1',tamaMin:8},
     {id:'crew_3',name:'Party Leader',desc:'Boss battles deal 2× damage',cost:500,requires:'crew_2',tamaMin:20},
-    {id:'crew_4',name:'Raid Ready',desc:'All party members +10% XP for 24h after party boss win',cost:800,requires:'crew_3',tamaMin:75},
+    {id:'crew_4',name:'Raid Ready',desc:'All party members +10% XP for 24h after crew boss win',cost:800,requires:'crew_3',tamaMin:75},
   ]},
   body:{name:'Body Mastery',icon:'💪',color:'#f59e0b',skills:[
     {id:'body_1',name:'Warm Up',desc:'Fitness sessions give +10 bonus XP',cost:60,requires:null,tamaMin:0},
@@ -1653,7 +1640,6 @@ const WORKOUT_GUIDES = [
 const BASE_URL = 'https://maplestory.io/api/GMS/255/item';
 let currentUser = null, userProfile = null;
 let tasks = [], habits = [], party = null, partyMembers = [], partyMessages = [], boss = null;
-let _ownTasks = [], _partyTasks = []; // separate to avoid race conditions
 let bodyEntries = [], workoutEntries = [], fitnessProfile = null;
 let unsubs = [], activeTab = 'today', synced = false;
 let _authHandled = false; // prevents onAuthStateChanged double-handling
@@ -1712,19 +1698,8 @@ async function loadProfile(uid) {
   }
 }
 
-
-// ─── TASK MERGE ───────────────────────────────────────────
-// Own tasks and party tasks are kept in separate arrays.
-// This function merges them into the shared `tasks` array
-// that the rest of the app reads. Safe to call from either snapshot.
-function _mergeTasks() {
-  // Party tasks that aren't already in own tasks (by id)
-  const ownIds = new Set(_ownTasks.map(t => t.id));
-  tasks = [..._ownTasks, ..._partyTasks.filter(t => !ownIds.has(t.id))];
-}
 function subscribeAll(uid, crewId) {
   unsubs.forEach(u => u()); unsubs = [];
-  _ownTasks = []; _partyTasks = []; tasks = [];
   unsubs.push(onSnapshot(doc(db,'users',uid), s => {
     // Guard: only apply if this snapshot is for the current user
     if (s.exists() && currentUser && currentUser.uid === uid) {
@@ -1733,25 +1708,8 @@ function subscribeAll(uid, crewId) {
     }
   }));
   unsubs.push(onSnapshot(query(collection(db,'tasks'),where('uid','==',uid)), s => {
-    // Own tasks only — stored separately, never mixed with party tasks here
-    _ownTasks = s.docs.map(d => ({id:d.id,...d.data()}));
-    _mergeTasks();
-    renderToday();
+    tasks = s.docs.map(d => ({id:d.id,...d.data()})); renderToday();
   }));
-  // Subscribe to OTHER party members' shared tasks (by partyId field)
-  if (crewId) {
-    unsubs.push(onSnapshot(
-      query(collection(db,'tasks'), where('partyId','==',crewId)),
-      s => {
-        // Only other members' shared tasks — own tasks are in _ownTasks already
-        _partyTasks = s.docs
-          .map(d => ({id:d.id,...d.data(),_fromParty:true}))
-          .filter(t => t.uid !== uid);
-        _mergeTasks();
-        renderToday();
-      }
-    ));
-  }
   unsubs.push(onSnapshot(query(collection(db,'habits'),where('uid','==',uid)), s => {
     habits = s.docs.map(d => ({id:d.id,...d.data()})); renderHabits();
   }));
@@ -1793,7 +1751,6 @@ window.doGoogleLogin = async () => {
   try {
     const result = await signInWithPopup(auth, googleProvider);
     currentUser = result.user;
-    // Calendar token captured separately via connectGCal()
     toast('Signing in...');
   } catch(e) {
     if (e.code === 'auth/popup-closed-by-user') {
@@ -1994,9 +1951,8 @@ window.doLogout = async () => {
     const toggleBtn = document.getElementById('auth-toggle-btn');
     if (toggleBtn) toggleBtn.textContent = "Don't have an account? Create one";
     // Clear any auth error messages
-    // Clear auth error box (id is 'auth-err')
-    const errEl = document.getElementById('auth-err');
-    if (errEl) { errEl.textContent = ''; errEl.style.display = 'none'; }
+    const errEl = document.getElementById('auth-error');
+    if (errEl) errEl.textContent = '';
     // Clear header DOM so old user's name never bleeds into next session
     const hdrName = document.getElementById('hdr-name');
     if (hdrName) hdrName.textContent = '';
@@ -2086,17 +2042,12 @@ async function gainXP(amount, stats = {}) {
 
 
 // ─── CALENDAR ─────────────────────────────────────────────
-let _calYear = new Date().getFullYear();
-let _calMonth = new Date().getMonth(); // 0-indexed
-let _calTab = 'personal';
+// _calYear, _calMonth, _calTab declared below with weather/gcal functions
 
 window.openCalendar = function() {
   _calYear = new Date().getFullYear();
   _calMonth = new Date().getMonth();
   document.getElementById('calendar-overlay').classList.add('open');
-  // Show connect button if Google user but no token yet
-  const gcalBtn = document.getElementById('gcal-connect-btn');
-  if (gcalBtn) gcalBtn.style.display = (!_gcalToken && currentUser?.providerData?.some(p=>p.providerId==='google.com')) ? 'inline-block' : 'none';
   renderCalendar();
 };
 window.closeCalendar = function() {
@@ -2116,339 +2067,228 @@ window.setCalTab = function(tab, el) {
   renderCalendar();
 };
 
-async function renderCalendar() {
+function renderCalendar() {
   const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
   document.getElementById('cal-month-label').textContent = months[_calMonth] + ' ' + _calYear;
 
   const today = new Date();
   const firstDay = new Date(_calYear, _calMonth, 1);
   const daysInMonth = new Date(_calYear, _calMonth+1, 0).getDate();
+  // Monday-first: 0=Mon..6=Sun
   let startDow = firstDay.getDay() - 1; if (startDow < 0) startDow = 6;
 
-  // Filter InTask tasks with deadlines
+  // Filter tasks with deadlines
   const filtered = tasks.filter(t => {
     if (!t.deadline_date) return false;
     const [y,m,d] = t.deadline_date.split('-').map(Number);
     if (y !== _calYear || m-1 !== _calMonth) return false;
     if (_calTab === 'personal') return t.type === 'personal' || t.type === 'goal';
     if (_calTab === 'party') return t.type === 'shared' || t.type === 'chore';
-    if (_calTab === 'gcal') return false; // gcal tab shows only gcal events
     return true;
   });
 
+  // Build day map: day number -> tasks[]
   const dayMap = {};
   filtered.forEach(t => {
     const day = parseInt(t.deadline_date.split('-')[2]);
     if (!dayMap[day]) dayMap[day] = [];
-    dayMap[day].push({kind:'task', data:t});
+    dayMap[day].push(t);
   });
-
-  // Merge Google Calendar events
-  let gcalEvents = [];
-  if (_calTab === 'gcal' || _calTab === 'all') {
-    gcalEvents = await loadGCalEvents(_calYear, _calMonth);
-    gcalEvents.forEach(ev => {
-      if (!ev.start) return;
-      const evDate = new Date(ev.start);
-      if (evDate.getFullYear() === _calYear && evDate.getMonth() === _calMonth) {
-        const d = evDate.getDate();
-        if (!dayMap[d]) dayMap[d] = [];
-        dayMap[d].push({kind:'gcal', data:ev});
-      }
-    });
-  }
 
   const pc = {high:'#ef4444',medium:'#f59e0b',low:'#10b981'};
   let cells = '';
+  // Empty leading cells
   for (let i = 0; i < startDow; i++) cells += '<div class="cal-day"></div>';
+  // Day cells
   for (let d = 1; d <= daysInMonth; d++) {
     const isToday = d === today.getDate() && _calMonth === today.getMonth() && _calYear === today.getFullYear();
-    const dayItems = dayMap[d] || [];
-    const hasItems = dayItems.length > 0;
-    const dots = dayItems.slice(0, 2).map(item => {
-      if (item.kind === 'task') {
-        const col = pc[item.data.priority] || 'var(--accent)';
-        return `<div class="cal-day-dot" style="background:${col}22;color:${col}">${escHtml(item.data.name)}</div>`;
-      } else {
-        return `<div class="cal-day-dot" style="background:#4285f420;color:#4285f4">${escHtml(item.data.title)}</div>`;
-      }
-    }).join('');
-    const more = dayItems.length > 2 ? `<div style="font-size:7px;color:var(--muted)">+${dayItems.length-2}</div>` : '';
-    cells += `<div class="cal-day${isToday?' today':''}${hasItems?' has-task':''}" onclick="showCalDay(${d})">` +
-      `<div class="cal-day-num">${d}</div>${dots}${more}</div>`;
+    const dayTasks = dayMap[d] || [];
+    const hasTasks = dayTasks.length > 0;
+    cells += '<div class="cal-day'+(isToday?' today':'')+(hasTasks?' has-task':'')+'"'+(hasTasks?' onclick="showCalDay('+d+')"':'')+'>'+
+      '<div class="cal-day-num">'+d+'</div>'+
+      dayTasks.slice(0,3).map(t => '<div class="cal-day-dot" style="background:'+(pc[t.priority]||'var(--accent)')+'22;color:'+(pc[t.priority]||'var(--accent)')+'">'+t.name+'</div>').join('')+
+      (dayTasks.length>3?'<div style="font-size:8px;color:var(--muted);margin-top:1px">+' + (dayTasks.length-3) + ' more</div>':'')+
+    '</div>';
   }
-  // GCal tab without token — show connect prompt instead of empty grid
-  if ((_calTab === 'gcal') && !_gcalToken) {
-    document.getElementById('cal-days-grid').innerHTML = '';
-    document.getElementById('cal-task-list').style.display = 'none';
-    const grid = document.getElementById('cal-days-grid');
-    if (grid) {
-      grid.style.display = 'block';
-      grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:40px 20px">
-        <div style="font-size:36px;margin-bottom:12px">📅</div>
-        <div style="font-size:15px;font-weight:700;color:var(--ink);margin-bottom:8px">Connect Google Calendar</div>
-        <div style="font-size:12px;color:var(--muted);margin-bottom:20px;line-height:1.6">Sign in with Google to see your events here. Read-only — InTask cannot modify your calendar.</div>
-        <button id="gcal-big-connect-btn" onclick="connectGCal()" style="background:#4285f4;color:#fff;border:none;border-radius:12px;padding:14px 28px;font-size:14px;font-weight:700;cursor:pointer;box-shadow:0 4px 14px rgba(66,133,244,.4)">📅 Connect Google Calendar</button>
-        <div id="gcal-loading-msg" style="display:none;font-size:12px;color:var(--muted);margin-top:12px">Connecting...</div>
-        <p style="font-size:10px;color:var(--muted);margin-top:16px">Read-only access. Your data stays private.</p>
-      </div>`;
-    }
-    const gcalBtn = document.getElementById('gcal-connect-btn');
-    if (gcalBtn) gcalBtn.style.display = 'none';
-    return;
-  }
-
-  document.getElementById('cal-days-grid').style.display = '';
   document.getElementById('cal-days-grid').innerHTML = cells;
   document.getElementById('cal-task-list').style.display = 'none';
-
-  // Update GCal connect button visibility in header
-  const gcalBtn2 = document.getElementById('gcal-connect-btn');
-  if (gcalBtn2) gcalBtn2.style.display = (!_gcalToken && (_calTab==='all')) ? 'inline-block' : 'none';
 }
 
 window.showCalDay = function(day) {
-  const pc = {high:'#ef4444',medium:'#f59e0b',low:'#10b981'};
-  const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-  const listEl = document.getElementById('cal-task-list');
-
-  // InTask tasks for this day
-  const filteredTasks = tasks.filter(t => {
+  const filtered = tasks.filter(t => {
     if (!t.deadline_date) return false;
     const [y,m,d] = t.deadline_date.split('-').map(Number);
     if (y !== _calYear || m-1 !== _calMonth || d !== day) return false;
     if (_calTab === 'personal') return t.type === 'personal' || t.type === 'goal';
     if (_calTab === 'party') return t.type === 'shared' || t.type === 'chore';
-    if (_calTab === 'gcal') return false;
     return true;
   });
-
-  // GCal events for this day
-  const filteredEvents = (_calTab === 'gcal' || _calTab === 'all') ? _gcalEvents.filter(ev => {
-    if (!ev.start) return false;
-    const evDate = new Date(ev.start);
-    return evDate.getFullYear() === _calYear && evDate.getMonth() === _calMonth && evDate.getDate() === day;
-  }) : [];
-
-  const dateLabel = `${day} ${months[_calMonth]} ${_calYear}`;
-
-  let html = `<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
-    <div style="font-size:13px;font-weight:700;color:var(--ink)">${dateLabel}</div>
-    <button onclick="document.getElementById('cal-task-list').style.display='none'" style="background:none;border:none;color:var(--muted);font-size:16px;cursor:pointer">✕</button>
-  </div>`;
-
-  if (filteredEvents.length) {
-    html += '<div style="font-size:9px;font-weight:700;color:#4285f4;letter-spacing:1px;margin-bottom:6px">GOOGLE CALENDAR</div>';
-    html += filteredEvents.map(ev => {
-      let timeStr = '';
-      if (!ev.allDay && ev.start) {
-        const t = new Date(ev.start);
-        const h = t.getHours(), mi = t.getMinutes().toString().padStart(2,'0');
-        const ampm = h >= 12 ? 'pm' : 'am';
-        timeStr = `${h % 12 || 12}:${mi}${ampm}`;
-      } else {
-        timeStr = 'All day';
-      }
-      return `<div class="gcal-event"><div class="gcal-time">${timeStr}</div><div class="gcal-title">${escHtml(ev.title)}</div></div>`;
-    }).join('');
-  }
-
-  if (filteredTasks.length) {
-    html += '<div style="font-size:9px;font-weight:700;color:var(--accent);letter-spacing:1px;margin:8px 0 6px">INTASK</div>';
-    html += filteredTasks.map(t =>
-      `<div class="cal-task-item">
-        <div style="width:8px;height:8px;border-radius:50%;background:${pc[t.priority]||'var(--accent)'};flex-shrink:0;margin-top:3px"></div>
-        <div style="flex:1">
-          <div style="font-size:13px;font-weight:600;color:${t.done?'var(--muted)':'var(--ink)'}">${escHtml(t.name)}${t.done?' ✓':''}</div>
-          <div style="font-size:10px;color:var(--muted)">${t.priority} · ${t.type}</div>
-        </div>
-      </div>`
-    ).join('');
-  }
-
-  if (!filteredTasks.length && !filteredEvents.length) {
-    html += '<div style="text-align:center;padding:16px;color:var(--muted);font-size:13px">Nothing on this day</div>';
-  }
-
-  listEl.innerHTML = html;
+  const listEl = document.getElementById('cal-task-list');
+  const pc = {high:'#ef4444',medium:'#f59e0b',low:'#10b981'};
+  const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  listEl.innerHTML = '<div style="font-size:10px;font-weight:700;color:var(--muted);letter-spacing:1px;margin-bottom:8px">'+day+' '+months[_calMonth]+' '+_calYear+'</div>'+
+    filtered.map(t => '<div class="cal-task-item">'+
+      '<div style="width:8px;height:8px;border-radius:50%;background:'+(pc[t.priority]||'var(--accent)')+';flex-shrink:0"></div>'+
+      '<div style="flex:1;font-size:13px;font-weight:600;color:'+(t.done?'var(--muted)':'var(--ink)')+'">'+t.name+(t.done?' ✓':'')+'</div>'+
+      '<span style="font-size:10px;color:var(--muted)">'+t.priority+'</span>'+
+    '</div>').join('');
   listEl.style.display = 'block';
 };
 
 
 // ─── BOM WEATHER ──────────────────────────────────────────
-const WMO_ICONS = {0:'☀️',1:'🌤',2:'⛅',3:'☁️',45:'🌫',48:'🌫',51:'🌦',53:'🌦',55:'🌧',61:'🌧',63:'🌧',65:'🌧',71:'🌨',73:'🌨',75:'🌨',77:'🌨',80:'🌦',81:'🌧',82:'⛈',85:'🌨',86:'🌨',95:'⛈',96:'⛈',99:'⛈'};
-const WMO_DESC = {0:'Clear sky',1:'Mainly clear',2:'Partly cloudy',3:'Overcast',45:'Foggy',48:'Foggy',51:'Light drizzle',53:'Drizzle',55:'Heavy drizzle',61:'Light rain',63:'Rain',65:'Heavy rain',71:'Light snow',73:'Snow',75:'Heavy snow',80:'Rain showers',81:'Rain showers',82:'Heavy showers',95:'Thunderstorm',96:'Thunderstorm',99:'Thunderstorm'};
+const WMO_ICONS = {0:'☀️',1:'🌤',2:'⛅',3:'☁️',45:'🌫',51:'🌦',53:'🌦',55:'🌧',61:'🌧',63:'🌧',65:'🌧',80:'🌦',81:'🌧',82:'⛈',95:'⛈',99:'⛈'};
+const WMO_DESC = {0:'Clear sky',1:'Mainly clear',2:'Partly cloudy',3:'Overcast',45:'Foggy',51:'Light drizzle',53:'Drizzle',55:'Heavy drizzle',61:'Light rain',63:'Rain',65:'Heavy rain',80:'Showers',81:'Rain showers',82:'Heavy showers',95:'Thunderstorm',99:'Thunderstorm'};
 let _weatherLoaded = false;
-
 async function loadWeather() {
-  const card = document.getElementById('weather-loading');
-  const content = document.getElementById('weather-content');
-  if (!card || !content) return;
-
+  const loadingEl = document.getElementById('weather-loading');
+  const contentEl = document.getElementById('weather-content');
+  if (!loadingEl || !contentEl) return;
   try {
-    // Get device location
-    const pos = await new Promise((res, rej) =>
-      navigator.geolocation.getCurrentPosition(res, rej, {timeout:8000, maximumAge:300000})
-    );
-    const {latitude: lat, longitude: lon} = pos.coords;
-
-    // Open-Meteo uses BOM data for Australia — free, no key, CORS-open
-    const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}` +
-      `&current=temperature_2m,apparent_temperature,weather_code,wind_speed_10m,relative_humidity_2m` +
-      `&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max` +
-      `&timezone=auto&forecast_days=5`;
-
-    const resp = await fetch(url);
-    if (!resp.ok) throw new Error('Weather fetch failed');
+    const pos = await new Promise((res,rej) => navigator.geolocation.getCurrentPosition(res,rej,{timeout:8000,maximumAge:300000}));
+    const {latitude:lat,longitude:lon} = pos.coords;
+    const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,apparent_temperature,weather_code,wind_speed_10m,relative_humidity_2m&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max&timezone=auto&forecast_days=5`;
+    const resp = await fetch(url); if (!resp.ok) throw new Error('fetch failed');
     const data = await resp.json();
-
-    const c = data.current;
-    const d = data.daily;
-    const icon = WMO_ICONS[c.weather_code] || '🌤';
-    const desc = WMO_DESC[c.weather_code] || '';
+    const c = data.current, d = data.daily;
+    const icon = WMO_ICONS[c.weather_code]||'🌤';
+    const desc = WMO_DESC[c.weather_code]||'';
     const temp = Math.round(c.temperature_2m);
     const feel = Math.round(c.apparent_temperature);
     const wind = Math.round(c.wind_speed_10m);
     const hum = Math.round(c.relative_humidity_2m);
-    const todayMax = Math.round(d.temperature_2m_max[0]);
-    const todayMin = Math.round(d.temperature_2m_min[0]);
+    const hi = Math.round(d.temperature_2m_max[0]), lo = Math.round(d.temperature_2m_min[0]);
     const rain = d.precipitation_probability_max[0];
-
-    // Reverse-geocode suburb name from BOM API
     let suburb = '';
     try {
-      // Use BOM location API for suburb name
-      const bomResp = await fetch(`https://api.weather.bom.gov.au/v1/locations?search=${lat},${lon}`);
-      if (bomResp.ok) {
-        const bomData = await bomResp.json();
-        suburb = bomData.data?.[0]?.name || '';
-      }
-    } catch(e) {
-      // BOM suburb lookup failed — use coordinates
-      try {
-        const geoResp = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json`);
-        if (geoResp.ok) {
-          const geoData = await geoResp.json();
-          suburb = geoData.address?.suburb || geoData.address?.city || geoData.address?.town || '';
-        }
-      } catch(e2) {}
-    }
-
-    const dayNames = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
-    const forecastHTML = d.time.slice(1, 5).map((dateStr, i) => {
-      const dow = dayNames[new Date(dateStr).getDay()];
-      const fi = WMO_ICONS[d.weather_code[i+1]] || '🌤';
-      return `<div class="wf-day"><div class="wf-day-lbl">${dow}</div><div class="wf-day-icon">${fi}</div><div class="wf-day-hi">${Math.round(d.temperature_2m_max[i+1])}°</div><div class="wf-day-lo">${Math.round(d.temperature_2m_min[i+1])}°</div></div>`;
-    }).join('');
-
-    content.innerHTML = `
-      <div class="weather-now">
-        <div class="weather-icon">${icon}</div>
-        <div style="flex:1;min-width:0">
-          <div style="display:flex;align-items:baseline;gap:4px">
-            <div class="weather-temp">${temp}°C</div>
-            <div style="font-size:11px;color:var(--muted)">Feels ${feel}°</div>
-          </div>
-          <div class="weather-desc">${desc} · ${todayMin}°–${todayMax}°</div>
-          ${suburb?`<div class="weather-loc">📍 ${suburb}</div>`:''}
-        </div>
-        <div style="text-align:right;flex-shrink:0">
-          <div style="font-size:11px;color:var(--muted)">${rain}% 🌧</div>
-          <div style="font-size:10px;color:var(--muted)">${hum}% 💧</div>
-          <div style="font-size:10px;color:var(--muted)">${wind}km/h 💨</div>
-        </div>
-      </div>
-      <div class="weather-forecast">${forecastHTML}</div>`;
-
-    card.style.display = 'none';
-    content.style.display = 'block';
-    _weatherLoaded = true;
-
+      const g = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json`);
+      if (g.ok) { const gd = await g.json(); suburb = gd.address?.suburb||gd.address?.city||gd.address?.town||''; }
+    } catch(e){}
+    const dayN = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+    const forecast = d.time.slice(1,5).map((dt,i) =>
+      `<div class="wf-day"><div class="wf-day-lbl">${dayN[new Date(dt).getDay()]}</div><div class="wf-day-icon">${WMO_ICONS[d.weather_code[i+1]]||'🌤'}</div><div class="wf-day-hi">${Math.round(d.temperature_2m_max[i+1])}°</div><div class="wf-day-lo">${Math.round(d.temperature_2m_min[i+1])}°</div></div>`
+    ).join('');
+    contentEl.innerHTML = `<div class="weather-now"><div class="weather-icon">${icon}</div><div style="flex:1;min-width:0"><div style="display:flex;align-items:baseline;gap:4px"><div class="weather-temp">${temp}°C</div><div style="font-size:11px;color:var(--muted)">Feels ${feel}°</div></div><div class="weather-desc">${desc} · ${lo}°–${hi}°</div>${suburb?`<div class="weather-loc">📍 ${suburb}</div>`:''}</div><div style="text-align:right;flex-shrink:0"><div style="font-size:11px;color:var(--muted)">${rain}% 🌧</div><div style="font-size:10px;color:var(--muted)">${hum}% 💧</div><div style="font-size:10px;color:var(--muted)">${wind}km/h 💨</div></div></div><div class="weather-forecast">${forecast}</div>`;
+    loadingEl.style.display = 'none'; contentEl.style.display = 'block'; _weatherLoaded = true;
   } catch(err) {
-    if (err.code === 1) { // Permission denied
-      card.innerHTML = '<div class="weather-err">📍 Enable location for weather</div>';
-    } else {
-      card.innerHTML = '<div class="weather-err">🌤 Weather unavailable</div>';
-    }
+    loadingEl.innerHTML = err.code===1 ? '<div class="weather-err">📍 Enable location for weather</div>' : '<div class="weather-err">🌤 Weather unavailable</div>';
   }
 }
 
 // ─── GOOGLE CALENDAR ──────────────────────────────────────
-let _gcalEvents = []; // cached events
-let _gcalLoading = false;
-
 async function loadGCalEvents(year, month) {
   if (!_gcalToken) return [];
   if (_gcalLoading) return _gcalEvents;
-  _gcalLoading = true;
+  _gcalLoading = true; _gcalLastError = null;
   try {
-    const start = new Date(year, month, 1).toISOString();
-    const end = new Date(year, month + 1, 0, 23, 59, 59).toISOString();
-    const url = `https://www.googleapis.com/calendar/v3/calendars/primary/events` +
-      `?timeMin=${encodeURIComponent(start)}&timeMax=${encodeURIComponent(end)}` +
-      `&singleEvents=true&orderBy=startTime&maxResults=100`;
-    const resp = await fetch(url, {headers: {Authorization: 'Bearer ' + _gcalToken}});
-    if (resp.status === 401) { _gcalToken = null; return []; } // token expired
-    if (!resp.ok) return [];
+    const tz = new Date().getTimezoneOffset()*60000;
+    const start = new Date(new Date(year,month,1).getTime()-tz).toISOString();
+    const end   = new Date(new Date(year,month+1,0,23,59,59).getTime()-tz).toISOString();
+    const url = 'https://www.googleapis.com/calendar/v3/calendars/primary/events'
+      +'?timeMin='+encodeURIComponent(start)+'&timeMax='+encodeURIComponent(end)
+      +'&singleEvents=true&orderBy=startTime&maxResults=250&showDeleted=false';
+    const resp = await fetch(url,{headers:{Authorization:'Bearer '+_gcalToken}});
+    if (resp.status===401) { _gcalToken=null; _gcalLastError='Session expired. Reconnect.'; return []; }
+    if (!resp.ok) { _gcalLastError='Error '+resp.status; return []; }
     const data = await resp.json();
-    _gcalEvents = (data.items || []).map(ev => ({
-      id: ev.id,
-      title: ev.summary || '(No title)',
-      start: ev.start?.dateTime || ev.start?.date || '',
-      end: ev.end?.dateTime || ev.end?.date || '',
-      allDay: !ev.start?.dateTime,
-      color: ev.colorId ? '#4285f4' : '#4285f4'
-    }));
+    _gcalEvents = (data.items||[]).map(ev=>({id:ev.id,title:ev.summary||'(No title)',start:ev.start?.dateTime||ev.start?.date||'',end:ev.end?.dateTime||ev.end?.date||'',allDay:!ev.start?.dateTime}));
     return _gcalEvents;
-  } catch(e) {
-    return [];
-  } finally {
-    _gcalLoading = false;
-  }
+  } catch(e) { _gcalLastError=e.message; return []; }
+  finally { _gcalLoading=false; }
 }
-
 async function connectGCal() {
-  const btn = document.getElementById('gcal-connect-btn');
   const bigBtn = document.getElementById('gcal-big-connect-btn');
   const loadingEl = document.getElementById('gcal-loading-msg');
   try {
-    if (btn) { btn.textContent = '⏳ Connecting...'; btn.disabled = true; }
-    if (bigBtn) { bigBtn.textContent = '⏳ Connecting...'; bigBtn.disabled = true; }
-    if (loadingEl) loadingEl.style.display = 'block';
-
+    if (bigBtn) { bigBtn.textContent='⏳ Connecting...'; bigBtn.disabled=true; }
+    if (loadingEl) loadingEl.style.display='block';
     const result = await signInWithPopup(auth, calendarProvider);
-
-    // Proper token extraction via Firebase API
     const credential = GoogleAuthProvider.credentialFromResult(result);
     const token = credential?.accessToken;
-
     if (token) {
-      _gcalToken = token;
-      _gcalEvents = [];
-      _gcalLoading = false;
+      _gcalToken=token; _gcalEvents=[]; _gcalLoading=false; _gcalLastError=null;
       toast('📅 Google Calendar connected!');
       renderCalendar();
     } else {
-      toast('⚠️ Could not get Calendar access. Try again.');
+      _gcalLastError='Could not get calendar token. Try again.';
+      toast('⚠️ Calendar access not granted.'); renderCalendar();
     }
   } catch(e) {
-    if (e.code === 'auth/popup-closed-by-user') {
-      toast('Calendar connection cancelled.');
-    } else if (e.code === 'auth/popup-blocked') {
-      toast('Popup blocked. Please allow popups for this site.');
-    } else {
-      toast('Could not connect Google Calendar: ' + (e.code || e.message));
-      console.error('GCal connect error:', e);
-    }
+    _gcalLastError = e.message||e.code||'Unknown error';
+    if (e.code==='auth/popup-closed-by-user') toast('Cancelled.');
+    else if (e.code==='auth/popup-blocked') toast('Popups blocked — please allow them.');
+    else { toast('Could not connect: '+(e.code||e.message)); }
+    renderCalendar();
   } finally {
-    if (btn) { btn.textContent = '📅 Connect'; btn.disabled = false; }
-    if (bigBtn) { bigBtn.textContent = '📅 Connect Google Calendar'; bigBtn.disabled = false; }
-    if (loadingEl) loadingEl.style.display = 'none';
+    if (bigBtn) { bigBtn.textContent='📅 Connect Google Calendar'; bigBtn.disabled=false; }
+    if (loadingEl) loadingEl.style.display='none';
   }
 }
 window.connectGCal = connectGCal;
-window.toggleSection = toggleSection;
-window.toggleArchive = toggleArchive;
+
+// ─── CALENDAR RENDER ──────────────────────────────────────
+let _calYear=new Date().getFullYear(), _calMonth=new Date().getMonth(), _calTab='personal';
+window.openCalendar=function(){_calYear=new Date().getFullYear();_calMonth=new Date().getMonth();document.getElementById('calendar-overlay').classList.add('open');renderCalendar();};
+window.closeCalendar=function(){document.getElementById('calendar-overlay').classList.remove('open');document.getElementById('cal-task-list').style.display='none';};
+window.calNav=function(d){_calMonth+=d;if(_calMonth<0){_calMonth=11;_calYear--;}if(_calMonth>11){_calMonth=0;_calYear++;}renderCalendar();};
+window.setCalTab=function(tab,el){_calTab=tab;document.querySelectorAll('.cal-tab').forEach(b=>b.classList.remove('active'));el.classList.add('active');renderCalendar();};
+async function renderCalendar(){
+  const months=['January','February','March','April','May','June','July','August','September','October','November','December'];
+  document.getElementById('cal-month-label').textContent=months[_calMonth]+' '+_calYear;
+  const today=new Date(), firstDay=new Date(_calYear,_calMonth,1), daysInMonth=new Date(_calYear,_calMonth+1,0).getDate();
+  let startDow=firstDay.getDay()-1; if(startDow<0)startDow=6;
+  const filtered=tasks.filter(t=>{if(!t.deadline_date)return false;const[y,m]=t.deadline_date.split('-').map(Number);if(y!==_calYear||m-1!==_calMonth)return false;if(_calTab==='personal')return t.type==='personal'||t.type==='goal';if(_calTab==='party')return t.type==='shared'||t.type==='chore';if(_calTab==='gcal')return false;return true;});
+  const dayMap={};
+  filtered.forEach(t=>{const day=parseInt(t.deadline_date.split('-')[2]);if(!dayMap[day])dayMap[day]=[];dayMap[day].push({kind:'task',data:t});});
+  if(_calTab==='gcal'||_calTab==='all'){const evs=await loadGCalEvents(_calYear,_calMonth);evs.forEach(ev=>{if(!ev.start)return;const evDate=new Date(ev.start);if(evDate.getFullYear()===_calYear&&evDate.getMonth()===_calMonth){const d=evDate.getDate();if(!dayMap[d])dayMap[d]=[];dayMap[d].push({kind:'gcal',data:ev});}});}
+  if(_calTab==='gcal'&&!_gcalToken){
+    const grid=document.getElementById('cal-days-grid'); if(grid){grid.style.display='block';const errMsg=_gcalLastError?'<div style="font-size:11px;color:var(--red);background:rgba(192,57,43,.08);border:1px solid rgba(192,57,43,.2);border-radius:8px;padding:8px 12px;margin-bottom:16px">⚠️ '+escHtml(_gcalLastError)+'</div>':'';grid.innerHTML='<div style="grid-column:1/-1;text-align:center;padding:40px 20px"><div style="font-size:36px;margin-bottom:12px">📅</div><div style="font-size:15px;font-weight:700;color:var(--ink);margin-bottom:8px">Connect Google Calendar</div><div style="font-size:12px;color:var(--muted);margin-bottom:16px;line-height:1.6">Sign in with Google to see your events. Read-only.</div>'+errMsg+'<button id="gcal-big-connect-btn" onclick="connectGCal()" style="background:#4285f4;color:#fff;border:none;border-radius:12px;padding:14px 28px;font-size:14px;font-weight:700;cursor:pointer;box-shadow:0 4px 14px rgba(66,133,244,.4)">📅 Connect Google Calendar</button><div id="gcal-loading-msg" style="display:none;font-size:12px;color:var(--muted);margin-top:12px">⏳ Opening...</div><p style="font-size:10px;color:var(--muted);margin-top:16px">If you see a warning, tap Advanced → Go to site.</p></div>';}
+    document.getElementById('cal-task-list').style.display='none'; return;
+  }
+  const pc={high:'#ef4444',medium:'#f59e0b',low:'#10b981'};
+  let cells='';
+  for(let i=0;i<startDow;i++)cells+='<div class="cal-day"></div>';
+  for(let d=1;d<=daysInMonth;d++){
+    const isToday=d===today.getDate()&&_calMonth===today.getMonth()&&_calYear===today.getFullYear();
+    const items=dayMap[d]||[];
+    const dots=items.slice(0,2).map(item=>item.kind==='task'?`<div class="cal-day-dot" style="background:${pc[item.data.priority]||'var(--accent)'}22;color:${pc[item.data.priority]||'var(--accent)'}">${escHtml(item.data.name)}</div>`:`<div class="cal-day-dot" style="background:#4285f420;color:#4285f4">${escHtml(item.data.title)}</div>`).join('');
+    const more=items.length>2?`<div style="font-size:7px;color:var(--muted)">+${items.length-2}</div>`:'';
+    cells+=`<div class="cal-day${isToday?' today':''}${items.length?' has-task':''}" onclick="showCalDay(${d})">${'<div class="cal-day-num">'+d+'</div>'}${dots}${more}</div>`;
+  }
+  const grid=document.getElementById('cal-days-grid');if(grid){grid.style.display='';grid.innerHTML=cells;}
+  document.getElementById('cal-task-list').style.display='none';
+  const gcalBtn=document.getElementById('gcal-connect-btn');if(gcalBtn)gcalBtn.style.display=(!_gcalToken&&(_calTab==='all'))?'inline-block':'none';
+}
+window.showCalDay=function(day){
+  const pc={high:'#ef4444',medium:'#f59e0b',low:'#10b981'};
+  const months=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const listEl=document.getElementById('cal-task-list');
+  const filteredTasks=tasks.filter(t=>{if(!t.deadline_date)return false;const[y,m,d]=t.deadline_date.split('-').map(Number);if(y!==_calYear||m-1!==_calMonth||d!==day)return false;if(_calTab==='personal')return t.type==='personal'||t.type==='goal';if(_calTab==='party')return t.type==='shared'||t.type==='chore';if(_calTab==='gcal')return false;return true;});
+  const filteredEvs=(_calTab==='gcal'||_calTab==='all')?_gcalEvents.filter(ev=>{if(!ev.start)return false;const evDate=new Date(ev.start);return evDate.getFullYear()===_calYear&&evDate.getMonth()===_calMonth&&evDate.getDate()===day;}):[];
+  let h=`<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px"><div style="font-size:13px;font-weight:700;color:var(--ink)">${day} ${months[_calMonth]} ${_calYear}</div><button onclick="document.getElementById('cal-task-list').style.display='none'" style="background:none;border:none;color:var(--muted);font-size:16px;cursor:pointer">✕</button></div>`;
+  if(filteredEvs.length){h+='<div style="font-size:9px;font-weight:700;color:#4285f4;letter-spacing:1px;margin-bottom:6px">GOOGLE CALENDAR</div>';h+=filteredEvs.map(ev=>{const t=new Date(ev.start);const timeStr=ev.allDay?'All day':`${t.getHours()%12||12}:${t.getMinutes().toString().padStart(2,'0')}${t.getHours()>=12?'pm':'am'}`;return`<div class="gcal-event"><div class="gcal-time">${timeStr}</div><div class="gcal-title">${escHtml(ev.title)}</div></div>`;}).join('');}
+  if(filteredTasks.length){h+='<div style="font-size:9px;font-weight:700;color:var(--accent);letter-spacing:1px;margin:8px 0 6px">INTASK</div>';h+=filteredTasks.map(t=>`<div class="cal-task-item"><div style="width:8px;height:8px;border-radius:50%;background:${pc[t.priority]||'var(--accent)'};flex-shrink:0;margin-top:3px"></div><div style="flex:1"><div style="font-size:13px;font-weight:600;color:${t.done?'var(--muted)':'var(--ink)'}">${escHtml(t.name)}${t.done?' ✓':''}</div><div style="font-size:10px;color:var(--muted)">${t.priority} · ${t.type}</div></div></div>`).join('');}
+  if(!filteredTasks.length&&!filteredEvs.length)h+='<div style="text-align:center;padding:16px;color:var(--muted);font-size:13px">Nothing on this day</div>';
+  listEl.innerHTML=h; listEl.style.display='block';
+};
+
+
+// ─── SECTION TOGGLES ─────────────────────────────────────
+const _sectionState = {
+  'my-tasks': true,       // expanded by default
+  'shared-tasks': false,  // collapsed by default
+  'archive': false        // collapsed by default
+};
+window.toggleSection = function(name) {
+  _sectionState[name] = !_sectionState[name];
+  const open = _sectionState[name];
+  const listIds = {'my-tasks':'tasks-list','shared-tasks':'chores-list','archive':'archive-list'};
+  const toggleIds = {'my-tasks':'my-tasks-toggle','shared-tasks':'shared-tasks-toggle','archive':'archive-toggle'};
+  const listEl = document.getElementById(listIds[name]);
+  const btn = document.getElementById(toggleIds[name]);
+  if (listEl) listEl.style.display = open ? '' : 'none';
+  if (btn) btn.textContent = open ? '▲' : '▼';
+};
 // ─── UNDO ─────────────────────────────────────────────────
 let _lastCompletedTask = null; // {id, xp, totalDone, shared, priority}
 
@@ -2480,11 +2320,9 @@ window.addTask = async () => {
   const deadlineEl = g('new-task-deadline');
   const deadline = deadlineEl ? deadlineEl.value : '';
   const sort_order = tasks.length; // append to end
-  const isShared = taskType==='shared'||taskType==='chore';
   await addDoc(collection(db,'tasks'), {
     name, type:taskType, priority:taskPriority, repeat:taskRepeat,
-    uid:currentUser.uid, owner: isShared ? 'both' : currentUser.uid,
-    partyId: isShared ? (userProfile?.crewId || null) : null,
+    uid:currentUser.uid, owner: taskType==='shared'||taskType==='chore' ? 'both' : currentUser.uid,
     xp: XP[taskPriority]||XP.medium, done:false, sort_order,
     deadline_date: deadline || null,
     createdAt:serverTimestamp()
@@ -2527,9 +2365,8 @@ window._doDeleteTask = async id => { await deleteDoc(doc(db,'tasks',id)); };
 // ─── HABITS ───────────────────────────────────────────────
 window.addHabit = async () => {
   const name = g('new-habit-name').value.trim(); if (!name) { toast('Name your habit!'); return; }
-  const scheduleDays = getSelectedHabitDays();
   await addDoc(collection(db,'habits'), {
-    name, time:habitTime, scheduleDays, uid:currentUser.uid,
+    name, time:habitTime, uid:currentUser.uid,
     streak:0, maxStreak:0, doneDays:{}, lastDoneDate:null, createdAt:serverTimestamp()
   });
   closeModal('habit-modal'); g('new-habit-name').value = ''; toast('🔥 Streak started!');
@@ -2542,10 +2379,6 @@ window.completeHabit = async id => {
   const yesterday = new Date(Date.now()-86400000).toDateString();
   const hasBuffer = (userProfile?.skills||[]).includes('res_1');
   const dayBefore = new Date(Date.now()-172800000).toDateString();
-  const schedule = h.scheduleDays || [1,2,3,4,5,6,0]; // default every day for old habits
-  const todayDow = new Date().getDay();
-  if (!schedule.includes(todayDow)) { toast('📅 Not a scheduled day — but logged anyway!'); }
-  // For streak continuity, check if the last scheduled day was yesterday or before
   const continued = h.lastDoneDate===yesterday || (hasBuffer && h.lastDoneDate===dayBefore);
   const streak = continued ? h.streak+1 : 1;
   const maxStreak = Math.max(h.maxStreak||0, streak);
@@ -2557,104 +2390,6 @@ window.completeHabit = async id => {
   renderHabits();
 };
 
-
-// ─── HABIT SCHEDULE & EDIT ────────────────────────────────
-let habitScheduleDays = [1,2,3,4,5]; // Mon-Fri default
-
-window.toggleHabitDay = function(btn) {
-  const day = parseInt(btn.dataset.day);
-  if (btn.classList.contains('active')) {
-    btn.classList.remove('active');
-  } else {
-    btn.classList.add('active');
-  }
-};
-
-function getSelectedHabitDays() {
-  const btns = document.querySelectorAll('#habit-modal [data-group="habit-sched"]');
-  const days = [];
-  btns.forEach(b => { if (b.classList.contains('active')) days.push(parseInt(b.dataset.day)); });
-  return days.length ? days : [1,2,3,4,5];
-}
-
-window.openEditHabitModal = function(id) {
-  const h = habits.find(x => x.id === id);
-  if (!h) return;
-  document.getElementById('edit-habit-modal-overlay')?.remove();
-  const DAY_LABELS = ['S','M','T','W','T','F','S'];
-  const schedule = h.scheduleDays || [1,2,3,4,5];
-  const timeOptions = ['morning','afternoon','evening','anytime'];
-
-  const overlay = document.createElement('div');
-  overlay.id = 'edit-habit-modal-overlay';
-  overlay.className = 'modal-overlay';
-  overlay.style.display = 'flex';
-  overlay.innerHTML = `
-    <div class="modal" style="max-height:90vh;overflow-y:auto">
-      <div class="modal-handle"></div>
-      <div class="modal-title">✏️ EDIT STREAK</div>
-      <label class="field-label">HABIT NAME</label>
-      <input id="edit-habit-name" class="form-input" value="${h.name.replace(/"/g,'&quot;')}" placeholder="Habit name...">
-      <label class="field-label">TIME OF DAY</label>
-      <div class="pill-row">
-        ${timeOptions.map(t=>`<button class="pill${h.time===t?' active':''}" data-group="edit-habit-time" onclick="window._setEditPill('${t}','edit-habit-time',this)">${{morning:'🌅 Morning',afternoon:'☀️ Afternoon',evening:'🌙 Evening',anytime:'⏰ Anytime'}[t]}</button>`).join('')}
-      </div>
-      <label class="field-label">SCHEDULE</label>
-      <div class="pill-row" style="gap:6px;flex-wrap:nowrap">
-        ${[1,2,3,4,5,6,0].map(d=>`<button class="pill${schedule.includes(d)?' active':''}" data-group="edit-habit-sched" data-day="${d}" onclick="this.classList.toggle('active')">${DAY_LABELS[d]}</button>`).join('')}
-      </div>
-      <p style="font-size:11px;color:var(--muted);margin:-6px 0 12px">Highlighted days count toward the streak.</p>
-      <div style="display:flex;gap:10px">
-        <button class="big-btn" style="background:var(--parchment);border:1.5px solid var(--border);color:var(--muted)" onclick="document.getElementById('edit-habit-modal-overlay')?.remove()">Cancel</button>
-        <button class="big-btn" style="background:linear-gradient(135deg,#f59e0b,#f97316)" onclick="window._saveEditHabit('${id}')">💾 Save</button>
-      </div>
-      <button onclick="window._deleteHabit('${id}');document.getElementById('edit-habit-modal-overlay')?.remove()" style="width:100%;padding:10px;margin-top:8px;border:1.5px solid var(--red);background:transparent;color:var(--red);border-radius:10px;font-size:13px;font-weight:600;cursor:pointer" id="del-habit-btn-${id}">🗑️ Delete Streak</button>
-    </div>`;
-  overlay.addEventListener('click', e => { if (e.target === overlay) overlay.remove(); });
-  document.body.appendChild(overlay);
-
-  // Wire up two-tap delete
-  const delBtn = document.getElementById('del-habit-btn-' + id);
-  if (delBtn) {
-    delBtn.onclick = function() {
-      if (this.dataset.armed === '1') {
-        document.getElementById('edit-habit-modal-overlay')?.remove();
-        window._deleteHabit(id);
-      } else {
-        this.dataset.armed = '1';
-        this.textContent = '⚠️ Tap again to confirm delete';
-        this.style.background = 'var(--red)'; this.style.color = '#fff';
-        setTimeout(() => {
-          if (this.dataset.armed === '1') {
-            this.dataset.armed = '0';
-            this.textContent = '🗑️ Delete Streak';
-            this.style.background = 'transparent'; this.style.color = 'var(--red)';
-          }
-        }, 3000);
-      }
-    };
-  }
-};
-
-window._saveEditHabit = async function(id) {
-  const name = document.getElementById('edit-habit-name')?.value.trim();
-  if (!name) { toast('Habit name required!'); return; }
-  const time = document.querySelector('[data-group="edit-habit-time"].active')?.dataset?.group
-    ? (document.querySelector('[data-group="edit-habit-time"].active')?.textContent.toLowerCase().includes('morning') ? 'morning' :
-       document.querySelector('[data-group="edit-habit-time"].active')?.textContent.toLowerCase().includes('afternoon') ? 'afternoon' :
-       document.querySelector('[data-group="edit-habit-time"].active')?.textContent.toLowerCase().includes('evening') ? 'evening' : 'anytime')
-    : 'anytime';
-  const schedBtns = document.querySelectorAll('[data-group="edit-habit-sched"]');
-  const scheduleDays = [...schedBtns].filter(b=>b.classList.contains('active')).map(b=>parseInt(b.dataset.day));
-  await updateDoc(doc(db,'habits',id), {name, time, scheduleDays: scheduleDays.length ? scheduleDays : [1,2,3,4,5]});
-  document.getElementById('edit-habit-modal-overlay')?.remove();
-  toast('✅ Streak updated!');
-};
-
-window._deleteHabit = async function(id) {
-  await deleteDoc(doc(db,'habits',id));
-  toast('🗑️ Streak deleted');
-};
 
 // ─── CUSTOM EXERCISES ─────────────────────────────────────
 
@@ -2898,9 +2633,6 @@ window.createParty = async () => {
   g('party-code-val').textContent = code;
   g('party-create-form').style.display = 'none';
   g('party-created-box').style.display = 'block';
-  // Hide the Create/Join tab row while showing confirmation
-  const partyModalTabs = document.querySelector('#party-modal .modal-tabs');
-  if (partyModalTabs) partyModalTabs.style.display = 'none';
   playSound('unlock'); spawnConfetti(30);
   setTimeout(()=>toast(`🎉 Party "${name}" created! Code: ${code}`),300);
 };
@@ -3576,12 +3308,6 @@ function showApp() {
   setTimeout(()=>applyIconDensity(parseInt(lsGet('intask_icon_count','5'))),300);
   // Stop login music when entering app
   if(window.stopLoginMusic) window.stopLoginMusic();
-  // Load user music preferences
-  _mpLoadUserMusic().catch(()=>{});
-  // Load custom exercises
-  loadCustomExercises(currentUser.uid).catch(()=>{});
-  // Load weather (once)
-  if (!_weatherLoaded) setTimeout(loadWeather, 600);
   // Auto-start BGM if enabled
   if(lsGet('intask_bgm_default','0')==='1') {
     setTimeout(() => { if(window.toggleBGM) window.toggleBGM(); }, 800);
@@ -3589,9 +3315,6 @@ function showApp() {
 }
 function showScreen(id) {
   document.body.style.overflow = ''; // allow scroll on login/setup screens
-  // Always clear auth error when returning to login
-  const _ae = document.getElementById('auth-err');
-  if (_ae && id === 'login') { _ae.textContent = ''; _ae.style.display = 'none'; }
   ['login','profile-setup'].forEach(s => g(s).classList.remove('active'));
   document.getElementById('app').classList.remove('active');
   g(id).classList.add('active');
@@ -3631,52 +3354,67 @@ function renderHeader() {
 
 function renderToday() {
   const sorted = [...tasks].sort((a,b) => (a.sort_order ?? Infinity) - (b.sort_order ?? Infinity));
-  // Split active vs done
-  const active = sorted.filter(t => !t.done);
-  const done   = sorted.filter(t => t.done);
-  const myTasks   = active.filter(t => t.type!=='chore' && t.type!=='shared');
-  const myChores  = active.filter(t => t.type==='chore' || t.type==='shared');
-  const doneCount = done.length;
-  const pct = sorted.length ? Math.round(doneCount/sorted.length*100) : 0;
-  g('prog-count').textContent = doneCount;
-  g('prog-total').textContent = ' / '+sorted.length;
+
+  // Separate active vs completed
+  const activeTasks  = sorted.filter(t => !t.done && t.type!=='chore' && t.type!=='shared');
+  const activeChores = sorted.filter(t => !t.done && (t.type==='chore' || t.type==='shared'));
+  const doneTasks    = sorted.filter(t => t.done);
+
+  // Progress counts active+done for total
+  const total = sorted.length;
+  const done  = sorted.filter(t=>t.done).length;
+  const pct   = total ? Math.round(done/total*100) : 0;
+  g('prog-count').textContent = done;
+  g('prog-total').textContent = ' / '+total;
   g('prog-fill').style.width = pct+'%';
   const pctEl = document.getElementById('prog-pct');
   if(pctEl) pctEl.textContent = pct+'%';
-  g('tasks-list').innerHTML = myTasks.length ? myTasks.map(taskCard).join('') : emptyState('🎯','No tasks yet!');
-  g('chores-list').innerHTML = myChores.length ? myChores.map(taskCard).join('') : emptyState('🏠','No shared tasks yet!');
-  // Archive section
-  const archiveSection = document.getElementById('archive-section');
-  const archiveList    = document.getElementById('archive-list');
-  if (archiveSection && archiveList) {
-    if (done.length > 0) {
-      archiveSection.style.display = 'block';
-      archiveList.innerHTML = done.map(t => taskCard(t, true)).join('');
-    } else {
-      archiveSection.style.display = 'none';
-      archiveList.innerHTML = '';
-    }
+
+  // Clear any stale drag opacity (mobile dragend may not have fired)
+  document.querySelectorAll('.task-card').forEach(el => { el.style.opacity = ''; el.classList.remove('dragging'); });
+  // Render active tasks (only undone)
+  g('tasks-list').innerHTML = activeTasks.length ? activeTasks.map(taskCard).join('') : emptyState('🎯','No tasks yet!');
+
+  // Render shared tasks (only undone) — respect collapsed state
+  const choresOpen = _sectionState['shared-tasks'] !== false;
+  const choresEl = g('chores-list');
+  choresEl.innerHTML = activeChores.length ? activeChores.map(taskCard).join('') : emptyState('🏠','No shared tasks yet!');
+  choresEl.style.display = choresOpen ? '' : 'none';
+
+  // Render archive (completed tasks)
+  const archiveHead = document.getElementById('archive-head');
+  const archiveList = document.getElementById('archive-list');
+  if (archiveHead) archiveHead.style.display = doneTasks.length ? '' : 'none';
+  if (archiveList) {
+    const archiveOpen = _sectionState['archive'] === true;
+    archiveList.style.display = (doneTasks.length && archiveOpen) ? '' : 'none';
+    archiveList.innerHTML = doneTasks.length ? doneTasks.map(taskCard).join('') : '';
   }
-  // Enable drag-and-drop after DOM update
+
+  // Keep my-tasks expanded per state
+  const myTasksEl = g('tasks-list');
+  if (myTasksEl) myTasksEl.style.display = (_sectionState['my-tasks'] !== false) ? '' : 'none';
+
   requestAnimationFrame(enableTaskDragAndDrop);
 }
 
-function taskCard(t, isArchived = false) {
+function taskCard(t) {
   const pc = {high:'#ef4444',medium:'#f59e0b',low:'#10b981'};
   const tc = {personal:'#7c3aed',shared:'#06b6d4',chore:'#10b981',goal:'#f59e0b'};
   const c = pc[t.priority]||tc[t.type]||'#7c3aed';
   const rep = {daily:'🔁 Daily',weekly:'📅 Weekly',monthly:'🗓️ Monthly'}[t.repeat]||'';
   const partyName = (t.type==='shared'||t.type==='chore') && party ? ` · ${party.name}` : '';
   const deadlineStr = t.deadline_date ? `<span class="tag" style="color:var(--accent2);border-color:var(--accent2)">📅 ${t.deadline_date}</span>` : '';
-  return `<div class="task-card${t.done?' done':''}${isArchived?' archived':''}" style="--tc:${c};cursor:${isArchived?'default':'grab'}" 
+  const _cd = t.createdAt?.toDate ? t.createdAt.toDate() : (t.createdAt ? new Date(t.createdAt) : null);
+  const createdStr = _cd ? `<span class="task-date">Created ${_cd.toLocaleDateString('en-AU',{day:'numeric',month:'short'})}</span>` : '';
+  return `<div class="task-card${t.done?' done':''}" style="--tc:${c};cursor:grab" 
     data-id="${t.id}"
-    draggable="${isArchived?'false':'true'}"
-    onclick="${isArchived?'void 0':('completeTask(\'' + t.id + '\')')}"
-    oncontextmenu="event.preventDefault();event.stopPropagation();${isArchived?'void 0':('openEditTaskModal(\'' + t.id + '\')')}"
-    ontouchstart="${isArchived?'':('window._taskLongPress(\'' + t.id + '\',event)')}"
-    style="${isArchived?'pointer-events:none;cursor:default;':''}">
-    ${!isArchived ? '<div class="task-drag-handle" onclick="event.stopPropagation()" style="color:var(--muted);font-size:16px;cursor:grab;padding:0 4px 0 0;flex-shrink:0;user-select:none">⠿</div>' : ''}
-    ${!isArchived ? '<button class="task-edit-btn" onclick="event.stopPropagation();openEditTaskModal(\''+ t.id +'\')">✏️</button>' : ''}
+    draggable="true"
+    onclick="completeTask('${t.id}')"
+    oncontextmenu="event.preventDefault();event.stopPropagation();openEditTaskModal('${t.id}')"
+    ontouchstart="window._taskLongPress('${t.id}',event)">
+    <div class="task-drag-handle" onclick="event.stopPropagation()" style="color:var(--muted);font-size:16px;cursor:grab;padding:0 4px 0 0;flex-shrink:0;user-select:none">⠿</div>
+    <button class="task-edit-btn" onclick="event.stopPropagation();openEditTaskModal('${t.id}')">✏️</button>
     <div class="task-check" style="border-color:${c};${t.done?`background:${c}`:''}">
       ${t.done?'<span style="color:#fff;font-size:13px;font-weight:900">✓</span>':''}
     </div>
@@ -3687,49 +3425,14 @@ function taskCard(t, isArchived = false) {
         <span class="tag" style="color:${c};border-color:${c}">${t.priority}</span>
         ${rep?`<span class="repeat-badge">${rep}</span>`:''}
         ${deadlineStr}
+        ${createdStr}
       </div>
-      ${t.createdAt ? `<div class="task-created">📅 Created ${formatTaskDate(t.createdAt)}</div>` : ''}
     </div>
-    ${isArchived ? `<button onclick="event.stopPropagation();window._reopenTask('${t.id}')" style="font-size:10px;padding:4px 8px;border:1.5px solid var(--green);background:rgba(122,158,126,.12);color:var(--green);border-radius:8px;cursor:pointer;pointer-events:all;flex-shrink:0">↩</button>` : `<span class="xp-badge">+${t.xp||30}XP</span>`}
+    <span class="xp-badge">+${t.xp||30}XP</span>
   </div>`;
 }
 
 
-
-// ─── TASK DATE FORMATTER ──────────────────────────────────
-function formatTaskDate(ts) {
-  if (!ts) return '';
-  // Firestore Timestamp or JS Date
-  const d = ts?.toDate ? ts.toDate() : (ts?.seconds ? new Date(ts.seconds*1000) : new Date(ts));
-  if (isNaN(d)) return '';
-  const now = new Date();
-  const diff = Math.floor((now - d) / 86400000);
-  if (diff === 0) return 'today';
-  if (diff === 1) return 'yesterday';
-  if (diff < 7) return diff + 'd ago';
-  return d.toLocaleDateString('en-AU',{day:'numeric',month:'short'});
-}
-
-// ─── SECTION COLLAPSE ────────────────────────────────────
-function toggleSection(listId, btnId) {
-  const wrap = document.getElementById(listId + '-wrap');
-  const btn  = document.getElementById(btnId);
-  if (!wrap || !btn) return;
-  const isOpen = wrap.classList.contains('open');
-  wrap.classList.toggle('open', !isOpen);
-  wrap.classList.toggle('closed', isOpen);
-  btn.classList.toggle('open', !isOpen);
-}
-
-// ─── ARCHIVE TOGGLE ──────────────────────────────────────
-function toggleArchive() {
-  const list = document.getElementById('archive-list');
-  const btn  = document.getElementById('archive-toggle-btn');
-  if (!list || !btn) return;
-  const isOpen = list.classList.contains('open');
-  list.classList.toggle('open', !isOpen);
-  btn.classList.toggle('open', !isOpen);
-}
 // ─── TASK DRAG & DROP ─────────────────────────────
 let _dragSrcId = null;
 
@@ -3743,13 +3446,18 @@ function enableTaskDragAndDrop() {
       item.addEventListener('dragstart', e => {
         _dragSrcId = item.dataset.id;
         e.dataTransfer.setData('text/plain', item.dataset.id);
-        item.style.opacity = '0.5';
+        // Use CSS class only — never inline opacity (mobile dragend may not fire)
         item.classList.add('dragging');
       });
       item.addEventListener('dragend', () => {
+        item.classList.remove('dragging');
+        item.style.opacity = ''; // safety clear in case anything set it
+        saveNewTaskOrder();
+      });
+      // Mobile touch fallback — always clear any stale opacity
+      item.addEventListener('touchend', () => {
         item.style.opacity = '';
         item.classList.remove('dragging');
-        saveNewTaskOrder();
       });
     });
     taskList.addEventListener('dragover', e => {
@@ -3813,7 +3521,6 @@ window.openEditTaskModal = function(id) {
     <div class="modal" style="max-height:90vh;overflow-y:auto">
       <div class="modal-handle"></div>
       <div class="modal-title">✏️ EDIT TASK</div>
-      ${t.done ? '<button onclick="window._reopenTask(\''  + id + '\');document.getElementById(\'edit-task-modal-overlay\')?.remove()" style="width:100%;padding:10px;margin-bottom:12px;border:1.5px solid var(--green);background:rgba(122,158,126,.1);color:var(--green);border-radius:10px;font-size:13px;font-weight:600;cursor:pointer">↩ Mark as Incomplete</button>' : ''}
       <label class="field-label">TASK NAME</label>
       <input id="edit-task-name" class="form-input" value="${t.name.replace(/"/g,'&quot;')}" placeholder="Task name...">
       <label class="field-label">TYPE</label>
@@ -3842,41 +3549,12 @@ window.openEditTaskModal = function(id) {
         <button class="big-btn" style="background:var(--parchment);border:1.5px solid var(--border);color:var(--muted)" onclick="document.getElementById('edit-task-modal-overlay')?.remove()">Cancel</button>
         <button class="big-btn" onclick="window._saveEditTask('${id}')">💾 Save Changes</button>
       </div>
-      <button id="edit-del-btn-${id}" onclick="window._editModalDelete('${id}',this)" style="width:100%;padding:10px;margin-top:8px;border:1.5px solid var(--red);background:transparent;color:var(--red);border-radius:10px;font-size:13px;font-weight:600;cursor:pointer">🗑️ Delete Task</button>
+      <button onclick="deleteTask('${id}');document.getElementById('edit-task-modal-overlay')?.remove()" style="width:100%;padding:10px;margin-top:8px;border:1.5px solid var(--red);background:transparent;color:var(--red);border-radius:10px;font-size:13px;font-weight:600;cursor:pointer">🗑️ Delete Task</button>
     </div>`;
   overlay.addEventListener('click', e => { if (e.target === overlay) overlay.remove(); });
   document.body.appendChild(overlay);
 };
 
-
-
-window._editModalDelete = function(id, btn) {
-  if (btn.dataset.armed === '1') {
-    // Second tap — actually delete
-    document.getElementById('edit-task-modal-overlay')?.remove();
-    window._doDeleteTask(id);
-    toast('🗑️ Task deleted');
-  } else {
-    // First tap — arm it
-    btn.dataset.armed = '1';
-    btn.textContent = '⚠️ Tap again to confirm delete';
-    btn.style.background = 'var(--red)';
-    btn.style.color = '#fff';
-    // Auto-disarm after 3s
-    setTimeout(() => {
-      if (btn && btn.dataset.armed === '1') {
-        btn.dataset.armed = '0';
-        btn.textContent = '🗑️ Delete Task';
-        btn.style.background = 'transparent';
-        btn.style.color = 'var(--red)';
-      }
-    }, 3000);
-  }
-};
-window._reopenTask = async function(id) {
-  await updateDoc(doc(db,'tasks',id), {done:false, doneAt:null});
-  toast('↩ Task re-opened!');
-};
 window._setEditPill = function(val, group, el) {
   document.querySelectorAll(`[data-group="${group}"]`).forEach(b => b.classList.remove('active'));
   el.classList.add('active');
@@ -3911,39 +3589,26 @@ function renderHabits() {
 function habitCard(h) {
   const today = new Date().toDateString();
   const doneToday = !!(h.doneDays?.[today]);
-  const DAY_LABELS = ['S','M','T','W','T','F','S'];
-  const schedule = h.scheduleDays || [1,2,3,4,5];
+  const days = ['M','T','W','T','F','S','S'];
   const last7 = Array.from({length:7},(_,i)=>{
     const d = new Date(Date.now()-(6-i)*86400000);
-    const dow = d.getDay();
-    const scheduled = schedule.includes(dow);
-    return {label:DAY_LABELS[dow], done:!!(h.doneDays?.[d.toDateString()]), today:i===6, scheduled};
+    return {label:days[d.getDay()===0?6:d.getDay()-1], done:!!(h.doneDays?.[d.toDateString()]), today:i===6};
   });
   const mult = Math.min(1+((h.streak||0)*0.2),10).toFixed(1);
-  const schedLabel = schedule.length===7 ? 'Every day' :
-    (schedule.length===5 && [1,2,3,4,5].every(d=>schedule.includes(d))) ? 'Weekdays' :
-    (schedule.length===2 && [0,6].every(d=>schedule.includes(d))) ? 'Weekends' :
-    schedule.map(d=>DAY_LABELS[d]).join(' ');
   return `<div class="habit-card">
     <div class="habit-top">
-      <div style="flex:1;min-width:0">
-        <div class="habit-name">${escHtml(h.name)}</div>
-        <div class="habit-meta">⏰ ${h.time} · ${schedLabel} · ×${mult}</div>
-      </div>
-      <div style="display:flex;align-items:center;gap:6px;flex-shrink:0">
-        <div style="text-align:right;flex-shrink:0"><div class="streak-count">${h.streak||0}</div><div style="font-size:11px;color:var(--muted)">🔥 days</div></div>
-        <button onclick="event.stopPropagation();openEditHabitModal('${h.id}')" style="background:none;border:1px solid var(--border);border-radius:6px;color:var(--muted);font-size:12px;cursor:pointer;padding:4px 6px" title="Edit">✏️</button>
-      </div>
+      <div><div class="habit-name">${h.name}</div><div class="habit-meta">⏰ ${h.time} · ×${mult} multiplier</div></div>
+      <div style="text-align:right"><div class="streak-count">${h.streak||0}</div><div style="font-size:11px;color:var(--muted)">🔥 days</div></div>
     </div>
-    <div class="days-row">${last7.map(d=>'<div class="day-dot'+(d.done?' done':'')+(d.today?' today':'')+'" style="'+(d.scheduled?'':'opacity:.3')+'">'+ d.label+'</div>').join('')}</div>
-    <button class="done-btn${doneToday?' done-btn-done':''}" onclick="${doneToday?'void 0':'completeHabit(\'' + h.id + '\')'}">${doneToday?'✅ Done! Come back tomorrow':'✓ Mark Done +XP × multiplier'}</button>
+    <div class="days-row">${last7.map(d=>`<div class="day-dot${d.done?' done':''}${d.today?' today':''}">${d.label}</div>`).join('')}</div>
+    <button class="done-btn${doneToday?' done-btn-done':''}" onclick="${doneToday?'':'completeHabit(\''+h.id+'\')'}">${doneToday?'✅ Done! Come back tomorrow':'✓ Mark Done  +XP × multiplier'}</button>
   </div>`;
 }
 
 function renderParty() {
   const panel = g('party-panel'); if (!panel) return;
   if (!userProfile?.crewId || !party) {
-    panel.innerHTML = `<div class="no-party-wrap"><div class="no-party-icon">🪐</div><div class="no-party-title">No Party Yet</div><div class="no-party-sub">Create a party or join one with a 6-digit code to connect with friends &amp; family.</div><button class="big-btn" onclick="openModal('party-modal')">🚀 Create or Join a Crew</button></div>`;
+    panel.innerHTML = `<div class="no-crew-wrap"><div class="no-crew-icon">🪐</div><div class="no-crew-title">No Party Yet</div><div class="no-crew-sub">Create a party or join one with a 6-digit code to connect with friends &amp; family.</div><button class="big-btn" onclick="openModal('party-modal')">🚀 Create or Join a Crew</button></div>`;
     return;
   }
   const sorted = [...partyMembers].sort((a,b)=>(b.level*1000+(b.xp||0))-(a.level*1000+(a.xp||0)));
@@ -5283,7 +4948,8 @@ function renderActiveSession() {
     <div id="ex-form-section"></div>
     <button class="finish-session-big-btn" onclick="finishSession()" ${sess.exercises.length===0?'disabled':''}>
       ✅ Finish Workout ${sess.exercises.length>0?`(${sess.exercises.length} exercise${sess.exercises.length!==1?'s':''})`:' — add exercises above'}
-    </button>`;
+    </button>
+    <div style="height:calc(var(--nav-h, 70px) + 40px)"></div>`;
   if (exQuery && !selEx) {
     setTimeout(()=>{const el=g('ex-search');if(el){el.value=exQuery;el.focus();el.setSelectionRange(exQuery.length,exQuery.length);}updateExSearch(exQuery);},30);
   }
@@ -5499,8 +5165,7 @@ window.renderLibrary = function() {
     return '<div class="ex-lib-card" data-exid="'+ex.id+'">'
       +'<div class="ex-lib-info"><div class="ex-lib-name">'+escHtml(ex.name)+badge+'</div>'
       +'<div class="ex-lib-muscles">'+escHtml((ex.muscles||[]).join(', '))+'</div></div>'
-      +actions
-      +'</div>';
+      +actions+'</div>';
   }).join('');
   const filterBtns = [['all','All'],['weights','Weights'],['calisthenics','Cali'],['run','Run'],['swim','Swim'],['cardio','Cardio'],['custom','⭐ Mine']].map(function(pair) {
     return '<button class="lib-filter-btn'+(lf===pair[0]?' active':'')+'" data-libf="'+pair[0]+'" onclick="window._libF=this.dataset.libf;window.renderLibrary()">'+pair[1]+'</button>';
@@ -5882,11 +5547,20 @@ window.switchTab = tab => {
 window.openModal=function(id){
   const el=g(id); if(!el) return;
   el.classList.add('open');
+  // Re-enable inputs inside this modal so user can type
+  el.querySelectorAll('input,textarea,select').forEach(inp => { if(inp.dataset.tabguarded) inp.tabIndex=0; });
   if(id==='settings-modal'){if(typeof window.renderSettings==='function')window.renderSettings();else setTimeout(()=>window.renderSettings&&window.renderSettings(),100);}
   // Push history state so back button closes the modal instead of leaving the page
   history.pushState({modal:id, tab:activeTab}, '', location.href);
 };
-window.closeModal=id=>{const el=g(id);if(el)el.classList.remove('open');};
+window.closeModal=id=>{
+  const el=g(id);
+  if(el){
+    el.classList.remove('open');
+    // Re-disable inputs inside hidden modals so they can't receive accidental focus on Android
+    el.querySelectorAll('input,textarea,select').forEach(inp => { inp.tabIndex=-1; inp.dataset.tabguarded='1'; });
+  }
+};
 
 window.setPill=(el,group)=>{document.querySelectorAll(`[data-group="${group}"]`).forEach(b=>b.classList.remove('active'));el.classList.add('active');};
 window.setTaskPill=(val,group,el)=>{setPill(el,group);if(group==='task-type')taskType=val;if(group==='task-priority')taskPriority=val;if(group==='task-repeat')taskRepeat=val;};
@@ -5895,7 +5569,7 @@ window.setHabitPill=(val,el)=>{setPill(el,'habit-time');habitTime=val;};
 window.selectAvatar=(a,el)=>{selAvatar=a;document.querySelectorAll('.av-btn').forEach(x=>x.classList.remove('sel'));el.classList.add('sel');};
 window.selectColor=(c,el)=>{selColor=c;document.querySelectorAll('.col-dot').forEach(x=>{x.classList.remove('sel');x.style.outline='';});el.classList.add('sel');el.style.outline='3px solid white';};
 
-function showAuthError(msg){const _e=g('auth-err');if(!_e)return;_e.textContent=msg||'';_e.style.display=(msg&&msg.trim())?'block':'none';}
+function showAuthError(msg){g('auth-err').textContent=msg;g('auth-err').style.display='block';}
 function toast(msg){const t=g('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2800);}
 
 // Celebrate overlay close
@@ -6336,12 +6010,6 @@ function _mpAttachDelegation(root) {
 
 // Debounced rebuild for search
 let _mpSearchTimer = null;
-window._mpOnSearchInput = function(val) {
-  const root = document.getElementById('music-app-root');
-  if (root) root._searchVal = val;
-  window._mpBuildUIDebounce();
-};
-
 window._mpBuildUIDebounce = function() {
   clearTimeout(_mpSearchTimer);
   // Longer delay to avoid killing keyboard focus on mobile
@@ -6384,7 +6052,6 @@ function _mpTabContent(list, currentTrack) {
         '<div style="font-size:10px;color:var(--muted)">'+tr.artist+'</div>' +
       '</div>' +
       '<button data-liketrack="' + tr.id + '" style="background:none;border:none;font-size:15px;color:' + (liked ? '#D4708A' : 'var(--muted)') + ';cursor:pointer;padding:4px">' + (liked ? '♥' : '♡') + '</button>' +
-      '<button data-addalbum="' + tr.id + '" style="background:none;border:none;font-size:13px;color:var(--muted);cursor:pointer;padding:4px" title="Add to album">📂</button>' +
     '</div>';
   }).join('');
 }
@@ -6498,110 +6165,8 @@ window._doDeleteAlbum = async function(name) {
 window._mpOpenAlbum = function(encodedName) {
   const name = decodeURIComponent(encodedName);
   const ids = _mpAlbums[name] || [];
-  const tracks = MUSIC_TRACKS.filter(function(t){ return ids.includes(t.id); });
-  const isDefault = name === 'In-Built Songs';
-
-  const root = document.getElementById('music-app-root');
-  if (!root) return;
-  const listEl = root.querySelector('#mp-list');
-  if (!listEl) { _mpBuildUI(); return; }
-
-  const firstId = ids[0] || '';
-  let rows = '';
-  if (tracks.length === 0) {
-    rows = '<div style="text-align:center;padding:32px;color:var(--muted);font-size:13px">No songs yet. Tap \u{1F4C2} on any song to add it.</div>';
-  } else {
-    tracks.forEach(function(tr) {
-      const realIdx = MUSIC_TRACKS.indexOf(tr);
-      const removeBtn = isDefault ? '' :
-        '<button data-removefromalbum="' + tr.id + '" data-albumname="' + encodeURIComponent(name) + '" style="background:none;border:none;color:var(--muted);font-size:16px;cursor:pointer;padding:4px" title="Remove">✕</button>';
-      rows += '<div style="display:flex;align-items:center;gap:10px;padding:8px 6px;border-radius:10px;margin-bottom:2px">' +
-        '<div data-albumplay="' + realIdx + '" style="display:flex;align-items:center;gap:10px;flex:1;cursor:pointer">' +
-          '<div style="width:36px;height:36px;border-radius:8px;background:' + tr.colour + '18;display:flex;align-items:center;justify-content:center;flex-shrink:0">' +
-            '<img src="https://maplestory.io/api/GMS/255/mob/' + tr.mob + '/render/stand" width="30" style="image-rendering:pixelated;object-fit:contain" onerror="this.remove()">' +
-          '</div>' +
-          '<div style="flex:1;min-width:0">' +
-            '<div style="font-size:13px;font-weight:500;color:var(--ink);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">' + tr.title + '</div>' +
-            '<div style="font-size:10px;color:var(--muted)">' + tr.artist + '</div>' +
-          '</div>' +
-        '</div>' +
-        removeBtn +
-      '</div>';
-    });
-  }
-
-  const playAllBtn = tracks.length > 0
-    ? '<button data-albumplayall="' + encodeURIComponent(firstId) + '" style="background:var(--midnight);color:#fff;border:none;border-radius:8px;padding:5px 12px;font-size:11px;font-weight:600;cursor:pointer">\u25b6 Play All</button>'
-    : '';
-
-  listEl.innerHTML =
-    '<div style="display:flex;align-items:center;gap:10px;padding:4px 0 12px">' +
-      '<button data-mptab="albums" style="background:none;border:none;color:var(--accent2);font-size:13px;font-weight:700;cursor:pointer;padding:4px">\u2190 Albums</button>' +
-      '<div style="flex:1;font-size:13px;font-weight:700;color:var(--ink)">' + escHtml(name) + '</div>' +
-      playAllBtn +
-    '</div>' +
-    rows;
-
-  // Wire up album detail clicks via delegation on root
-  _mpAttachDelegation(root);
-  // Extra delegation for album-specific data attrs
-  listEl.onclick = function(e) {
-    const el = e.target.closest('[data-albumplay],[data-albumplayall],[data-removefromalbum]');
-    if (!el) return;
-    if (el.dataset.albumplay !== undefined) { window._mpPlay(parseInt(el.dataset.albumplay)); return; }
-    if (el.dataset.albumplayall !== undefined) {
-      const startTrack = MUSIC_TRACKS.find(function(t){ return t.id === decodeURIComponent(el.dataset.albumplayall); });
-      if (startTrack) window._mpPlay(MUSIC_TRACKS.indexOf(startTrack));
-      return;
-    }
-    if (el.dataset.removefromalbum) {
-      e.stopPropagation();
-      window._mpRemoveFromAlbum(el.dataset.removefromalbum, el.dataset.albumname);
-    }
-  };
-};
-window._mpRemoveFromAlbum = async function(trackId, encodedAlbum) {
-  const album = decodeURIComponent(encodedAlbum);
-  if (!_mpAlbums[album]) return;
-  _mpAlbums[album] = _mpAlbums[album].filter(id => id !== trackId);
-  await _mpSaveAlbums();
-  toast('Removed from ' + album);
-  // Refresh album detail view
-  window._mpOpenAlbum(encodedAlbum);
-};
-
-
-window._mpAddToAlbum = async function(trackId) {
-  const albumNames = Object.keys(_mpAlbums).filter(n => n !== 'In-Built Songs');
-  if (!albumNames.length) {
-    toast('Create an album first in the Albums tab!');
-    return;
-  }
-  // Build a simple picker
-  const overlay = document.createElement('div');
-  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px';
-  const track = MUSIC_TRACKS.find(t=>t.id===trackId);
-  overlay.innerHTML = `<div style="background:var(--surf);border-radius:16px;padding:20px;max-width:300px;width:100%">
-    <div style="font-family:var(--pixel);font-size:10px;color:var(--accent);margin-bottom:12px">ADD TO ALBUM</div>
-    <div style="font-size:13px;font-weight:700;margin-bottom:14px">${track ? track.title : trackId}</div>
-    ${albumNames.map(n=>`<button onclick="window._doAddToAlbum('${trackId}','${encodeURIComponent(n)}');this.closest('div[style]').remove()" style="width:100%;padding:10px;margin-bottom:8px;border:1.5px solid var(--border);background:var(--surf2);color:var(--text);border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;text-align:left">📂 ${n}</button>`).join('')}
-    <button onclick="this.closest('div[style]').remove()" style="width:100%;padding:10px;border:1.5px solid var(--border);background:transparent;color:var(--muted);border-radius:10px;font-size:13px;cursor:pointer">Cancel</button>
-  </div>`;
-  document.body.appendChild(overlay);
-};
-
-window._doAddToAlbum = async function(trackId, encodedAlbum) {
-  const album = decodeURIComponent(encodedAlbum);
-  if (!_mpAlbums[album]) _mpAlbums[album] = [];
-  if (_mpAlbums[album].includes(trackId)) { toast('Already in that album!'); return; }
-  _mpAlbums[album].push(trackId);
-  await _mpSaveAlbums();
-  // Close any open picker overlays
-  document.querySelectorAll('[id^="mp-album-picker"]').forEach(el => el.remove());
-  toast('Added to ' + album + '! Tap 💿 to view.');
-  // Switch to albums tab so user sees it immediately
-  _mpTab = 'albums';
-  _mpBuildUI();
+  const tracks = MUSIC_TRACKS.filter(t => ids.includes(t.id));
+  if (tracks.length > 0) window._mpPlay(MUSIC_TRACKS.indexOf(tracks[0]));
 };
 
 window.MUSIC_TRACKS = MUSIC_TRACKS;
@@ -6645,8 +6210,7 @@ window.addEventListener('appinstalled', () => {
   if(window.toast) toast('🎉 InTask installed successfully!');
 });
 // Apply saved preferences on load
-// Apply colorblind mode on load (reads localStorage directly - lsGet is module-scoped)
-(function(){var _cbKey='intask_colorblind';var _uid=null;try{_uid=Object.keys(localStorage).find(function(k){return k.startsWith(_cbKey+'_') && k!==_cbKey+'_anon';});}catch(e){}var _cbVal=localStorage.getItem(_cbKey+(_uid?'_'+_uid.replace(_cbKey+'_',''):'_anon'))||localStorage.getItem(_cbKey+'_anon')||'0';if(_cbVal==='1')document.body.classList.add('colorblind');})();
+(function(){var _v=localStorage.getItem('intask_colorblind_anon')||'0';if(_v==='1')document.body.classList.add('colorblind');})();
 
 
 </script>
@@ -6757,8 +6321,6 @@ function _doDeleteEntry(){if(window._doDeleteEntry)window._doDeleteEntry.apply(w
 function _doDeleteTask(){if(window._doDeleteTask)window._doDeleteTask.apply(window,arguments);}
 function _mpDeleteAlbum(){if(window._mpDeleteAlbum)window._mpDeleteAlbum.apply(window,arguments);}
 function _doDeleteAlbum(){if(window._doDeleteAlbum)window._doDeleteAlbum.apply(window,arguments);}
-function _mpAddToAlbum(){if(window._mpAddToAlbum)window._mpAddToAlbum.apply(window,arguments);}
-function _doAddToAlbum(){if(window._doAddToAlbum)window._doAddToAlbum.apply(window,arguments);}
 function _mpLikeTrack(){if(window._mpLikeTrack)window._mpLikeTrack.apply(window,arguments);}
 function _mpNewAlbum(){if(window._mpNewAlbum)window._mpNewAlbum.apply(window,arguments);}
 function _mpNext(){if(window._mpNext)window._mpNext.apply(window,arguments);}
@@ -6776,8 +6338,6 @@ function addGuideToDiary(){if(window.addGuideToDiary)window.addGuideToDiary.appl
 function addHabit(){if(window.addHabit)window.addHabit.apply(window,arguments);}
 function addSet(){if(window.addSet)window.addSet.apply(window,arguments);}
 function addTask(){if(window.addTask)window.addTask.apply(window,arguments);}
-function toggleSection(){if(window.toggleSection)window.toggleSection.apply(window,arguments);}
-function toggleArchive(){if(window.toggleArchive)window.toggleArchive.apply(window,arguments);}
 function adjGuideReps(){if(window.adjGuideReps)window.adjGuideReps.apply(window,arguments);}
 function adjSet(){if(window.adjSet)window.adjSet.apply(window,arguments);}
 function applyIconDensity(){if(window.applyIconDensity)window.applyIconDensity.apply(window,arguments);}
@@ -7030,53 +6590,45 @@ function updateExSearch(){if(window.updateExSearch)window.updateExSearch.apply(w
 
     <!-- TODAY -->
     <div class="panel active" id="panel-today">
-      <!-- Weather widget -->
+      <!-- Weather -->
       <div class="weather-card" id="weather-card">
         <div class="weather-loading" id="weather-loading">🌤 Fetching weather…</div>
         <div id="weather-content" style="display:none"></div>
       </div>
       <!-- Compact progress -->
       <div class="progress-card">
-        <div style="flex:1;min-width:0">
-          <div style="display:flex;align-items:center;gap:8px;margin-bottom:5px">
-            <span class="prog-label" style="margin:0">TODAY</span>
-            <span style="font-size:11px;font-weight:600;color:var(--muted)">
-              <span class="prog-count" id="prog-count">0</span><span class="prog-total" id="prog-total"> / 0</span>
-              <span style="margin-left:2px">tasks</span>
-            </span>
-            <span style="font-size:13px;font-weight:800;color:var(--accent);margin-left:auto" id="prog-pct">0%</span>
-          </div>
-          <div class="prog-bar"><div class="prog-fill" id="prog-fill" style="width:0%"></div></div>
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:5px">
+          <span class="prog-label" style="margin:0">TODAY</span>
+          <span style="font-size:11px;font-weight:600;color:var(--muted)"><span class="prog-count" id="prog-count">0</span><span class="prog-total" id="prog-total"> / 0</span> tasks</span>
+          <span style="font-size:13px;font-weight:800;color:var(--accent);margin-left:auto" id="prog-pct">0%</span>
         </div>
+        <div class="prog-bar"><div class="prog-fill" id="prog-fill" style="width:0%"></div></div>
       </div>
       <div class="sec-head" style="margin-top:0;margin-bottom:12px"><span class="sec-title" style="font-size:13px">📅 CALENDAR TASKS</span><button class="icon-btn" onclick="openCalendar()" style="font-size:11px;padding:5px 12px">📅 View Calendar</button></div>
-      <div class="sec-head">
+      <!-- My Tasks — expanded by default -->
+      <div class="sec-head" id="my-tasks-head">
         <span class="sec-title">🎯 MY TASKS</span>
-        <div style="display:flex;align-items:center;gap:6px">
+        <div style="display:flex;gap:6px;align-items:center">
           <button class="add-btn" onclick="openModal('task-modal')">+</button>
-          <button class="sec-collapse-btn open" id="my-tasks-toggle" onclick="toggleSection('tasks-list','my-tasks-toggle')" title="Collapse">▼</button>
+          <button class="sec-toggle" id="my-tasks-toggle" onclick="toggleSection('my-tasks')">▲</button>
         </div>
       </div>
-      <div class="sec-body open" id="tasks-list-wrap">
-        <div id="tasks-list"></div>
-      </div>
-      <div class="sec-head" style="margin-top:8px">
+      <div id="tasks-list"></div>
+      <!-- Shared Tasks — collapsed by default -->
+      <div class="sec-head" style="margin-top:8px" id="shared-tasks-head">
         <span class="sec-title">🏠 SHARED TASKS</span>
-        <div style="display:flex;align-items:center;gap:6px">
+        <div style="display:flex;gap:6px;align-items:center">
           <button class="add-btn" onclick="taskType='chore';openModal('task-modal')">+</button>
-          <button class="sec-collapse-btn" id="chores-toggle" onclick="toggleSection('chores-list','chores-toggle')" title="Expand">▼</button>
+          <button class="sec-toggle" id="shared-tasks-toggle" onclick="toggleSection('shared-tasks')">▼</button>
         </div>
       </div>
-      <div class="sec-body closed" id="chores-list-wrap">
-        <div id="chores-list"></div>
+      <div id="chores-list" style="display:none"></div>
+      <!-- Completed Task Archive — collapsed by default -->
+      <div class="sec-head" style="margin-top:8px" id="archive-head" style="display:none">
+        <span class="sec-title">✅ COMPLETED</span>
+        <button class="sec-toggle" id="archive-toggle" onclick="toggleSection('archive')">▼</button>
       </div>
-      <div class="archive-section" id="archive-section" style="display:none">
-        <button class="archive-toggle" id="archive-toggle-btn" onclick="toggleArchive()">
-          <span>📦 COMPLETED TASKS</span>
-          <span class="archive-chevron">▼</span>
-        </button>
-        <div class="archive-list" id="archive-list"></div>
-      </div>
+      <div id="archive-list" style="display:none"></div>
     </div>
 
     <!-- HABITS -->
@@ -7193,17 +6745,6 @@ function updateExSearch(){if(window.updateExSearch)window.updateExSearch.apply(w
       <button class="pill" data-group="habit-time" onclick="setHabitPill('evening',this)">🌙 Evening</button>
       <button class="pill" data-group="habit-time" onclick="setHabitPill('anytime',this)">⏰ Anytime</button>
     </div>
-    <label class="field-label">SCHEDULE <span style="font-weight:400;color:var(--muted)">— which days count?</span></label>
-    <div class="pill-row" style="gap:6px;flex-wrap:nowrap">
-      <button class="pill active" data-group="habit-sched" data-day="1" onclick="toggleHabitDay(this)">M</button>
-      <button class="pill active" data-group="habit-sched" data-day="2" onclick="toggleHabitDay(this)">T</button>
-      <button class="pill active" data-group="habit-sched" data-day="3" onclick="toggleHabitDay(this)">W</button>
-      <button class="pill active" data-group="habit-sched" data-day="4" onclick="toggleHabitDay(this)">T</button>
-      <button class="pill active" data-group="habit-sched" data-day="5" onclick="toggleHabitDay(this)">F</button>
-      <button class="pill" data-group="habit-sched" data-day="6" onclick="toggleHabitDay(this)">S</button>
-      <button class="pill" data-group="habit-sched" data-day="0" onclick="toggleHabitDay(this)">S</button>
-    </div>
-    <p style="font-size:11px;color:var(--muted);margin:-6px 0 12px;font-weight:500">Tap to toggle days. Highlighted = counts toward streak.</p>
     <div style="display:flex;gap:10px">
       <button class="big-btn" style="background:var(--parchment);border:1.5px solid var(--border);color:var(--muted)" onclick="closeModal('habit-modal')">Cancel</button>
       <button class="big-btn" style="background:linear-gradient(135deg,#f59e0b,#f97316)" onclick="addHabit()">🔥 START STREAK</button>
@@ -7223,7 +6764,7 @@ function updateExSearch(){if(window.updateExSearch)window.updateExSearch.apply(w
     <div id="party-create-section">
       <div id="party-create-form">
         <label class="field-label">PARTY NAME</label>
-        <input id="party-name-input" class="form-input" placeholder="e.g. The Johnson Party, Dream Team...">
+        <input id="party-name-input" class="form-input" placeholder="e.g. The Johnson Party, Dream Team..." tabindex="-1">
         <button id="create-party-btn" class="big-btn" onclick="createParty()">👑 Create Party</button>
       </div>
       <div id="party-created-box" style="display:none">
@@ -7231,13 +6772,13 @@ function updateExSearch(){if(window.updateExSearch)window.updateExSearch.apply(w
           <div style="font-size:11px;font-weight:800;color:var(--muted);letter-spacing:1px;margin-bottom:8px">✅ PARTY CREATED! SHARE THIS CODE:</div>
           <div class="code-val" id="party-code-val">------</div>
           <div class="code-sub">Send this 6-digit code to anyone you want in your party. They tap "Join Party" and enter it.</div>
-          <button class="big-btn" style="background:linear-gradient(135deg,#10b981,#059669)" onclick="closeModal('party-modal');document.getElementById('party-created-box').style.display='none';document.getElementById('party-create-form').style.display='block';var t=document.querySelector('#party-modal .modal-tabs');if(t)t.style.display=''">✅ Got it!</button>
+          <button class="big-btn" style="background:linear-gradient(135deg,#10b981,#059669)" onclick="closeModal('party-modal');document.getElementById('party-created-box').style.display='none';document.getElementById('party-create-form').style.display='block'">✅ Got it!</button>
         </div>
       </div>
     </div>
     <div id="party-join-section" style="display:none">
       <label class="field-label">ENTER CREW CODE</label>
-      <input id="join-input" class="join-input" placeholder="AB12CD" maxlength="6">
+      <input id="join-input" class="join-input" placeholder="AB12CD" maxlength="6" tabindex="-1">
       <p style="color:var(--muted);font-size:12px;font-weight:600;margin-bottom:14px;text-align:center">Ask your party leader for their 6-digit code</p>
       <button class="big-btn" style="background:linear-gradient(135deg,var(--pink),var(--accent3))" onclick="joinParty()">🔗 Join Party</button>
     </div>
@@ -7251,7 +6792,7 @@ function updateExSearch(){if(window.updateExSearch)window.updateExSearch.apply(w
     <button class="cal-nav-btn" onclick="calNav(-1)">‹</button>
     <span class="cal-title" id="cal-month-label">Month Year</span>
     <button class="cal-nav-btn" onclick="calNav(1)">›</button>
-    <button id="gcal-connect-btn" onclick="connectGCal()" style="background:#4285f4;color:#fff;border:none;border-radius:8px;padding:4px 10px;font-size:10px;font-weight:700;cursor:pointer;margin-left:8px;display:none">📅 Connect</button>
+    <button id="gcal-connect-btn" onclick="connectGCal()" style="background:#4285f4;color:#fff;border:none;border-radius:8px;padding:4px 10px;font-size:10px;font-weight:700;cursor:pointer;margin-left:6px;display:none">📅 Connect</button>
     <button onclick="closeCalendar()" style="background:none;border:none;font-size:20px;cursor:pointer;color:var(--muted);margin-left:6px">✕</button>
   </div>
   <div class="cal-tabs">
