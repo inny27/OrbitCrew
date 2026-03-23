@@ -3315,6 +3315,8 @@ function showApp() {
 }
 function showScreen(id) {
   document.body.style.overflow = ''; // allow scroll on login/setup screens
+  // Clear auth error when going back to login
+  if (id === 'login') { const _ae=g('auth-err'); if(_ae){_ae.textContent='';_ae.style.display='none';} }
   ['login','profile-setup'].forEach(s => g(s).classList.remove('active'));
   document.getElementById('app').classList.remove('active');
   g(id).classList.add('active');
@@ -5546,21 +5548,18 @@ window.switchTab = tab => {
 
 window.openModal=function(id){
   const el=g(id); if(!el) return;
+  // Ignore openModal calls for party-modal unless explicitly triggered by user
+  if(id==='party-modal' && document.activeElement && 
+     ['INPUT','TEXTAREA','SELECT'].includes(document.activeElement.tagName) &&
+     !document.activeElement.closest('#party-modal')) {
+    return; // Keyboard is showing in a non-party input — don't accidentally open party modal
+  }
   el.classList.add('open');
-  // Re-enable inputs inside this modal so user can type
-  el.querySelectorAll('input,textarea,select').forEach(inp => { if(inp.dataset.tabguarded) inp.tabIndex=0; });
   if(id==='settings-modal'){if(typeof window.renderSettings==='function')window.renderSettings();else setTimeout(()=>window.renderSettings&&window.renderSettings(),100);}
   // Push history state so back button closes the modal instead of leaving the page
   history.pushState({modal:id, tab:activeTab}, '', location.href);
 };
-window.closeModal=id=>{
-  const el=g(id);
-  if(el){
-    el.classList.remove('open');
-    // Re-disable inputs inside hidden modals so they can't receive accidental focus on Android
-    el.querySelectorAll('input,textarea,select').forEach(inp => { inp.tabIndex=-1; inp.dataset.tabguarded='1'; });
-  }
-};
+window.closeModal=id=>{const el=g(id);if(el)el.classList.remove('open');};
 
 window.setPill=(el,group)=>{document.querySelectorAll(`[data-group="${group}"]`).forEach(b=>b.classList.remove('active'));el.classList.add('active');};
 window.setTaskPill=(val,group,el)=>{setPill(el,group);if(group==='task-type')taskType=val;if(group==='task-priority')taskPriority=val;if(group==='task-repeat')taskRepeat=val;};
@@ -5569,7 +5568,7 @@ window.setHabitPill=(val,el)=>{setPill(el,'habit-time');habitTime=val;};
 window.selectAvatar=(a,el)=>{selAvatar=a;document.querySelectorAll('.av-btn').forEach(x=>x.classList.remove('sel'));el.classList.add('sel');};
 window.selectColor=(c,el)=>{selColor=c;document.querySelectorAll('.col-dot').forEach(x=>{x.classList.remove('sel');x.style.outline='';});el.classList.add('sel');el.style.outline='3px solid white';};
 
-function showAuthError(msg){g('auth-err').textContent=msg;g('auth-err').style.display='block';}
+function showAuthError(msg){const _e=g('auth-err');if(!_e)return;_e.textContent=msg||'';_e.style.display=(msg&&msg.trim())?'block':'none';}
 function toast(msg){const t=g('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2800);}
 
 // Celebrate overlay close
@@ -6764,7 +6763,7 @@ function updateExSearch(){if(window.updateExSearch)window.updateExSearch.apply(w
     <div id="party-create-section">
       <div id="party-create-form">
         <label class="field-label">PARTY NAME</label>
-        <input id="party-name-input" class="form-input" placeholder="e.g. The Johnson Party, Dream Team..." tabindex="-1">
+        <input id="party-name-input" class="form-input" placeholder="e.g. The Johnson Party, Dream Team...">
         <button id="create-party-btn" class="big-btn" onclick="createParty()">👑 Create Party</button>
       </div>
       <div id="party-created-box" style="display:none">
@@ -6778,7 +6777,7 @@ function updateExSearch(){if(window.updateExSearch)window.updateExSearch.apply(w
     </div>
     <div id="party-join-section" style="display:none">
       <label class="field-label">ENTER CREW CODE</label>
-      <input id="join-input" class="join-input" placeholder="AB12CD" maxlength="6" tabindex="-1">
+      <input id="join-input" class="join-input" placeholder="AB12CD" maxlength="6">
       <p style="color:var(--muted);font-size:12px;font-weight:600;margin-bottom:14px;text-align:center">Ask your party leader for their 6-digit code</p>
       <button class="big-btn" style="background:linear-gradient(135deg,var(--pink),var(--accent3))" onclick="joinParty()">🔗 Join Party</button>
     </div>
