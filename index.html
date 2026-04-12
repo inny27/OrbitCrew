@@ -160,15 +160,15 @@ body::before{
 .archive-toggle:hover{color:var(--ink);}
 .archive-toggle .archive-chevron{transition:transform .25s;font-size:13px;}
 .archive-toggle.open .archive-chevron{transform:rotate(180deg);}
-.archive-list{overflow:hidden;max-height:0;transition:max-height .3s ease;}
-.archive-list.open{max-height:9999px;}
+.archive-list{overflow:hidden;display:none;}
+.archive-list.open{display:block;}
 
 /* ── Section collapse toggle ── */
 .sec-collapse-btn{background:none;border:none;cursor:pointer;color:var(--muted);font-size:14px;padding:2px 4px;transition:transform .25s;}
 .sec-collapse-btn.open{transform:rotate(180deg);}
-.sec-body{overflow:hidden;transition:max-height .3s ease;}
-.sec-body.open{max-height:9999px;}
-.sec-body.closed{max-height:0;}
+.sec-body{overflow:hidden;}
+.sec-body.open{display:block;}
+.sec-body.closed{display:none;}
 
 /* ── Date created badge ── */
 .task-created{font-size:9px;color:var(--muted);margin-top:3px;opacity:.75;}
@@ -3810,10 +3810,15 @@ function renderToday() {
     if (done.length > 0) {
       archiveSection.style.display = 'block';
       archiveList.innerHTML = done.map(t => taskCard(t, true)).join('');
+      // Keep archive collapsed by default; only show if .open class is present
+      if (!archiveList.classList.contains('open')) {
+        archiveList.style.display = 'none';
+      }
       wireTaskEvents(archiveList);
     } else {
       archiveSection.style.display = 'none';
       archiveList.innerHTML = '';
+      archiveList.style.display = 'none';
     }
   }
   // Force both task sections open so newly added tasks are always visible
@@ -3821,8 +3826,8 @@ function renderToday() {
   const _cw = document.getElementById('chores-list-wrap');
   const _tb = document.getElementById('my-tasks-toggle');
   const _cb = document.getElementById('chores-toggle');
-  if (_tw) { _tw.classList.add('open'); _tw.classList.remove('closed'); }
-  if (_cw) { _cw.classList.add('open'); _cw.classList.remove('closed'); }
+  if (_tw) { _tw.classList.add('open'); _tw.classList.remove('closed'); _tw.style.display='block'; }
+  if (_cw) { _cw.classList.add('open'); _cw.classList.remove('closed'); _cw.style.display='block'; }
   if (_tb) _tb.classList.add('open');
   if (_cb) _cb.classList.add('open');
 }
@@ -3950,6 +3955,7 @@ window.toggleSection = function(listId, btnId) {
   wrap.classList.toggle('open', !isOpen);
   wrap.classList.toggle('closed', isOpen);
   btn.classList.toggle('open', !isOpen);
+  wrap.style.display = isOpen ? 'none' : 'block';
 };
 
 // ─── ARCHIVE TOGGLE ──────────────────────────────────────
@@ -3960,6 +3966,7 @@ window.toggleArchive = function() {
   const isOpen = list.classList.contains('open');
   list.classList.toggle('open', !isOpen);
   btn.classList.toggle('open', !isOpen);
+  list.style.display = isOpen ? 'none' : 'block';
 };
 // ─── TASK DRAG & DROP ─────────────────────────────
 let _dragSrcId = null;
@@ -4314,7 +4321,9 @@ function renderParty() {
   }
 
   renderBoss();
-  renderMessages();
+  // NOTE: renderMessages() is intentionally NOT called here.
+  // It is only called by the Firestore messages snapshot in subscribeParty.
+  // Calling it here would wipe the chat whenever party member XP changes.
 }
 
 function renderBoss() {
