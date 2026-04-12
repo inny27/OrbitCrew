@@ -3564,10 +3564,21 @@ window.addSet = () => {
   const b = document.getElementById('sets-builder');
   if (b) {
     b.innerHTML = currentSets.map((s,j)=>setRowHTML(s,j)).join('');
-    // Scroll the new set into view
+    // Scroll panel so new set is visible
     requestAnimationFrame(() => {
       const newRow = b.lastElementChild;
-      if (newRow) newRow.scrollIntoView({behavior:'smooth', block:'nearest'});
+      if (!newRow) return;
+      // Find the scrollable panel ancestor
+      const panel = document.querySelector('.panel.active');
+      if (panel) {
+        const rowBottom = newRow.getBoundingClientRect().bottom;
+        const panelBottom = panel.getBoundingClientRect().bottom;
+        if (rowBottom > panelBottom - 20) {
+          panel.scrollBy({top: rowBottom - panelBottom + 60, behavior:'smooth'});
+        }
+      } else {
+        newRow.scrollIntoView({behavior:'smooth', block:'nearest'});
+      }
     });
   }
 };
@@ -3785,15 +3796,15 @@ function taskCard(t, isArchived = false) {
   const rep = {daily:'🔁 Daily',weekly:'📅 Weekly',monthly:'🗓️ Monthly'}[t.repeat]||'';
   const partyName = (t.type==='shared'||t.type==='chore') && party ? ` · ${party.name}` : '';
   const deadlineStr = t.deadline_date ? `<span class="tag" style="color:var(--accent2);border-color:var(--accent2)">📅 ${t.deadline_date}</span>` : '';
-  return `<div class="task-card${isArchived?' done archived':''}"
-    style="--tc:${c};${isArchived?'pointer-events:none;cursor:default;':'cursor:grab;'}"
+  return `<div class="task-card${t.done?' done':''}${isArchived?' archived':''}"
+    style="--tc:${c};cursor:${isArchived?'default':'grab'};"
     data-id="${t.id}"
     draggable="${isArchived?'false':'true'}"
     onclick="${isArchived?'void 0':('completeTask(\'' + t.id + '\')')}"
     oncontextmenu="event.preventDefault();event.stopPropagation();${isArchived?'void 0':('openEditTaskModal(\'' + t.id + '\')')}"
     ontouchstart="${isArchived?'':('window._taskLongPress(\'' + t.id + '\',event)')}">
     ${!isArchived ? '<div class="task-drag-handle" onclick="event.stopPropagation()" style="color:var(--muted);font-size:16px;cursor:grab;padding:0 4px 0 0;flex-shrink:0;user-select:none">⠿</div>' : ''}
-    ${!isArchived ? '<button class="task-edit-btn" onclick="event.stopPropagation();openEditTaskModal(\''+ t.id +'\')">✏️</button>' : ''}
+    ${!isArchived ? '<button class="task-edit-btn" onclick="event.stopPropagation();openEditTaskModal(\''+ t.id +'\'\')">✏️</button>' : ''}
     <div class="task-check" style="border-color:${c};${t.done?`background:${c}`:''}">
       ${t.done?'<span style="color:#fff;font-size:13px;font-weight:900">✓</span>':''}
     </div>
@@ -3869,33 +3880,37 @@ function enableTaskDragAndDrop() {
         item.classList.remove('dragging');
         saveNewTaskOrder();
       });
-      // Touch drag support
-      let _touchDragging = null, _touchClone = null;
-      item.addEventListener('touchstart', e => {
-        if (!e.target.closest('.task-drag-handle')) return;
-        e.preventDefault();
-        _touchDragging = item;
-        item.classList.add('dragging');
-        _touchClone = item.cloneNode(true);
-        _touchClone.style.cssText = 'position:fixed;opacity:.7;pointer-events:none;z-index:9999;width:'+item.offsetWidth+'px;left:'+item.getBoundingClientRect().left+'px;top:'+item.getBoundingClientRect().top+'px;';
-        document.body.appendChild(_touchClone);
-      }, {passive:false});
-      item.addEventListener('touchmove', e => {
-        if (!_touchDragging) return;
-        e.preventDefault();
-        const t = e.touches[0];
-        if (_touchClone) { _touchClone.style.left = t.clientX - _touchDragging.offsetWidth/2 + 'px'; _touchClone.style.top = t.clientY - 30 + 'px'; }
-        const after = getDragAfterElement(taskList, t.clientY);
-        if (after == null) taskList.appendChild(_touchDragging);
-        else taskList.insertBefore(_touchDragging, after);
-      }, {passive:false});
-      item.addEventListener('touchend', () => {
-        if (!_touchDragging) return;
-        item.classList.remove('dragging');
-        if (_touchClone) { _touchClone.remove(); _touchClone = null; }
-        _touchDragging = null;
-        saveNewTaskOrder();
-      });
+      // Touch drag: long-press handle → drag mode, touchmove reorders list
+      let _tDragActive = false, _tLongPress = null;
+      const handle = item.querySelector('.task-drag-handle');
+      if (handle) {
+        handle.addEventListener('touchstart', e => {
+          e.stopPropagation(); // don't trigger task long-press
+          _tLongPress = setTimeout(() => {
+            _tDragActive = true;
+            item.classList.add('dragging');
+            navigator.vibrate && navigator.vibrate(40); // haptic feedback
+          }, 200);
+        }, {passive:true});
+        handle.addEventListener('touchmove', e => {
+          if (!_tDragActive) { clearTimeout(_tLongPress); return; }
+          e.preventDefault();
+          const touch = e.touches[0];
+          const after = getDragAfterElement(taskList, touch.clientY);
+          if (after == null) { if (taskList.lastElementChild !== item) taskList.appendChild(item); }
+          else if (after !== item && after.previousElementSibling !== item) taskList.insertBefore(item, after);
+        }, {passive:false});
+        handle.addEventListener('touchend', () => {
+          clearTimeout(_tLongPress);
+          if (_tDragActive) { item.classList.remove('dragging'); saveNewTaskOrder(); }
+          _tDragActive = false;
+        }, {passive:true});
+        handle.addEventListener('touchcancel', () => {
+          clearTimeout(_tLongPress);
+          item.classList.remove('dragging');
+          _tDragActive = false;
+        }, {passive:true});
+      }
     });
     taskList.addEventListener('dragover', e => {
       e.preventDefault();
@@ -4095,17 +4110,17 @@ function renderParty() {
     panel.innerHTML = `<div class="no-party-wrap"><div class="no-party-icon">🪐</div><div class="no-party-title">No Party Yet</div><div class="no-party-sub">Create a party or join one with a 6-digit code to connect with friends &amp; family.</div><button class="big-btn" onclick="openModal('party-modal')">🚀 Create or Join a Crew</button></div>`;
     return;
   }
+
+  // Preserve chat input value so rebuilds don't clear what user is typing
+  const existingInput = g('msg-input');
+  const savedInputVal = existingInput ? existingInput.value : '';
+
+  // Only do a full rebuild if the shell doesn't exist yet (first render)
+  const shellExists = !!g('chat-box');
+
   const sorted = [...partyMembers].sort((a,b)=>(b.level*1000+(b.xp||0))-(a.level*1000+(a.xp||0)));
   const medals = ['🥇','🥈','🥉'];
-  panel.innerHTML = `
-    <div class="season-banner" style="border-color:var(--border);background:var(--surf2)"><span style="font-size:11px;font-weight:600;color:var(--muted);letter-spacing:0.5px">⚔️ SEASON 1: THE AWAKENING</span></div>
-    <div id="boss-section"></div>
-    <div class="crew-header-row">
-      <div><div class="crew-name-text">${escHtml(party.name)}</div><div class="crew-sub-text">${partyMembers.length} pilots · Code: <span style="color:var(--accent3);font-weight:900;letter-spacing:2px">${party.code}</span></div></div>
-      <button class="leave-btn" onclick="leaveParty()">↩ Leave</button>
-    </div>
-    <div class="sec-title" style="margin-bottom:10px"><img src="https://maplestory.io/api/GMS/255/item/4031138/icon" alt="" width="18" height="18" style="image-rendering:pixelated;vertical-align:middle;margin-right:4px"> PARTY LEADERBOARD</div>
-    <div class="lb-wrap">${sorted.map((m,i)=>`
+  const lbHTML = sorted.map((m,i)=>`
       <div class="lb-row${m.id===currentUser?.uid?' me':''}">
         <span class="lb-rank">${medals[i]||'#'+(i+1)}</span>
         <div class="lb-av" style="border-color:var(--border);background:var(--surf2)">${m.avatar?`<img src="${AVATAR_URL(m.avatar)}" width="32" height="32" style="image-rendering:pixelated;object-fit:contain" onerror="this.style.display='none'">`:`<span style="font-size:20px">👤</span>`}</div>
@@ -4114,16 +4129,38 @@ function renderParty() {
           <div class="lb-level">LVL ${m.level} ${m.title} · ${m.xp||0}XP · 🔥${m.currentStreak||0}</div>
         </div>
         ${m.id!==currentUser?.uid?`<button class="boost-mini" onclick="sendBoost('${escHtml(m.displayName)}')">⚡</button>`:`<span style="color:var(--accent3);font-size:10px;font-weight:800">YOU</span>`}
-      </div>`).join('')}
-    </div>
-    <div style="margin-top:16px"><div class="sec-title" style="margin-bottom:10px">QUICK NUDGES</div>
-    <div class="nudge-scroll">${['🚀 You got this!','💪 Keep going!','⭐ Proud of you!','🔔 Reminder!','🎯 Focus time!','❤️ Love you!','🔥 On fire!','⚔️ Attack the boss!'].map(n=>`<button class="nudge-chip" onclick="sendNudge('${n}')">${n}</button>`).join('')}</div></div>
-    <div style="margin-top:16px"><div class="sec-title" style="margin-bottom:10px">PARTY COMMS</div>
-    <div class="chat-box" id="chat-box"></div>
-    <div class="msg-input-row">
-      <input id="msg-input" class="msg-input" placeholder="Message the party..." onkeydown="if(event.key==='Enter')sendPartyMsg()">
-      <button class="send-btn" onclick="sendPartyMsg()">➤</button>
-    </div></div>`;
+      </div>`).join('');
+
+  if (!shellExists) {
+    // First render: build the full shell including chat box
+    panel.innerHTML = `
+      <div class="season-banner" style="border-color:var(--border);background:var(--surf2)"><span style="font-size:11px;font-weight:600;color:var(--muted);letter-spacing:0.5px">⚔️ SEASON 1: THE AWAKENING</span></div>
+      <div id="boss-section"></div>
+      <div class="crew-header-row">
+        <div><div class="crew-name-text">${escHtml(party.name)}</div><div class="crew-sub-text">${partyMembers.length} pilots · Code: <span style="color:var(--accent3);font-weight:900;letter-spacing:2px">${party.code}</span></div></div>
+        <button class="leave-btn" onclick="leaveParty()">↩ Leave</button>
+      </div>
+      <div class="sec-title" style="margin-bottom:10px"><img src="https://maplestory.io/api/GMS/255/item/4031138/icon" alt="" width="18" height="18" style="image-rendering:pixelated;vertical-align:middle;margin-right:4px"> PARTY LEADERBOARD</div>
+      <div class="lb-wrap" id="lb-wrap">${lbHTML}</div>
+      <div style="margin-top:16px"><div class="sec-title" style="margin-bottom:10px">QUICK NUDGES</div>
+      <div class="nudge-scroll">${['🚀 You got this!','💪 Keep going!','⭐ Proud of you!','🔔 Reminder!','🎯 Focus time!','❤️ Love you!','🔥 On fire!','⚔️ Attack the boss!'].map(n=>`<button class="nudge-chip" onclick="sendNudge('${n}')">${n}</button>`).join('')}</div></div>
+      <div style="margin-top:16px"><div class="sec-title" style="margin-bottom:10px">PARTY COMMS</div>
+      <div class="chat-box" id="chat-box"></div>
+      <div class="msg-input-row">
+        <input id="msg-input" class="msg-input" placeholder="Message the party..." onkeydown="if(event.key==='Enter')sendPartyMsg()">
+        <button class="send-btn" onclick="sendPartyMsg()">➤</button>
+      </div></div>`;
+  } else {
+    // Subsequent renders: only update leaderboard and crew sub-text (NOT the chat box)
+    const lbWrap = g('lb-wrap');
+    if (lbWrap) lbWrap.innerHTML = lbHTML;
+    const crewSub = panel.querySelector('.crew-sub-text');
+    if (crewSub) crewSub.innerHTML = `${partyMembers.length} pilots · Code: <span style="color:var(--accent3);font-weight:900;letter-spacing:2px">${party.code}</span>`;
+    // Restore any in-progress input text
+    const inp = g('msg-input');
+    if (inp && savedInputVal) inp.value = savedInputVal;
+  }
+
   renderBoss();
   renderMessages();
 }
