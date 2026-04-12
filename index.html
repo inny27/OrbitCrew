@@ -6823,7 +6823,7 @@ window.MUSIC_TRACKS = MUSIC_TRACKS;
 if('serviceWorker' in navigator) {
   try {
     const swCode = [
-      "const C='intask-v2';",
+      "const C='intask-v3';",
       "self.addEventListener('install',e=>{self.skipWaiting();});",
       "self.addEventListener('activate',e=>{self.clients.claim();e.waitUntil(caches.keys().then(k=>Promise.all(k.filter(x=>x!==C).map(x=>caches.delete(x)))));});",
       "self.addEventListener('fetch',e=>{if(e.request.method!=='GET')return;const u=new URL(e.request.url);if(u.origin!==self.location.origin)return;e.respondWith(caches.open(C).then(c=>c.match(e.request).then(r=>{const n=fetch(e.request).then(res=>{if(res.ok)c.put(e.request,res.clone());return res;}).catch(()=>r);return r||n;})));});"
