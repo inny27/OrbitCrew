@@ -151,7 +151,7 @@ body::before{
 ============================================================ */
 .panels{flex:1;min-height:0;overflow:hidden;}
 .panel{display:none;}
-.panel.active{display:block;height:100%;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:16px 16px calc(var(--nav-h) + 160px);box-sizing:border-box;}
+.panel.active{display:block;height:100%;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;padding:16px 16px calc(var(--nav-h) + 160px);box-sizing:border-box;max-width:100%;}
 
 
 /* ── Task Archive ── */
@@ -390,26 +390,26 @@ body::before{
 /* Sets builder */
 .sets-head{display:flex;align-items:center;padding:0 8px;margin-bottom:8px;}
 .sets-head-lbl{font-size:10px;font-weight:800;color:var(--muted);letter-spacing:1px;text-transform:uppercase;}
-.set-row{display:flex;align-items:center;gap:4px;background:var(--parchment);border-radius:10px;padding:8px 10px;margin-bottom:6px;border:1px solid var(--border);transition:.1s;width:100%;box-sizing:border-box;}
+.set-row{display:flex;align-items:center;gap:3px;background:var(--parchment);border-radius:8px;padding:5px 8px;margin-bottom:4px;border:1px solid var(--border);transition:.1s;width:100%;box-sizing:border-box;}
 .set-row.done-set{border-color:var(--sage);background:rgba(122,158,126,.08);}
 .set-badge{width:22px;height:22px;border-radius:6px;background:var(--gold-bg);color:var(--gold);font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-family:'DM Sans',sans-serif;border:1px solid rgba(200,149,42,0.2);}
 .set-fg{display:flex;align-items:center;gap:3px;}
-.set-adj{width:32px;height:32px;border-radius:9px;border:1px solid var(--border);background:var(--surf);color:var(--text);font-size:20px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:.15s;user-select:none;}
+.set-adj{width:28px;height:28px;border-radius:7px;border:1px solid var(--border);background:var(--surf);color:var(--text);font-size:17px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:.15s;user-select:none;}
 .set-adj:active{background:var(--accent);border-color:var(--accent);color:#fff;transform:scale(.94);}
-.set-num-input{width:44px;background:var(--surf);border:1px solid var(--border);border-radius:8px;padding:5px 2px;color:var(--text);font-family:'Inter',sans-serif;font-variant-numeric:tabular-nums;font-size:15px;font-weight:700;text-align:center;outline:none;}
+.set-num-input{width:40px;background:var(--surf);border:1px solid var(--border);border-radius:6px;padding:3px 2px;color:var(--text);font-family:'Inter',sans-serif;font-variant-numeric:tabular-nums;font-size:14px;font-weight:700;text-align:center;outline:none;}
 .set-unit-lbl{display:none;}
 .set-x-lbl{font-size:12px;font-weight:900;color:var(--muted);flex-shrink:0;margin:0 1px;}
-.set-check-btn{width:26px;height:26px;border-radius:8px;border:1.5px solid var(--sage);background:rgba(122,158,126,0.08);color:var(--sage);font-size:11px;font-weight:700;cursor:pointer;flex-shrink:0;transition:.2s;}
+.set-check-btn{width:24px;height:24px;border-radius:6px;border:1.5px solid var(--sage);background:rgba(122,158,126,0.08);color:var(--sage);font-size:11px;font-weight:700;cursor:pointer;flex-shrink:0;transition:.2s;}
 .set-del-btn{background:none;border:none;color:var(--red);font-size:14px;cursor:pointer;flex-shrink:0;opacity:.7;padding:0 2px;}
 .set-del-btn:hover{opacity:1;}
 /* Set header labels */
 .sets-grid-head{display:grid;grid-template-columns:28px 1fr auto 1fr auto auto;gap:6px;padding:0 10px;margin-bottom:4px;}
 .sgh-lbl{font-size:9px;font-weight:800;color:var(--muted);letter-spacing:1px;text-transform:uppercase;text-align:center;}
-.add-set-btn{width:100%;padding:13px;border-radius:12px;border:2px dashed rgba(6,182,212,.3);background:transparent;color:var(--accent2);font-family:'Nunito',sans-serif;font-size:14px;font-weight:800;cursor:pointer;transition:.2s;margin:6px 0 14px;}
+.add-set-btn{width:100%;padding:9px;border-radius:10px;border:2px dashed rgba(6,182,212,.3);background:transparent;color:var(--accent2);font-family:'Nunito',sans-serif;font-size:13px;font-weight:800;cursor:pointer;transition:.2s;margin:4px 0 10px;}
 .add-set-btn:hover{border-color:var(--accent2);background:rgba(6,182,212,.05);}
 .feel-row{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:8px;}
 .feel-btns{display:flex;gap:8px;}
-.feel-btn{width:48px;height:48px;border-radius:14px;border:2px solid var(--border);background:var(--surf2);font-size:22px;cursor:pointer;transition:.2s;display:flex;align-items:center;justify-content:center;}
+.feel-btn{width:38px;height:38px;border-radius:10px;border:2px solid var(--border);background:var(--surf2);font-size:18px;cursor:pointer;transition:.2s;display:flex;align-items:center;justify-content:center;}
 .feel-btn.sel{border-color:var(--accent);background:rgba(38,132,255,.15);transform:none;}
 .log-big-btn{width:100%;padding:14px;border-radius:12px;border:none;background:linear-gradient(135deg,var(--gold),var(--gold-lt));color:#fff;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;cursor:pointer;margin-top:12px;transition:.2s;box-shadow:0 4px 14px rgba(200,149,42,0.25);}
 .log-big-btn:hover{transform:translateY(-1px);}
@@ -514,17 +514,17 @@ body::before{
 .guide-reps-num{font-family:'Inter',sans-serif;font-variant-numeric:tabular-nums;font-size:20px;font-weight:900;display:block;}
 .reps-adj-btn{width:28px;height:28px;border-radius:99px;border:1px solid var(--border);background:var(--surf);color:var(--text);font-size:16px;cursor:pointer;font-weight:700;}
 /* Workout history */
-.workout-entry-card{background:var(--surf);border:1px solid var(--border);border-radius:12px;padding:12px;margin-bottom:8px;}
-.wec-top{display:flex;align-items:center;gap:10px;margin-bottom:8px;}
-.wec-icon{font-size:22px;}
-.wec-name{font-size:14px;font-weight:800;}
-.wec-meta{font-size:11px;color:var(--muted);font-weight:600;margin-top:2px;}
-.wec-sets-row{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:6px;}
-.wec-set-pill{font-size:11px;background:var(--surf2);border-radius:99px;padding:3px 10px;font-weight:700;}
+.workout-entry-card{background:var(--surf);border:1px solid var(--border);border-radius:10px;padding:8px 10px;margin-bottom:6px;overflow:hidden;max-width:100%;box-sizing:border-box;}
+.wec-top{display:flex;align-items:center;gap:8px;margin-bottom:5px;min-width:0;}
+.wec-icon{font-size:18px;flex-shrink:0;}
+.wec-name{font-size:13px;font-weight:800;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.wec-meta{font-size:10px;color:var(--muted);font-weight:600;margin-top:1px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.wec-sets-row{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:4px;overflow:hidden;max-width:100%;}
+.wec-set-pill{font-size:10px;background:var(--surf2);border-radius:99px;padding:2px 7px;font-weight:700;}
 .wec-vol{font-size:11px;font-weight:800;color:var(--accent3);font-family:'Inter',sans-serif;font-variant-numeric:tabular-nums;}
 .wec-notes{font-size:11px;color:var(--muted);font-style:italic;margin-top:4px;}
 .date-group-label{font-size:11px;font-weight:800;color:var(--accent2);letter-spacing:1px;margin-bottom:8px;text-transform:uppercase;}
-.date-group{margin-bottom:20px;}
+.date-group{margin-bottom:12px;}
 
 /* ============================================================
    MODALS
@@ -880,7 +880,7 @@ const EXERCISE_DB = [
    desc:'Raise dumbbells to sides to shoulder height, slight lean forward.',tips:'Lead with elbows. Go lighter than you think.',cues:'Imagine pouring water from a jug at the top.'},
 
   {id:'face_pull',name:'Face Pull',muscles:['Rear Delts','Rotator Cuff','Upper Back'],type:'weights',difficulty:1,category:'isolation',
-   demo:'rep-GVS_8XU',
+   demo:'eIq5CB9JfKE',
    desc:'Pull rope attachment to face level with elbows high, external rotate at peak.',tips:'Essential for shoulder health and posture.',cues:'Pull to your eyes, not your chin. Elbows high and wide.'},
 
   // ── BICEPS ──
@@ -965,15 +965,15 @@ const EXERCISE_DB = [
    desc:'Support bodyweight on hands with legs held straight out at a 90-degree angle.',tips:'Depress your shoulders hard. Point toes.',cues:'Push the floor away from you. Compress your abs hard.'},
 
   {id:'planche_lean',name:'Planche Lean',muscles:['Chest','Shoulders','Core'],type:'calisthenics',difficulty:3,category:'compound',
-   demo:'5d9S01JKZ6g',
+   demo:'Cd5DUuMFNJs',
    desc:'In push-up position lean forward past wrists, loading anterior shoulder and core.',tips:'Fingers pointing backward increases difficulty.',cues:'Lean forward progressively. Hold for 10-30 seconds.'},
 
   {id:'tuck_planche',name:'Tuck Planche',muscles:['Chest','Shoulders','Core'],type:'calisthenics',difficulty:3,category:'compound',
-   demo:'7RbPncGFZL8',
+   demo:'FDMZiZGVLpg',
    desc:'Hold body off ground with knees tucked to chest, arms straight.',tips:'Depression and protraction of scapula is key.',cues:'Push through your hands. Hollow body position.'},
 
   {id:'handstand_pushup',name:'Handstand Push-up',muscles:['Shoulders','Triceps','Core'],type:'calisthenics',difficulty:3,category:'compound',
-   demo:'WRL_FnCkEkY',
+   demo:'ytJNMRcEKfQ',
    desc:'Handstand against wall, lower head toward floor and press back up.',tips:'Head position is key — tuck chin or look at hands.',cues:'Elbows track 45 degrees, not flared wide.'},
 
   {id:'front_lever',name:'Front Lever',muscles:['Back','Core','Shoulders'],type:'calisthenics',difficulty:3,category:'isolation',
@@ -1082,7 +1082,7 @@ const EXERCISE_DB = [
    cues:'Opposite arm and leg move together. Keep a neutral spine throughout.'},
 
   {id:'commando_crawl',name:'Commando Crawl',muscles:['Core','Shoulders','Chest','Triceps'],type:'calisthenics',difficulty:2,category:'compound',
-   demo:'cnyTQDSE884',
+   demo:'aLyJDfGBFBM',
    desc:'Low crawl on elbows and toes, dragging body forward close to the ground.',
    tips:'Keep hips flat. Pull with elbows, push with toes.',
    cues:'Stay low. Use your lats and core to drive forward, not your back.'},
@@ -1101,19 +1101,19 @@ const EXERCISE_DB = [
 
   // ── MOUNTAIN CLIMBERS + VARIATIONS ──
   {id:'mountain_climbers',name:'Mountain Climbers',muscles:['Core','Cardio','Shoulders','Hip Flexors'],type:'calisthenics',difficulty:2,category:'compound',
-   demo:'cnyTQDSE884',
+   demo:'nmwgirgXLYM',
    desc:'In plank position, rapidly alternate driving knees to chest.',
    tips:'Keep hips level. The faster you go the more cardiovascular it becomes.',
    cues:'Flat back. Drive knee to chest, not to armpit. Snap back fully before switching.'},
 
   {id:'cross_body_mountain_climber',name:'Cross-Body Mountain Climber',muscles:['Core','Obliques','Shoulders'],type:'calisthenics',difficulty:2,category:'isolation',
-   demo:'cnyTQDSE884',
+   demo:'nmwgirgXLYM',
    desc:'Mountain climbers where each knee drives toward the opposite elbow to target the obliques.',
    tips:'Slow it down to really feel the rotation.',
    cues:'Twist the hip slightly on each rep. Control beats speed here.'},
 
   {id:'slow_mountain_climber',name:'Slow Mountain Climbers',muscles:['Core','Hip Flexors','Shoulders'],type:'calisthenics',difficulty:2,category:'isolation',
-   demo:'cnyTQDSE884',
+   demo:'nmwgirgXLYM',
    desc:'Mountain climbers performed in a slow controlled tempo — 3 seconds per rep.',
    tips:'Far superior to fast mountain climbers for true core strength.',
    cues:'Hold the knee-to-chest position for a beat. Extend fully back before switching.'},
@@ -1226,7 +1226,7 @@ const EXERCISE_DB = [
    cues:'Rock from shoulders to hips and back. Never break the rigid C-curve.'},
 
   {id:'v_sit',name:'V-Sit',muscles:['Core','Hip Flexors','Triceps'],type:'calisthenics',difficulty:3,category:'isolation',
-   demo:'HoE-C85ZWCg',
+   demo:'IUZKcvEOaG4',
    desc:'Balance on sitting bones with legs and torso elevated in a V shape, hands pushing into floor.',
    tips:'Harder than L-sit. Compress the hip flexors hard. Point toes.',
    cues:'Legs above horizontal. Lean back slightly. Push floor away with hands.'},
@@ -1755,7 +1755,10 @@ function subscribeAll(uid, crewId) {
 function subscribeParty(crewId) {
   unsubs.push(onSnapshot(doc(db,'crews',crewId), s => { if(s.exists()){party={id:s.id,...s.data()};renderParty();} }));
   unsubs.push(onSnapshot(query(collection(db,'users'),where('crewId','==',crewId)), s => { partyMembers=s.docs.map(d=>({id:d.id,...d.data()}));renderParty(); }));
-  unsubs.push(onSnapshot(query(collection(db,'crews',crewId,'messages'),orderBy('createdAt','asc')), s => { partyMessages=s.docs.map(d=>({id:d.id,...d.data()}));renderMessages(); }));
+  unsubs.push(onSnapshot(query(collection(db,'crews',crewId,'messages'),orderBy('createdAt','asc')), s => {
+    partyMessages = s.docs.map(d => ({id:d.id,...d.data()}));
+    renderMessages();
+  }));
   unsubs.push(onSnapshot(doc(db,'crews',crewId,'boss','current'), s => { if(s.exists()){boss=s.data();renderBoss();} }));
 }
 
@@ -2550,6 +2553,54 @@ window.completeHabit = async id => {
 };
 
 
+// ─── HABIT PAST DAY LOGGING ──────────────────────────────
+window.openHabitPastDay = function(id) {
+  const h = habits.find(x=>x.id===id); if(!h) return;
+  const overlay = document.createElement('div');
+  overlay.id = 'habit-pastday-overlay';
+  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:7000;display:flex;align-items:center;justify-content:center;padding:20px';
+  const today = new Date();
+  const maxDate = new Date(today); maxDate.setDate(today.getDate()-1);
+  const minDate = new Date(today); minDate.setDate(today.getDate()-30);
+  const fmt = d => d.toISOString().split('T')[0];
+  overlay.innerHTML = \`<div style="background:var(--surf);border-radius:20px;padding:24px;max-width:320px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.4)">
+    <div style="font-family:var(--pixel);font-size:14px;font-weight:700;color:var(--ink);margin-bottom:6px;text-align:center">📅 LOG PAST DAY</div>
+    <div style="font-size:12px;color:var(--muted);text-align:center;margin-bottom:16px">\${escHtml(h.name)}</div>
+    <label class="field-label">SELECT DATE</label>
+    <input id="habit-past-date" type="date" class="form-input" value="\${fmt(maxDate)}" max="\${fmt(maxDate)}" min="\${fmt(minDate)}">
+    <div style="display:flex;gap:10px;margin-top:14px">
+      <button class="big-btn" style="background:var(--parchment);border:1.5px solid var(--border);color:var(--muted)" onclick="document.getElementById('habit-pastday-overlay').remove()">Cancel</button>
+      <button class="big-btn" onclick="logHabitPastDay('\${id}')">✅ Log It</button>
+    </div>
+  </div>\`;
+  document.body.appendChild(overlay);
+};
+
+window.logHabitPastDay = async function(id) {
+  const h = habits.find(x=>x.id===id); if(!h) return;
+  const dateInput = document.getElementById('habit-past-date');
+  if (!dateInput) return;
+  const [y,mo,d] = dateInput.value.split('-').map(Number);
+  const date = new Date(y, mo-1, d);
+  const dateStr = date.toDateString();
+  if (h.doneDays?.[dateStr]) { toast('Already logged for that day!'); return; }
+  const yesterday = new Date(Date.now()-86400000).toDateString();
+  const continued = h.lastDoneDate === yesterday || h.lastDoneDate === dateStr;
+  const streak = continued ? (h.streak||0)+1 : 1;
+  const maxStreak = Math.max(h.maxStreak||0, streak);
+  try {
+    await updateDoc(doc(db,'habits',id), {
+      streak, maxStreak,
+      lastDoneDate: dateStr,
+      [\`doneDays.\${dateStr}\`]: true
+    });
+    document.getElementById('habit-pastday-overlay')?.remove();
+    toast(\`📅 Logged for \${date.toLocaleDateString('en-AU',{weekday:'short',day:'numeric',month:'short'})}!\`);
+  } catch(e) {
+    toast('Could not log past day.');
+  }
+};
+
 // ─── HABIT SCHEDULE & EDIT ────────────────────────────────
 let habitScheduleDays = [1,2,3,4,5]; // Mon-Fri default
 
@@ -2919,7 +2970,30 @@ async function sendMsg(text) {
     text:text.trim(), createdAt:serverTimestamp()
   });
 }
-window.sendPartyMsg = async () => { const inp=g('msg-input'); await sendMsg(inp.value); inp.value=''; };
+window.sendPartyMsg = async () => {
+  const inp = g('msg-input');
+  const text = inp.value.trim();
+  if (!text) return;
+  inp.value = '';
+  // Optimistic local append so message appears immediately
+  const box = g('chat-box');
+  if (box) {
+    const tempId = 'temp_' + Date.now();
+    const div = document.createElement('div');
+    div.className = 'msg-wrap msg-me';
+    div.id = tempId;
+    div.innerHTML = \`<div class="bubble me" style="background:var(--accent)">\${escHtml(text)}</div>\`;
+    box.appendChild(div);
+    box.scrollTop = box.scrollHeight;
+  }
+  try {
+    await sendMsg(text);
+  } catch(e) {
+    toast('Message failed to send.');
+    const temp = document.getElementById('temp_' + (Date.now() - 1));
+    if (temp) temp.remove();
+  }
+};
 window.sendNudge = t => sendMsg(t);
 window.sendBoost = async targetName => {
   await sendMsg(`⚡ BOOST to ${targetName}! You are crushing it! 🚀`);
@@ -3502,7 +3576,15 @@ window.switchSetMode = mode => {
 window.addSet = () => {
   const last = currentSets[currentSets.length-1]||{};
   currentSets.push({reps:last.reps||8, weight:last.weight||'', duration:last.duration||30, mode:setMode, done:false});
-  const b = document.getElementById('sets-builder'); if (b) b.innerHTML = currentSets.map((s,j)=>setRowHTML(s,j)).join('');
+  const b = document.getElementById('sets-builder');
+  if (b) {
+    b.innerHTML = currentSets.map((s,j)=>setRowHTML(s,j)).join('');
+    // Scroll the new set into view
+    requestAnimationFrame(() => {
+      const newRow = b.lastElementChild;
+      if (newRow) newRow.scrollIntoView({behavior:'smooth', block:'nearest'});
+    });
+  }
 };
 window.setFeel = (feel, el) => {
   currentFeel = feel;
@@ -3528,10 +3610,56 @@ window.toggleSetMode = (mode) => {
 
 // ─── SMART SEARCH ─────────────────────────────────────────
 function smartSearch(q) {
-  q = q.toLowerCase();
-  const related = {'bicep':['Biceps','Forearms'],'curl':['Biceps','Forearms'],'chest':['Chest','Triceps'],'push':['Chest','Triceps','Shoulders'],'back':['Back','Biceps'],'pull':['Back','Biceps'],'shoulder':['Shoulders'],'delt':['Shoulders'],'leg':['Quads','Hamstrings','Glutes'],'squat':['Quads','Glutes'],'core':['Core'],'abs':['Core'],'tricep':['Triceps'],'glute':['Glutes'],'ham':['Hamstrings']};
-  const relMuscles = Object.entries(related).filter(([k])=>q.includes(k)).flatMap(([,v])=>v);
-  return getAllExercises().filter(ex => ex.name.toLowerCase().includes(q) || ex.muscles.some(m=>m.toLowerCase().includes(q)) || ex.type.toLowerCase().includes(q) || relMuscles.some(m=>ex.muscles.includes(m))).slice(0,6);
+  q = q.toLowerCase().trim();
+  if (!q) return [];
+  // Keyword → primary muscle group mapping
+  const muscleMap = {
+    'chest':['Chest'],'pec':['Chest'],
+    'back':['Back','Lats'],'lat':['Back','Lats'],
+    'shoulder':['Shoulders'],'delt':['Shoulders'],
+    'bicep':['Biceps'],'curl':['Biceps'],
+    'tricep':['Triceps'],'push':['Chest','Triceps'],
+    'pull':['Back','Biceps'],'row':['Back'],
+    'leg':['Quads','Glutes','Hamstrings'],'quad':['Quads'],
+    'squat':['Quads','Glutes'],'glute':['Glutes'],
+    'ham':['Hamstrings'],'hamstring':['Hamstrings'],
+    'core':['Core'],'abs':['Core'],'plank':['Core'],
+    'calf':['Calves'],'cardio':['Cardio'],'run':['Endurance'],
+    'swim':['Shoulders','Back'],'press':['Chest','Shoulders'],
+    'lunge':['Quads','Glutes'],'deadlift':['Back','Glutes'],
+  };
+  const relMuscles = Object.entries(muscleMap)
+    .filter(([k]) => q.includes(k))
+    .flatMap(([,v]) => v);
+
+  const all = getAllExercises();
+  const scored = all.map(ex => {
+    const nm = ex.name.toLowerCase();
+    const muscles = ex.muscles.map(m=>m.toLowerCase());
+    let score = 0;
+    // Exact name start = highest priority
+    if (nm.startsWith(q)) score += 100;
+    // Name contains query
+    else if (nm.includes(q)) score += 60;
+    // Primary muscle (first listed) matches keyword
+    else if (relMuscles.some(rm => ex.muscles[0]?.toLowerCase().includes(rm.toLowerCase()))) score += 40;
+    // Secondary muscle matches keyword
+    else if (relMuscles.some(rm => muscles.some(m=>m.includes(rm.toLowerCase())))) score += 20;
+    // Any muscle name contains query
+    else if (muscles.some(m=>m.includes(q))) score += 15;
+    // Type matches
+    else if (ex.type.toLowerCase().includes(q)) score += 10;
+    return {ex, score};
+  })
+  .filter(x => x.score > 0)
+  .sort((a,b) => {
+    if (b.score !== a.score) return b.score - a.score;
+    return a.ex.name.localeCompare(b.ex.name);
+  })
+  .slice(0, 8)
+  .map(x => x.ex);
+
+  return scored;
 }
 
 window._showExSuggestions = () => {
@@ -3744,6 +3872,7 @@ function enableTaskDragAndDrop() {
     if (!taskList) return;
     const items = taskList.querySelectorAll('.task-card');
     items.forEach(item => {
+      item.setAttribute('draggable','true');
       item.addEventListener('dragstart', e => {
         _dragSrcId = item.dataset.id;
         e.dataTransfer.setData('text/plain', item.dataset.id);
@@ -3753,6 +3882,33 @@ function enableTaskDragAndDrop() {
       item.addEventListener('dragend', () => {
         item.style.opacity = '';
         item.classList.remove('dragging');
+        saveNewTaskOrder();
+      });
+      // Touch drag support
+      let _touchDragging = null, _touchClone = null;
+      item.addEventListener('touchstart', e => {
+        if (!e.target.closest('.task-drag-handle')) return;
+        e.preventDefault();
+        _touchDragging = item;
+        item.classList.add('dragging');
+        _touchClone = item.cloneNode(true);
+        _touchClone.style.cssText = 'position:fixed;opacity:.7;pointer-events:none;z-index:9999;width:'+item.offsetWidth+'px;left:'+item.getBoundingClientRect().left+'px;top:'+item.getBoundingClientRect().top+'px;';
+        document.body.appendChild(_touchClone);
+      }, {passive:false});
+      item.addEventListener('touchmove', e => {
+        if (!_touchDragging) return;
+        e.preventDefault();
+        const t = e.touches[0];
+        if (_touchClone) { _touchClone.style.left = t.clientX - _touchDragging.offsetWidth/2 + 'px'; _touchClone.style.top = t.clientY - 30 + 'px'; }
+        const after = getDragAfterElement(taskList, t.clientY);
+        if (after == null) taskList.appendChild(_touchDragging);
+        else taskList.insertBefore(_touchDragging, after);
+      }, {passive:false});
+      item.addEventListener('touchend', () => {
+        if (!_touchDragging) return;
+        item.classList.remove('dragging');
+        if (_touchClone) { _touchClone.remove(); _touchClone = null; }
+        _touchDragging = null;
         saveNewTaskOrder();
       });
     });
@@ -3878,8 +4034,12 @@ window._editModalDelete = function(id, btn) {
   }
 };
 window._reopenTask = async function(id) {
-  await updateDoc(doc(db,'tasks',id), {done:false, doneAt:null});
-  toast('↩ Task re-opened!');
+  try {
+    await updateDoc(doc(db,'tasks',id), {done:false, doneAt:null});
+    toast('↩ Task re-opened!');
+  } catch(e) {
+    toast('Could not reopen task.');
+  }
 };
 window._setEditPill = function(val, group, el) {
   document.querySelectorAll(`[data-group="${group}"]`).forEach(b => b.classList.remove('active'));
@@ -6171,26 +6331,42 @@ let _mpTab = 'all'; // 'all' | 'liked' | 'albums'
 let _mpLiked = new Set();
 let _mpAlbums = {};
 
-// Load liked/albums from Firestore per user (falls back to localStorage for guests)
+// Load liked/albums from Firestore per user — each account has its own data
+// Albums version: bump MP_ALBUMS_VERSION to wipe all user album data (fresh start)
+const MP_ALBUMS_VERSION = 'v2';
 async function _mpLoadUserMusic() {
   if (!currentUser) {
-    // Guest: use localStorage
-    _mpLiked = new Set(JSON.parse(localStorage.getItem('mp_liked_' + (currentUser?.uid||'anon')) || '[]'));
-    _mpAlbums = JSON.parse(localStorage.getItem('mp_albums_' + (currentUser?.uid||'anon')) || '{}');
+    _mpLiked = new Set(JSON.parse(localStorage.getItem('mp_liked_anon') || '[]'));
+    const savedVer = localStorage.getItem('mp_albums_ver_anon');
+    _mpAlbums = savedVer === MP_ALBUMS_VERSION
+      ? JSON.parse(localStorage.getItem('mp_albums_anon') || '{}')
+      : {};
+    if (savedVer !== MP_ALBUMS_VERSION) localStorage.setItem('mp_albums_ver_anon', MP_ALBUMS_VERSION);
   } else {
     try {
       const snap = await getDoc(doc(db, 'users', currentUser.uid));
       if (snap.exists()) {
         const d = snap.data();
+        // Each account retains its own liked songs
         _mpLiked = new Set(d.mp_liked || []);
-        _mpAlbums = d.mp_albums || {};
+        // Reset albums if version has changed
+        if (d.mp_albums_ver === MP_ALBUMS_VERSION) {
+          _mpAlbums = d.mp_albums || {};
+        } else {
+          _mpAlbums = {};
+          // Save the reset immediately
+          updateDoc(doc(db,'users',currentUser.uid), {
+            mp_albums: {},
+            mp_albums_ver: MP_ALBUMS_VERSION
+          }).catch(()=>{});
+        }
       }
     } catch(e) {
-      // fallback to localStorage
       _mpLiked = new Set(JSON.parse(localStorage.getItem('mp_liked_' + currentUser.uid) || '[]'));
-      _mpAlbums = JSON.parse(localStorage.getItem('mp_albums_' + currentUser.uid) || '{}');
+      _mpAlbums = {};
     }
   }
+  // Always ensure In-Built Songs album exists
   if (!_mpAlbums['In-Built Songs']) _mpAlbums['In-Built Songs'] = MUSIC_TRACKS.map(t=>t.id);
 }
 
@@ -6209,10 +6385,14 @@ async function _mpSaveLiked() {
 async function _mpSaveAlbums() {
   if (!currentUser) {
     localStorage.setItem('mp_albums_anon', JSON.stringify(_mpAlbums));
+    localStorage.setItem('mp_albums_ver_anon', MP_ALBUMS_VERSION);
     return;
   }
   try {
-    await updateDoc(doc(db,'users',currentUser.uid), { mp_albums: _mpAlbums });
+    await updateDoc(doc(db,'users',currentUser.uid), {
+      mp_albums: _mpAlbums,
+      mp_albums_ver: MP_ALBUMS_VERSION
+    });
   } catch(e) {
     localStorage.setItem('mp_albums_' + currentUser.uid, JSON.stringify(_mpAlbums));
   }
@@ -6591,8 +6771,8 @@ window._mpAddToAlbum = async function(trackId) {
   overlay.innerHTML = `<div style="background:var(--surf);border-radius:16px;padding:20px;max-width:300px;width:100%">
     <div style="font-family:var(--pixel);font-size:10px;color:var(--accent);margin-bottom:12px">ADD TO ALBUM</div>
     <div style="font-size:13px;font-weight:700;margin-bottom:14px">${track ? track.title : trackId}</div>
-    ${albumNames.map(n=>`<button onclick="window._doAddToAlbum('${trackId}','${encodeURIComponent(n)}');this.closest('div[style]').remove()" style="width:100%;padding:10px;margin-bottom:8px;border:1.5px solid var(--border);background:var(--surf2);color:var(--text);border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;text-align:left">📂 ${n}</button>`).join('')}
-    <button onclick="this.closest('div[style]').remove();window._mpBuildUI&&window._mpBuildUI()" style="width:100%;padding:10px;border:1.5px solid var(--border);background:transparent;color:var(--muted);border-radius:10px;font-size:13px;cursor:pointer">Cancel</button>
+    ${albumNames.map(n=>`<button onclick="window._doAddToAlbum('${trackId}','${encodeURIComponent(n)}')" style="width:100%;padding:10px;margin-bottom:8px;border:1.5px solid var(--border);background:var(--surf2);color:var(--text);border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;text-align:left">📂 ${n}</button>`).join('')}
+    <button onclick="document.querySelectorAll('div[style*=\"z-index:9999\"]').forEach(e=>e.remove());window._mpBuildUI&&window._mpBuildUI()" style="width:100%;padding:10px;border:1.5px solid var(--border);background:transparent;color:var(--muted);border-radius:10px;font-size:13px;cursor:pointer">Cancel</button>
   </div>`;
   document.body.appendChild(overlay);
 };
@@ -6600,13 +6780,18 @@ window._mpAddToAlbum = async function(trackId) {
 window._doAddToAlbum = async function(trackId, encodedAlbum) {
   const album = decodeURIComponent(encodedAlbum);
   if (!_mpAlbums[album]) _mpAlbums[album] = [];
-  if (_mpAlbums[album].includes(trackId)) { toast('Already in that album!'); return; }
+  if (_mpAlbums[album].includes(trackId)) {
+    // Remove any overlay even if duplicate
+    document.querySelectorAll('div[style*="z-index:9999"]').forEach(el => el.remove());
+    toast('Already in that album!');
+    _mpBuildUI();
+    return;
+  }
   _mpAlbums[album].push(trackId);
   await _mpSaveAlbums();
-  // Close any open picker overlays
-  document.querySelectorAll('[id^="mp-album-picker"]').forEach(el => el.remove());
-  toast('Added to ' + album + '! Tap 💿 to view.');
-  // Switch to albums tab so user sees it immediately
+  // Remove ALL floating overlays (album picker, etc.)
+  document.querySelectorAll('div[style*="z-index:9999"]').forEach(el => el.remove());
+  toast('Added to ' + album + '!');
   _mpTab = 'albums';
   _mpBuildUI();
 };
@@ -7071,10 +7256,10 @@ function updateExSearch(){if(window.updateExSearch)window.updateExSearch.apply(w
         <span class="sec-title">🏠 SHARED TASKS</span>
         <div style="display:flex;align-items:center;gap:6px">
           <button class="add-btn" onclick="taskType='chore';openModal('task-modal')">+</button>
-          <button class="sec-collapse-btn" id="chores-toggle" onclick="toggleSection('chores-list','chores-toggle')" title="Expand">▼</button>
+          <button class="sec-collapse-btn open" id="chores-toggle" onclick="toggleSection('chores-list','chores-toggle')" title="Collapse">▼</button>
         </div>
       </div>
-      <div class="sec-body closed" id="chores-list-wrap">
+      <div class="sec-body open" id="chores-list-wrap">
         <div id="chores-list"></div>
       </div>
       <div class="archive-section" id="archive-section" style="display:none">
