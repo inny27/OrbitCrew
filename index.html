@@ -2987,22 +2987,14 @@ window.sendPartyMsg = async () => {
   if (!text) return;
   if (!userProfile?.crewId) { toast('Join a party first!'); return; }
   inp.value = '';
-  // Optimistic append — shown immediately, replaced by real snapshot
-  const box = g('chat-box');
-  if (box) {
-    const div = document.createElement('div');
-    div.className = 'msg-wrap msg-me _optimistic';
-    div.innerHTML = `<div class="bubble me" style="background:var(--accent)">${escHtml(text)}</div>`;
-    box.appendChild(div);
-    box.scrollTop = box.scrollHeight;
-  }
+  inp.focus();
   try {
     await sendMsg(text);
-    // Remove optimistic messages — real snapshot will re-render
-    document.querySelectorAll('._optimistic').forEach(el => el.remove());
+    // renderMessages() is called by the Firestore snapshot listener automatically
   } catch(e) {
-    document.querySelectorAll('._optimistic').forEach(el => el.remove());
+    console.error('sendPartyMsg failed:', e);
     toast('Message failed to send.');
+    inp.value = text; // restore so user can retry
   }
 };
 window.sendNudge = t => sendMsg(t);
@@ -3052,7 +3044,10 @@ window.leaveParty = function() {
 window._doLeaveParty = async function() {
   await updateDoc(doc(db,'users',currentUser.uid),{crewId:null});
   party=null; partyMembers=[]; partyMessages=[]; boss=null;
-  const _pp = g('party-panel'); if(_pp) _pp.innerHTML = '';
+  const inp = g('msg-input'); if(inp) inp.value = '';
+  const box = g('chat-box'); if(box) box.innerHTML = '<div class="empty-chat">No messages yet. Say hi! 👋</div>';
+  // Wipe nudge chips so they get re-rendered on next join
+  const nudge = g('nudge-scroll'); if(nudge) nudge.innerHTML = '';
   renderParty(); toast('Left the party.');
 };
 
@@ -3823,8 +3818,6 @@ function renderToday() {
   if (_cw) { _cw.classList.add('open'); _cw.classList.remove('closed'); }
   if (_tb) _tb.classList.add('open');
   if (_cb) _cb.classList.add('open');
-  // Enable drag-and-drop after DOM update
-  requestAnimationFrame(enableTaskDragAndDrop);
 }
 
 function taskCard(t, isArchived = false) {
@@ -3866,15 +3859,23 @@ function taskCard(t, isArchived = false) {
   </div>`;
 }
 
-// Wire all task card interactions via event delegation — no inline onclick strings
+// Wire all task card interactions via event delegation
+// Uses AbortController to cleanly remove old listeners before re-wiring
+const _taskWireMap = new WeakMap();
+
 function wireTaskEvents(container) {
   if (!container) return;
-  // Clone to remove any previously attached listeners
-  const fresh = container.cloneNode(true);
-  container.parentNode.replaceChild(fresh, container);
+
+  // Abort any previously attached listeners on this container
+  const oldAC = _taskWireMap.get(container);
+  if (oldAC) oldAC.abort();
+
+  const ac = new AbortController();
+  const sig = ac.signal;
+  _taskWireMap.set(container, ac);
   let _lpt = null;
 
-  fresh.addEventListener('click', e => {
+  container.addEventListener('click', e => {
     const card = e.target.closest('.task-card');
     if (!card) return;
     const id = card.dataset.id;
@@ -3891,16 +3892,16 @@ function wireTaskEvents(container) {
       return;
     }
     if (!archived) window.completeTask(id);
-  });
+  }, {signal: sig});
 
-  fresh.addEventListener('contextmenu', e => {
+  container.addEventListener('contextmenu', e => {
     const card = e.target.closest('.task-card');
     if (!card || card.dataset.archived === '1') return;
     e.preventDefault(); e.stopPropagation();
     window.openEditTaskModal(card.dataset.id);
-  });
+  }, {signal: sig});
 
-  fresh.addEventListener('touchstart', e => {
+  container.addEventListener('touchstart', e => {
     const card = e.target.closest('.task-card');
     if (!card || card.dataset.archived === '1') return;
     if (e.target.closest('[data-action="drag"]')) return;
@@ -3911,11 +3912,10 @@ function wireTaskEvents(container) {
     card.addEventListener('touchend',    cancel, {once:true, passive:true});
     card.addEventListener('touchmove',   cancel, {once:true, passive:true});
     card.addEventListener('touchcancel', cancel, {once:true, passive:true});
-  }, {passive:true});
+  }, {passive:true, signal: sig});
 
-  // Drag & drop on fresh container
-  enableDragOnContainer(fresh);
-  return fresh;
+  // Wire drag on the same container (no cloneNode needed)
+  enableDragOnContainer(container);
 }
 
 // ─── TASK DATE FORMATTER ──────────────────────────────────
@@ -4258,64 +4258,50 @@ function habitCard(h) {
 }
 
 function renderParty() {
-  const panel = g('party-panel'); if (!panel) return;
-  if (!userProfile?.crewId || !party) {
-    // Only show "no party" if we don't already have a live chat shell
-    // (prevents race condition wiping chat when snapshots fire out of order)
-    if (!g('chat-box')) {
-      panel.innerHTML = `<div class="no-party-wrap"><div class="no-party-icon">🪐</div><div class="no-party-title">No Party Yet</div><div class="no-party-sub">Create a party or join one with a 6-digit code to connect with friends &amp; family.</div><button class="big-btn" onclick="openModal('party-modal')">🚀 Create or Join a Crew</button></div>`;
-    }
-    return;
-  }
+  // The party panel uses STATIC HTML elements — never dynamically created.
+  // We show/hide the two persistent screens and update their contents in-place.
+  const noPartyScreen = g('no-party-screen');
+  const partyScreen   = g('party-screen');
+  if (!noPartyScreen || !partyScreen) return;
 
-  // Preserve chat input value so rebuilds don't clear what user is typing
-  const existingInput = g('msg-input');
-  const savedInputVal = existingInput ? existingInput.value : '';
+  const inParty = !!(userProfile?.crewId && party);
 
-  // Only do a full rebuild if the shell doesn't exist yet (first render)
-  const shellExists = !!g('chat-box');
+  // Toggle which screen is visible
+  noPartyScreen.style.display = inParty ? 'none'  : 'block';
+  partyScreen.style.display   = inParty ? 'block' : 'none';
 
-  const sorted = [...partyMembers].sort((a,b)=>(b.level*1000+(b.xp||0))-(a.level*1000+(a.xp||0)));
-  const medals = ['🥇','🥈','🥉'];
-  const lbHTML = sorted.map((m,i)=>`
+  if (!inParty) return;
+
+  // Update party name + subtitle
+  const nameEl = g('party-name-text');
+  const subEl  = g('party-sub-text');
+  if (nameEl) nameEl.textContent = party.name || '';
+  if (subEl)  subEl.innerHTML = `${partyMembers.length} pilots · Code: <span style="color:var(--accent3);font-weight:900;letter-spacing:2px">${party.code}</span>`;
+
+  // Update leaderboard
+  const lbWrap = g('lb-wrap');
+  if (lbWrap) {
+    const sorted = [...partyMembers].sort((a,b)=>(b.level*1000+(b.xp||0))-(a.level*1000+(a.xp||0)));
+    const medals = ['🥇','🥈','🥉'];
+    lbWrap.innerHTML = sorted.map((m,i)=>`
       <div class="lb-row${m.id===currentUser?.uid?' me':''}">
         <span class="lb-rank">${medals[i]||'#'+(i+1)}</span>
         <div class="lb-av" style="border-color:var(--border);background:var(--surf2)">${m.avatar?`<img src="${AVATAR_URL(m.avatar)}" width="32" height="32" style="image-rendering:pixelated;object-fit:contain" onerror="this.style.display='none'">`:`<span style="font-size:20px">👤</span>`}</div>
         <div style="flex:1">
           <div class="lb-name">${escHtml(m.displayName)} ${(m.badges||[]).slice(0,3).map(bid=>{const b=BADGES.find(x=>x.id===bid);return b?b.icon:''}).join('')}</div>
-          <div class="lb-level">LVL ${m.level} ${m.title} · ${m.xp||0}XP · 🔥${m.currentStreak||0}</div>
+          <div class="lb-level">LVL ${m.level||1} ${m.title||''} · ${m.xp||0}XP · 🔥${m.currentStreak||0}</div>
         </div>
-        ${m.id!==currentUser?.uid?`<button class="boost-mini" onclick="sendBoost('${escHtml(m.displayName)}')">⚡</button>`:`<span style="color:var(--accent3);font-size:10px;font-weight:800">YOU</span>`}
+        ${m.id!==currentUser?.uid
+          ? `<button class="boost-mini" onclick="sendBoost('${escHtml(m.displayName)}')">⚡</button>`
+          : `<span style="color:var(--accent3);font-size:10px;font-weight:800">YOU</span>`}
       </div>`).join('');
+  }
 
-  if (!shellExists) {
-    // First render: build the full shell including chat box
-    panel.innerHTML = `
-      <div class="season-banner" style="border-color:var(--border);background:var(--surf2)"><span style="font-size:11px;font-weight:600;color:var(--muted);letter-spacing:0.5px">⚔️ SEASON 1: THE AWAKENING</span></div>
-      <div id="boss-section"></div>
-      <div class="crew-header-row">
-        <div><div class="crew-name-text">${escHtml(party.name)}</div><div class="crew-sub-text">${partyMembers.length} pilots · Code: <span style="color:var(--accent3);font-weight:900;letter-spacing:2px">${party.code}</span></div></div>
-        <button class="leave-btn" onclick="leaveParty()">↩ Leave</button>
-      </div>
-      <div class="sec-title" style="margin-bottom:10px"><img src="https://maplestory.io/api/GMS/255/item/4031138/icon" alt="" width="18" height="18" style="image-rendering:pixelated;vertical-align:middle;margin-right:4px"> PARTY LEADERBOARD</div>
-      <div class="lb-wrap" id="lb-wrap">${lbHTML}</div>
-      <div style="margin-top:16px"><div class="sec-title" style="margin-bottom:10px">QUICK NUDGES</div>
-      <div class="nudge-scroll">${['🚀 You got this!','💪 Keep going!','⭐ Proud of you!','🔔 Reminder!','🎯 Focus time!','❤️ Love you!','🔥 On fire!','⚔️ Attack the boss!'].map(n=>`<button class="nudge-chip" onclick="sendNudge('${n}')">${n}</button>`).join('')}</div></div>
-      <div style="margin-top:16px"><div class="sec-title" style="margin-bottom:10px">PARTY COMMS</div>
-      <div class="chat-box" id="chat-box"></div>
-      <div class="msg-input-row">
-        <input id="msg-input" class="msg-input" placeholder="Message the party..." onkeydown="if(event.key==='Enter')sendPartyMsg()">
-        <button class="send-btn" onclick="sendPartyMsg()">➤</button>
-      </div></div>`;
-  } else {
-    // Subsequent renders: only update leaderboard and crew sub-text (NOT the chat box)
-    const lbWrap = g('lb-wrap');
-    if (lbWrap) lbWrap.innerHTML = lbHTML;
-    const crewSub = panel.querySelector('.crew-sub-text');
-    if (crewSub) crewSub.innerHTML = `${partyMembers.length} pilots · Code: <span style="color:var(--accent3);font-weight:900;letter-spacing:2px">${party.code}</span>`;
-    // Restore any in-progress input text
-    const inp = g('msg-input');
-    if (inp && savedInputVal) inp.value = savedInputVal;
+  // Update nudge chips
+  const nudgeScroll = g('nudge-scroll');
+  if (nudgeScroll && !nudgeScroll.children.length) {
+    nudgeScroll.innerHTML = ['🚀 You got this!','💪 Keep going!','⭐ Proud of you!','🔔 Reminder!','🎯 Focus time!','❤️ Love you!','🔥 On fire!','⚔️ Attack the boss!']
+      .map(n=>`<button class="nudge-chip" onclick="sendNudge('${n}')">${n}</button>`).join('');
   }
 
   renderBoss();
@@ -4339,23 +4325,23 @@ function renderBoss() {
 
 function renderMessages() {
   const box = g('chat-box');
-  if (!box) {
-    // Chat box not in DOM yet (race: snapshot fired before shell was built).
-    // Retry once shell is ready.
-    if (userProfile?.crewId && party) {
-      requestAnimationFrame(renderMessages);
-    }
+  if (!box) return; // static element — always exists once panel-party renders
+  if (!partyMessages.length) {
+    box.innerHTML = '<div class="empty-chat">No messages yet. Say hi! 👋</div>';
     return;
   }
-  if (!partyMessages.length) { box.innerHTML='<div class="empty-chat">No messages yet. Say hi! 👋</div>'; return; }
-  // Preserve scroll position — only auto-scroll if user is already at bottom
-  const wasAtBottom = box.scrollHeight - box.scrollTop - box.clientHeight < 60;
-  box.innerHTML = partyMessages.map(m=>{
-    const isMe = m.from===currentUser?.uid;
+  // Only auto-scroll if user is already at the bottom
+  const wasAtBottom = box.scrollHeight - box.scrollTop - box.clientHeight < 80;
+  box.innerHTML = partyMessages.map(m => {
+    const isMe = m.from === currentUser?.uid;
+    const avHTML = m.avatar
+      ? `<img src="${AVATAR_URL(m.avatar)}" width="32" height="32" style="image-rendering:pixelated;object-fit:contain" onerror="this.style.display='none'">`
+      : `<span style="font-size:20px">👤</span>`;
     return `<div class="msg-wrap${isMe?' msg-me':''}">
-      ${!isMe?`<div class="msg-av" style="border-color:var(--border);background:var(--surf2)">${m.avatar?`<img src="${AVATAR_URL(m.avatar)}" width="32" height="32" style="image-rendering:pixelated;object-fit:contain" onerror="this.style.display='none'">`:`<span style="font-size:20px">👤</span>`}</div>`:''}
+      ${!isMe ? `<div class="msg-av" style="border-color:var(--border);background:var(--surf2)">${avHTML}</div>` : ''}
       <div class="bubble${isMe?' me':''}" style="${isMe?'background:var(--accent)':''}">
-        ${!isMe?`<div class="bubble-sender">${escHtml(m.displayName)}</div>`:''}${escHtml(m.text)}
+        ${!isMe ? `<div class="bubble-sender">${escHtml(m.displayName)}</div>` : ''}
+        ${escHtml(m.text)}
       </div>
     </div>`;
   }).join('');
@@ -6223,10 +6209,8 @@ window.switchTab = tab => {
   setTimeout(()=>applyIconDensity(_ic), 100);
   if(tab==='habits') renderHabits();
   if(tab==='party') {
-    // Only do initial render if panel is empty; snapshots will keep it updated
-    const pp = g('party-panel');
-    if (pp && !pp.innerHTML.trim()) renderParty();
-    else if (pp && pp.innerHTML.trim()) { renderBoss(); renderMessages(); }
+    // renderParty is now safe to call any time — it never destroys the chat shell
+    renderParty();
   }
   if(tab==='awards') renderAwards();
   if(tab==='fitness') renderFitness();
@@ -7433,7 +7417,47 @@ function updateExSearch(){if(window.updateExSearch)window.updateExSearch.apply(w
 
     <!-- CREW -->
     <div class="panel" id="panel-party">
-      <div id="party-panel"></div>
+      <!-- No-party screen: shown when user has no party -->
+      <div id="no-party-screen" style="display:block">
+        <div class="no-party-wrap">
+          <div class="no-party-icon">🪐</div>
+          <div class="no-party-title">No Party Yet</div>
+          <div class="no-party-sub">Create a party or join one with a 6-digit code to connect with friends &amp; family.</div>
+          <button class="big-btn" onclick="openModal('party-modal')">🚀 Create or Join a Crew</button>
+        </div>
+      </div>
+
+      <!-- Party screen: shown when user is in a party -->
+      <div id="party-screen" style="display:none">
+        <div class="season-banner" style="border-color:var(--border);background:var(--surf2)">
+          <span style="font-size:11px;font-weight:600;color:var(--muted);letter-spacing:0.5px">⚔️ SEASON 1: THE AWAKENING</span>
+        </div>
+        <div id="boss-section"></div>
+        <div class="crew-header-row">
+          <div>
+            <div class="crew-name-text" id="party-name-text">—</div>
+            <div class="crew-sub-text" id="party-sub-text"></div>
+          </div>
+          <button class="leave-btn" onclick="leaveParty()">↩ Leave</button>
+        </div>
+        <div class="sec-title" style="margin-bottom:10px">
+          <img src="https://maplestory.io/api/GMS/255/item/4031138/icon" alt="" width="18" height="18" style="image-rendering:pixelated;vertical-align:middle;margin-right:4px">
+          PARTY LEADERBOARD
+        </div>
+        <div class="lb-wrap" id="lb-wrap"></div>
+        <div style="margin-top:16px">
+          <div class="sec-title" style="margin-bottom:10px">QUICK NUDGES</div>
+          <div class="nudge-scroll" id="nudge-scroll"></div>
+        </div>
+        <div style="margin-top:16px">
+          <div class="sec-title" style="margin-bottom:10px">PARTY COMMS</div>
+          <div class="chat-box" id="chat-box"><div class="empty-chat">No messages yet. Say hi! 👋</div></div>
+          <div class="msg-input-row">
+            <input id="msg-input" class="msg-input" placeholder="Message the party..." onkeydown="if(event.key==='Enter')sendPartyMsg()">
+            <button class="send-btn" onclick="sendPartyMsg()">➤</button>
+          </div>
+        </div>
+      </div>
     </div>
 
     <!-- AWARDS -->
