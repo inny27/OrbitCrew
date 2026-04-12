@@ -1705,9 +1705,13 @@ async function loadProfile(uid) {
 // This function merges them into the shared `tasks` array
 // that the rest of the app reads. Safe to call from either snapshot.
 function _mergeTasks() {
-  // Party tasks that aren't already in own tasks (by id)
+  // Merge own + other party members' tasks, dedup by id (own takes priority)
   const ownIds = new Set(_ownTasks.map(t => t.id));
-  tasks = [..._ownTasks, ..._partyTasks.filter(t => !ownIds.has(t.id))];
+  const merged = [..._ownTasks, ..._partyTasks.filter(t => !ownIds.has(t.id))];
+  // Final dedup by id — last write wins for any remaining duplicates
+  const seen = new Map();
+  merged.forEach(t => seen.set(t.id, t));
+  tasks = [...seen.values()];
 }
 function subscribeAll(uid, crewId) {
   unsubs.forEach(u => u()); unsubs = [];
@@ -3776,7 +3780,10 @@ function renderHeader() {
 }
 
 function renderToday() {
-  const sorted = [...tasks].sort((a,b) => (a.sort_order ?? Infinity) - (b.sort_order ?? Infinity));
+  // Deduplicate tasks by ID — keep last occurrence (most recent snapshot wins)
+  const seenIds = new Map();
+  tasks.forEach(t => seenIds.set(t.id, t));
+  const sorted = [...seenIds.values()].sort((a,b) => (a.sort_order ?? Infinity) - (b.sort_order ?? Infinity));
   // Split active vs done
   const active = sorted.filter(t => !t.done);
   const done   = sorted.filter(t => t.done);
@@ -3921,11 +3928,13 @@ function wireTaskEvents(container) {
 // ─── TASK DATE FORMATTER ──────────────────────────────────
 function formatTaskDate(ts) {
   if (!ts) return '';
-  // Firestore Timestamp or JS Date
+  // Firestore serverTimestamp() returns null until resolved — skip it
+  if (ts && typeof ts === 'object' && !ts.seconds && !ts.toDate) return '';
   const d = ts?.toDate ? ts.toDate() : (ts?.seconds ? new Date(ts.seconds*1000) : new Date(ts));
-  if (isNaN(d)) return '';
+  if (!d || isNaN(d.getTime())) return '';
   const now = new Date();
   const diff = Math.floor((now - d) / 86400000);
+  if (diff < 0) return 'today'; // pending serverTimestamp or clock skew
   if (diff === 0) return 'today';
   if (diff === 1) return 'yesterday';
   if (diff < 7) return diff + 'd ago';
