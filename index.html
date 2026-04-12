@@ -203,6 +203,7 @@ body::before{
 .prog-fill{height:100%;border-radius:99px;background:var(--accent);transition:width .5s ease;}
 .task-card{background:var(--surf);border:1px solid rgba(200,149,42,0.08);border-radius:14px;padding:12px 14px;margin-bottom:8px;display:flex;align-items:center;gap:12px;cursor:pointer;transition:all .2s;box-shadow:0 2px 10px var(--shadow);}
 .task-card:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(44,35,64,0.1);}
+.task-card.done:not(.archived){opacity:1 !important;}
 .task-card.archived{opacity:.5;filter:grayscale(15%);}
 .task-check{width:26px;height:26px;border-radius:99px;border:2px solid;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .3s;}
 .task-body{flex:1;min-width:0;}
@@ -3807,6 +3808,15 @@ function renderToday() {
       archiveList.innerHTML = '';
     }
   }
+  // Force both task sections open so newly added tasks are always visible
+  const _tw = document.getElementById('tasks-list-wrap');
+  const _cw = document.getElementById('chores-list-wrap');
+  const _tb = document.getElementById('my-tasks-toggle');
+  const _cb = document.getElementById('chores-toggle');
+  if (_tw) { _tw.classList.add('open'); _tw.classList.remove('closed'); }
+  if (_cw) { _cw.classList.add('open'); _cw.classList.remove('closed'); }
+  if (_tb) _tb.classList.add('open');
+  if (_cb) _cb.classList.add('open');
   // Enable drag-and-drop after DOM update
   requestAnimationFrame(enableTaskDragAndDrop);
 }
@@ -4129,7 +4139,11 @@ function habitCard(h) {
 function renderParty() {
   const panel = g('party-panel'); if (!panel) return;
   if (!userProfile?.crewId || !party) {
-    panel.innerHTML = `<div class="no-party-wrap"><div class="no-party-icon">🪐</div><div class="no-party-title">No Party Yet</div><div class="no-party-sub">Create a party or join one with a 6-digit code to connect with friends &amp; family.</div><button class="big-btn" onclick="openModal('party-modal')">🚀 Create or Join a Crew</button></div>`;
+    // Only show "no party" if we don't already have a live chat shell
+    // (prevents race condition wiping chat when snapshots fire out of order)
+    if (!g('chat-box')) {
+      panel.innerHTML = `<div class="no-party-wrap"><div class="no-party-icon">🪐</div><div class="no-party-title">No Party Yet</div><div class="no-party-sub">Create a party or join one with a 6-digit code to connect with friends &amp; family.</div><button class="big-btn" onclick="openModal('party-modal')">🚀 Create or Join a Crew</button></div>`;
+    }
     return;
   }
 
@@ -5784,132 +5798,125 @@ window.showExDetail = id => {
   const s=getFitSub(); if(!s) return;
   const diffLabels=['Beginner','Beginner','Intermediate','Advanced','Elite'];
   const ytMap = {
-    'bench_press':'vcBig73ojpE',
-    'incline_press':'DbFgADa2PL8',
-    'pushup':'IODxDxX7oi4',
-    'dips':'yN6Q1UI_xb0',
-    'pullup':'eGo4IYlbE5g',
-    'bent_row':'FWJR5Ve8bnQ',
-    'deadlift':'op9kVnSso6Q',
-    'lat_pulldown':'CAwf7n6Luuc',
-    'ohp':'2yjwXTZbDtY',
-    'lateral_raise':'FeSmKQlv_kA',
-    'bicep_curl':'ykJmrZ5v0Oo',
-    'hammer_curl':'zC3nLlEvin4',
-    'skull_crusher':'d_KpyzTerms',
-    'tricep_pushdown':'2-LAMcpzODU',
-    'squat':'ultWZbUMPL8',
-    'rdl':'hCDzSR6Ppis',
-    'leg_press':'IZxyjW7MPJQ',
-    'lunge':'QOVaHwm-Q6U',
-    'glute_bridge':'wPM8icPu6H8',
-    'plank':'pvIjFBVFgVM',
-    'dead_bug':'4XLEnwUr1d8',
-    'hanging_leg_raise':'hdng3Nm1x70',
-    'muscle_up':'F-xEL4Gkzos',
-    'pistol_squat':'vq5-vdgJc0I',
-    'planche_lean':'Cd5DUuMFNJs',
-    'tuck_planche':'FDMZiZGVLpg',
-    'straddle_planche':'1UqRb6AZKJE',
-    'full_planche':'1UqRb6AZKJE',
-    'front_lever':'tiLHaste9dY',
-    'tuck_front_lever':'WbHqBaHR0ac',
-    'back_lever':'NKjWZfSEAFM',
-    'dragon_flag':'pvz7k5gOKAw',
-    'human_flag':'kAsYB5yb8jQ',
-    'handstand_pushup':'tQhrk6WqDSg',
-    'l_sit':'IUZKcvEOaG4',
-    'v_sit':'HoE-C85ZWCg',
-    'skin_cat':'dZVFGXDqpGI',
-    'archer_pushup':'qbDFBuFGJXM',
-    'one_arm_pushup':'qbDFBuFGJXM',
-    'typewriter_pullup':'Bn6sauqHZVo',
-    'easy_run':'brFHyOtTwH4',
-    'interval_run':'brFHyOtTwH4',
-    'tempo_run':'brFHyOtTwH4',
-    'freestyle':'gh5mAtmeR3Y',
-    'breaststroke':'Lp-TKN-we8U',
-    'incline_db_press':'DbFgADa2PL8',
-    'cable_fly':'KvH2GPH5mSrkXG',
-    'close_grip_bench':'GnRzg_IYZs4',
-    'seated_cable_row':'GZbfZ033f74',
-    'face_pull':'rep4jAPoehM',
-    'tbar_row':'j3Igk5nyZE4',
-    'chest_supported_row':'xQNrFHEMhI4',
-    'db_shoulder_press':'qEwKCR5JCog',
-    'arnold_press':'6Z15_WdXmVw',
-    'upright_row':'VFkJKPEiEOI',
-    'preacher_curl':'fIWP-FRFNU0',
-    'incline_curl':'soxrZlIl35U',
-    'overhead_tricep_ext':'_gsUck-7M74',
-    'tricep_dips':'0326dy_-CzM',
-    'hip_thrust':'xDmFkJxPzeM',
-    'bulgarian_split_squat':'2C-uNgKwPLE',
-    'hack_squat':'EdtgAPKWZAU',
-    'leg_extension':'YyvSfVjQeL0',
-    'leg_curl':'1Tq3QdYUuHs',
-    'standing_calf_raise':'JbyjNymZOt0',
-    'hollow_body_hold':'LlDNef_Ztsc',
-    'ab_rollout':'j2iaMqnXm8k',
-    'mountain_climbers':'cnyTQDSE884',
-    'bicycle_crunch':'9FGilxCbdz8',
-    'pike_push_up':'sposDXWEB0A',
-    'diamond_push_up':'J0DXBSpgeFE',
-    'chin_up':'FDMZiZGVLpg',
-    'inverted_row':'PGcTxvw6sMQ',
-    'burpee':'dZgVxmf6jeQ',
-    'box_jump':'52r_Ul5k03g',
-    'long_run':'brFHyOtTwH4',
-    'hill_repeats':'brFHyOtTwH4',
-    'recovery_run':'brFHyOtTwH4',
-    'backstroke':'S1kbfBZiqWQ',
-    'butterfly':'Lp-TKN-we8U',
-    'jump_rope':'1BZM2ueH_KY',
-    'rowing_machine':'H0r5HqQoXYI',
-    'assault_bike':'RIpVT9t7MeY',
-    'sled_push':'hH0Vm6cq-7U',
-    'incline_db_press':'DbFgADa2PL8',
-    'cable_fly':'KvH2GPH5mSrkXG',
-    'close_grip_bench':'GnRzg_IYZs4',
-    'seated_cable_row':'GZbfZ033f74',
-    'face_pull':'rep4jAPoehM',
-    'tbar_row':'j3Igk5nyZE4',
-    'chest_supported_row':'xQNrFHEMhI4',
-    'db_shoulder_press':'qEwKCR5JCog',
-    'arnold_press':'6Z15_WdXmVw',
-    'upright_row':'VFkJKPEiEOI',
-    'preacher_curl':'fIWP-FRFNU0',
-    'incline_curl':'soxrZlIl35U',
-    'overhead_tricep_ext':'_gsUck-7M74',
-    'tricep_dips':'0326dy_-CzM',
-    'hip_thrust':'xDmFkJxPzeM',
-    'bulgarian_split_squat':'2C-uNgKwPLE',
-    'hack_squat':'EdtgAPKWZAU',
-    'leg_extension':'YyvSfVjQeL0',
-    'leg_curl':'1Tq3QdYUuHs',
-    'standing_calf_raise':'JbyjNymZOt0',
-    'hollow_body_hold':'LlDNef_Ztsc',
-    'ab_rollout':'j2iaMqnXm8k',
-    'mountain_climbers':'cnyTQDSE884',
-    'bicycle_crunch':'9FGilxCbdz8',
-    'pike_push_up':'sposDXWEB0A',
-    'diamond_push_up':'J0DXBSpgeFE',
-    'chin_up':'FDMZiZGVLpg',
-    'inverted_row':'PGcTxvw6sMQ',
-    'burpee':'dZgVxmf6jeQ',
-    'box_jump':'52r_Ul5k03g',
-    'long_run':'brFHyOtTwH4',
-    'hill_repeats':'brFHyOtTwH4',
-    'recovery_run':'brFHyOtTwH4',
-    'backstroke':'S1kbfBZiqWQ',
-    'butterfly':'Lp-TKN-we8U',
-    'jump_rope':'1BZM2ueH_KY',
-    'rowing_machine':'H0r5HqQoXYI',
-    'assault_bike':'RIpVT9t7MeY',
-    'sled_push':'hH0Vm6cq-7U',
-    'calf_raise':'-M4-G8p1vyg',
-    'ab_wheel':'j2iaMqnXm8k'
-  };
+    // Chest
+    'bench_press':       'vcBig73ojpE',
+    'incline_press':     'DbFgADa2PL8',
+    'incline_db_press':  'DbFgADa2PL8',
+    'cable_fly':         'KvH2GPH5mSrk',
+    'pushup':            'IODxDxX7oi4',
+    'dips':              '2z8JmR3yt9Y',
+    'archer_pushup':     'wH_HBVoUAMk',
+    'diamond_push_up':   'J0DXBSpgeFE',
+    'pike_push_up':      'sposDXWEB0A',
+    'close_grip_bench':  'GnRzg_IYZs4',
+    // Back
+    'pullup':            'eGo4IYlbE5g',
+    'chinup':            'eGo4IYlbE5g',
+    'chin_up':           'eGo4IYlbE5g',
+    'bent_row':          'FWJR5Ve8bnQ',
+    'deadlift':          'op9kVnSso6Q',
+    'lat_pulldown':      'CAwf7n6Luuc',
+    'seated_cable_row':  'GZbfZ033f68',
+    'tbar_row':          'j3Igk5nyZE4',
+    'chest_supported_row': 'xQNrFHEMhI4',
+    'inverted_row':      'PGcTxvw6sMQ',
+    'typewriter_pullup': 'Bn6sauqHZVo',
+    // Shoulders
+    'ohp':               '2yjwXTZQDDI',
+    'lateral_raise':     '3VcKaXpzqRo',
+    'face_pull':         'eIq5CB9JfKE',
+    'db_shoulder_press': 'qEwKCR5JCog',
+    'arnold_press':      '6Z15_WdXmVw',
+    'upright_row':       'VFkJKPEiEOI',
+    // Arms
+    'bicep_curl':        'ykJmrZ5v0Oo',
+    'hammer_curl':       'zC_nINlFRCnQ',
+    'skull_crusher':     'd_KZxkY_0cM',
+    'tricep_pushdown':   '2-LAMcpzODU',
+    'preacher_curl':     'fIWP-FRFNU0',
+    'incline_curl':      'soxrZlIl35U',
+    'overhead_tricep_ext': '_gsUck-7M74',
+    'tricep_dips':       '2z8JmR3yt9Y',
+    // Legs
+    'squat':             'ultWZbUMPL8',
+    'rdl':               'hCDzSR6Ppis',
+    'leg_press':         'IZxyjW7SKNI',
+    'lunge':             'D7KaRcUTQeE',
+    'glute_bridge':      'OUgsJ8-Vi0E',
+    'hip_thrust':        'xDmFkJxPzeM',
+    'bulgarian_split_squat': 'vq5-vdgJc0I',
+    'hack_squat':        'EdtgAPKWZAU',
+    'leg_extension':     'YyvSfVjQeL0',
+    'leg_curl':          '1Tq3QdYUuHs',
+    'calf_raise':        'gwLzBv3bZpQ',
+    'standing_calf_raise': 'gwLzBv3bZpQ',
+    // Core
+    'plank':             'pSHjTRCQxIw',
+    'dead_bug':          'g_BYB0R-4Ws',
+    'hanging_leg_raise': 'Pr1ieGZ5ATk',
+    'ab_wheel':          'q6SxTm79x_s',
+    'ab_rollout':        'q6SxTm79x_s',
+    'dragon_flag':       'pvz7k5gOKAw',
+    'l_sit':             'IUZKcvEOaG4',
+    'hollow_body_hold':  'LlDNef_Ztsc',
+    'hollow_body_rock':  'LlDNef_Ztsc',
+    'v_sit':             'IUZKcvEOaG4',
+    'mountain_climbers': 'nmwgirgXLYM',
+    'cross_body_mountain_climber': 'nmwgirgXLYM',
+    'slow_mountain_climber': 'nmwgirgXLYM',
+    'bicycle_crunch':    '9FGilxCbdz8',
+    // Calisthenics advanced
+    'muscle_up':         'F-xEL4Gkzos',
+    'pistol_squat':      'vq5-vdgJc0I',
+    'planche_lean':      'Cd5DUuMFNJs',
+    'tuck_planche':      'FDMZiZGVLpg',
+    'advanced_tuck_planche': 'FDMZiZGVLpg',
+    'straddle_planche':  '1UqRb6AZKJE',
+    'full_planche':      '1UqRb6AZKJE',
+    'planche_pushup':    '1UqRb6AZKJE',
+    'planche_to_handstand': '1UqRb6AZKJE',
+    'maltese':           '1UqRb6AZKJE',
+    'handstand_pushup':  'ytJNMRcEKfQ',
+    'wall_handstand':    'WRL_FnCkEkY',
+    'freestanding_handstand': 'WRL_FnCkEkY',
+    'handstand_walk':    'WRL_FnCkEkY',
+    'press_handstand':   'WRL_FnCkEkY',
+    'front_lever':       'lhRR5w5Dbpo',
+    'tuck_front_lever':  'tB1DFJjw9I8',
+    'back_lever':        'NKjWZfSEAFM',
+    'skin_the_cat':      'dZVFGXDqpGI',
+    'skin_cat':          'dZVFGXDqpGI',
+    'human_flag':        'kAsYB5yb8jQ',
+    'one_arm_pushup':    'qbDFBuFGJXM',
+    // Full body / compound
+    'burpee':            'dZgVxmf6jeQ',
+    'box_jump':          '52ldYMFMkLo',
+    'bear_crawl':        'aLyJDfGBFBM',
+    'baby_crawl':        'aLyJDfGBFBM',
+    'commando_crawl':    'aLyJDfGBFBM',
+    'crab_walk':         'dO7FtKjKzOs',
+    'inchworm':          'SKfmzOGi3xA',
+    // Cardio
+    'jump_rope':         'FJmRQ5iTXKE',
+    'rowing_machine':    'H0r5HGbZzGk',
+    'assault_bike':      'pILGPEZlMoo',
+    'sled_push':         'MzNBpLIEa_4',
+    'walking':           'aGPtT6KPRWQ',
+    'nordic_walk':       'iFLrPP5YcR4',
+    // Running
+    'easy_run':          '_kGcKg_lsGc',
+    'interval_run':      'xvPzYbMC9BE',
+    'tempo_run':         'GKNQtRqnS_A',
+    'long_run':          '_kGcKg_lsGc',
+    'hill_repeats':      'xvPzYbMC9BE',
+    'recovery_run':      '_kGcKg_lsGc',
+    'jogging':           '_kGcKg_lsGc',
+    // Swimming
+    'freestyle':         '5HLW2AI_4_E',
+    'breaststroke':      'am5gPCxS3jM',
+    'backstroke':        'HmkRvZJSNJo',
+    'butterfly':         'zDPeRPYlMrM',
+  }
   const ytId = ytMap[ex.id]||null;
   const typeIcon = {weights:'🏋️',calisthenics:'💪',run:'🏃',swim:'🏊',cardio:'❤️'};
   const videoHTML = ytId
