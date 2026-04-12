@@ -1453,7 +1453,7 @@ const EXERCISE_DB = [
    cues:'Land soft. Keep a slight bend in the knees throughout.'},
 
   {id:'high_knees',name:'High Knees',muscles:['Hip Flexors','Calves','Cardio'],type:'calisthenics',difficulty:1,category:'cardio',
-   demo:'cnyTQDSE884',
+   demo:'zb3wFBgr49M',
    desc:'Running on the spot driving knees above hip height with each step.',
    tips:'Drive arms in opposition to legs. Stay on the balls of your feet.',
    cues:'Knees above hips. Fast feet. Pump arms. Land soft.'},
@@ -1465,7 +1465,7 @@ const EXERCISE_DB = [
    cues:'Kick heels to your glutes. Stay tall. Pump arms.'},
 
   {id:'lateral_bound',name:'Lateral Bound',muscles:['Glutes','Calves','Balance','Power'],type:'calisthenics',difficulty:2,category:'cardio',
-   demo:'52r_Ul5k03g',
+   demo:'Gkuq7zwQxeA',
    desc:'Single-leg lateral jump, landing softly on the opposite foot.',
    tips:'Stick each landing for 2 seconds before jumping back.',
    cues:'Drive off one foot. Land soft on the other. Absorb with a bent knee.'},
@@ -1745,13 +1745,21 @@ function subscribeAll(uid, crewId) {
 }
 
 function subscribeParty(crewId) {
-  unsubs.push(onSnapshot(doc(db,'crews',crewId), s => { if(s.exists()){party={id:s.id,...s.data()};renderParty();} }));
-  unsubs.push(onSnapshot(query(collection(db,'users'),where('crewId','==',crewId)), s => { partyMembers=s.docs.map(d=>({id:d.id,...d.data()}));renderParty(); }));
+  unsubs.push(onSnapshot(doc(db,'crews',crewId), s => {
+    if (s.exists()) { party={id:s.id,...s.data()}; renderParty(); }
+  }));
+  unsubs.push(onSnapshot(query(collection(db,'users'),where('crewId','==',crewId)), s => {
+    partyMembers = s.docs.map(d=>({id:d.id,...d.data()}));
+    // Only re-render if party data is loaded — avoids wiping chat shell
+    if (party) renderParty();
+  }));
   unsubs.push(onSnapshot(query(collection(db,'crews',crewId,'messages'),orderBy('createdAt','asc')), s => {
     partyMessages = s.docs.map(d => ({id:d.id,...d.data()}));
     renderMessages();
   }));
-  unsubs.push(onSnapshot(doc(db,'crews',crewId,'boss','current'), s => { if(s.exists()){boss=s.data();renderBoss();} }));
+  unsubs.push(onSnapshot(doc(db,'crews',crewId,'boss','current'), s => {
+    if (s.exists()) { boss=s.data(); renderBoss(); }
+  }));
 }
 
 async function loadFitness(uid) {
@@ -2479,6 +2487,16 @@ window.addTask = async () => {
   if (deadlineEl) deadlineEl.value = '';
   taskType='personal'; taskPriority='medium'; taskRepeat='none';
   playSound('launch'); toast('✅ Task added!');
+  // Ensure the relevant section is open so the new task is visible
+  const isChore = (isShared);
+  const wrapId = isChore ? 'chores-list-wrap' : 'tasks-list-wrap';
+  const btnId  = isChore ? 'chores-toggle' : 'my-tasks-toggle';
+  const wrap = document.getElementById(wrapId);
+  const btn  = document.getElementById(btnId);
+  if (wrap && !wrap.classList.contains('open')) {
+    wrap.classList.add('open'); wrap.classList.remove('closed');
+    if (btn) btn.classList.add('open');
+  }
 };
 
 window.completeTask = async id => {
@@ -2963,26 +2981,27 @@ async function sendMsg(text) {
 }
 window.sendPartyMsg = async () => {
   const inp = g('msg-input');
+  if (!inp) return;
   const text = inp.value.trim();
   if (!text) return;
+  if (!userProfile?.crewId) { toast('Join a party first!'); return; }
   inp.value = '';
-  // Optimistic local append so message appears immediately
+  // Optimistic append — shown immediately, replaced by real snapshot
   const box = g('chat-box');
   if (box) {
-    const tempId = 'temp_' + Date.now();
     const div = document.createElement('div');
-    div.className = 'msg-wrap msg-me';
-    div.id = tempId;
+    div.className = 'msg-wrap msg-me _optimistic';
     div.innerHTML = `<div class="bubble me" style="background:var(--accent)">${escHtml(text)}</div>`;
     box.appendChild(div);
     box.scrollTop = box.scrollHeight;
   }
   try {
     await sendMsg(text);
+    // Remove optimistic messages — real snapshot will re-render
+    document.querySelectorAll('._optimistic').forEach(el => el.remove());
   } catch(e) {
+    document.querySelectorAll('._optimistic').forEach(el => el.remove());
     toast('Message failed to send.');
-    const temp = document.getElementById('temp_' + (Date.now() - 1));
-    if (temp) temp.remove();
   }
 };
 window.sendNudge = t => sendMsg(t);
@@ -3010,6 +3029,7 @@ window.switchPartyTab = function(tab) {
 window.leaveParty = function() {
   const overlay = document.createElement('div');
   overlay.id = 'leave-party-overlay';
+  overlay.className = 'mp-album-picker-overlay';
   overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px';
   overlay.innerHTML = '<div style="background:var(--surf);border:3px solid var(--accent);border-radius:0;padding:24px;max-width:300px;width:100%;box-shadow:4px 4px 0 rgba(0,0,0,.6);text-align:center">' +
     '<div style="font-size:10px;font-family:var(--pixel);color:var(--accent);margin-bottom:12px;line-height:2">⚠️ LEAVE PARTY?</div>' +
@@ -3030,7 +3050,9 @@ window.leaveParty = function() {
 
 window._doLeaveParty = async function() {
   await updateDoc(doc(db,'users',currentUser.uid),{crewId:null});
-  party=null; partyMembers=[]; partyMessages=[]; boss=null; renderParty(); toast('Left the party.');
+  party=null; partyMembers=[]; partyMessages=[]; boss=null;
+  const _pp = g('party-panel'); if(_pp) _pp.innerHTML = '';
+  renderParty(); toast('Left the party.');
 };
 
 
@@ -4181,8 +4203,18 @@ function renderBoss() {
 }
 
 function renderMessages() {
-  const box = g('chat-box'); if (!box) return;
+  const box = g('chat-box');
+  if (!box) {
+    // Chat box not in DOM yet (race: snapshot fired before shell was built).
+    // Retry once shell is ready.
+    if (userProfile?.crewId && party) {
+      requestAnimationFrame(renderMessages);
+    }
+    return;
+  }
   if (!partyMessages.length) { box.innerHTML='<div class="empty-chat">No messages yet. Say hi! 👋</div>'; return; }
+  // Preserve scroll position — only auto-scroll if user is already at bottom
+  const wasAtBottom = box.scrollHeight - box.scrollTop - box.clientHeight < 60;
   box.innerHTML = partyMessages.map(m=>{
     const isMe = m.from===currentUser?.uid;
     return `<div class="msg-wrap${isMe?' msg-me':''}">
@@ -4192,7 +4224,7 @@ function renderMessages() {
       </div>
     </div>`;
   }).join('');
-  box.scrollTop = box.scrollHeight;
+  if (wasAtBottom) box.scrollTop = box.scrollHeight;
 }
 
 function renderAwards() {
@@ -4656,6 +4688,7 @@ window.toggleBgmDefault = () => {
 
 window.confirmDeleteAccount = () => {
   const overlay = document.createElement('div');
+  overlay.className = 'mp-album-picker-overlay';
   overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px';
   overlay.innerHTML = `<div style="background:var(--surf);border:3px solid var(--red);border-radius:0;padding:24px;max-width:340px;width:100%;box-shadow:4px 4px 0 rgba(0,0,0,.6);text-align:center">
     <div style="font-size:11px;font-family:var(--pixel);color:var(--red);margin-bottom:12px;line-height:2">⚠️ DELETE ACCOUNT</div>
@@ -6061,7 +6094,12 @@ window.switchTab = tab => {
   const _ic = parseInt(lsGet('intask_icon_count','5'));
   setTimeout(()=>applyIconDensity(_ic), 100);
   if(tab==='habits') renderHabits();
-  if(tab==='party') renderParty();
+  if(tab==='party') {
+    // Only do initial render if panel is empty; snapshots will keep it updated
+    const pp = g('party-panel');
+    if (pp && !pp.innerHTML.trim()) renderParty();
+    else if (pp && pp.innerHTML.trim()) { renderBoss(); renderMessages(); }
+  }
   if(tab==='awards') renderAwards();
   if(tab==='fitness') renderFitness();
   if(tab==='music') renderMusicPlayer();
@@ -6141,6 +6179,7 @@ window.addEventListener('popstate', function(e) {
   history.pushState({tab:'today'}, '', location.href);
   const overlay = document.createElement('div');
   overlay.id = 'exit-confirm-overlay';
+  overlay.className = 'mp-album-picker-overlay';
   overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px';
   overlay.innerHTML = `<div style="background:var(--surf);border:3px solid var(--accent);border-radius:0;padding:24px;max-width:300px;width:100%;box-shadow:4px 4px 0 rgba(0,0,0,.6);text-align:center">
     <div style="font-size:10px;font-family:var(--pixel);color:var(--accent);margin-bottom:12px;line-height:2">LEAVE INTASK?</div>
@@ -6641,6 +6680,7 @@ window._mpDeleteAlbum = async function(encodedName) {
   const name = decodeURIComponent(encodedName);
   if (name === 'In-Built Songs') { toast('Cannot delete the default album.'); return; }
   const overlay = document.createElement('div');
+  overlay.className = 'mp-album-picker-overlay';
   overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px';
   overlay.innerHTML = `<div style='background:var(--surf);border:3px solid var(--red);border-radius:0;padding:24px;max-width:280px;width:100%;text-align:center'><div style='font-size:10px;font-family:var(--pixel);color:var(--red);margin-bottom:12px'>DELETE ALBUM?</div><div style='font-size:12px;color:var(--muted);margin-bottom:20px'>${name}</div><div style='display:flex;gap:10px'><button onclick='this.closest("div[style]").remove()' style='flex:1;padding:10px;border:2px solid var(--border);background:var(--surf2);color:var(--text);font-family:var(--pixel);font-size:8px;cursor:pointer'>Cancel</button><button onclick='window._doDeleteAlbum(decodeURIComponent("${encodedName}"));this.closest("div[style]").remove()' style='flex:1;padding:10px;border:2px solid var(--red);background:var(--red);color:#fff;font-family:var(--pixel);font-size:8px;cursor:pointer'>Delete</button></div></div>`;
   document.body.appendChild(overlay);
@@ -6724,6 +6764,12 @@ window._mpRemoveFromAlbum = async function(trackId, encodedAlbum) {
 };
 
 
+window._mpCloseAlbumPicker = function() {
+  document.querySelectorAll('.mp-album-picker-overlay').forEach(function(el){el.remove();});
+  if(window._mpBuildUI) window._mpBuildUI();
+};
+window._mpCloseAlbumPicker = function() { document.querySelectorAll('.mp-album-picker-overlay').forEach(e=>e.remove()); if(window._mpBuildUI) window._mpBuildUI(); };
+
 window._mpAddToAlbum = async function(trackId) {
   const albumNames = Object.keys(_mpAlbums).filter(n => n !== 'In-Built Songs');
   if (!albumNames.length) {
@@ -6732,13 +6778,14 @@ window._mpAddToAlbum = async function(trackId) {
   }
   // Build a simple picker
   const overlay = document.createElement('div');
+  overlay.className = 'mp-album-picker-overlay';
   overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px';
   const track = MUSIC_TRACKS.find(t=>t.id===trackId);
   overlay.innerHTML = `<div style="background:var(--surf);border-radius:16px;padding:20px;max-width:300px;width:100%">
     <div style="font-family:var(--pixel);font-size:10px;color:var(--accent);margin-bottom:12px">ADD TO ALBUM</div>
     <div style="font-size:13px;font-weight:700;margin-bottom:14px">${track ? track.title : trackId}</div>
     ${albumNames.map(n=>`<button onclick="window._doAddToAlbum('${trackId}','${encodeURIComponent(n)}')" style="width:100%;padding:10px;margin-bottom:8px;border:1.5px solid var(--border);background:var(--surf2);color:var(--text);border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;text-align:left">📂 ${n}</button>`).join('')}
-    <button onclick="document.querySelectorAll('div[style*=\"z-index:9999\"]').forEach(e=>e.remove());window._mpBuildUI&&window._mpBuildUI()" style="width:100%;padding:10px;border:1.5px solid var(--border);background:transparent;color:var(--muted);border-radius:10px;font-size:13px;cursor:pointer">Cancel</button>
+    <button onclick="window._mpCloseAlbumPicker()" style="width:100%;padding:10px;border:1.5px solid var(--border);background:transparent;color:var(--muted);border-radius:10px;font-size:13px;cursor:pointer">Cancel</button>
   </div>`;
   document.body.appendChild(overlay);
 };
@@ -6747,16 +6794,14 @@ window._doAddToAlbum = async function(trackId, encodedAlbum) {
   const album = decodeURIComponent(encodedAlbum);
   if (!_mpAlbums[album]) _mpAlbums[album] = [];
   if (_mpAlbums[album].includes(trackId)) {
-    // Remove any overlay even if duplicate
-    document.querySelectorAll('div[style*="z-index:9999"]').forEach(el => el.remove());
+    window._mpCloseAlbumPicker();
     toast('Already in that album!');
     _mpBuildUI();
     return;
   }
   _mpAlbums[album].push(trackId);
   await _mpSaveAlbums();
-  // Remove ALL floating overlays (album picker, etc.)
-  document.querySelectorAll('div[style*="z-index:9999"]').forEach(el => el.remove());
+  window._mpCloseAlbumPicker();
   toast('Added to ' + album + '!');
   _mpTab = 'albums';
   _mpBuildUI();
@@ -6919,6 +6964,17 @@ function _mpSeek(){if(window._mpSeek)window._mpSeek.apply(window,arguments);}
 function _mpTogglePlay(){if(window._mpTogglePlay)window._mpTogglePlay.apply(window,arguments);}
 function _mpToggleShuffle(){if(window._mpToggleShuffle)window._mpToggleShuffle.apply(window,arguments);}
 function addExToSession(){if(window.addExToSession)window.addExToSession.apply(window,arguments);}
+function _reopenTask(){if(window._reopenTask)window._reopenTask.apply(window,arguments);}
+function _doDeleteTask(){if(window._doDeleteTask)window._doDeleteTask.apply(window,arguments);}
+function _saveEditTask(){if(window._saveEditTask)window._saveEditTask.apply(window,arguments);}
+function _setEditPill(){if(window._setEditPill)window._setEditPill.apply(window,arguments);}
+function _editModalDelete(){if(window._editModalDelete)window._editModalDelete.apply(window,arguments);}
+function _doDeleteEntry(){if(window._doDeleteEntry)window._doDeleteEntry.apply(window,arguments);}
+function _reopenTask(){if(window._reopenTask)window._reopenTask.apply(window,arguments);}
+function _doDeleteTask(){if(window._doDeleteTask)window._doDeleteTask.apply(window,arguments);}
+function _saveEditTask(){if(window._saveEditTask)window._saveEditTask.apply(window,arguments);}
+function _setEditPill(){if(window._setEditPill)window._setEditPill.apply(window,arguments);}
+function _editModalDelete(){if(window._editModalDelete)window._editModalDelete.apply(window,arguments);}
 function calNav(){if(window.calNav)window.calNav.apply(window,arguments);}
 function closeCalendar(){if(window.closeCalendar)window.closeCalendar.apply(window,arguments);}
 function logHabitPastDay(){if(window.logHabitPastDay)window.logHabitPastDay.apply(window,arguments);}
