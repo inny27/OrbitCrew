@@ -162,7 +162,6 @@ body::before{
 .archive-toggle.open .archive-chevron{transform:rotate(180deg);}
 .archive-list{overflow:hidden;max-height:0;transition:max-height .3s ease;}
 .archive-list.open{max-height:9999px;}
-/* .task-card.archived handled above */
 
 /* ── Section collapse toggle ── */
 .sec-collapse-btn{background:none;border:none;cursor:pointer;color:var(--muted);font-size:14px;padding:2px 4px;transition:transform .25s;}
@@ -596,7 +595,7 @@ body::before{
 
 /* ── Exercise Demo ── */
 .ex-demo-card{display:none;}
-.ex-detail-banner{display:flex;align-items:center;justify-content:center;}
+.ex-detail-banner{display:flex;align-items:center;justify-content:center;background:var(--surf2);border:2px solid var(--border);margin-bottom:14px;}
 
 /* ── Set mode toggle ── */
 .set-mode-row{display:flex;gap:6px;margin-bottom:10px;}
@@ -610,7 +609,6 @@ body::before{
 .ex-yt-thumb img{width:100%;display:block;object-fit:cover;}
 .ex-yt-play{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:56px;height:56px;background:rgba(255,0,0,.9);border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:22px;color:#fff;box-shadow:0 4px 20px rgba(0,0,0,.5);}
 .ex-yt-label{position:absolute;bottom:0;left:0;right:0;background:rgba(0,0,0,.7);color:#fff;font-size:10px;font-family:var(--pixel);padding:8px;text-align:center;letter-spacing:1px;}
-.ex-detail-banner{background:var(--surf2);border:2px solid var(--border);margin-bottom:14px;}
 
 /* ── Settings ── */
 .settings-section{background:var(--surf);border:1px solid var(--border);border-radius:16px;padding:16px;margin-bottom:12px;box-shadow:0 2px 10px var(--shadow);}
@@ -741,13 +739,13 @@ body.colorblind{filter:url(#colorblind-filter);}
 
 <script type="module">import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js';
 import { getFirestore,collection,doc,setDoc,onSnapshot,addDoc,updateDoc,serverTimestamp,getDoc,query,orderBy,where,getDocs,deleteDoc } from 'https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js';
-import { getAuth,signOut,onAuthStateChanged,GoogleAuthProvider,signInWithPopup,createUserWithEmailAndPassword,signInWithEmailAndPassword,signInAnonymously,updateProfile } from 'https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js';
+import { getAuth,signOut,onAuthStateChanged,GoogleAuthProvider,signInWithPopup,createUserWithEmailAndPassword,signInWithEmailAndPassword,updateProfile } from 'https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js';
 
 const DEFAULT_LOGIN_SONG = 'Floral Life';
 const DEFAULT_BGM_SONG = 'Above the Treetops';
 
 function getSongUrl(name) {
-  return SONG_FILES[name] || null;
+  return (MUSIC_TRACKS.find(t => t.title === name) || {}).url || null;
 }
 
 
@@ -964,13 +962,7 @@ const EXERCISE_DB = [
    demo:'IUZKcvEOaG4',
    desc:'Support bodyweight on hands with legs held straight out at a 90-degree angle.',tips:'Depress your shoulders hard. Point toes.',cues:'Push the floor away from you. Compress your abs hard.'},
 
-  {id:'planche_lean',name:'Planche Lean',muscles:['Chest','Shoulders','Core'],type:'calisthenics',difficulty:3,category:'compound',
-   demo:'Cd5DUuMFNJs',
-   desc:'In push-up position lean forward past wrists, loading anterior shoulder and core.',tips:'Fingers pointing backward increases difficulty.',cues:'Lean forward progressively. Hold for 10-30 seconds.'},
 
-  {id:'tuck_planche',name:'Tuck Planche',muscles:['Chest','Shoulders','Core'],type:'calisthenics',difficulty:3,category:'compound',
-   demo:'FDMZiZGVLpg',
-   desc:'Hold body off ground with knees tucked to chest, arms straight.',tips:'Depression and protraction of scapula is key.',cues:'Push through your hands. Hollow body position.'},
 
   {id:'handstand_pushup',name:'Handstand Push-up',muscles:['Shoulders','Triceps','Core'],type:'calisthenics',difficulty:3,category:'compound',
    demo:'ytJNMRcEKfQ',
@@ -1976,7 +1968,7 @@ window.doLogout = async () => {
     window._mpPlaying = false;
     if(window._mpProgressInterval) { clearInterval(window._mpProgressInterval); window._mpProgressInterval=null; }
     // Clear state
-    crew=null; crewMembers=[]; crewMessages=[]; boss=null; synced=false;
+    party=null; partyMembers=[]; partyMessages=[]; boss=null; synced=false;
     userProfile=null; currentUser=null;
     unsubs.forEach(u=>u()); unsubs=[];
     // Clear all login form fields so previous user's details aren't shown
@@ -1991,7 +1983,6 @@ window.doLogout = async () => {
     const toggleBtn = document.getElementById('auth-toggle-btn');
     if (toggleBtn) toggleBtn.textContent = "Don't have an account? Create one";
     // Clear any auth error messages
-    // Clear auth error box (id is 'auth-err')
     const errEl = document.getElementById('auth-err');
     if (errEl) { errEl.textContent = ''; errEl.style.display = 'none'; }
     // Clear header DOM so old user's name never bleeds into next session
@@ -2328,7 +2319,7 @@ async function loadWeather() {
           const geoData = await geoResp.json();
           suburb = geoData.address?.suburb || geoData.address?.city || geoData.address?.town || '';
         }
-      } catch(e2) {}
+      } catch(e2) { /* nominatim fallback failed silently */ }
     }
 
     const dayNames = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
@@ -2454,7 +2445,7 @@ window.undoLastTask = async function() {
   document.getElementById('cel-undo-btn').style.display = 'none';
   g('celebration').classList.remove('show');
   // Revert task done state
-  try { await updateDoc(doc(db,'tasks',id), {done:false, doneAt:null}); } catch(e){}
+  try { await updateDoc(doc(db,'tasks',id), {done:false, doneAt:null}); } catch(e){ console.warn('Undo task revert failed:', e); }
   // Deduct XP
   try {
     const ref = doc(db,'users',currentUser.uid);
@@ -2465,7 +2456,7 @@ window.undoLastTask = async function() {
       const newTotal = Math.max(0, (u.totalDone||0) - 1);
       await updateDoc(ref, {xp:newXp, totalDone:newTotal});
     }
-  } catch(e){}
+  } catch(e){ console.warn('Undo XP revert failed:', e); }
   toast('↩ Task undone');
 };
 
@@ -2563,16 +2554,16 @@ window.openHabitPastDay = function(id) {
   const maxDate = new Date(today); maxDate.setDate(today.getDate()-1);
   const minDate = new Date(today); minDate.setDate(today.getDate()-30);
   const fmt = d => d.toISOString().split('T')[0];
-  overlay.innerHTML = \`<div style="background:var(--surf);border-radius:20px;padding:24px;max-width:320px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.4)">
+  overlay.innerHTML = `<div style="background:var(--surf);border-radius:20px;padding:24px;max-width:320px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.4)">
     <div style="font-family:var(--pixel);font-size:14px;font-weight:700;color:var(--ink);margin-bottom:6px;text-align:center">📅 LOG PAST DAY</div>
-    <div style="font-size:12px;color:var(--muted);text-align:center;margin-bottom:16px">\${escHtml(h.name)}</div>
+    <div style="font-size:12px;color:var(--muted);text-align:center;margin-bottom:16px">${escHtml(h.name)}</div>
     <label class="field-label">SELECT DATE</label>
-    <input id="habit-past-date" type="date" class="form-input" value="\${fmt(maxDate)}" max="\${fmt(maxDate)}" min="\${fmt(minDate)}">
+    <input id="habit-past-date" type="date" class="form-input" value="${fmt(maxDate)}" max="${fmt(maxDate)}" min="${fmt(minDate)}">
     <div style="display:flex;gap:10px;margin-top:14px">
       <button class="big-btn" style="background:var(--parchment);border:1.5px solid var(--border);color:var(--muted)" onclick="document.getElementById('habit-pastday-overlay').remove()">Cancel</button>
-      <button class="big-btn" onclick="logHabitPastDay('\${id}')">✅ Log It</button>
+      <button class="big-btn" onclick="logHabitPastDay('${id}')">✅ Log It</button>
     </div>
-  </div>\`;
+  </div>`;
   document.body.appendChild(overlay);
 };
 
@@ -2592,10 +2583,10 @@ window.logHabitPastDay = async function(id) {
     await updateDoc(doc(db,'habits',id), {
       streak, maxStreak,
       lastDoneDate: dateStr,
-      [\`doneDays.\${dateStr}\`]: true
+      [`doneDays.${dateStr}`]: true
     });
     document.getElementById('habit-pastday-overlay')?.remove();
-    toast(\`📅 Logged for \${date.toLocaleDateString('en-AU',{weekday:'short',day:'numeric',month:'short'})}!\`);
+    toast(`📅 Logged for ${date.toLocaleDateString('en-AU',{weekday:'short',day:'numeric',month:'short'})}!`);
   } catch(e) {
     toast('Could not log past day.');
   }
@@ -2982,7 +2973,7 @@ window.sendPartyMsg = async () => {
     const div = document.createElement('div');
     div.className = 'msg-wrap msg-me';
     div.id = tempId;
-    div.innerHTML = \`<div class="bubble me" style="background:var(--accent)">\${escHtml(text)}</div>\`;
+    div.innerHTML = `<div class="bubble me" style="background:var(--accent)">${escHtml(text)}</div>`;
     box.appendChild(div);
     box.scrollTop = box.scrollHeight;
   }
@@ -3324,7 +3315,7 @@ function updateExFormSection() {
   if (hadFocus && searchEl) {
     requestAnimationFrame(() => {
       searchEl.focus();
-      try { searchEl.setSelectionRange(cursorPos, cursorPos); } catch(e) {}
+      try { searchEl.setSelectionRange(cursorPos, cursorPos); } catch(e) { /* not all inputs support setSelectionRange */ }
     });
   }
 }
@@ -3565,13 +3556,7 @@ window.setModeHeader = function setModeHeader() {
   return `<span class="sgh-lbl">SET</span><span class="sgh-lbl">kg</span><span class="sgh-lbl"></span><span class="sgh-lbl">${label}</span><span class="sgh-lbl">✓</span><span class="sgh-lbl">×</span>`;
 }
 
-window.switchSetMode = mode => {
-  setMode = mode;
-  // Update all current sets to new mode
-  currentSets = currentSets.map(s => ({...s, mode}));
-  // Rebuild the form section
-  updateExFormSection();
-};
+
 
 window.addSet = () => {
   const last = currentSets[currentSets.length-1]||{};
@@ -3941,7 +3926,7 @@ async function saveNewTaskOrder() {
   });
   // Update Firestore for each task
   for (const { id, sort_order } of batch) {
-    try { await updateDoc(doc(db, 'tasks', id), { sort_order }); } catch(e) {}
+    try { await updateDoc(doc(db, 'tasks', id), { sort_order }); } catch(e) { /* non-critical: reorder save failed */ }
   }
 }
 
@@ -5552,7 +5537,6 @@ window.editWorkoutEntry = id => {
   }
 };
 
-window._editSets = {};
 window.editAdjSet = (i,f,d,id) => {
   const e=workoutEntries.find(x=>x.id===id); if(!e||!e.sets[i]) return;
   const v=Math.max(0,parseFloat(e.sets[i][f]||0)+d);
@@ -6209,59 +6193,6 @@ window.playLoginMusic = function() {
 
 
 // ─── MUSIC PLAYER STATE ──────────────────────────────────────────────────────
-const SONG_FILES = {
-  'Floral Life': 'https://inny27.github.io/OrbitCrew/01.%20Floral%20Life%20-%20Henesys.mp3',
-  'Above the Treetops': 'https://inny27.github.io/OrbitCrew/12.%20Above%20the%20Treetops%20-%20Lith%20Harbour.mp3',
-  'Missing You': 'https://inny27.github.io/OrbitCrew/15.%20Missing%20You%20-%20Ellinia.mp3',
-  'Title Screen': 'https://inny27.github.io/OrbitCrew/123.%20Title%20-%20Login.mp3',
-  'Go Picnic': 'https://inny27.github.io/OrbitCrew/02.%20Go%20Picnic.mp3',
-  'SleepyWood': 'https://inny27.github.io/OrbitCrew/05.%20SleepyWood.mp3',
-  'Bad Guys': 'https://inny27.github.io/OrbitCrew/07.%20Bad%20Guys.mp3',
-  'Moonlight Shadow': 'https://inny27.github.io/OrbitCrew/10.%20Moonlight%20Shadow.mp3',
-  'Jungle Book': 'https://inny27.github.io/OrbitCrew/14.%20Jungle%20Book.mp3',
-  'Snowy Village': 'https://inny27.github.io/OrbitCrew/20.%20Snowy%20Village.mp3',
-  'Shinins Harbor': 'https://inny27.github.io/OrbitCrew/24.%20Shinin%27%20Harbor.mp3',
-  'Upon the Sky': 'https://inny27.github.io/OrbitCrew/25.%20Upon%20the%20Sky.mp3',
-  'Warm Regard': 'https://inny27.github.io/OrbitCrew/26.%20Warm%20Regard.mp3',
-  'White Christmas': 'https://inny27.github.io/OrbitCrew/27.%20White%20Christmas.mp3',
-  'Come With Me': 'https://inny27.github.io/OrbitCrew/33.%20Come%20With%20Me.mp3',
-  'Fantastic Thinking': 'https://inny27.github.io/OrbitCrew/34.%20Fantastic%20Thinking.mp3',
-  'Flying in a Blue Dream': 'https://inny27.github.io/OrbitCrew/36.%20Flying%20in%20a%20Blue%20Dream.mp3',
-  'Fantasia': 'https://inny27.github.io/OrbitCrew/38.%20Fantasia.mp3',
-  'Funny Time Maker': 'https://inny27.github.io/OrbitCrew/39.%20Funny%20Time%20Maker.mp3',
-  'Waltz For Work': 'https://inny27.github.io/OrbitCrew/41.%20Waltz%20For%20Work.mp3',
-  'Fairy Tale Diffvers': 'https://inny27.github.io/OrbitCrew/50.%20Fairy%20Tale%20Diffvers.mp3',
-  'Timeless': 'https://inny27.github.io/OrbitCrew/56.%20Timeless.mp3',
-  'Timeless B': 'https://inny27.github.io/OrbitCrew/57.%20Timeless%20B.mp3',
-  'Aquarium': 'https://inny27.github.io/OrbitCrew/58.%20Aquarium.mp3',
-  'Blue World': 'https://inny27.github.io/OrbitCrew/59.%20Blue%20World.mp3',
-  'Leafre': 'https://inny27.github.io/OrbitCrew/72.%20Leafre.mp3',
-  'Elin Forest': 'https://inny27.github.io/OrbitCrew/81.%20Elin%20Forest.mp3',
-  'Nautilus': 'https://inny27.github.io/OrbitCrew/85.%20Nautilus.mp3',
-  'Amoria': 'https://inny27.github.io/OrbitCrew/94.%20Amoria.mp3',
-  'First Step Master': 'https://inny27.github.io/OrbitCrew/113.%20First%20Step%20Master.mp3',
-  'Remembrance': 'https://inny27.github.io/OrbitCrew/132.%20Remembrance.mp3',
-  'Minecraft': 'https://inny27.github.io/OrbitCrew/1-08.%20Minecraft.mp3',
-  'FWC Theme': 'https://inny27.github.io/OrbitCrew/52.%20Flyff%20World%20Championship%20%28FWC%29.mp3',
-  'Flying': 'https://inny27.github.io/OrbitCrew/17.%20Flying.mp3',
-  'Soaring Broom': 'https://inny27.github.io/OrbitCrew/07.%20Soaring%20Broom%20%28General%29.mp3',
-  'Frostbelt': 'https://inny27.github.io/OrbitCrew/01.%20Frostbelt%20%28Log-In%29.mp3',
-  'Town Junon': 'https://inny27.github.io/OrbitCrew/Town01%20junon.mp3',
-  'Plain Junon': 'https://inny27.github.io/OrbitCrew/Plain01%20junon.mp3',
-  'Plain Eldeon': 'https://inny27.github.io/OrbitCrew/Plain01%20eldeon.mp3',
-  'Lunar Field 2': 'https://inny27.github.io/OrbitCrew/Lunar%20field02.mp3',
-  'Lunar Field 1': 'https://inny27.github.io/OrbitCrew/Lunar%20field01.mp3',
-  'Junon Field': 'https://inny27.github.io/OrbitCrew/JUNON%20FIELD01.mp3',
-  'Event Carol': 'https://inny27.github.io/OrbitCrew/Event02%20carol.mp3',
-  'Event Junon': 'https://inny27.github.io/OrbitCrew/Event01%20junon.mp3',
-  'Canyon Junon': 'https://inny27.github.io/OrbitCrew/Canyon01%20junon.mp3',
-  'Scape Main': 'https://inny27.github.io/OrbitCrew/scape%20main%20%28aka%20desert%20or%20new%20theme%29.mp3',
-  'Scape Original': 'https://inny27.github.io/OrbitCrew/scape%20original%20%28aka%20old%20theme%29.mp3',
-  'Newbie Melody': 'https://inny27.github.io/OrbitCrew/newbie%20melody.mp3',
-  'Autumn Voyage': 'https://inny27.github.io/OrbitCrew/autumn%20voyage.mp3',
-  'Harmony': 'https://inny27.github.io/OrbitCrew/harmony.mp3',
-  'Sea Shanty 2': 'https://inny27.github.io/OrbitCrew/sea%20shanty%202.mp3'
-};
 
 const MUSIC_TRACKS = [
   {id:'floral_life',title:'Floral Life',artist:'In-Built Songs',album:'In-Built Songs',url:'https://inny27.github.io/OrbitCrew/01.%20Floral%20Life%20-%20Henesys.mp3',mob:'130100',colour:'#9bbc0f'},
@@ -6399,8 +6330,6 @@ async function _mpSaveAlbums() {
 }
 
 // Load music data when tab is opened
-const _origRenderMusicPlayer = window.renderMusicPlayer;
-
 function _mpFmt(s) {
   if (!s || isNaN(s)) return '0:00';
   return Math.floor(s/60) + ':' + Math.floor(s%60).toString().padStart(2,'0');
@@ -6797,7 +6726,6 @@ window._doAddToAlbum = async function(trackId, encodedAlbum) {
 };
 
 window.MUSIC_TRACKS = MUSIC_TRACKS;
-window.SONG_FILES = SONG_FILES;
 
 
 </script>
@@ -6945,25 +6873,23 @@ window.doExecuteClearData = async function() {
 // Bridge: global wrappers so onclick= attrs can call ES module functions
 function confirmClearData(){if(window.confirmClearData)window.confirmClearData.apply(window,arguments);}
 function copyInstallLink(){if(window.copyInstallLink)window.copyInstallLink.apply(window,arguments);}
-function _doDeleteEntry(){if(window._doDeleteEntry)window._doDeleteEntry.apply(window,arguments);}
-function _doDeleteTask(){if(window._doDeleteTask)window._doDeleteTask.apply(window,arguments);}
-function _mpDeleteAlbum(){if(window._mpDeleteAlbum)window._mpDeleteAlbum.apply(window,arguments);}
-function _doDeleteAlbum(){if(window._doDeleteAlbum)window._doDeleteAlbum.apply(window,arguments);}
-function _mpAddToAlbum(){if(window._mpAddToAlbum)window._mpAddToAlbum.apply(window,arguments);}
 function _doAddToAlbum(){if(window._doAddToAlbum)window._doAddToAlbum.apply(window,arguments);}
-function _mpLikeTrack(){if(window._mpLikeTrack)window._mpLikeTrack.apply(window,arguments);}
 function _mpNewAlbum(){if(window._mpNewAlbum)window._mpNewAlbum.apply(window,arguments);}
 function _mpNext(){if(window._mpNext)window._mpNext.apply(window,arguments);}
-function _mpOpenAlbum(){if(window._mpOpenAlbum)window._mpOpenAlbum.apply(window,arguments);}
 function _mpPlay(){if(window._mpPlay)window._mpPlay.apply(window,arguments);}
 function _mpPrev(){if(window._mpPrev)window._mpPrev.apply(window,arguments);}
 function _mpSeek(){if(window._mpSeek)window._mpSeek.apply(window,arguments);}
-function _mpSetTab(){if(window._mpSetTab)window._mpSetTab.apply(window,arguments);}
-function _mpSetVol(){if(window._mpSetVol)window._mpSetVol.apply(window,arguments);}
-function _mpToggleLike(){if(window._mpToggleLike)window._mpToggleLike.apply(window,arguments);}
 function _mpTogglePlay(){if(window._mpTogglePlay)window._mpTogglePlay.apply(window,arguments);}
 function _mpToggleShuffle(){if(window._mpToggleShuffle)window._mpToggleShuffle.apply(window,arguments);}
 function addExToSession(){if(window.addExToSession)window.addExToSession.apply(window,arguments);}
+function calNav(){if(window.calNav)window.calNav.apply(window,arguments);}
+function closeCalendar(){if(window.closeCalendar)window.closeCalendar.apply(window,arguments);}
+function logHabitPastDay(){if(window.logHabitPastDay)window.logHabitPastDay.apply(window,arguments);}
+function openCalendar(){if(window.openCalendar)window.openCalendar.apply(window,arguments);}
+function openHabitPastDay(){if(window.openHabitPastDay)window.openHabitPastDay.apply(window,arguments);}
+function setCalTab(){if(window.setCalTab)window.setCalTab.apply(window,arguments);}
+function showCalDay(){if(window.showCalDay)window.showCalDay.apply(window,arguments);}
+function toggleHabitDay(){if(window.toggleHabitDay)window.toggleHabitDay.apply(window,arguments);}
 function addGuideToDiary(){if(window.addGuideToDiary)window.addGuideToDiary.apply(window,arguments);}
 function addHabit(){if(window.addHabit)window.addHabit.apply(window,arguments);}
 function addSet(){if(window.addSet)window.addSet.apply(window,arguments);}
@@ -7007,7 +6933,6 @@ function getTamaState(){if(window.getTamaState)window.getTamaState.apply(window,
 function getTotalStats(){if(window.getTotalStats)window.getTotalStats.apply(window,arguments);}
 function joinParty(){if(window.joinParty)window.joinParty.apply(window,arguments);}
 function leaveParty(){if(window.leaveParty)window.leaveParty.apply(window,arguments);}
-function _doLeaveParty(){if(window._doLeaveParty)window._doLeaveParty.apply(window,arguments);}
 function switchPartyTab(){if(window.switchPartyTab)window.switchPartyTab.apply(window,arguments);}
 function logBodyEntry(){if(window.logBodyEntry)window.logBodyEntry.apply(window,arguments);}
 function logCardioEntry(){if(window.logCardioEntry)window.logCardioEntry.apply(window,arguments);}
@@ -7064,7 +6989,6 @@ function toggleBGM(){if(window.toggleBGM)window.toggleBGM.apply(window,arguments
 function stopLoginMusic(){if(window.stopLoginMusic)window.stopLoginMusic.apply(window,arguments);}
 function switchAuthTab(){if(window.switchAuthTab)window.switchAuthTab.apply(window,arguments);}
 function switchFitTab(){if(window.switchFitTab)window.switchFitTab.apply(window,arguments);}
-function switchSetMode(){if(window.switchSetMode)window.switchSetMode.apply(window,arguments);}
 function switchTab(){if(window.switchTab)window.switchTab.apply(window,arguments);}
 function toggleAuthMode(){if(window.toggleAuthMode)window.toggleAuthMode.apply(window,arguments);}
 function toggleBgmDefault(){if(window.toggleBgmDefault)window.toggleBgmDefault.apply(window,arguments);}
