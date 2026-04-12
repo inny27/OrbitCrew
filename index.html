@@ -3794,8 +3794,13 @@ function renderToday() {
   g('prog-fill').style.width = pct+'%';
   const pctEl = document.getElementById('prog-pct');
   if(pctEl) pctEl.textContent = pct+'%';
-  g('tasks-list').innerHTML = myTasks.length ? myTasks.map(taskCard).join('') : emptyState('🎯','No tasks yet!');
+  g('tasks-list').innerHTML  = myTasks.length  ? myTasks.map(taskCard).join('')  : emptyState('🎯','No tasks yet!');
   g('chores-list').innerHTML = myChores.length ? myChores.map(taskCard).join('') : emptyState('🏠','No shared tasks yet!');
+  // Wire events — wireTaskEvents replaces nodes so re-query is not needed
+  // (the parent wrappers tasks-list and chores-list are the targets)
+  wireTaskEvents(g('tasks-list'));
+  wireTaskEvents(g('chores-list'));
+  // Archive list wired below after it's populated
   // Archive section
   const archiveSection = document.getElementById('archive-section');
   const archiveList    = document.getElementById('archive-list');
@@ -3803,6 +3808,7 @@ function renderToday() {
     if (done.length > 0) {
       archiveSection.style.display = 'block';
       archiveList.innerHTML = done.map(t => taskCard(t, true)).join('');
+      wireTaskEvents(archiveList);
     } else {
       archiveSection.style.display = 'none';
       archiveList.innerHTML = '';
@@ -3824,37 +3830,93 @@ function renderToday() {
 function taskCard(t, isArchived = false) {
   const pc = {high:'#ef4444',medium:'#f59e0b',low:'#10b981'};
   const tc = {personal:'#7c3aed',shared:'#06b6d4',chore:'#10b981',goal:'#f59e0b'};
-  const c = pc[t.priority]||tc[t.type]||'#7c3aed';
-  const rep = {daily:'🔁 Daily',weekly:'📅 Weekly',monthly:'🗓️ Monthly'}[t.repeat]||'';
+  const c  = pc[t.priority] || tc[t.type] || '#7c3aed';
+  const rep = {daily:'🔁 Daily',weekly:'📅 Weekly',monthly:'🗓️ Monthly'}[t.repeat] || '';
   const partyName = (t.type==='shared'||t.type==='chore') && party ? ` · ${party.name}` : '';
-  const deadlineStr = t.deadline_date ? `<span class="tag" style="color:var(--accent2);border-color:var(--accent2)">📅 ${t.deadline_date}</span>` : '';
+  const deadlineStr = t.deadline_date
+    ? `<span class="tag" style="color:var(--accent2);border-color:var(--accent2)">📅 ${t.deadline_date}</span>` : '';
+  const typeIcon = t.type==='shared' ? '<img src="https://maplestory.io/api/GMS/255/item/1302086/icon" width="12" height="12" style="image-rendering:pixelated;vertical-align:middle">'
+    : t.type==='chore'  ? '<img src="https://maplestory.io/api/GMS/255/item/1322000/icon" width="12" height="12" style="image-rendering:pixelated;vertical-align:middle">'
+    : t.type==='goal'   ? '<img src="https://maplestory.io/api/GMS/255/item/1402000/icon" width="12" height="12" style="image-rendering:pixelated;vertical-align:middle">'
+    : '<img src="https://maplestory.io/api/GMS/255/item/1302000/icon" width="12" height="12" style="image-rendering:pixelated;vertical-align:middle">';
+  // No inline onclick handlers — all events wired by wireTaskEvents() after render
   return `<div class="task-card${t.done?' done':''}${isArchived?' archived':''}"
     style="--tc:${c};cursor:${isArchived?'default':'grab'};"
     data-id="${t.id}"
-    draggable="${isArchived?'false':'true'}"
-    onclick="${isArchived?'void 0':('completeTask(\'' + t.id + '\')')}"
-    oncontextmenu="event.preventDefault();event.stopPropagation();${isArchived?'void 0':('openEditTaskModal(\'' + t.id + '\')')}"
-    ontouchstart="${isArchived?'':('window._taskLongPress(\'' + t.id + '\',event)')}">
-    ${!isArchived ? '<div class="task-drag-handle" onclick="event.stopPropagation()" style="color:var(--muted);font-size:16px;cursor:grab;padding:0 4px 0 0;flex-shrink:0;user-select:none">⠿</div>' : ''}
-    ${!isArchived ? '<button class="task-edit-btn" onclick="event.stopPropagation();openEditTaskModal(\''+ t.id +'\'\')">✏️</button>' : ''}
+    data-archived="${isArchived?'1':'0'}"
+    draggable="${isArchived?'false':'true'}">
+    ${!isArchived ? '<div class="task-drag-handle" data-action="drag" style="color:var(--muted);font-size:16px;cursor:grab;padding:0 4px 0 0;flex-shrink:0;user-select:none">⠿</div>' : ''}
+    ${!isArchived ? '<button class="task-edit-btn" data-action="edit">✏️</button>' : ''}
     <div class="task-check" style="border-color:${c};${t.done?`background:${c}`:''}">
-      ${t.done?'<span style="color:#fff;font-size:13px;font-weight:900">✓</span>':''}
+      ${t.done ? '<span style="color:#fff;font-size:13px;font-weight:900">✓</span>' : ''}
     </div>
     <div class="task-body">
       <div class="task-name">${escHtml(t.name)}</div>
       <div class="task-tags">
-        <span class="tag" style="color:${tc[t.type]||'#7c3aed'};border-color:${tc[t.type]||'#7c3aed'}">${t.type==='shared'?'<img src="https://maplestory.io/api/GMS/255/item/1302086/icon" width="12" height="12" style="image-rendering:pixelated;vertical-align:middle">':t.type==='chore'?'<img src="https://maplestory.io/api/GMS/255/item/1322000/icon" width="12" height="12" style="image-rendering:pixelated;vertical-align:middle">':t.type==='goal'?'<img src="https://maplestory.io/api/GMS/255/item/1402000/icon" width="12" height="12" style="image-rendering:pixelated;vertical-align:middle">':'<img src="https://maplestory.io/api/GMS/255/item/1302000/icon" width="12" height="12" style="image-rendering:pixelated;vertical-align:middle">'} ${t.type}${partyName}</span>
+        <span class="tag" style="color:${tc[t.type]||'#7c3aed'};border-color:${tc[t.type]||'#7c3aed'}">${typeIcon} ${t.type}${partyName}</span>
         <span class="tag" style="color:${c};border-color:${c}">${t.priority}</span>
-        ${rep?`<span class="repeat-badge">${rep}</span>`:''}
+        ${rep ? `<span class="repeat-badge">${rep}</span>` : ''}
         ${deadlineStr}
       </div>
       ${t.createdAt ? `<div class="task-created">📅 Created ${formatTaskDate(t.createdAt)}</div>` : ''}
     </div>
-    ${isArchived ? `<button onclick="event.stopPropagation();window._reopenTask('${t.id}')" style="font-size:10px;padding:4px 8px;border:1.5px solid var(--green);background:rgba(122,158,126,.12);color:var(--green);border-radius:8px;cursor:pointer;pointer-events:all;flex-shrink:0">↩</button>` : `<span class="xp-badge">+${t.xp||30}XP</span>`}
+    ${isArchived
+      ? '<button class="reopen-btn" data-action="reopen" style="font-size:10px;padding:4px 8px;border:1.5px solid var(--green);background:rgba(122,158,126,.12);color:var(--green);border-radius:8px;cursor:pointer;flex-shrink:0">↩ Reopen</button>'
+      : `<span class="xp-badge">+${t.xp||30}XP</span>`}
   </div>`;
 }
 
+// Wire all task card interactions via event delegation — no inline onclick strings
+function wireTaskEvents(container) {
+  if (!container) return;
+  // Clone to remove any previously attached listeners
+  const fresh = container.cloneNode(true);
+  container.parentNode.replaceChild(fresh, container);
+  let _lpt = null;
 
+  fresh.addEventListener('click', e => {
+    const card = e.target.closest('.task-card');
+    if (!card) return;
+    const id = card.dataset.id;
+    const archived = card.dataset.archived === '1';
+    if (e.target.closest('[data-action="drag"]')) return;
+    if (e.target.closest('[data-action="edit"]')) {
+      e.stopPropagation();
+      window.openEditTaskModal(id);
+      return;
+    }
+    if (e.target.closest('[data-action="reopen"]')) {
+      e.stopPropagation();
+      window._reopenTask(id);
+      return;
+    }
+    if (!archived) window.completeTask(id);
+  });
+
+  fresh.addEventListener('contextmenu', e => {
+    const card = e.target.closest('.task-card');
+    if (!card || card.dataset.archived === '1') return;
+    e.preventDefault(); e.stopPropagation();
+    window.openEditTaskModal(card.dataset.id);
+  });
+
+  fresh.addEventListener('touchstart', e => {
+    const card = e.target.closest('.task-card');
+    if (!card || card.dataset.archived === '1') return;
+    if (e.target.closest('[data-action="drag"]')) return;
+    const id = card.dataset.id;
+    clearTimeout(_lpt);
+    _lpt = setTimeout(() => window.openEditTaskModal(id), 500);
+    const cancel = () => { clearTimeout(_lpt); _lpt = null; };
+    card.addEventListener('touchend',    cancel, {once:true, passive:true});
+    card.addEventListener('touchmove',   cancel, {once:true, passive:true});
+    card.addEventListener('touchcancel', cancel, {once:true, passive:true});
+  }, {passive:true});
+
+  // Drag & drop on fresh container
+  enableDragOnContainer(fresh);
+  return fresh;
+}
 
 // ─── TASK DATE FORMATTER ──────────────────────────────────
 function formatTaskDate(ts) {
@@ -3892,6 +3954,65 @@ window.toggleArchive = function() {
 };
 // ─── TASK DRAG & DROP ─────────────────────────────
 let _dragSrcId = null;
+
+function enableDragOnContainer(container) {
+  // Wire drag on a specific container element
+  if (!container) return;
+  const items = container.querySelectorAll('.task-card');
+  items.forEach(item => {
+    item.setAttribute('draggable','true');
+    item.addEventListener('dragstart', e => {
+      e.dataTransfer.setData('text/plain', item.dataset.id);
+      item.style.opacity = '0.5';
+      item.classList.add('dragging');
+    });
+    item.addEventListener('dragend', () => {
+      item.style.opacity = '';
+      item.classList.remove('dragging');
+      saveNewTaskOrder();
+    });
+    // Touch drag via handle
+    let _tDragActive = false, _tLongPress = null;
+    const handle = item.querySelector('[data-action="drag"]');
+    if (handle) {
+      handle.addEventListener('touchstart', e => {
+        e.stopPropagation();
+        _tLongPress = setTimeout(() => {
+          _tDragActive = true;
+          item.classList.add('dragging');
+          navigator.vibrate && navigator.vibrate(40);
+        }, 200);
+      }, {passive:true});
+      handle.addEventListener('touchmove', e => {
+        if (!_tDragActive) { clearTimeout(_tLongPress); return; }
+        e.preventDefault();
+        const touch = e.touches[0];
+        const taskList = item.parentNode;
+        const after = getDragAfterElement(taskList, touch.clientY);
+        if (after == null) { if (taskList.lastElementChild !== item) taskList.appendChild(item); }
+        else if (after !== item && after.previousElementSibling !== item) taskList.insertBefore(item, after);
+      }, {passive:false});
+      handle.addEventListener('touchend', () => {
+        clearTimeout(_tLongPress);
+        if (_tDragActive) { item.classList.remove('dragging'); saveNewTaskOrder(); }
+        _tDragActive = false;
+      }, {passive:true});
+      handle.addEventListener('touchcancel', () => {
+        clearTimeout(_tLongPress);
+        item.classList.remove('dragging');
+        _tDragActive = false;
+      }, {passive:true});
+    }
+  });
+  container.addEventListener('dragover', e => {
+    e.preventDefault();
+    const dragging = container.querySelector('.dragging');
+    if (!dragging) return;
+    const after = getDragAfterElement(container, e.clientY);
+    if (after == null) container.appendChild(dragging);
+    else container.insertBefore(dragging, after);
+  });
+}
 
 function enableTaskDragAndDrop() {
   const lists = ['tasks-list','chores-list'];
@@ -7008,6 +7129,7 @@ function closeTamaPostWorkout(){if(window.closeTamaPostWorkout)window.closeTamaP
 function completeHabit(){if(window.completeHabit)window.completeHabit.apply(window,arguments);}
 function completeProfile(){if(window.completeProfile)window.completeProfile.apply(window,arguments);}
 function completeTask(){if(window.completeTask)window.completeTask.apply(window,arguments);}
+function openEditTaskModal(){if(window.openEditTaskModal)window.openEditTaskModal.apply(window,arguments);}
 function confirmDeleteAccount(){if(window.confirmDeleteAccount)window.confirmDeleteAccount.apply(window,arguments);}
 function createParty(){if(window.createParty)window.createParty.apply(window,arguments);}
 function delSet(){if(window.delSet)window.delSet.apply(window,arguments);}
